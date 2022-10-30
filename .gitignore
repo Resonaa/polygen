@@ -1,0 +1,14 @@
+node_modules
+
+/.idea
+
+/build
+/public/build
+.env
+
+/prisma/data.db
+/prisma/data.db-journal
+
+/coverage
+
+/app/styles/tailwind.css
