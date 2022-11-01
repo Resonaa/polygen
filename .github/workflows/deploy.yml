@@ -1,0 +1,18 @@
+name: Deploy
+on: [push]
+
+jobs:
+  deploy:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy
+        uses: garygrossgarten/github-action-ssh@release
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          password: ${{ secrets.PASS }}
+          command: |
+            cd ~/polygen
+            /usr/bin/git pull

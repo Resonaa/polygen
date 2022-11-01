@@ -27,24 +27,22 @@ export default function AuthBox({ type }: { type: "login" | "register" }) {
   }, [actionData]);
 
   return (
-    <Layout type="text" cur={type}>
+    <Layout type="text" cur="auth">
       <div className="flex justify-center sm:my-auto">
         <Form className="ui large form max-sm:w-full" method="post" action={`/${type}`}>
           <SemanticForm.Field>
             <img src={logo} alt="logo" className="mx-auto" />
           </SemanticForm.Field>
 
-          <SemanticForm.Field>
-            <div className="ui left icon input">
+          <SemanticForm.Field className={actionData?.errors?.username ? "error" : ""}>
+            <div className={`ui left icon input ${actionData?.errors?.username ? "error" : ""}`}>
               <input
                 ref={usernameRef}
                 required
-                autoFocus={true}
+                autoFocus
                 name="username"
                 type="username"
                 placeholder="用户名"
-                aria-invalid={actionData?.errors?.username ? true : undefined}
-                aria-describedby="username-error"
               />
               <Icon name="user" />
             </div>
@@ -55,16 +53,14 @@ export default function AuthBox({ type }: { type: "login" | "register" }) {
             )}
           </SemanticForm.Field>
 
-          <SemanticForm.Field>
-            <div className="ui left icon input">
+          <SemanticForm.Field className={actionData?.errors?.password ? "error" : ""}>
+            <div className={`ui left icon input ${actionData?.errors?.password ? "error" : ""}`}>
               <input
                 ref={passwordRef}
                 required
                 name="password"
                 type="password"
                 placeholder="密码"
-                aria-invalid={actionData?.errors?.password ? true : undefined}
-                aria-describedby="password-error"
               />
               <Icon name="lock" />
             </div>
@@ -76,16 +72,14 @@ export default function AuthBox({ type }: { type: "login" | "register" }) {
           </SemanticForm.Field>
 
           {type === "register" &&
-            <SemanticForm.Field>
-              <div className="ui left icon input">
+            <SemanticForm.Field className={actionData?.errors?.repeatPassword ? "error" : ""}>
+              <div className={`ui left icon input ${actionData?.errors?.repeatPassword ? "error" : ""}`}>
                 <input
                   ref={repeatPasswordRef}
                   required
                   name="repeatPassword"
                   type="password"
                   placeholder="再次输入密码"
-                  aria-invalid={actionData?.errors?.repeatPassword ? true : undefined}
-                  aria-describedby="repeatPassword-error"
                 />
                 <Icon name="lock" />
               </div>
@@ -103,8 +97,8 @@ export default function AuthBox({ type }: { type: "login" | "register" }) {
           </Button>
 
           <div className="text-center">
-            <hr className="h-0.5 bg-slate-200 borderless my-3.5" />
-            <SemanticForm.Field className="text-sm">
+            <hr className="h-px bg-slate-200 borderless my-3.5" />
+            <SemanticForm.Field className="text-base">
               {type === "login" ?
                 <>
                   没有账号？
