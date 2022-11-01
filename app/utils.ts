@@ -69,3 +69,19 @@ export function useUser(): User {
 export function validateUsername(username: unknown): username is string {
   return typeof username === "string" && /^[\u4e00-\u9fa5_a-zA-Z0-9]{3,16}$/.test(username);
 }
+
+export function validatePassword(password: unknown): password is string {
+  return typeof password === "string" && password.length >= 6;
+}
+
+export async function ajax(method: string, url: string, data = {}) {
+  const options = {
+    method: method,
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(data)
+  };
+
+  return (await (await fetch(url, options)).json()).data;
+}

@@ -10,9 +10,6 @@
       "DOM.Iterable",
       "ES2019"
     ],
-    "types": [
-      "vitest/globals"
-    ],
     "isolatedModules": true,
     "esModuleInterop": true,
     "jsx": "react-jsx",
