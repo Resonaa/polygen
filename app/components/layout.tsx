@@ -107,7 +107,7 @@ export default function Layout({ type, cur, children }: { type: string, cur: str
         <Sidebar.Pusher dimmed={visible} className="overflow-hidden min-h-full flex flex-col">
           {type === "text" ?
             <Container text
-                       className={`${cur !== "auth" ? "mt-20 mb-12" : "max-sm:mt-20"} flex-1 !flex justify-center`}>{children}</Container>
+                       className={`${cur !== "auth" ? "mt-20 mb-12" : "max-sm:mt-20 !flex justify-center"} flex-1`}>{children}</Container>
             :
             <Container stackable grid className="m-12 flex-1">{children}</Container>
           }

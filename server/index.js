@@ -1,12 +1,15 @@
 const path = require("path");
-const { createServer } = require("http");
 const fs = require("fs");
 
+const http = require("http");
+const https = require("https");
 const express = require("express");
 const { Server } = require("socket.io");
 const compression = require("compression");
 const morgan = require("morgan");
 const { createRequestHandler } = require("@remix-run/express");
+
+require("dotenv").config({ path: ".env" });
 
 const MODE = process.env.NODE_ENV;
 const BUILD_DIR = path.join(process.cwd(), "server/build");
@@ -20,9 +23,22 @@ if (!fs.existsSync(BUILD_DIR)) {
 
 const app = express();
 
-const httpServer = createServer(app);
+const httpServer = http.createServer(app).listen(80, "0.0.0.0", () => {
+  console.log("HTTP server listening on 0.0.0.0:80");
+});
+let io;
 
-const io = new Server(httpServer);
+if (MODE === "production" && process.env.SSL_CERT && process.env.SSL_KEY) {
+  const cert = fs.readFileSync(process.env.SSL_CERT);
+  const key = fs.readFileSync(process.env.SSL_KEY);
+
+  const httpsServer = https.createServer({ key, cert }, app).listen(443, "0.0.0.0", () => {
+    console.log("HTTPS server listening on 0.0.0.0:443");
+  });
+  io = new Server(httpsServer);
+} else {
+  io = new Server(httpServer);
+}
 
 io.on("connection", (socket) => {
   console.log(socket.id, "connected");
@@ -52,10 +68,6 @@ app.all(
       return createRequestHandler({ build, mode: MODE })(req, res, next);
     }
 );
-
-httpServer.listen(80, "0.0.0.0", () => {
-  console.log("Express server listening on 0.0.0.0:80");
-});
 
 ////////////////////////////////////////////////////////////////////////////////
 function purgeRequireCache() {
