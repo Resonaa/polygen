@@ -12,7 +12,16 @@ model User {
   username  String @unique
   password  String
   createdAt DateTime @default(now())
+
   posts     Post[]
+  comments  Comment[]
+  access    Access?
+}
+
+model Announcement {
+  id        Int @id @default(autoincrement())
+  title     String
+  content   String
 }
 
 model Post {
@@ -23,5 +32,33 @@ model Post {
   updatedAt DateTime @updatedAt
 
   author     User   @relation(fields: [authorname], references: [username], onDelete: Cascade, onUpdate: Cascade)
-  authorname String
+  authorname String @unique
+
+  comments Comment[]
+}
+
+model Comment {
+  id      Int @id @default(autoincrement())
+  content String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  author     User   @relation(fields: [authorname], references: [username], onDelete: Cascade, onUpdate: Cascade)
+  authorname String @unique
+
+  parent   Post @relation(fields: [parentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  parentId Int
+}
+
+model Access {
+  user     User   @relation(fields: [username], references: [username], onDelete: Cascade, onUpdate: Cascade)
+  username String @unique
+
+  visitWebsite Int @default(1)
+  communicate  Int @default(1)
+  joinRoom     Int @default(1)
+  createRoom   Int @default(1)
+
+  manageAnnouncement Int @default(0)
 }

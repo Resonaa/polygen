@@ -2,6 +2,7 @@ import { useMatches } from "@remix-run/react";
 import { useMemo } from "react";
 
 import type { User } from "~/models/user.server";
+import bcrypt from "bcryptjs";
 
 const DEFAULT_REDIRECT = "/";
 
@@ -84,4 +85,12 @@ export async function ajax(method: string, url: string, data = {}) {
   };
 
   return (await (await fetch(url, options)).json()).data;
+}
+
+export function hashPassword(password: string) {
+  return bcrypt.hash(password, 10);
+}
+
+export function comparePassword(input: string, hash: string) {
+  return bcrypt.compare(input, hash);
 }

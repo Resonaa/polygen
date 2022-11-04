@@ -5,6 +5,7 @@ import io from "socket.io-client";
 
 import Layout from "../components/layout";
 import { useOptionalUser } from "~/utils";
+import { Grid } from "semantic-ui-react";
 
 export function meta() {
   return {
@@ -33,23 +34,25 @@ export default function Index() {
   }, [socket]);
 
   return (
-    <Layout type="text" cur="home">
-      {user && (
-        <Link
-          to="/post"
-          className="flex items-center justify-center rounded-md border border-transparent bg-white px-4 py-3 text-base font-medium text-yellow-700 shadow-sm hover:bg-yellow-50 sm:px-8"
-        >
-          View posts for {user.username}
-        </Link>
-      )}
+    <Layout columns={1} cur="home">
+      <Grid.Column>
+        {user && (
+          <Link
+            to="/post"
+            className="flex items-center justify-center rounded-md border border-transparent bg-white px-4 py-3 text-base font-medium text-yellow-700 shadow-sm hover:bg-yellow-50 sm:px-8"
+          >
+            View posts for {user.username}
+          </Link>
+        )}
 
-      <h1>Welcome to Remix + Socket.io</h1>
-      <div>
-        <button type="button" onClick={() => socket?.emit("event", "ping")}>
-          Send ping
-        </button>
-      </div>
-      <p>See Browser console and Server terminal</p>
+        <h1>Welcome to Remix + Socket.io</h1>
+        <div>
+          <button type="button" onClick={() => socket?.emit("event", "ping")}>
+            Send ping
+          </button>
+        </div>
+        <p>See Browser console and Server terminal</p>
+      </Grid.Column>
     </Layout>
   )
     ;

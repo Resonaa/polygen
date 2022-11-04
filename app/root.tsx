@@ -3,12 +3,12 @@
 import type { LoaderArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, useCatch } from "@remix-run/react";
-import { useEffect } from "react";
 
 import tailwindStylesheet from "./styles/tailwind.css";
 import semanticStylesheet from "semantic-ui-css/semantic.min.css";
 import { getUser } from "./session.server";
 import Layout from "~/components/layout";
+import { Grid } from "semantic-ui-react";
 
 export function links() {
   return [{ rel: "stylesheet", href: tailwindStylesheet },
@@ -18,7 +18,8 @@ export function links() {
 export function meta() {
   return {
     charset: "utf-8",
-    viewport: "width=device-width, initial-scale=1, shrink-to-fit=no"
+    viewport: "width=device-width, initial-scale=1, shrink-to-fit=no",
+    title: "polygen"
   };
 }
 
@@ -31,10 +32,6 @@ export async function loader({ request }: LoaderArgs) {
 export function CatchBoundary() {
   const caught = useCatch();
 
-  useEffect(() => {
-    setTimeout(() => window.history.back(), 3000);
-  }, []);
-
   return (
     <html>
     <head>
@@ -44,12 +41,10 @@ export function CatchBoundary() {
     </head>
 
     <body>
-    <Layout type="text" cur="error">
-      <p>
+    <Layout columns={1} cur="error">
+      <Grid.Column>
         <h1>{caught.status} {caught.statusText}</h1>
-      </p>
-
-      <p>3 秒后将返回上一页</p>
+      </Grid.Column>
     </Layout>
     <Scripts />
     </body>

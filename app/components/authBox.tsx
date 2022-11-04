@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Form, Link, useActionData, useSearchParams } from "@remix-run/react";
-import { Button, Form as SemanticForm, Icon } from "semantic-ui-react";
+import { Button, Form as SemanticForm, Icon, Grid } from "semantic-ui-react";
 
 import logo from "../../public/images/polygen.png";
 import Layout from "./layout";
@@ -27,8 +27,8 @@ export default function AuthBox({ type }: { type: "login" | "register" }) {
   }, [actionData]);
 
   return (
-    <Layout type="text" cur="auth">
-      <div className="flex justify-center sm:my-auto">
+    <Layout columns={1} cur="auth">
+      <Grid.Column className="sm:my-auto !flex justify-center">
         <Form className="ui large form max-sm:w-full" method="post" action={`/${type}`}>
           <SemanticForm.Field>
             <img src={logo} alt="logo" className="mx-auto" />
@@ -42,6 +42,7 @@ export default function AuthBox({ type }: { type: "login" | "register" }) {
                 autoFocus
                 name="username"
                 type="username"
+                autoComplete="nickname"
                 placeholder="用户名"
               />
               <Icon name="user" />
@@ -60,6 +61,7 @@ export default function AuthBox({ type }: { type: "login" | "register" }) {
                 required
                 name="password"
                 type="password"
+                autoComplete={type === "login" ? "current-password" : "new-password"}
                 placeholder="密码"
               />
               <Icon name="lock" />
@@ -79,6 +81,7 @@ export default function AuthBox({ type }: { type: "login" | "register" }) {
                   required
                   name="repeatPassword"
                   type="password"
+                  autoComplete="new-password"
                   placeholder="再次输入密码"
                 />
                 <Icon name="lock" />
@@ -113,7 +116,7 @@ export default function AuthBox({ type }: { type: "login" | "register" }) {
             </SemanticForm.Field>
           </div>
         </Form>
-      </div>
+      </Grid.Column>
     </Layout>
   );
 }

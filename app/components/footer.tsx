@@ -2,7 +2,7 @@ import { Container, Grid, Header, List, Segment } from "semantic-ui-react";
 
 export default function Footer() {
   return (
-    <Segment inverted vertical className="!py-20" >
+    <Segment inverted vertical className="!py-16" >
       <Container>
         <Grid divided inverted stackable>
           <Grid.Column width={3} className="max-w-[40%]">

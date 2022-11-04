@@ -9,11 +9,12 @@
     "dev:css": "npm run generate:css -- --watch",
     "dev:watch": "remix watch",
     "dev:start": "cross-env NODE_ENV=development node server/index.js",
-    "start": "cross-env NODE_ENV=production nodemon server/index.js",
+    "start": "cross-env NODE_ENV=production pm2 start server/index.js",
     "typecheck": "tsc -b",
     "generate:css": "tailwindcss -o ./app/styles/tailwind.css",
     "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint .",
-    "setup": "prisma generate && prisma migrate deploy && prisma db seed"
+    "setup": "prisma generate && prisma migrate deploy && prisma db seed",
+    "migrate": "npx prisma migrate dev"
   },
   "eslintIgnore": [
     "/node_modules",
@@ -21,12 +22,6 @@
     "/public/build",
     "/server/build"
   ],
-  "nodemonConfig": {
-    "watch": [
-      "app/"
-    ],
-    "ext": "js,jsx,ts,tsx,css"
-  },
   "dependencies": {
     "@prisma/client": "latest",
     "@remix-run/node": "latest",
@@ -44,8 +39,7 @@
     "express": "latest",
     "morgan": "latest",
     "socket.io": "latest",
-    "socket.io-client": "latest",
-    "dotenv": "latest"
+    "socket.io-client": "latest"
   },
   "devDependencies": {
     "@remix-run/dev": "latest",
@@ -57,7 +51,7 @@
     "@types/react-dom": "latest",
     "eslint": "latest",
     "npm-run-all": "latest",
-    "nodemon": "latest",
+    "pm2": "latest",
     "prisma": "latest",
     "tailwindcss": "latest",
     "ts-node": "latest",

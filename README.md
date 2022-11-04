@@ -18,7 +18,3 @@
   ```shell
   npm run dev
   ```
-  
-## HTTPS
-
-HTTPS 服务默认关闭，在  `.env` 中填写证书路径即可开启

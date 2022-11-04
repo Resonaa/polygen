@@ -1,11 +1,30 @@
-import { Button, Container, Dropdown, Header, Icon, Menu, Sidebar } from "semantic-ui-react";
+import type { SemanticICONS, SemanticWIDTHS } from "semantic-ui-react";
+import { Button, Container, Dropdown, Grid, Header, Icon, Menu, Sidebar } from "semantic-ui-react";
 import React, { useEffect } from "react";
 import { Form, Link } from "@remix-run/react";
 
 import Footer from "./footer";
 import { useOptionalUser } from "~/utils";
 
-export default function Layout({ type, cur, children }: { type: string, cur: string, children: React.ReactNode }) {
+function NavItem({
+                   to,
+                   text,
+                   icon,
+                   active,
+                   className
+                 }: { to: string, text: string, icon: SemanticICONS, active: boolean, className?: string }) {
+  return (
+    <Menu.Item as={Link} className={(className ? className : "") + (active ? " active" : "")} to={to}>
+      <Icon name={icon} />{text}
+    </Menu.Item>
+  );
+}
+
+export default function Layout({
+                                 columns,
+                                 cur,
+                                 children
+                               }: { columns: SemanticWIDTHS, cur: string, children: React.ReactNode }) {
   const [visible, setVisible] = React.useState(false);
   const [slideUp, setSlideUp] = React.useState(false);
   const refButton = React.useRef<HTMLButtonElement>(null);
@@ -34,25 +53,19 @@ export default function Layout({ type, cur, children }: { type: string, cur: str
 
   return (
     <>
-      <Menu fixed="top" borderless className={`h-14 transform duration-300 ${slideUp ? "-translate-y-full" : "translate-y-0"}`}>
+      <Menu fixed="top" borderless
+            className={`h-14 transform duration-300 ${slideUp ? "-translate-y-full" : "translate-y-0"}`}>
         <Container>
           <Header as={Menu.Item} className="max-sm:!hidden">
             <span className="font-semibold text-2xl">polygen</span>
           </Header>
 
-          <Menu.Item as={Link} className={`max-sm:!hidden ${cur === "home" ? "active" : ""}`} to="/">
-            <Icon name="home" />首页
-          </Menu.Item>
-          <Menu.Item as={"a"} className={`max-sm:!hidden ${cur === "game" ? "active" : ""}`}>
-            <Icon name="chess queen" />游戏
-          </Menu.Item>
-          <Menu.Item as={"a"} className={`max-sm:!hidden ${cur === "leaderboard" ? "active" : ""}`}>
-            <Icon name="signal" />排行榜
-          </Menu.Item>
-          <Menu.Item as={"a"} className={`max-sm:!hidden ${cur === "webadmin" ? "active" : ""}`}>
-            <Icon name="tachometer alternate" />管理后台
-          </Menu.Item>
-
+          <NavItem to="/" text="首页" icon="home" active={cur === "home"} className="max-sm:!hidden" />
+          <NavItem to="/game" text="游戏" icon="chess queen" active={cur === "game"} className="max-sm:!hidden" />
+          <NavItem to="/leaderboard" text="排行榜" icon="signal" active={cur === "leaderboard"}
+                   className="max-sm:!hidden" />
+          <NavItem to="/admin" text="管理后台" icon="tachometer alternate" active={cur === "admin"}
+                   className="max-sm:!hidden" />
           <Menu.Item className="sm:!hidden" onClick={() => setVisible(true)}>
             <Icon name="sidebar" />
           </Menu.Item>
@@ -89,32 +102,18 @@ export default function Layout({ type, cur, children }: { type: string, cur: str
       </Menu>
 
       <Sidebar as={Menu} animation="overlay" inverted vertical onHide={() => setVisible(false)} visible={visible}>
-        <Menu.Item as={Link} to="/" className={cur === "home" ? "active" : ""}>
-          主页
-        </Menu.Item>
-        <Menu.Item as={"a"} className={cur === "game" ? "active" : ""}>
-          游戏
-        </Menu.Item>
-        <Menu.Item as={"a"} className={cur === "leaderboard" ? "active" : ""}>
-          排行榜
-        </Menu.Item>
-        <Menu.Item as={"a"} className={cur === "webadmin" ? "active" : ""}>
-          管理后台
-        </Menu.Item>
+        <NavItem to="/" text="首页" icon="home" active={cur === "home"} />
+        <NavItem to="/game" text="游戏" icon="chess queen" active={cur === "game"} />
+        <NavItem to="/leaderboard" text="排行榜" icon="signal" active={cur === "leaderboard"} />
+        <NavItem to="/admin" text="管理后台" icon="tachometer alternate" active={cur === "admin"} />
       </Sidebar>
 
-      <div className={`${cur !== "auth" ? "!h-auto min-h-full" : ""} pushable`}>
+      <Sidebar.Pushable className="min-h-full">
         <Sidebar.Pusher dimmed={visible} className="overflow-hidden min-h-full flex flex-col">
-          {type === "text" ?
-            <Container text
-                       className={`${cur !== "auth" ? "mt-20 mb-12" : "max-sm:mt-20 !flex justify-center"} flex-1`}>{children}</Container>
-            :
-            <Container stackable grid className="m-12 flex-1">{children}</Container>
-          }
+          <Grid stackable container className="!mt-20 !mb-12 flex-1" columns={columns}>{children}</Grid>
+          <Footer />
         </Sidebar.Pusher>
-      </div>
-
-      <Footer />
+      </Sidebar.Pushable>
     </>
   );
 }
