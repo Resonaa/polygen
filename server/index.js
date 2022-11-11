@@ -38,9 +38,12 @@ if (MODE === "production" && process.env.SSL_CERT && process.env.SSL_KEY) {
   });
 
   app.all("*", (req, res, next) => {
-    if (req.protocol === "http") {
-      let host = req.headers.host;
+    let host = req.headers.host;
+
+    if (req.protocol === "http" || host.startsWith("www")) {
       host = host.replace(/:\d+$/, "");
+      host = host.replace(/^www./, "");
+
       return res.redirect(307, `https://${host}${req.path}`);
     }
 
