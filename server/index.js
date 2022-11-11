@@ -23,22 +23,34 @@ if (!fs.existsSync(BUILD_DIR)) {
 
 const app = express();
 
-let server;
+let io;
+
+const httpServer = http.createServer(app).listen(80, "0.0.0.0", () => {
+  console.log("HTTP server listening on 0.0.0.0:80");
+});
 
 if (MODE === "production" && process.env.SSL_CERT && process.env.SSL_KEY) {
   const cert = fs.readFileSync(process.env.SSL_CERT);
   const key = fs.readFileSync(process.env.SSL_KEY);
 
-  server = https.createServer({ key, cert }, app).listen(443, "0.0.0.0", () => {
+  const httpsServer = https.createServer({ key, cert }, app).listen(443, "0.0.0.0", () => {
     console.log("HTTPS server listening on 0.0.0.0:443");
   });
-} else {
-  server = http.createServer(app).listen(80, "0.0.0.0", () => {
-    console.log("HTTP server listening on 0.0.0.0:80");
-  });
-}
 
-const io = new Server(server);
+  app.all("*", (req, res, next) => {
+    if (req.protocol === "http") {
+      let host = req.headers.host;
+      host = host.replace(/:\d+$/, "");
+      return res.redirect(307, `https://${host}${req.path}`);
+    }
+
+    next();
+  });
+
+  io = new Server(httpsServer);
+} else {
+  io = new Server(httpServer);
+}
 
 io.on("connection", (socket) => {
   console.log(socket.id, "connected");
