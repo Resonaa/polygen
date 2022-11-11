@@ -36,6 +36,7 @@
     "tiny-invariant": "latest",
     "compression": "latest",
     "cross-env": "latest",
+    "dotenv": "latest",
     "express": "latest",
     "morgan": "latest",
     "socket.io": "latest",

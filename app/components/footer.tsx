@@ -2,7 +2,7 @@ import { Container, Grid, Header, List, Segment } from "semantic-ui-react";
 
 export default function Footer() {
   return (
-    <Segment inverted vertical className="!py-16" >
+    <Segment inverted vertical className="!py-16">
       <Container>
         <Grid divided inverted stackable>
           <Grid.Column width={3} className="max-w-[40%]">
@@ -23,10 +23,12 @@ export default function Footer() {
           </Grid.Column>
           <Grid.Column width={7}>
             <Header as="h4" inverted>
-              Copyright © 2022 polygen
+              Copyleft&nbsp;
+              <span style={{ transform: "scale(-1,1)", display: "inline-block" }}>©</span>
+              &nbsp;2022 polygen
             </Header>
             <p>
-              This page is licensed under the <a href="~/components/footer">Unlicense</a>.
+              This page is unlicensed under the <a href="https://unlicense.org/">Unlicense</a>.
             </p>
           </Grid.Column>
         </Grid>
