@@ -4,6 +4,9 @@ import { useEffect } from "react";
 
 export default function Game() {
   useEffect(() => {
+    require("public/js/phaser.min.js");
+    require("public/js/catch-the-cat.min.js");
+
     // @ts-ignore
     const game = setTimeout(() => new CatchTheCatGame({
       w: 15,
@@ -11,8 +14,9 @@ export default function Game() {
       r: 15,
       parent: "catch-the-cat",
       statusBarAlign: "center",
-      credit: "polygen"
-    }), process.env.NODE_ENV === "production" ? 300 : 700);
+      credit: "polygen",
+      backgroundColor: 0xffffff
+    }), process.env.NODE_ENV === "production" ? 0 : 700);
 
     return () => clearTimeout(game);
   }, []);
@@ -20,9 +24,6 @@ export default function Game() {
   return (
     <Layout columns={1} cur="game">
       <Grid.Column className="text-center">
-        <script src="/js/phaser.min.js"></script>
-        <script src="/js/catch-the-cat.min.js"></script>
-
         <div id="catch-the-cat"></div>
       </Grid.Column>
     </Layout>
