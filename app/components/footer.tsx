@@ -1,37 +1,24 @@
-import { Container, Grid, Header, List, Segment } from "semantic-ui-react";
+import { Container, Icon, Segment } from "semantic-ui-react";
 
 export default function Footer() {
   return (
-    <Segment inverted vertical className="!py-16">
-      <Container>
-        <Grid divided inverted stackable>
-          <Grid.Column width={3} className="max-w-[40%]">
-            <Header inverted as="h4" content="关于" />
-            <List link inverted>
-              <List.Item as="a">站点地图</List.Item>
-              <List.Item as="a">联系我们</List.Item>
-              <List.Item as="a">帮助中心</List.Item>
-            </List>
-          </Grid.Column>
-          <Grid.Column width={3} className="max-w-[40%]">
-            <Header inverted as="h4" content="社区" />
-            <List link inverted>
-              <List.Item as="a">社区规则</List.Item>
-              <List.Item as="a" href="https://github.com/jwcub/polygen">开源仓库</List.Item>
-              <List.Item as="a">官方 QQ 群</List.Item>
-            </List>
-          </Grid.Column>
-          <Grid.Column width={7}>
-            <Header as="h4" inverted>
-              Copyleft&nbsp;
-              <span style={{ transform: "scale(-1,1)", display: "inline-block" }}>©</span>
-              &nbsp;2022 polygen
-            </Header>
-            <p>
-              This page is unlicensed under the <a href="https://unlicense.org/">Unlicense</a>.
-            </p>
-          </Grid.Column>
-        </Grid>
+    <Segment className="!py-8">
+      <Container className="!flex justify-between items-center">
+        <div>
+          Copyleft&nbsp;
+          <span style={{ transform: "scale(-1,1)", display: "inline-block" }}>©</span>
+          &nbsp;2022 polygen.
+        </div>
+
+        <div>
+          <a title="GitHub" href="https://github.com/jwcub/polygen" style={{ color: "unset" }}>
+            <Icon link name="github" size="large" />
+          </a>
+
+          <a title="QQ" href="https://jq.qq.com/?_wv=1027&k=4ngo8TrD" style={{ color: "unset" }} className="ml-6">
+            <Icon link name="qq" size="large" />
+          </a>
+        </div>
       </Container>
     </Segment>
   );

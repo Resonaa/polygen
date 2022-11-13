@@ -26,6 +26,7 @@ export default function Layout({
                                  children
                                }: { columns: SemanticWIDTHS, cur: string, children: React.ReactNode }) {
   const [visible, setVisible] = React.useState(false);
+  const [top, setTop] = React.useState(true);
   const [slideUp, setSlideUp] = React.useState(false);
   const refButton = React.useRef<HTMLButtonElement>(null);
 
@@ -35,9 +36,11 @@ export default function Layout({
     let newScrollPosition = 0, lastScrollPosition = 0;
 
     const handleScroll = (_: any) => {
-      lastScrollPosition = window.scrollY;
+      lastScrollPosition = document.getElementsByClassName("pushable")[0].scrollTop;
 
-      if (newScrollPosition < lastScrollPosition && lastScrollPosition > 80) {
+      setTop(lastScrollPosition === 0);
+
+      if (newScrollPosition < lastScrollPosition && lastScrollPosition > 100) {
         setSlideUp(true);
       } else if (newScrollPosition > lastScrollPosition) {
         setSlideUp(false);
@@ -54,7 +57,8 @@ export default function Layout({
   return (
     <>
       <Menu fixed="top" borderless
-            className={`h-14 transform duration-300 ${slideUp ? "-translate-y-full" : "translate-y-0"}`}>
+            className={`h-14 transform duration-300 ${slideUp ? "-translate-y-full" : "translate-y-0"}
+            ${top || slideUp ? "!shadow-none" : "!shadow-lg"}`}>
         <Container>
           <Header as={Menu.Item} className="max-sm:!hidden">
             <span className="font-semibold text-2xl">polygen</span>
@@ -110,7 +114,7 @@ export default function Layout({
 
       <Sidebar.Pushable className="min-h-full">
         <Sidebar.Pusher dimmed={visible} className="overflow-hidden min-h-full flex flex-col">
-          <Grid stackable container className="!mt-20 !mb-12 flex-1" columns={columns}>{children}</Grid>
+          <Grid stackable container className="!mt-16 !mb-3 flex-1" columns={columns}>{children}</Grid>
           <Footer />
         </Sidebar.Pusher>
       </Sidebar.Pushable>
