@@ -8,21 +8,12 @@ async function seed() {
   await prisma.post.deleteMany({});
   await prisma.announcement.deleteMany({});
   await prisma.comment.deleteMany({});
-  await prisma.access.deleteMany({});
 
   await prisma.user.create({
     data: {
       username: "admin",
       password: await hashPassword("123456"),
-      access: {
-        create: {
-          visitWebsite: -1,
-          communicate: -1,
-          joinRoom: -1,
-          createRoom: -1,
-          manageAnnouncement: -1
-        }
-      }
+      access: 9
     }
   });
 

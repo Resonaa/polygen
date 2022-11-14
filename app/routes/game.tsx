@@ -2,6 +2,12 @@ import { Grid } from "semantic-ui-react";
 import Layout from "~/components/layout";
 import { useEffect } from "react";
 
+export function meta() {
+  return {
+    title: "游戏 - polygen"
+  };
+}
+
 export default function Game() {
   useEffect(() => {
     require("public/js/phaser.min.js");

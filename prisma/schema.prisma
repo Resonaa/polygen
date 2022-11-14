@@ -15,7 +15,7 @@ model User {
 
   posts     Post[]
   comments  Comment[]
-  access    Access?
+  access    Int @default(1)
 }
 
 model Announcement {
@@ -49,16 +49,4 @@ model Comment {
 
   parent   Post @relation(fields: [parentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   parentId Int
-}
-
-model Access {
-  user     User   @relation(fields: [username], references: [username], onDelete: Cascade, onUpdate: Cascade)
-  username String @unique
-
-  visitWebsite Int @default(1)
-  communicate  Int @default(1)
-  joinRoom     Int @default(1)
-  createRoom   Int @default(1)
-
-  manageAnnouncement Int @default(0)
 }

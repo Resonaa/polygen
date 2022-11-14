@@ -1,11 +1,16 @@
-import { Link } from "@remix-run/react";
+import { Link, useLoaderData } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import type { Socket } from "socket.io-client";
 import io from "socket.io-client";
+import { json } from "@remix-run/node";
 
 import Layout from "../components/layout";
+import Announcement from "~/components/announcement";
 import { useOptionalUser } from "~/utils";
-import { Grid } from "semantic-ui-react";
+import { Grid, Header, Segment } from "semantic-ui-react";
+
+import type { Announcement as ann } from "@prisma/client";
+import { getAnnouncements } from "~/models/announcement.server";
 
 export function meta() {
   return {
@@ -13,10 +18,22 @@ export function meta() {
   };
 }
 
+type LoaderData = {
+  announcements: Array<ann>;
+};
+
+export async function loader() {
+  return json<LoaderData>({
+    announcements: getAnnouncements() as Array<ann>
+  });
+}
+
 export default function Index() {
   const user = useOptionalUser();
 
   const [socket, setSocket] = useState<Socket>();
+
+  const { announcements } = useLoaderData() as LoaderData;
 
   useEffect(() => {
     const socket = io();
@@ -34,8 +51,8 @@ export default function Index() {
   }, [socket]);
 
   return (
-    <Layout columns={1} cur="home">
-      <Grid.Column>
+    <Layout columns={2} cur="home">
+      <Grid.Column width={12}>
         {user && (
           <Link
             to="/post"
@@ -52,6 +69,17 @@ export default function Index() {
           </button>
         </div>
         <p>See Browser console and Server terminal</p>
+      </Grid.Column>
+
+      <Grid.Column width={4}>
+        <Header as="h4" attached="top" block>
+          本站公告
+        </Header>
+        <Segment attached>
+          {announcements.map(({ id, title, content }) => (
+            <Announcement id={id} title={title} content={content} key={id} />
+          ))}
+        </Segment>
       </Grid.Column>
     </Layout>
   )
