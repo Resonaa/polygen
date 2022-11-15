@@ -1,0 +1,7 @@
+.vditor-anchor {
+  display: inline-block;
+}
+
+.vditor-copy {
+  display: block !important;
+}

@@ -1,9 +1,7 @@
+import { prisma } from "~/db.server";
+
 export function getAnnouncements() {
-  return [
-    {
-      id: 1,
-      title: "Title",
-      content: "Content"
-    }
-  ];
+  return prisma.announcement.findMany({
+    orderBy: { id: "desc" }
+  });
 }

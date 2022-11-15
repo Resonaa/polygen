@@ -40,7 +40,8 @@
     "express": "latest",
     "morgan": "latest",
     "socket.io": "latest",
-    "socket.io-client": "latest"
+    "socket.io-client": "latest",
+    "vditor": "latest"
   },
   "devDependencies": {
     "@remix-run/dev": "latest",

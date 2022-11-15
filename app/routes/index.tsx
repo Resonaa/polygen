@@ -23,9 +23,9 @@ type LoaderData = {
 };
 
 export async function loader() {
-  return json<LoaderData>({
-    announcements: getAnnouncements() as Array<ann>
-  });
+  const announcements = await getAnnouncements() as Array<ann>;
+
+  return json<LoaderData>({ announcements });
 }
 
 export default function Index() {
@@ -49,6 +49,7 @@ export default function Index() {
       console.log(event, data);
     });
   }, [socket]);
+
 
   return (
     <Layout columns={2} cur="home">
@@ -82,6 +83,5 @@ export default function Index() {
         </Segment>
       </Grid.Column>
     </Layout>
-  )
-    ;
+  );
 }

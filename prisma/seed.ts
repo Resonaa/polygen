@@ -17,6 +17,13 @@ async function seed() {
     }
   });
 
+  await prisma.announcement.create({
+    data: {
+      title: "欢迎来到 polygen",
+      content: "# Markdown\n$$\\KaTeX$$\n```cpp\n#include <bits/stdc++.h>\n```"
+    }
+  });
+
   console.log(`Database has been seeded. 🌱`);
 }
 
