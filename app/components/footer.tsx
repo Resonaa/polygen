@@ -1,4 +1,5 @@
 import { Container, Icon, Segment } from "semantic-ui-react";
+import { Link } from "@remix-run/react";
 
 export default function Footer() {
   return (
@@ -11,13 +12,20 @@ export default function Footer() {
         </div>
 
         <div>
-          <a title="GitHub" href="https://github.com/jwcub/polygen" style={{ color: "unset" }}>
+          <a href="https://github.com/jwcub/polygen" style={{ color: "unset" }}
+             data-inverted="" data-tooltip="GitHub" data-variation="mini">
             <Icon link name="github" size="large" />
           </a>
 
-          <a title="QQ" href="https://jq.qq.com/?_wv=1027&k=4ngo8TrD" style={{ color: "unset" }} className="ml-6">
+          <a href="https://jq.qq.com/?_wv=1027&k=4ngo8TrD" style={{ color: "unset" }} className="ml-6"
+             data-inverted="" data-tooltip="QQ" data-variation="mini">
             <Icon link name="qq" size="large" />
           </a>
+
+          <Link reloadDocument to="/sitemap.xml" style={{ color: "unset" }} className="ml-6"
+                data-inverted="" data-tooltip="站点地图" data-variation="mini">
+            <Icon link name="sitemap" size="large" />
+          </Link>
         </div>
       </Container>
     </Segment>
