@@ -52,7 +52,7 @@ export default function Index() {
 
 
   return (
-    <Layout columns={2} cur="home">
+    <Layout columns={2}>
       <Grid.Column width={12}>
         {user && (
           <Link
@@ -73,10 +73,10 @@ export default function Index() {
       </Grid.Column>
 
       <Grid.Column width={4}>
-        <Header as="h4" attached="top" block>
+        <Header as="h4" attached="top" block className="!shadow-md">
           本站公告
         </Header>
-        <Segment attached>
+        <Segment attached="bottom" className="!shadow-md">
           {announcements.map(({ id, title, content }) => (
             <Announcement id={id} title={title} content={content} key={id} />
           ))}

@@ -21,14 +21,14 @@ export default function Game() {
       parent: "catch-the-cat",
       statusBarAlign: "center",
       credit: "polygen",
-      backgroundColor: 0xffffff
+      backgroundColor: 0xf8f9fa
     }), process.env.NODE_ENV === "production" ? 0 : 700);
 
     return () => clearTimeout(game);
   }, []);
 
   return (
-    <Layout columns={1} cur="game">
+    <Layout columns={1}>
       <Grid.Column className="text-center">
         <div id="catch-the-cat"></div>
       </Grid.Column>

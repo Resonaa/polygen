@@ -45,7 +45,7 @@ export function CatchBoundary() {
     </head>
 
     <body>
-    <Layout columns={1} cur="error">
+    <Layout columns={1}>
       <Grid.Column>
         <h1>{caught.status} {caught.statusText}</h1>
       </Grid.Column>
@@ -63,7 +63,7 @@ export default function App() {
       <Meta />
       <Links />
     </head>
-    <body>
+    <body className="bg-[#f8f9fa]">
     <Outlet />
     <ScrollRestoration />
     <Scripts />

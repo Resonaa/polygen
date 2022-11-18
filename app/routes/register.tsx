@@ -23,7 +23,7 @@ export async function action({ request }: ActionArgs) {
 
   if (!validateUsername(username)) {
     return json(
-      { errors: { username: "用户名为3~16位，只包含中文、英文、数字和_", password: null, repeatPassword: null } },
+      { errors: { username: "用户名为3~16位，仅包含中英文、数字和_", password: null, repeatPassword: null } },
       { status: 400 }
     );
   }

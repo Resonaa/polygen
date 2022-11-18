@@ -20,7 +20,7 @@ async function seed() {
   await prisma.announcement.create({
     data: {
       title: "欢迎来到 polygen",
-      content: "# Markdown\n$$\\KaTeX$$\n```cpp\n#include <bits/stdc++.h>\n```"
+      content: "# Markdown\n$$\\ce{Zn^2+  <=>[+ 2OH-][+ 2H+]  $\\underset{\\text{amphoteres Hydroxid}}{\\ce{Zn(OH)2 v}}$  <=>[+ 2OH-][+ 2H+]  $\\underset{\\text{Hydroxozikat}}{\\ce{[Zn(OH)4]^2-}}$}$$\n```cpp\n#include <bits/stdc++.h>\n```"
     }
   });
 

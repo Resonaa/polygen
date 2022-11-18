@@ -27,9 +27,9 @@ export default function AuthBox({ type }: { type: "login" | "register" }) {
   }, [actionData]);
 
   return (
-    <Layout columns={1} cur="auth">
-      <Grid.Column className="sm:my-auto !flex justify-center">
-        <Form className="ui large form max-sm:w-full" method="post" action={`/${type}`}>
+    <Layout columns={1}>
+      <Grid.Column className="my-auto !flex justify-center">
+        <Form className="ui large form max-sm:w-full bg-white shadow-md p-8 m-auto rounded" method="post" action={`/${type}`}>
           <SemanticForm.Field>
             <img src={logo} alt="logo" className="mx-auto" />
           </SemanticForm.Field>

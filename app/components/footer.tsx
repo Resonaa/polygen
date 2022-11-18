@@ -3,7 +3,7 @@ import { Link } from "@remix-run/react";
 
 export default function Footer() {
   return (
-    <Segment className="!py-8">
+    <Segment className="!py-8" style={{ boxShadow: "0 2px 3px rgb(0 0 0 / 8%) inset" }}>
       <Container className="!flex justify-between items-center">
         <div>
           Copyleft&nbsp;

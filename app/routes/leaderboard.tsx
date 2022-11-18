@@ -9,7 +9,7 @@ export function meta() {
 
 export default function Leaderboard() {
   return (
-    <Layout columns={1} cur="leaderboard">
+    <Layout columns={1}>
       <Grid.Column className="text-center">
         <iframe title="generals.io" src="https://generals.io" className="w-full h-[110%]" />
       </Grid.Column>

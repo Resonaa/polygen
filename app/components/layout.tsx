@@ -1,7 +1,7 @@
 import type { SemanticICONS, SemanticWIDTHS } from "semantic-ui-react";
 import { Button, Container, Dropdown, Grid, Header, Icon, Menu, Sidebar } from "semantic-ui-react";
 import React, { useEffect } from "react";
-import { Form, Link } from "@remix-run/react";
+import { Form, Link, NavLink } from "@remix-run/react";
 
 import Footer from "./footer";
 import { useOptionalUser } from "~/utils";
@@ -10,21 +10,16 @@ function NavItem({
                    to,
                    text,
                    icon,
-                   active,
                    className
-                 }: { to: string, text: string, icon: SemanticICONS, active: boolean, className?: string }) {
+                 }: { to: string, text: string, icon: SemanticICONS, className?: string }) {
   return (
-    <Menu.Item as={Link} className={(className ? className : "") + (active ? " active" : "")} to={to}>
+    <Menu.Item as={NavLink} className={className} to={to}>
       <Icon name={icon} />{text}
     </Menu.Item>
   );
 }
 
-export default function Layout({
-                                 columns,
-                                 cur,
-                                 children
-                               }: { columns: SemanticWIDTHS, cur: string, children: React.ReactNode }) {
+export default function Layout({ columns, children }: { columns: SemanticWIDTHS, children: React.ReactNode }) {
   const [visible, setVisible] = React.useState(false);
   const [top, setTop] = React.useState(true);
   const [slideUp, setSlideUp] = React.useState(false);
@@ -64,12 +59,10 @@ export default function Layout({
             <span className="font-semibold text-2xl">polygen</span>
           </Header>
 
-          <NavItem to="/" text="首页" icon="home" active={cur === "home"} className="max-sm:!hidden" />
-          <NavItem to="/game" text="游戏" icon="chess queen" active={cur === "game"} className="max-sm:!hidden" />
-          <NavItem to="/leaderboard" text="排行榜" icon="signal" active={cur === "leaderboard"}
-                   className="max-sm:!hidden" />
-          <NavItem to="/admin" text="管理后台" icon="tachometer alternate" active={cur === "admin"}
-                   className="max-sm:!hidden" />
+          <NavItem to="/" text="首页" icon="home" className="max-sm:!hidden" />
+          <NavItem to="/game" text="游戏" icon="chess queen" className="max-sm:!hidden" />
+          <NavItem to="/leaderboard" text="排行榜" icon="signal" className="max-sm:!hidden" />
+          <NavItem to="/admin" text="管理后台" icon="tachometer alternate" className="max-sm:!hidden" />
           <Menu.Item className="sm:!hidden" onClick={() => setVisible(true)}>
             <Icon name="sidebar" />
           </Menu.Item>
@@ -105,11 +98,11 @@ export default function Layout({
         </Container>
       </Menu>
 
-      <Sidebar as={Menu} animation="overlay" inverted vertical onHide={() => setVisible(false)} visible={visible}>
-        <NavItem to="/" text="首页" icon="home" active={cur === "home"} />
-        <NavItem to="/game" text="游戏" icon="chess queen" active={cur === "game"} />
-        <NavItem to="/leaderboard" text="排行榜" icon="signal" active={cur === "leaderboard"} />
-        <NavItem to="/admin" text="管理后台" icon="tachometer alternate" active={cur === "admin"} />
+      <Sidebar as={Menu} animation="overlay" vertical onHide={() => setVisible(false)} visible={visible}>
+        <NavItem to="/" text="首页" icon="home" />
+        <NavItem to="/game" text="游戏" icon="chess queen" />
+        <NavItem to="/leaderboard" text="排行榜" icon="signal" />
+        <NavItem to="/admin" text="管理后台" icon="tachometer alternate" />
       </Sidebar>
 
       <Sidebar.Pushable className="min-h-full">
