@@ -2,19 +2,21 @@ import type { LoaderArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Form, Link, NavLink, Outlet, useLoaderData } from "@remix-run/react";
 
-import { requireUsername } from "~/session.server";
-import { useUser } from "~/utils";
+import { requireAuthenticatedUser } from "~/session.server";
+import { Access, useAuthorizedUser } from "~/utils";
 import { getPostListItems } from "~/models/post.server";
 
 export async function loader({ request }: LoaderArgs) {
-  const authorname = await requireUsername(request);
-  const postListItems = await getPostListItems({ authorname });
+  const author = await requireAuthenticatedUser(request, Access.VisitWebsite);
+
+  const postListItems = await getPostListItems({ authorname: author.username });
+
   return json({ postListItems });
 }
 
 export default function PostPage() {
   const data = useLoaderData<typeof loader>();
-  const user = useUser();
+  const user = useAuthorizedUser(Access.Community);
 
   return (
     <div className="flex h-full min-h-screen flex-col">

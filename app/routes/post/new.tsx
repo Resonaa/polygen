@@ -4,10 +4,11 @@ import { Form, useActionData } from "@remix-run/react";
 import * as React from "react";
 
 import { createPost } from "~/models/post.server";
-import { requireUsername } from "~/session.server";
+import { requireAuthenticatedUser } from "~/session.server";
+import { Access } from "~/utils";
 
 export async function action({ request }: ActionArgs) {
-  const username = await requireUsername(request);
+  const user = await requireAuthenticatedUser(request, Access.Community);
 
   const formData = await request.formData();
   const content = formData.get("content");
@@ -19,7 +20,7 @@ export async function action({ request }: ActionArgs) {
     );
   }
 
-  const post = await createPost({ content, username });
+  const post = await createPost({ content, username: user.username });
 
   return redirect(`/post/${post.id}`);
 }

@@ -6,10 +6,10 @@ import { json } from "@remix-run/node";
 
 import Layout from "../components/layout";
 import Announcement from "~/components/announcement";
-import { useOptionalUser } from "~/utils";
+import { Access, useAuthorizedOptionalUser } from "~/utils";
 import { Grid, Header, Segment } from "semantic-ui-react";
 
-import type { Announcement as ann } from "@prisma/client";
+import type { Announcement as ann } from "~/models/announcement.server";
 import { getAnnouncements } from "~/models/announcement.server";
 
 export function meta() {
@@ -29,7 +29,7 @@ export async function loader() {
 }
 
 export default function Index() {
-  const user = useOptionalUser();
+  const user = useAuthorizedOptionalUser(Access.VisitWebsite);
 
   const [socket, setSocket] = useState<Socket>();
 
@@ -37,7 +37,9 @@ export default function Index() {
 
   useEffect(() => {
     const socket = io();
+
     setSocket(socket);
+
     return () => {
       socket.close();
     };
@@ -45,6 +47,7 @@ export default function Index() {
 
   useEffect(() => {
     if (!socket) return;
+
     socket.onAny((event, data) => {
       console.log(event, data);
     });

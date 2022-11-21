@@ -12,7 +12,7 @@ export default function Announcement({ id, title, content }: ann) {
       open={open}
       onClose={() => setOpen(false)}
       onOpen={() => setOpen(true)}
-      trigger={<a className="cursor-pointer">{title}</a>}
+      trigger={<a className="cursor-pointer block p-1">{title}</a>}
     >
       <Modal.Header>
         {title}

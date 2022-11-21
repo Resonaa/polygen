@@ -3,6 +3,7 @@ import invariant from "tiny-invariant";
 
 import type { User } from "~/models/user.server";
 import { getUserByUsername } from "~/models/user.server";
+import type { Access } from "~/utils";
 
 invariant(process.env.SESSION_SECRET, "SESSION_SECRET must be set");
 
@@ -40,7 +41,7 @@ export async function getUser(request: Request) {
   throw await logout(request);
 }
 
-export async function requireUsername(
+async function requireUsername(
   request: Request,
   redirectTo: string = new URL(request.url).pathname
 ) {
@@ -52,13 +53,22 @@ export async function requireUsername(
   return username;
 }
 
-export async function requireUser(request: Request) {
+async function requireUser(request: Request) {
   const username = await requireUsername(request);
 
   const user = await getUserByUsername(username);
   if (user) return user;
 
   throw await logout(request);
+}
+
+export async function requireAuthenticatedUser(request: Request, access: Access) {
+  const user = await requireUser(request);
+
+  if (user.access < access)
+    throw new Response("权限不足", { status: 403 });
+
+  return user;
 }
 
 export async function createUserSession({

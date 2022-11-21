@@ -4,7 +4,7 @@ import React, { useEffect } from "react";
 import { Form, Link, NavLink } from "@remix-run/react";
 
 import Footer from "./footer";
-import { useOptionalUser } from "~/utils";
+import { Access, useAuthorizedOptionalUser } from "~/utils";
 
 function NavItem({
                    to,
@@ -25,7 +25,7 @@ export default function Layout({ columns, children }: { columns: SemanticWIDTHS,
   const [slideUp, setSlideUp] = React.useState(false);
   const refButton = React.useRef<HTMLButtonElement>(null);
 
-  const user = useOptionalUser();
+  const user = useAuthorizedOptionalUser(Access.VisitWebsite);
 
   useEffect(() => {
     let newScrollPosition = 0, lastScrollPosition = 0;
@@ -91,7 +91,7 @@ export default function Layout({ columns, children }: { columns: SemanticWIDTHS,
               </Dropdown>
               : <>
                 <Button as={Link} to="/login">登录</Button>
-                <Button as={Link} primary to="/register" className="!ml-6">注册</Button>
+                <Button as={Link} primary to="/register" className="!ml-7">注册</Button>
               </>
             }
           </Menu.Item>

@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useRef, useEffect } from "react";
 import { Form, Link, useActionData, useSearchParams } from "@remix-run/react";
 import { Button, Form as SemanticForm, Icon, Grid } from "semantic-ui-react";
 
@@ -12,11 +12,11 @@ export default function AuthBox({ type }: { type: "login" | "register" }) {
 
   const actionData = useActionData<typeof action>();
 
-  const usernameRef = React.useRef<HTMLInputElement>(null);
-  const passwordRef = React.useRef<HTMLInputElement>(null);
-  const repeatPasswordRef = React.useRef<HTMLInputElement>(null);
+  const usernameRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
+  const repeatPasswordRef = useRef<HTMLInputElement>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (actionData?.errors?.username) {
       usernameRef.current?.focus();
     } else if (actionData?.errors?.password) {
@@ -29,7 +29,8 @@ export default function AuthBox({ type }: { type: "login" | "register" }) {
   return (
     <Layout columns={1}>
       <Grid.Column className="my-auto !flex justify-center">
-        <Form className="ui large form max-sm:w-full bg-white shadow-md p-8 m-auto rounded" method="post" action={`/${type}`}>
+        <Form className="ui large form max-sm:w-full bg-white shadow-md p-8 m-auto rounded" method="post"
+              action={`/${type}`}>
           <SemanticForm.Field>
             <img src={logo} alt="logo" className="mx-auto" />
           </SemanticForm.Field>

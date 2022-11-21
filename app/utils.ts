@@ -2,6 +2,7 @@ import { useMatches } from "@remix-run/react";
 import { useMemo } from "react";
 import type { User } from "~/models/user.server";
 import bcrypt from "bcryptjs";
+import type { IOptions } from "glob";
 
 const DEFAULT_REDIRECT = "/";
 
@@ -48,22 +49,14 @@ function isUser(user: any): user is User {
   return user && typeof user === "object" && typeof user.username === "string";
 }
 
-export function useOptionalUser(): User | undefined {
+function useOptionalUser(): User | undefined {
   const data = useMatchesData("root");
+
   if (!data || !isUser(data.user)) {
     return undefined;
   }
-  return data.user;
-}
 
-export function useUser(): User {
-  const maybeUser = useOptionalUser();
-  if (!maybeUser) {
-    throw new Error(
-      "No user found in root loader, but user is required by useUser. If user is optional, try useOptionalUser instead."
-    );
-  }
-  return maybeUser;
+  return data.user;
 }
 
 export function validateUsername(username: unknown): username is string {
@@ -74,7 +67,7 @@ export function validatePassword(password: unknown): password is string {
   return typeof password === "string" && password.length >= 6;
 }
 
-export async function ajax(method: string, url: string, data = {}) {
+export async function ajax(method: string, url: string, data: any) {
   const options = {
     method: method,
     headers: {
@@ -93,3 +86,75 @@ export function hashPassword(password: string) {
 export function comparePassword(input: string, hash: string) {
   return bcrypt.compare(input, hash);
 }
+
+export const enum Access {
+  VisitWebsite = 0,
+
+  Community = 1,
+  PlayGame = 1,
+
+  ManageCommunity = 2,
+  ManageAccess = 2,
+
+  ManageAnnouncement = 3,
+  ManageUser = 3,
+  ManageGame = 3,
+
+  ManageServer = 4,
+  ManageDb = 4,
+}
+
+export function useAuthorizedOptionalUser(access: Access) {
+  const maybeUser = useOptionalUser();
+
+  if ((maybeUser ? maybeUser.access : 0) < access) {
+    throw new Error("权限不足");
+  }
+
+  return maybeUser;
+}
+
+export function useAuthorizedUser(access: Access): User {
+  const maybeUser = useAuthorizedOptionalUser(access);
+
+  if (!maybeUser) {
+    throw new Error("用户未找到");
+  }
+
+  return maybeUser;
+}
+
+export const vditorConfig = {
+  height: 160,
+  toolbar: [
+    "upload",
+    "record",
+    "|",
+    "undo",
+    "redo",
+    "|",
+    "fullscreen",
+    {
+      name: "more",
+      toolbar: [
+        "both",
+        "edit-mode",
+        "export",
+        "outline",
+        "preview"
+      ]
+    }
+  ],
+  toolbarConfig: {
+    pin: true
+  },
+  resize: {
+    enable: true
+  },
+  tab: "    ",
+  preview: {
+    math: {
+      inlineDigit: true
+    }
+  }
+} as IOptions;

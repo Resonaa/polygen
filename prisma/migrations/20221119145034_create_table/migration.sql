@@ -38,9 +38,3 @@ CREATE TABLE "Comment" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Post_authorname_key" ON "Post"("authorname");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Comment_authorname_key" ON "Comment"("authorname");

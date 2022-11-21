@@ -68,7 +68,7 @@ io.on("connection", (socket) => {
 
 app.use(compression());
 
-app.use(express.static("public", { maxAge: "1m" }));
+app.use(express.static("public", { maxAge: "10m" }));
 
 app.use(express.static("public/build", { immutable: true, maxAge: "1y" }));
 

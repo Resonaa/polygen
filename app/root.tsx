@@ -56,6 +56,27 @@ export function CatchBoundary() {
   );
 }
 
+export function ErrorBoundary({ error }: { error: Error }) {
+  return (
+    <html>
+    <head>
+      <title>错误 - polygen</title>
+      <Meta />
+      <Links />
+    </head>
+
+    <body>
+    <Layout columns={1}>
+      <Grid.Column>
+        <h1>{error.message}</h1>
+      </Grid.Column>
+    </Layout>
+    <Scripts />
+    </body>
+    </html>
+  );
+}
+
 export default function App() {
   return (
     <html lang="zh">
