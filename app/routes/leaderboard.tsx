@@ -1,10 +1,17 @@
 import { Grid } from "semantic-ui-react";
 import Layout from "~/components/layout";
+import type { LoaderArgs } from "@remix-run/node";
+import { requireAuthenticatedOptionalUser } from "~/session.server";
+import { Access } from "~/utils";
 
 export function meta() {
   return {
     title: "排行榜 - polygen"
   };
+}
+
+export async function loader({ request }: LoaderArgs) {
+  return await requireAuthenticatedOptionalUser(request, Access.VisitWebsite);
 }
 
 export default function Leaderboard() {

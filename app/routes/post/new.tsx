@@ -1,7 +1,7 @@
 import type { ActionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";
-import * as React from "react";
+import { useEffect, useRef } from "react";
 
 import { createPost } from "~/models/post.server";
 import { requireAuthenticatedUser } from "~/session.server";
@@ -27,9 +27,9 @@ export async function action({ request }: ActionArgs) {
 
 export default function NewPostPage() {
   const actionData = useActionData<typeof action>();
-  const contentRef = React.useRef<HTMLTextAreaElement>(null);
+  const contentRef = useRef<HTMLTextAreaElement>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (actionData?.errors?.content) {
       contentRef.current?.focus();
     }

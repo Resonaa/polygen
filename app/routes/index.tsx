@@ -2,15 +2,18 @@ import { Link, useLoaderData } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import type { Socket } from "socket.io-client";
 import io from "socket.io-client";
+import type { LoaderArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 
 import Layout from "../components/layout";
 import Announcement from "~/components/announcement";
-import { Access, useAuthorizedOptionalUser } from "~/utils";
+import { Access } from "~/utils";
 import { Grid, Header, Segment } from "semantic-ui-react";
 
 import type { Announcement as ann } from "~/models/announcement.server";
 import { getAnnouncements } from "~/models/announcement.server";
+import { requireAuthenticatedOptionalUser } from "~/session.server";
+import type { User } from "~/models/user.server";
 
 export function meta() {
   return {
@@ -19,21 +22,21 @@ export function meta() {
 }
 
 type LoaderData = {
-  announcements: Array<ann>;
+  announcements: ann[],
+  user: User | null
 };
 
-export async function loader() {
-  const announcements = await getAnnouncements() as Array<ann>;
+export async function loader({ request }: LoaderArgs) {
+  const announcements = await getAnnouncements();
+  const user = await requireAuthenticatedOptionalUser(request, Access.VisitWebsite);
 
-  return json<LoaderData>({ announcements });
+  return json({ announcements, user });
 }
 
 export default function Index() {
-  const user = useAuthorizedOptionalUser(Access.VisitWebsite);
-
   const [socket, setSocket] = useState<Socket>();
 
-  const { announcements } = useLoaderData() as LoaderData;
+  const { announcements, user } = useLoaderData() as LoaderData;
 
   useEffect(() => {
     const socket = io();

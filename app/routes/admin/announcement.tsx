@@ -1,9 +1,9 @@
-import { Access, useAuthorizedOptionalUser, vditorConfig } from "~/utils";
+import { Access, vditorConfig } from "~/utils";
 import Vditor from "vditor";
 import { useEffect, useRef, useState } from "react";
 import { Button, Icon } from "semantic-ui-react";
 import { createAnnouncement } from "~/models/announcement.server";
-import type { ActionArgs } from "@remix-run/node";
+import type { ActionArgs, LoaderArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { requireAuthenticatedUser } from "~/session.server";
 import { useSubmit } from "@remix-run/react";
@@ -35,9 +35,13 @@ export async function action({ request }: ActionArgs) {
   return redirect("/");
 }
 
-export default function Announcement() {
-  useAuthorizedOptionalUser(Access.ManageAnnouncement);
+export async function loader({ request }: LoaderArgs) {
+  await requireAuthenticatedUser(request, Access.ManageAnnouncement);
 
+  return null;
+}
+
+export default function Announcement() {
   const [vd, setVd] = useState<Vditor>();
 
   useEffect(() => {

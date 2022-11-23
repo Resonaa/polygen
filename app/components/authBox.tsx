@@ -17,11 +17,11 @@ export default function AuthBox({ type }: { type: "login" | "register" }) {
   const repeatPasswordRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (actionData?.errors?.username) {
+    if (actionData?.username) {
       usernameRef.current?.focus();
-    } else if (actionData?.errors?.password) {
+    } else if (actionData?.password) {
       passwordRef.current?.focus();
-    } else if (actionData?.errors?.repeatPassword) {
+    } else if (actionData?.repeatPassword) {
       repeatPasswordRef.current?.focus();
     }
   }, [actionData]);
@@ -35,8 +35,8 @@ export default function AuthBox({ type }: { type: "login" | "register" }) {
             <img src={logo} alt="logo" className="mx-auto" />
           </SemanticForm.Field>
 
-          <SemanticForm.Field className={actionData?.errors?.username ? "error" : ""}>
-            <div className={`ui left icon input ${actionData?.errors?.username ? "error" : ""}`}>
+          <SemanticForm.Field className={actionData?.username ? "error" : ""}>
+            <div className={`ui left icon input ${actionData?.username ? "error" : ""}`}>
               <input
                 ref={usernameRef}
                 required
@@ -48,15 +48,15 @@ export default function AuthBox({ type }: { type: "login" | "register" }) {
               />
               <Icon name="user" />
             </div>
-            {actionData?.errors?.username && (
+            {actionData?.username && (
               <div className="pt-1 text-red-700" id="username-error">
-                {actionData.errors.username}
+                {actionData.username}
               </div>
             )}
           </SemanticForm.Field>
 
-          <SemanticForm.Field className={actionData?.errors?.password ? "error" : ""}>
-            <div className={`ui left icon input ${actionData?.errors?.password ? "error" : ""}`}>
+          <SemanticForm.Field className={actionData?.password ? "error" : ""}>
+            <div className={`ui left icon input ${actionData?.password ? "error" : ""}`}>
               <input
                 ref={passwordRef}
                 required
@@ -67,16 +67,16 @@ export default function AuthBox({ type }: { type: "login" | "register" }) {
               />
               <Icon name="lock" />
             </div>
-            {actionData?.errors?.password && (
+            {actionData?.password && (
               <div className="pt-1 text-red-700" id="password-error">
-                {actionData.errors.password}
+                {actionData.password}
               </div>
             )}
           </SemanticForm.Field>
 
           {type === "register" &&
-            <SemanticForm.Field className={actionData?.errors?.repeatPassword ? "error" : ""}>
-              <div className={`ui left icon input ${actionData?.errors?.repeatPassword ? "error" : ""}`}>
+            <SemanticForm.Field className={actionData?.repeatPassword ? "error" : ""}>
+              <div className={`ui left icon input ${actionData?.repeatPassword ? "error" : ""}`}>
                 <input
                   ref={repeatPasswordRef}
                   required
@@ -87,9 +87,9 @@ export default function AuthBox({ type }: { type: "login" | "register" }) {
                 />
                 <Icon name="lock" />
               </div>
-              {actionData?.errors?.repeatPassword && (
+              {actionData?.repeatPassword && (
                 <div className="pt-1 text-red-700" id="repeatPassword-error">
-                  {actionData.errors.repeatPassword}
+                  {actionData.repeatPassword}
                 </div>
               )}
             </SemanticForm.Field>

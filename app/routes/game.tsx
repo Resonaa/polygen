@@ -1,11 +1,18 @@
 import { Grid } from "semantic-ui-react";
 import Layout from "~/components/layout";
 import { useEffect } from "react";
+import type { LoaderArgs } from "@remix-run/node";
+import { requireAuthenticatedOptionalUser } from "~/session.server";
+import { Access } from "~/utils";
 
 export function meta() {
   return {
     title: "游戏 - polygen"
   };
+}
+
+export async function loader({ request }: LoaderArgs) {
+  return await requireAuthenticatedOptionalUser(request, Access.VisitWebsite);
 }
 
 export default function Game() {
@@ -14,7 +21,7 @@ export default function Game() {
     require("public/js/catch-the-cat.min.js");
 
     // @ts-ignore
-    const game = setTimeout(() => new CatchTheCatGame({
+    new CatchTheCatGame({
       w: 15,
       h: 15,
       r: 15,
@@ -22,9 +29,7 @@ export default function Game() {
       statusBarAlign: "center",
       credit: "polygen",
       backgroundColor: 0xf8f9fa
-    }), process.env.NODE_ENV === "production" ? 0 : 700);
-
-    return () => clearTimeout(game);
+    });
   }, []);
 
   return (

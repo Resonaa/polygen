@@ -1,11 +1,18 @@
 import Layout from "~/components/layout";
 import { Grid, Menu } from "semantic-ui-react";
 import { NavLink, Outlet } from "@remix-run/react";
+import type { LoaderArgs } from "@remix-run/node";
+import { requireAuthenticatedOptionalUser } from "~/session.server";
+import { Access } from "~/utils";
 
 export function meta() {
   return {
     title: "管理后台 - polygen"
   };
+}
+
+export async function loader({ request }: LoaderArgs) {
+  return await requireAuthenticatedOptionalUser(request, Access.VisitWebsite);
 }
 
 function AdminMenu() {

@@ -3,7 +3,7 @@ import { json } from "@remix-run/node";
 import { Form, Link, NavLink, Outlet, useLoaderData } from "@remix-run/react";
 
 import { requireAuthenticatedUser } from "~/session.server";
-import { Access, useAuthorizedUser } from "~/utils";
+import { Access } from "~/utils";
 import { getPostListItems } from "~/models/post.server";
 
 export async function loader({ request }: LoaderArgs) {
@@ -11,12 +11,11 @@ export async function loader({ request }: LoaderArgs) {
 
   const postListItems = await getPostListItems({ authorname: author.username });
 
-  return json({ postListItems });
+  return json({ postListItems, author });
 }
 
 export default function PostPage() {
   const data = useLoaderData<typeof loader>();
-  const user = useAuthorizedUser(Access.Community);
 
   return (
     <div className="flex h-full min-h-screen flex-col">
@@ -24,7 +23,7 @@ export default function PostPage() {
         <h1 className="text-3xl font-bold">
           <Link to=".">Posts</Link>
         </h1>
-        <p>{user.username}</p>
+        <p>{data.author.username}</p>
         <Form action="/logout" method="post">
           <button
             type="submit"

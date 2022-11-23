@@ -8,9 +8,10 @@ import global from "./styles/global.css";
 import tailwind from "./styles/tailwind.css";
 import semantic from "semantic-ui-css/semantic.min.css";
 import vditor from "vditor/dist/index.css";
-import { getUser } from "./session.server";
+import { requireAuthenticatedOptionalUser } from "./session.server";
 import Layout from "~/components/layout";
 import { Grid } from "semantic-ui-react";
+import { Access, useAuthorizedOptionalUser } from "~/utils";
 
 export function links() {
   return [{ rel: "stylesheet", href: global },
@@ -29,7 +30,7 @@ export function meta() {
 
 export async function loader({ request }: LoaderArgs) {
   return json({
-    user: await getUser(request)
+    user: await requireAuthenticatedOptionalUser(request, Access.VisitWebsite)
   });
 }
 
@@ -48,6 +49,7 @@ export function CatchBoundary() {
     <Layout columns={1}>
       <Grid.Column>
         <h1>{caught.status} {caught.statusText}</h1>
+        {caught.data}
       </Grid.Column>
     </Layout>
     <Scripts />
@@ -78,6 +80,8 @@ export function ErrorBoundary({ error }: { error: Error }) {
 }
 
 export default function App() {
+  useAuthorizedOptionalUser(Access.VisitWebsite);
+
   return (
     <html lang="zh">
     <head>

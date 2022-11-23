@@ -1,3 +1,7 @@
+import { requireAuthenticatedOptionalUser } from "~/session.server";
+import type { LoaderArgs } from "@remix-run/node";
+import { Access } from "~/utils";
+
 function generateSiteMap() {
   const baseUrl = "https://polygen.tk";
 
@@ -15,7 +19,9 @@ function generateSiteMap() {
  `;
 }
 
-export async function loader() {
+export async function loader({ request }: LoaderArgs) {
+  await requireAuthenticatedOptionalUser(request, Access.VisitWebsite);
+
   return new Response(generateSiteMap(), {
     status: 200,
     headers: {

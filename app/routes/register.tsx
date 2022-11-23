@@ -1,68 +1,53 @@
 import type { ActionArgs, LoaderArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import * as React from "react";
 
-import { getUsername, createUserSession } from "~/session.server";
-
+import { createUserSession, requireAuthenticatedOptionalUser } from "~/session.server";
 import { createUser, getUserByUsername } from "~/models/user.server";
-import { safeRedirect, validatePassword, validateUsername } from "~/utils";
+import { Access, validatePassword, validateUsername, safeRedirect } from "~/utils";
 import AuthBox from "../components/authBox";
 
 export async function loader({ request }: LoaderArgs) {
-  const username = await getUsername(request);
-  if (username) return redirect("/");
-  return json({});
+  if (await requireAuthenticatedOptionalUser(request, Access.VisitWebsite))
+    return redirect("/");
+
+  return null;
 }
 
 export async function action({ request }: ActionArgs) {
   const formData = await request.formData();
+
   const username = formData.get("username");
   const password = formData.get("password");
   const repeatPassword = formData.get("repeatPassword");
   const redirectTo = safeRedirect(formData.get("redirectTo"), "/");
 
-  if (!validateUsername(username)) {
+  if (!validateUsername(username))
     return json(
-      { errors: { username: "用户名为3~16位，仅包含中英文、数字和_", password: null, repeatPassword: null } },
+      { username: "用户名为3~16位，仅包含中英文、数字和_", password: null, repeatPassword: null },
       { status: 400 }
     );
-  }
 
-  if (!validatePassword(password)) {
+  if (!validatePassword(password))
     return json(
-      { errors: { username: null, password: "密码长度应不小于6位", repeatPassword: null } },
+      { username: null, password: "密码长度应不小于6位", repeatPassword: null },
       { status: 400 }
     );
-  }
 
-  if (password !== repeatPassword) {
+  if (password !== repeatPassword)
     return json(
-      { errors: { username: null, password: null, repeatPassword: "两次输入的密码不一致" } },
+      { username: null, password: null, repeatPassword: "两次输入的密码不一致" },
       { status: 400 }
     );
-  }
 
-  const existingUser = await getUserByUsername(username);
-  if (existingUser) {
+  if (await getUserByUsername(username))
     return json(
-      {
-        errors: {
-          username: "用户名已存在",
-          password: null,
-          repeatPassword: null
-        }
-      },
+      { username: "用户名已存在", password: null, repeatPassword: null },
       { status: 400 }
     );
-  }
 
-  const user = await createUser(username, password);
+  await createUser(username, password);
 
-  return createUserSession({
-    request,
-    username: user.username,
-    redirectTo
-  });
+  return createUserSession({ request, username, redirectTo });
 }
 
 export function meta() {

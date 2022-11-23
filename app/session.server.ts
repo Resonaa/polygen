@@ -66,7 +66,18 @@ export async function requireAuthenticatedUser(request: Request, access: Access)
   const user = await requireUser(request);
 
   if (user.access < access)
-    throw new Response("权限不足", { status: 403 });
+    throw new Response(`权限不足 (expected ${access}+, got ${user.access})`, { status: 403, statusText: "Forbidden" });
+
+  return user;
+}
+
+export async function requireAuthenticatedOptionalUser(request: Request, access: Access) {
+  const user = await getUser(request);
+
+  const userAccess = user ? user.access : 0;
+
+  if (userAccess < access)
+    throw new Response(`权限不足 (expected ${access}+, got ${userAccess})`, { status: 403, statusText: "Forbidden" });
 
   return user;
 }
