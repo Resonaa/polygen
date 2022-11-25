@@ -10,14 +10,15 @@ export default function RenderedText({ content }: { content: string }) {
 
       if (cur) {
         cur.innerHTML = await Vditor.md2html(content.trim(), {
+          mode: "light",
           anchor: 2,
           math: {
             inlineDigit: true
           }
-        } as IPreviewOptions);
+        });
 
         Vditor.mathRender(cur);
-        Vditor.highlightRender({}, cur);
+        Vditor.highlightRender({ style: "autumn" }, cur);
         Vditor.codeRender(cur);
       }
     })();

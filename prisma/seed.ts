@@ -19,6 +19,13 @@ async function seed() {
 
   await prisma.user.create({
     data: {
+      username: "user",
+      password: await hashPassword("123456")
+    }
+  });
+
+  await prisma.user.create({
+    data: {
       username: "banned",
       password: await hashPassword("123456"),
       access: -1

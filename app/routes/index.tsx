@@ -4,11 +4,11 @@ import type { Socket } from "socket.io-client";
 import io from "socket.io-client";
 import type { LoaderArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
+import { Grid, Header, Segment } from "semantic-ui-react";
 
 import Layout from "../components/layout";
 import Announcement from "~/components/announcement";
 import { Access } from "~/utils";
-import { Grid, Header, Segment } from "semantic-ui-react";
 
 import type { Announcement as ann } from "~/models/announcement.server";
 import { getAnnouncements } from "~/models/announcement.server";
@@ -79,10 +79,10 @@ export default function Index() {
       </Grid.Column>
 
       <Grid.Column width={4}>
-        <Header as="h4" attached="top" block className="!shadow-md">
+        <Header as="h4" attached="top" block>
           本站公告
         </Header>
-        <Segment attached="bottom" className="!shadow-md">
+        <Segment attached="bottom">
           {announcements.map(({ id, title, content }) => (
             <Announcement id={id} title={title} content={content} key={id} />
           ))}

@@ -20,8 +20,8 @@ CREATE TABLE "Post" (
     "content" TEXT NOT NULL,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL,
-    "authorname" TEXT NOT NULL,
-    CONSTRAINT "Post_authorname_fkey" FOREIGN KEY ("authorname") REFERENCES "User" ("username") ON DELETE CASCADE ON UPDATE CASCADE
+    "username" TEXT NOT NULL,
+    CONSTRAINT "Post_username_fkey" FOREIGN KEY ("username") REFERENCES "User" ("username") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -30,9 +30,9 @@ CREATE TABLE "Comment" (
     "content" TEXT NOT NULL,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL,
-    "authorname" TEXT NOT NULL,
+    "username" TEXT NOT NULL,
     "parentId" INTEGER NOT NULL,
-    CONSTRAINT "Comment_authorname_fkey" FOREIGN KEY ("authorname") REFERENCES "User" ("username") ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT "Comment_username_fkey" FOREIGN KEY ("username") REFERENCES "User" ("username") ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT "Comment_parentId_fkey" FOREIGN KEY ("parentId") REFERENCES "Post" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 

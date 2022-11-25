@@ -1,7 +1,8 @@
 import { useMatches } from "@remix-run/react";
 import { useMemo } from "react";
-import type { User } from "~/models/user.server";
 import bcrypt from "bcryptjs";
+
+import type { User } from "~/models/user.server";
 
 const DEFAULT_REDIRECT = "/";
 
@@ -33,9 +34,7 @@ export function safeRedirect(
  * @param   id The route id
  * @returns The router data or undefined if not found
  */
-export function useMatchesData(
-  id: string
-): Record<string, unknown> | undefined {
+export function useMatchesData(id: string) {
   const matchingRoutes = useMatches();
 
   const route = useMemo(
@@ -59,7 +58,7 @@ function isUser(user: any): user is User {
 /**
  * A hook to get an optional user from a React function component.
  */
-function useOptionalUser(): User | undefined {
+export function useOptionalUser() {
   const data = useMatchesData("root");
 
   if (!data || !isUser(data.user)) {
@@ -67,6 +66,21 @@ function useOptionalUser(): User | undefined {
   }
 
   return data.user;
+}
+
+/**
+ * A hook to get a certain user from a React function component.
+ *
+ * If the user does not exist, an error will be thrown.
+ */
+export function useUser() {
+  const maybeUser = useOptionalUser();
+
+  if (!maybeUser) {
+    throw new Error("用户未找到");
+  }
+
+  return maybeUser;
 }
 
 /**
@@ -201,38 +215,6 @@ export const enum Access {
 }
 
 /**
- * A hook to get an authorized optional user with the given access from a React function component.
- *
- * If the user does not possess the required access, an error will be thrown.
- * @param access The given access
- */
-export function useAuthorizedOptionalUser(access: Access) {
-  const maybeUser = useOptionalUser();
-
-  if ((maybeUser ? maybeUser.access : 0) < access) {
-    throw new Error("权限不足");
-  }
-
-  return maybeUser;
-}
-
-/**
- * A hook to get an authorized user with the given access from a React function component.
- *
- * If the user does not exist OR possess the required access, an error will be thrown.
- * @param access The given access
- */
-export function useAuthorizedUser(access: Access): User {
-  const maybeUser = useAuthorizedOptionalUser(access);
-
-  if (!maybeUser) {
-    throw new Error("用户未找到");
-  }
-
-  return maybeUser;
-}
-
-/**
  * Configuration for the Vditor editor
  */
 export const vditorConfig = {
@@ -247,5 +229,5 @@ export const vditorConfig = {
   toolbarConfig: { pin: true },
   resize: { enable: true },
   tab: "    ",
-  preview: { math: { inlineDigit: true } }
+  preview: { math: { inlineDigit: true }, hljs: { style: "autumn" } }
 };

@@ -82,15 +82,7 @@ export async function requireAuthenticatedOptionalUser(request: Request, access:
   return user;
 }
 
-export async function createUserSession({
-                                          request,
-                                          username,
-                                          redirectTo
-                                        }: {
-  request: Request;
-  username: string;
-  redirectTo: string;
-}) {
+export async function createUserSession(request: Request, username: string, redirectTo: string) {
   const session = await getSession(request);
   session.set(USER_SESSION_KEY, username);
   return redirect(redirectTo, {

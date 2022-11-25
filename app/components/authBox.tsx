@@ -1,6 +1,6 @@
 import { useRef, useEffect } from "react";
-import { Form, Link, useActionData, useSearchParams } from "@remix-run/react";
-import { Button, Form as SemanticForm, Icon, Grid } from "semantic-ui-react";
+import { Form as ReactForm, Link, useActionData, useSearchParams } from "@remix-run/react";
+import { Button, Form, Icon, Grid } from "semantic-ui-react";
 
 import logo from "../../public/images/polygen.png";
 import Layout from "./layout";
@@ -29,13 +29,13 @@ export default function AuthBox({ type }: { type: "login" | "register" }) {
   return (
     <Layout columns={1}>
       <Grid.Column className="my-auto !flex justify-center">
-        <Form className="ui large form max-sm:w-full bg-white shadow-md p-8 m-auto rounded" method="post"
+        <Form as={ReactForm} size="large" className="max-sm:w-full bg-white p-8 m-auto" method="post"
               action={`/${type}`}>
-          <SemanticForm.Field>
+          <Form.Field>
             <img src={logo} alt="logo" className="mx-auto" />
-          </SemanticForm.Field>
+          </Form.Field>
 
-          <SemanticForm.Field className={actionData?.username ? "error" : ""}>
+          <Form.Field className={actionData?.username ? "error" : ""}>
             <div className={`ui left icon input ${actionData?.username ? "error" : ""}`}>
               <input
                 ref={usernameRef}
@@ -53,9 +53,9 @@ export default function AuthBox({ type }: { type: "login" | "register" }) {
                 {actionData.username}
               </div>
             )}
-          </SemanticForm.Field>
+          </Form.Field>
 
-          <SemanticForm.Field className={actionData?.password ? "error" : ""}>
+          <Form.Field className={actionData?.password ? "error" : ""}>
             <div className={`ui left icon input ${actionData?.password ? "error" : ""}`}>
               <input
                 ref={passwordRef}
@@ -72,10 +72,10 @@ export default function AuthBox({ type }: { type: "login" | "register" }) {
                 {actionData.password}
               </div>
             )}
-          </SemanticForm.Field>
+          </Form.Field>
 
           {type === "register" &&
-            <SemanticForm.Field className={actionData?.repeatPassword ? "error" : ""}>
+            <Form.Field className={actionData?.repeatPassword ? "error" : ""}>
               <div className={`ui left icon input ${actionData?.repeatPassword ? "error" : ""}`}>
                 <input
                   ref={repeatPasswordRef}
@@ -92,7 +92,7 @@ export default function AuthBox({ type }: { type: "login" | "register" }) {
                   {actionData.repeatPassword}
                 </div>
               )}
-            </SemanticForm.Field>
+            </Form.Field>
           }
 
           <input type="hidden" name="redirectTo" value={redirectTo} />
@@ -102,7 +102,7 @@ export default function AuthBox({ type }: { type: "login" | "register" }) {
 
           <div className="text-center">
             <hr className="h-px bg-slate-200 borderless my-3.5" />
-            <SemanticForm.Field className="text-base">
+            <Form.Field className="text-base">
               {type === "login" ?
                 <>
                   没有账号？
@@ -114,7 +114,7 @@ export default function AuthBox({ type }: { type: "login" | "register" }) {
                   <Link to="/login">登录</Link>
                 </>
               }
-            </SemanticForm.Field>
+            </Form.Field>
           </div>
         </Form>
       </Grid.Column>

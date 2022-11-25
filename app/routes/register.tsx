@@ -3,7 +3,7 @@ import { json, redirect } from "@remix-run/node";
 
 import { createUserSession, requireAuthenticatedOptionalUser } from "~/session.server";
 import { createUser, getUserByUsername } from "~/models/user.server";
-import { Access, validatePassword, validateUsername, safeRedirect } from "~/utils";
+import { Access, safeRedirect, validatePassword, validateUsername } from "~/utils";
 import AuthBox from "../components/authBox";
 
 export async function loader({ request }: LoaderArgs) {
@@ -47,7 +47,7 @@ export async function action({ request }: ActionArgs) {
 
   await createUser(username, password);
 
-  return createUserSession({ request, username, redirectTo });
+  return createUserSession(request, username, redirectTo);
 }
 
 export function meta() {

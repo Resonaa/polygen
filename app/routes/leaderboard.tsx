@@ -1,6 +1,7 @@
 import { Grid } from "semantic-ui-react";
-import Layout from "~/components/layout";
 import type { LoaderArgs } from "@remix-run/node";
+
+import Layout from "~/components/layout";
 import { requireAuthenticatedOptionalUser } from "~/session.server";
 import { Access } from "~/utils";
 

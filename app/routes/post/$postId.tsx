@@ -8,12 +8,12 @@ import { requireAuthenticatedUser } from "~/session.server";
 import { Access } from "~/utils";
 
 export async function loader({ request, params }: LoaderArgs) {
-  const author = await requireAuthenticatedUser(request, Access.VisitWebsite);
+  const { username } = await requireAuthenticatedUser(request, Access.VisitWebsite);
 
   invariant(params.postId, "postId not found");
   const id = Number(params.postId);
 
-  const post = await getPost({ authorname: author.username, id });
+  const post = await getPost({ username, id });
   if (!post) {
     throw new Response("Not Found", { status: 404 });
   }
@@ -21,12 +21,12 @@ export async function loader({ request, params }: LoaderArgs) {
 }
 
 export async function action({ request, params }: ActionArgs) {
-  const author = await requireAuthenticatedUser(request, Access.VisitWebsite);
+  const { username } = await requireAuthenticatedUser(request, Access.VisitWebsite);
 
   invariant(params.postId, "postId not found");
   const id = Number(params.postId);
 
-  await deletePost({ authorname: author.username, id });
+  await deletePost({ username, id });
 
   return redirect("/post");
 }

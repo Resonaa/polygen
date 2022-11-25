@@ -8,10 +8,10 @@
     "dev": "run-p dev:*",
     "dev:css": "npm run generate:css -- --watch",
     "dev:watch": "remix watch",
-    "dev:start": "cross-env NODE_ENV=development node server/index.js",
-    "start": "cross-env NODE_ENV=production pm2 start server/index.js",
+    "dev:start": "cross-env NODE_ENV=development ts-node server/index.ts",
+    "start": "cross-env NODE_ENV=production ts-node server/index.ts",
     "typecheck": "tsc -b",
-    "generate:css": "tailwindcss -o ./app/styles/tailwind.css",
+    "generate:css": "tailwindcss -i ./app/styles/global.css -o ./app/styles/tailwind.css",
     "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint .",
     "setup": "prisma generate && prisma migrate deploy && prisma db seed",
     "migrate": "npx prisma migrate dev"
@@ -41,7 +41,9 @@
     "morgan": "latest",
     "socket.io": "latest",
     "socket.io-client": "latest",
-    "vditor": "latest"
+    "vditor": "latest",
+    "ts-node": "latest",
+    "typescript": "latest"
   },
   "devDependencies": {
     "@remix-run/dev": "latest",
@@ -51,14 +53,14 @@
     "@types/node": "latest",
     "@types/react": "latest",
     "@types/react-dom": "latest",
+    "@types/express": "latest",
+    "@types/compression": "latest",
+    "@types/morgan": "latest",
     "eslint": "latest",
     "npm-run-all": "latest",
-    "pm2": "latest",
     "prisma": "latest",
     "tailwindcss": "latest",
-    "ts-node": "latest",
-    "tsconfig-paths": "latest",
-    "typescript": "latest"
+    "tsconfig-paths": "latest"
   },
   "engines": {
     "node": ">=14"

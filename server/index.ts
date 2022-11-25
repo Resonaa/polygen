@@ -1,15 +1,17 @@
-const path = require("path");
-const fs = require("fs");
+import path from "path";
+import fs from "fs";
 
-const http = require("http");
-const https = require("https");
-const express = require("express");
-const { Server } = require("socket.io");
-const compression = require("compression");
-const morgan = require("morgan");
-const { createRequestHandler } = require("@remix-run/express");
+import http from "http";
+import https from "https";
+import express from "express";
+import { Server } from "socket.io";
+import compression from "compression";
+import morgan from "morgan";
+import { createRequestHandler } from "@remix-run/express";
 
-require("dotenv").config({ path: ".env" });
+import dotenv from "dotenv";
+
+dotenv.config({ path: ".env" });
 
 const MODE = process.env.NODE_ENV;
 const BUILD_DIR = path.join(process.cwd(), "server/build");
@@ -40,9 +42,9 @@ if (MODE === "production" && process.env.SSL_CERT && process.env.SSL_KEY) {
   app.all("*", (req, res, next) => {
     let host = req.headers.host;
 
-    if (req.protocol === "http" || host.startsWith("www")) {
-      host = host.replace(/:\d+$/, "");
-      host = host.replace(/^www./, "");
+    if (host && (req.protocol === "http" || host.startsWith("www"))) {
+      host = host.replace(/:\d+$/, "")
+        .replace(/^www./, "");
 
       return res.redirect(307, `https://${host}${req.path}`);
     }
@@ -78,19 +80,23 @@ app.all(
   MODE === "production"
     ? createRequestHandler({ build: require("./build") })
     : (req, res, next) => {
-      purgeRequireCache();
+      if (Math.random() > 0.8)
+        purgeRequireCache();
+
       const build = require("./build");
       return createRequestHandler({ build, mode: MODE })(req, res, next);
     }
 );
 
-////////////////////////////////////////////////////////////////////////////////
+/**
+ * Purge require cache on requests for "server side HMR".
+ *
+ * This won't let you have in-memory objects between requests in development,
+ * alternatively you can set up nodemon/pm2-dev to restart the server on
+ * file changes, we prefer the DX of this though, so we've included it
+ * for you by default.
+ */
 function purgeRequireCache() {
-  // purge require cache on requests for "server side HMR" this won't let
-  // you have in-memory objects between requests in development,
-  // alternatively you can set up nodemon/pm2-dev to restart the server on
-  // file changes, we prefer the DX of this though, so we've included it
-  // for you by default
   for (const key in require.cache) {
     if (key.startsWith(BUILD_DIR)) {
       delete require.cache[key];

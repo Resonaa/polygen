@@ -1,10 +1,11 @@
 import type { SemanticICONS, SemanticWIDTHS } from "semantic-ui-react";
 import { Button, Container, Dropdown, Grid, Header, Icon, Menu, Sidebar } from "semantic-ui-react";
-import React, { useEffect } from "react";
+import type { ReactNode } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Form, Link, NavLink } from "@remix-run/react";
 
 import Footer from "./footer";
-import { Access, useAuthorizedOptionalUser } from "~/utils";
+import { useOptionalUser } from "~/utils";
 
 function NavItem({
                    to,
@@ -19,13 +20,13 @@ function NavItem({
   );
 }
 
-export default function Layout({ columns, children }: { columns: SemanticWIDTHS, children: React.ReactNode }) {
-  const [visible, setVisible] = React.useState(false);
-  const [top, setTop] = React.useState(true);
-  const [slideUp, setSlideUp] = React.useState(false);
-  const refButton = React.useRef<HTMLButtonElement>(null);
+export default function Layout({ columns, children }: { columns: SemanticWIDTHS, children: ReactNode }) {
+  const [visible, setVisible] = useState(false);
+  const [top, setTop] = useState(true);
+  const [slideUp, setSlideUp] = useState(false);
+  const refButton = useRef<HTMLButtonElement>(null);
 
-  const user = useAuthorizedOptionalUser(Access.VisitWebsite);
+  const user = useOptionalUser();
 
   useEffect(() => {
     let newScrollPosition = 0, lastScrollPosition = 0;

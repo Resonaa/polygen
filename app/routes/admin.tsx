@@ -1,7 +1,8 @@
-import Layout from "~/components/layout";
 import { Grid, Menu } from "semantic-ui-react";
 import { NavLink, Outlet } from "@remix-run/react";
 import type { LoaderArgs } from "@remix-run/node";
+
+import Layout from "~/components/layout";
 import { requireAuthenticatedOptionalUser } from "~/session.server";
 import { Access } from "~/utils";
 
@@ -25,7 +26,7 @@ function AdminMenu() {
   }
 
   return (
-    <Menu vertical fluid size="large" className="!shadow-md">
+    <Menu vertical fluid tabular size="large">
       <Menu.Item>
         用户
         <Menu.Menu>

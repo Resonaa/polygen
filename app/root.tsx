@@ -3,18 +3,18 @@
 import type { LoaderArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, useCatch } from "@remix-run/react";
+import { Grid } from "semantic-ui-react";
 
-import global from "./styles/global.css";
 import tailwind from "./styles/tailwind.css";
 import semantic from "semantic-ui-css/semantic.min.css";
 import vditor from "vditor/dist/index.css";
+
 import { requireAuthenticatedOptionalUser } from "./session.server";
 import Layout from "~/components/layout";
-import { Grid } from "semantic-ui-react";
-import { Access, useAuthorizedOptionalUser } from "~/utils";
+import { Access } from "~/utils";
 
 export function links() {
-  return [{ rel: "stylesheet", href: global },
+  return [
     { rel: "stylesheet", href: tailwind },
     { rel: "stylesheet", href: semantic },
     { rel: "stylesheet", href: vditor }];
@@ -80,15 +80,13 @@ export function ErrorBoundary({ error }: { error: Error }) {
 }
 
 export default function App() {
-  useAuthorizedOptionalUser(Access.VisitWebsite);
-
   return (
     <html lang="zh">
     <head>
       <Meta />
       <Links />
     </head>
-    <body className="bg-[#f8f9fa]">
+    <body>
     <Outlet />
     <ScrollRestoration />
     <Scripts />

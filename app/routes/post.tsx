@@ -7,11 +7,11 @@ import { Access } from "~/utils";
 import { getPostListItems } from "~/models/post.server";
 
 export async function loader({ request }: LoaderArgs) {
-  const author = await requireAuthenticatedUser(request, Access.VisitWebsite);
+  const { username } = await requireAuthenticatedUser(request, Access.VisitWebsite);
 
-  const postListItems = await getPostListItems({ authorname: author.username });
+  const postListItems = await getPostListItems({ username });
 
-  return json({ postListItems, author });
+  return json({ postListItems, username });
 }
 
 export default function PostPage() {
@@ -23,7 +23,7 @@ export default function PostPage() {
         <h1 className="text-3xl font-bold">
           <Link to=".">Posts</Link>
         </h1>
-        <p>{data.author.username}</p>
+        <p>{data.username}</p>
         <Form action="/logout" method="post">
           <button
             type="submit"

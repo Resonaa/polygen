@@ -1,7 +1,8 @@
 import { Grid } from "semantic-ui-react";
-import Layout from "~/components/layout";
 import { useEffect } from "react";
 import type { LoaderArgs } from "@remix-run/node";
+
+import Layout from "~/components/layout";
 import { requireAuthenticatedOptionalUser } from "~/session.server";
 import { Access } from "~/utils";
 
@@ -28,7 +29,7 @@ export default function Game() {
       parent: "catch-the-cat",
       statusBarAlign: "center",
       credit: "polygen",
-      backgroundColor: 0xf8f9fa
+      backgroundColor: 0xffffff
     });
   }, []);
 

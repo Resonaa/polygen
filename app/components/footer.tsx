@@ -1,32 +1,38 @@
-import { Container, Icon, Segment } from "semantic-ui-react";
+import { Container, Grid, Header, List, Segment } from "semantic-ui-react";
 import { Link } from "@remix-run/react";
 
 export default function Footer() {
   return (
-    <Segment className="!py-8" style={{ boxShadow: "0 2px 3px rgb(0 0 0 / 8%) inset" }}>
-      <Container className="!flex justify-between items-center">
-        <div>
-          Copyleft&nbsp;
-          <span style={{ transform: "scale(-1,1)", display: "inline-block" }}>©</span>
-          &nbsp;2022 polygen.
-        </div>
-
-        <div>
-          <a href="https://github.com/jwcub/polygen" style={{ color: "unset" }}
-             data-inverted="" data-tooltip="GitHub" data-variation="mini">
-            <Icon link name="github" size="large" />
-          </a>
-
-          <a href="https://jq.qq.com/?_wv=1027&k=4ngo8TrD" style={{ color: "unset" }} className="ml-6"
-             data-inverted="" data-tooltip="QQ" data-variation="mini">
-            <Icon link name="qq" size="large" />
-          </a>
-
-          <Link reloadDocument to="/sitemap.xml" style={{ color: "unset" }} className="ml-6"
-                data-inverted="" data-tooltip="站点地图" data-variation="mini">
-            <Icon link name="sitemap" size="large" />
-          </Link>
-        </div>
+    <Segment inverted vertical className="!py-16">
+      <Container>
+        <Grid divided inverted stackable>
+          <Grid.Column width={3} className="max-w-[40%]">
+            <Header inverted as="h4" content="关于" />
+            <List link inverted>
+              <List.Item as={Link} reloadDocument to="/sitemap.xml">站点地图</List.Item>
+              <List.Item as="a">联系我们</List.Item>
+              <List.Item as="a">帮助中心</List.Item>
+            </List>
+          </Grid.Column>
+          <Grid.Column width={3} className="max-w-[40%]">
+            <Header inverted as="h4" content="社区" />
+            <List link inverted>
+              <List.Item as="a">社区规则</List.Item>
+              <List.Item as="a" href="https://github.com/jwcub/polygen">开源仓库</List.Item>
+              <List.Item as="a" href="https://jq.qq.com/?_wv=1027&k=4ngo8TrD">官方 QQ 群</List.Item>
+            </List>
+          </Grid.Column>
+          <Grid.Column width={7}>
+            <Header as="h4" inverted>
+              Copyleft&nbsp;
+              <span style={{ transform: "scale(-1,1)", display: "inline-block" }}>©</span>
+              &nbsp;2022 polygen
+            </Header>
+            <p>
+              This page is unlicensed under the <a href="https://unlicense.org/">Unlicense</a>.
+            </p>
+          </Grid.Column>
+        </Grid>
       </Container>
     </Segment>
   );

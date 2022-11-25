@@ -1,12 +1,13 @@
-import { Access, vditorConfig } from "~/utils";
 import Vditor from "vditor";
 import { useEffect, useRef, useState } from "react";
 import { Button, Icon } from "semantic-ui-react";
-import { createAnnouncement } from "~/models/announcement.server";
+import { useSubmit } from "@remix-run/react";
 import type { ActionArgs, LoaderArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
+
+import { Access, vditorConfig } from "~/utils";
+import { createAnnouncement } from "~/models/announcement.server";
 import { requireAuthenticatedUser } from "~/session.server";
-import { useSubmit } from "@remix-run/react";
 
 export async function action({ request }: ActionArgs) {
   await requireAuthenticatedUser(request, Access.ManageAnnouncement);
@@ -71,7 +72,7 @@ export default function Announcement() {
       <br />
       <Button icon primary labelPosition="left" onClick={sendRequest}>
         <Icon name="send" />
-        提交
+        发布
       </Button>
     </div>
   );

@@ -5,6 +5,7 @@ node_modules
 /build
 /public/build
 /server/build
+/server/index.js
 .env
 
 /ssl

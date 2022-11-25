@@ -1,5 +1,6 @@
-import { requireAuthenticatedOptionalUser } from "~/session.server";
 import type { LoaderArgs } from "@remix-run/node";
+
+import { requireAuthenticatedOptionalUser } from "~/session.server";
 import { Access } from "~/utils";
 
 function generateSiteMap() {
