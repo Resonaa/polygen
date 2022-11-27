@@ -37,9 +37,7 @@ export async function action({ request }: ActionArgs) {
 }
 
 export async function loader({ request }: LoaderArgs) {
-  await requireAuthenticatedUser(request, Access.ManageAnnouncement);
-
-  return null;
+  return await requireAuthenticatedUser(request, Access.ManageAnnouncement);
 }
 
 export default function Announcement() {
@@ -68,7 +66,6 @@ export default function Announcement() {
       <div className="ui input"><input placeholder="这里是标题" ref={titleRef} /></div>
 
       <div id="vditor" />
-
       <br />
       <Button icon primary labelPosition="left" onClick={sendRequest}>
         <Icon name="send" />

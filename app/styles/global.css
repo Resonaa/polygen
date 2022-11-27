@@ -9,3 +9,7 @@
 .vditor-copy {
   @apply !block;
 }
+
+.error-message {
+  @apply pt-1 text-red-700;
+}

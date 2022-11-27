@@ -19,8 +19,8 @@ CREATE TABLE "Post" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "content" TEXT NOT NULL,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
     "username" TEXT NOT NULL,
+    "viewCount" INTEGER NOT NULL DEFAULT 0,
     CONSTRAINT "Post_username_fkey" FOREIGN KEY ("username") REFERENCES "User" ("username") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -29,7 +29,6 @@ CREATE TABLE "Comment" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "content" TEXT NOT NULL,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
     "username" TEXT NOT NULL,
     "parentId" INTEGER NOT NULL,
     CONSTRAINT "Comment_username_fkey" FOREIGN KEY ("username") REFERENCES "User" ("username") ON DELETE CASCADE ON UPDATE CASCADE,

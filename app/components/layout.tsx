@@ -32,11 +32,14 @@ export default function Layout({ columns, children }: { columns: SemanticWIDTHS,
     let newScrollPosition = 0, lastScrollPosition = 0;
 
     const handleScroll = (_: any) => {
-      lastScrollPosition = document.getElementsByClassName("pushable")[0].scrollTop;
+      if (!document.scrollingElement)
+        return;
+
+      lastScrollPosition = document.scrollingElement.scrollTop;
 
       setTop(lastScrollPosition === 0);
 
-      if (newScrollPosition < lastScrollPosition && lastScrollPosition > 100) {
+      if (newScrollPosition < lastScrollPosition && lastScrollPosition > 50) {
         setSlideUp(true);
       } else if (newScrollPosition > lastScrollPosition) {
         setSlideUp(false);
@@ -106,8 +109,8 @@ export default function Layout({ columns, children }: { columns: SemanticWIDTHS,
         <NavItem to="/admin" text="管理后台" icon="tachometer alternate" />
       </Sidebar>
 
-      <Sidebar.Pushable className="min-h-full">
-        <Sidebar.Pusher dimmed={visible} className="overflow-hidden min-h-full flex flex-col">
+      <Sidebar.Pushable className="min-h-full !overflow-visible">
+        <Sidebar.Pusher dimmed={visible} className="min-h-full flex flex-col">
           <Grid stackable container className="!mt-16 !mb-3 flex-1" columns={columns}>{children}</Grid>
           <Footer />
         </Sidebar.Pusher>

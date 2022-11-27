@@ -1,4 +1,6 @@
 import { PrismaClient } from "@prisma/client";
+import fs from "fs";
+
 import { hashPassword } from "~/utils";
 
 const prisma = new PrismaClient();
@@ -32,6 +34,23 @@ async function seed() {
     }
   });
 
+  await prisma.post.create({
+    data: {
+      content: "# Test\n$$\\KaTeX$$",
+      user: { connect: { username: "user" } }
+    }
+  });
+
+
+  const longPost = fs.readFileSync(process.cwd() + "/app/entry.client.tsx").toString();
+
+  await prisma.post.create({
+    data: {
+      content: `\`\`\`typescript\n${longPost}\`\`\``,
+      user: { connect: { username: "user" } }
+    }
+  });
+
   await prisma.announcement.create({
     data: {
       title: "欢迎来到 polygen",
@@ -41,8 +60,8 @@ async function seed() {
 
   await prisma.announcement.create({
     data: {
-      title: "第 21 次内测已开始",
-      content: "测试内容：公告"
+      title: "第 22 次内测已开始",
+      content: "测试内容：说说"
     }
   });
 

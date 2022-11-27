@@ -115,7 +115,7 @@ export async function ajax(method: string, url: string, data: any = {}) {
     body: JSON.stringify(data)
   };
 
-  return (await (await fetch(url, options)).json()).data;
+  return await (await fetch(url, options)).json();
 }
 
 /**

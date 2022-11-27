@@ -1,5 +1,5 @@
 import { useRef, useEffect } from "react";
-import { Form as ReactForm, Link, useActionData, useSearchParams } from "@remix-run/react";
+import { Form as ReactForm, Link, useActionData, useSearchParams, useTransition } from "@remix-run/react";
 import { Button, Form, Icon, Grid } from "semantic-ui-react";
 
 import logo from "../../public/images/polygen.png";
@@ -15,6 +15,8 @@ export default function AuthBox({ type }: { type: "login" | "register" }) {
   const usernameRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const repeatPasswordRef = useRef<HTMLInputElement>(null);
+
+  const transition = useTransition();
 
   useEffect(() => {
     if (actionData?.username) {
@@ -49,7 +51,7 @@ export default function AuthBox({ type }: { type: "login" | "register" }) {
               <Icon name="user" />
             </div>
             {actionData?.username && (
-              <div className="pt-1 text-red-700" id="username-error">
+              <div className="error-message">
                 {actionData.username}
               </div>
             )}
@@ -68,7 +70,7 @@ export default function AuthBox({ type }: { type: "login" | "register" }) {
               <Icon name="lock" />
             </div>
             {actionData?.password && (
-              <div className="pt-1 text-red-700" id="password-error">
+              <div className="error-message">
                 {actionData.password}
               </div>
             )}
@@ -88,7 +90,7 @@ export default function AuthBox({ type }: { type: "login" | "register" }) {
                 <Icon name="lock" />
               </div>
               {actionData?.repeatPassword && (
-                <div className="pt-1 text-red-700" id="repeatPassword-error">
+                <div className="error-message">
                   {actionData.repeatPassword}
                 </div>
               )}
@@ -96,7 +98,8 @@ export default function AuthBox({ type }: { type: "login" | "register" }) {
           }
 
           <input type="hidden" name="redirectTo" value={redirectTo} />
-          <Button fluid primary size="large" type="submit">
+          <Button fluid primary size="large" type="submit" loading={transition.state === "submitting"}
+                  disabled={transition.state === "submitting"}>
             {type === "login" ? "登录" : "注册"}
           </Button>
 

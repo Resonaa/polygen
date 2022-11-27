@@ -4,17 +4,28 @@ import { prisma } from "~/db.server";
 
 export type { Post } from "@prisma/client";
 
-export function getPost({ id, username }: Pick<Post, "id" | "username">) {
-  return prisma.post.findFirst({
-    where: { id, username }
+export async function getPost({ id }: Pick<Post, "id">) {
+  await prisma.post.update({
+    where: { id },
+    data: {
+      viewCount: {
+        increment: 1
+      }
+    }
+  });
+
+  return prisma.post.findUnique({
+    where: { id }
   });
 }
 
-export function getPostListItems({ username }: Pick<Post, "username">) {
-  return prisma.post.findMany({
-    where: { username },
-    orderBy: { updatedAt: "desc" }
+export async function getPosts(page: number) {
+  await prisma.post.updateMany({
+    where: { id: { gte: (page - 1) * 10, lte: page * 10 } },
+    data: { viewCount: { increment: 1 } }
   });
+
+  return prisma.post.findMany({ orderBy: { id: "desc" }, skip: (page - 1) * 10, take: 10 });
 }
 
 export function createPost({ content, username }: Pick<Post, "content" | "username">) {
