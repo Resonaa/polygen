@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 
 export function Avatar({ username }: { username: string }) {
   return (
-    <Link to={`/user/${username}`}>
+    <Link to={`/user/${username}`} className="avatar">
       <img alt="avatar" src={`/usercontent/avatar/${username}.jpg`} />
     </Link>
   );
@@ -13,6 +13,10 @@ export function UserLink({ username }: { username: string }) {
   return (
     <Link to={`/user/${username}`} className="user">{username}</Link>
   );
+}
+
+export function formatDate(date: string) {
+  return new Date(date).toLocaleString().replace(/\//g, "-");
 }
 
 /**
@@ -55,5 +59,5 @@ export function SafeDeltaDate({ date }: { date: string }) {
     setDelta(deltaDate(date));
   }, [date]);
 
-  return <>{delta}</>;
+  return <span>{delta}</span>;
 }

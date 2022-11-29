@@ -5,14 +5,17 @@ import { Link } from "@remix-run/react";
 import type { Post as PostType } from "~/models/post.server";
 import { Avatar, SafeDeltaDate, UserLink } from "~/components/community";
 import RenderedText from "~/components/renderedText";
+import {formatDate} from "~/components/community";
 
 export default function Post({
                                id,
                                username,
                                content,
                                createdAt,
-                               viewCount
-                             }: Pick<PostType, "id" | "username" | "content" | "viewCount"> & { createdAt: string }) {
+                               viewCount,
+                               commentAmount,
+                               link
+                             }: Pick<PostType, "id" | "username" | "content" | "viewCount"> & { createdAt: string, commentAmount: number, link?: boolean }) {
   return (
     <Feed.Event>
       <Feed.Label>
@@ -21,22 +24,30 @@ export default function Post({
       <Feed.Content>
         <Feed.Summary>
           <UserLink username={username} />
-          <Feed.Date title={createdAt}>
+          <Feed.Date title={formatDate(createdAt)}>
             <SafeDeltaDate date={createdAt} />
           </Feed.Date>
         </Feed.Summary>
 
-        <Feed.Extra text className="max-h-72 overflow-auto !max-w-none" style={{ overflowWrap: "anywhere" }}>
-          <Link to={`/post/${id}`} style={{ color: "unset" }}>
+        {link ? (
+          <Feed.Extra text className="max-h-72 overflow-auto !max-w-none" style={{ overflowWrap: "anywhere" }}>
+            <Link to={`/post/${id}`} style={{ color: "unset" }}>
+              <object>
+                <RenderedText content={content} />
+              </object>
+            </Link>
+          </Feed.Extra>
+        ) : (
+          <Feed.Extra text className="overflow-auto !max-w-none" style={{ overflowWrap: "anywhere" }}>
             <object>
               <RenderedText content={content} />
             </object>
-          </Link>
-        </Feed.Extra>
+          </Feed.Extra>
+        )}
 
         <Feed.Meta>
           <a><Icon name="eye" />{viewCount}</a>
-          <a className="ml-8"><Icon name="comment" />0</a>
+          <a className="ml-8"><Icon name="comment" />{commentAmount}</a>
           <Feed.Like className="ml-8"><Icon name="like" />0</Feed.Like>
         </Feed.Meta>
       </Feed.Content>

@@ -15,7 +15,8 @@ export async function getPost({ id }: Pick<Post, "id">) {
   });
 
   return prisma.post.findUnique({
-    where: { id }
+    where: { id },
+    include: { _count: { select: { comments: true } } }
   });
 }
 
@@ -25,7 +26,12 @@ export async function getPosts(page: number) {
     data: { viewCount: { increment: 1 } }
   });
 
-  return prisma.post.findMany({ orderBy: { id: "desc" }, skip: (page - 1) * 10, take: 10 });
+  return prisma.post.findMany({
+    orderBy: { id: "desc" },
+    skip: (page - 1) * 10,
+    take: 10,
+    include: { _count: { select: { comments: true } } }
+  });
 }
 
 export function createPost({ content, username }: Pick<Post, "content" | "username">) {

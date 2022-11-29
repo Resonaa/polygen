@@ -44,10 +44,18 @@ async function seed() {
 
   const longPost = fs.readFileSync(process.cwd() + "/app/entry.client.tsx").toString();
 
-  await prisma.post.create({
+  const post = await prisma.post.create({
     data: {
       content: `\`\`\`typescript\n${longPost}\`\`\``,
       user: { connect: { username: "user" } }
+    }
+  });
+
+  await prisma.comment.create({
+    data: {
+      content: "**Test**",
+      user: { connect: { username: "user" } },
+      parent: { connect: { id: post.id } }
     }
   });
 
@@ -60,15 +68,8 @@ async function seed() {
 
   await prisma.announcement.create({
     data: {
-      title: "第 22 次内测已开始",
-      content: "测试内容：说说"
-    }
-  });
-
-  await prisma.announcement.create({
-    data: {
-      title: "封禁用户测试",
-      content: "现有一封禁用户（用户名为 `banned`，密码为 `123456`），欢迎大家进行测试，若发现 Bug 请及时反馈"
+      title: "第 23 次内测已开始",
+      content: "测试内容：评论"
     }
   });
 
