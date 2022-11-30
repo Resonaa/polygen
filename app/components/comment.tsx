@@ -6,14 +6,16 @@ import type { Comment as CommentType } from "~/models/comment.server";
 import { formatDate } from "~/components/community";
 import { Avatar, SafeDeltaDate, UserLink } from "~/components/community";
 import RenderedText from "~/components/renderedText";
+import { useOptionalUser } from "~/utils";
 
 export default function Comment({
                                   username,
                                   content,
                                   createdAt,
-                                  onReplyClick,
-                                  reply
-                                }: Pick<CommentType, "username" | "content"> & { createdAt: string, onReplyClick: (_: string) => void, reply: boolean }) {
+                                  onReplyClick
+                                }: Pick<CommentType, "username" | "content"> & { createdAt: string, onReplyClick: (_: string) => void }) {
+  const user = useOptionalUser();
+
   return (
     <SemanticComment>
       <Avatar username={username} />
@@ -27,7 +29,7 @@ export default function Comment({
         <SemanticComment.Text className="max-h-60 overflow-auto !max-w-none">
           <RenderedText content={content} />
         </SemanticComment.Text>
-        {reply && <SemanticComment.Actions>
+        {user && <SemanticComment.Actions>
           <a onClick={() => onReplyClick(username)}>回复</a>
         </SemanticComment.Actions>}
       </SemanticComment.Content>

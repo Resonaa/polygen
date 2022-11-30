@@ -148,9 +148,9 @@ export default function Index() {
               </Feed.Content>
             </Feed.Event>)}
 
-          {posts.map(({ id, content, username, createdAt, viewCount, _count: { comments } }) => (
+          {posts.map(({ id, content, username, createdAt, viewCount, _count: { comments }, favouredBy }) => (
             <Post key={id} id={id} content={content} username={username} createdAt={createdAt}
-                  viewCount={viewCount} commentAmount={comments} link />
+                  viewCount={viewCount} commentAmount={comments} favouredBy={favouredBy} link />
           ))}
         </Feed>
       </Grid.Column>

@@ -136,7 +136,7 @@ export default function PostId() {
       <Grid.Column width={12}>
         <Feed size="large">
           <Post id={post.id} createdAt={post.createdAt} commentAmount={post._count.comments} content={post.content}
-                viewCount={post.viewCount} username={post.username} />
+                viewCount={post.viewCount} username={post.username} favouredBy={post.favouredBy} />
         </Feed>
 
         <SemanticComment.Group size="large" minimal className="!max-w-none">
@@ -160,7 +160,7 @@ export default function PostId() {
               </SemanticComment>)}
 
           {comments.map(({ id, content, username, createdAt }) => (
-            <Comment key={id} content={content} username={username} createdAt={createdAt} reply={user !== null}
+            <Comment key={id} content={content} username={username} createdAt={createdAt}
                      onReplyClick={(username) => {
                        vd?.setValue(`@${username} ${vd?.getValue()}`);
                        vd?.focus();

@@ -16,6 +16,8 @@ model User {
   posts     Post[]
   comments  Comment[]
   access    Int @default(1)
+
+  favouredPosts Post[] @relation("favour")
 }
 
 model Announcement {
@@ -36,6 +38,8 @@ model Post {
   comments Comment[]
 
   viewCount Int @default(0)
+
+  favouredBy User[] @relation("favour")
 }
 
 model Comment {

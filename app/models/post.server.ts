@@ -16,7 +16,7 @@ export async function getPost({ id }: Pick<Post, "id">) {
 
   return prisma.post.findUnique({
     where: { id },
-    include: { _count: { select: { comments: true } } }
+    include: { _count: { select: { comments: true } }, favouredBy: { select: { username: true } } }
   });
 }
 
@@ -30,7 +30,7 @@ export async function getPosts(page: number) {
     orderBy: { id: "desc" },
     skip: (page - 1) * 10,
     take: 10,
-    include: { _count: { select: { comments: true } } }
+    include: { _count: { select: { comments: true } }, favouredBy: { select: { username: true } } }
   });
 }
 
@@ -47,4 +47,8 @@ export function deletePost({ id, username }: Pick<Post, "id" | "username">) {
   return prisma.post.deleteMany({
     where: { id, username }
   });
+}
+
+export function sendFavour({ id, username }: Pick<Post, "id" | "username">) {
+  return prisma.post.update({ where: { id }, data: { favouredBy: { connect: { username } } } });
 }

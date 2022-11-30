@@ -1,11 +1,13 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { Feed, Icon } from "semantic-ui-react";
 import { Link } from "@remix-run/react";
+import { useState } from "react";
 
 import type { Post as PostType } from "~/models/post.server";
 import { Avatar, SafeDeltaDate, UserLink } from "~/components/community";
 import RenderedText from "~/components/renderedText";
-import {formatDate} from "~/components/community";
+import { formatDate } from "~/components/community";
+import { useOptionalUser, ajax } from "~/utils";
 
 export default function Post({
                                id,
@@ -14,8 +16,16 @@ export default function Post({
                                createdAt,
                                viewCount,
                                commentAmount,
-                               link
-                             }: Pick<PostType, "id" | "username" | "content" | "viewCount"> & { createdAt: string, commentAmount: number, link?: boolean }) {
+                               link,
+                               favouredBy
+                             }: Pick<PostType, "id" | "username" | "content" | "viewCount"> &
+  { createdAt: string, commentAmount: number, link?: boolean, favouredBy: { username: string }[] }) {
+  const postUrl = `/post/${id}`;
+  const user = useOptionalUser();
+
+  const [favour, setFavour] = useState(user ? favouredBy.some(({ username }) => username === user.username) : false);
+  const [likes, setLikes] = useState(favouredBy.length);
+
   return (
     <Feed.Event>
       <Feed.Label>
@@ -31,7 +41,7 @@ export default function Post({
 
         {link ? (
           <Feed.Extra text className="max-h-72 overflow-auto !max-w-none" style={{ overflowWrap: "anywhere" }}>
-            <Link to={`/post/${id}`} style={{ color: "unset" }}>
+            <Link to={postUrl} style={{ color: "unset" }}>
               <object>
                 <RenderedText content={content} />
               </object>
@@ -46,9 +56,17 @@ export default function Post({
         )}
 
         <Feed.Meta>
-          <a><Icon name="eye" />{viewCount}</a>
-          <a className="ml-8"><Icon name="comment" />{commentAmount}</a>
-          <Feed.Like className="ml-8"><Icon name="like" />0</Feed.Like>
+          <Link to={postUrl}><Icon name="eye" />{viewCount}</Link>
+          <Link to={postUrl} className="!ml-6"><Icon name="comment" />{commentAmount}</Link>
+          <Feed.Like className={`!ml-6 ${favour ? "active" : ""}`} onClick={async () => {
+            if (favour || !user)
+              return;
+
+            setFavour(true);
+            setLikes(likes => likes + 1);
+
+            await ajax("post", "/post/favour", { id });
+          }}><Icon name="like" />{likes}</Feed.Like>
         </Feed.Meta>
       </Feed.Content>
     </Feed.Event>
