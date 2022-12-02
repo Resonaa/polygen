@@ -36,13 +36,12 @@ export async function action({ request }: ActionArgs) {
   const { username } = await requireAuthenticatedUser(request, Access.Community);
   const content = formData.get("content");
 
-
   if (typeof content !== "string" || content.length <= 0 || content.length >= 100000)
-    return json("说说长度应为1~100000个字符", { status: 400 });
+    return json(false, { status: 400 });
 
   await createPost({ username, content });
 
-  return json("发布成功");
+  return json(true);
 }
 
 export default function Index() {
@@ -73,7 +72,7 @@ export default function Index() {
 
   useEffect(() => {
     (async () => {
-      if (actionData === "发布成功" && transition.state !== "submitting") {
+      if (actionData && transition.state !== "submitting") {
         vd?.setValue("");
         const data = await ajax("post", "/post/page", { page: 1 });
 
@@ -137,10 +136,9 @@ export default function Index() {
 
                 <Feed.Extra text className="!max-w-none">
                   <div id="vditor" className="h-40" />
-                  <div className="error-message">{actionData !== "发布成功" && actionData}</div>
                   <Button icon primary labelPosition="left" onClick={sendRequest}
                           loading={transition.state === "submitting"}
-                          disabled={transition.state === "submitting"} className="!mt-2">
+                          disabled={transition.state === "submitting"} className="!mt-4">
                     <Icon name="send" />
                     发布
                   </Button>

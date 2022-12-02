@@ -13,3 +13,13 @@
 .error-message {
   @apply pt-1 text-red-700;
 }
+
+.room-ready {
+  -webkit-box-shadow: 0.2em 0 0 0 #21ba45 inset;
+  box-shadow: 0.2em 0 0 0 #21ba45 inset;
+}
+
+.room-ongoing {
+  -webkit-box-shadow: 0.2em 0 0 0 #2185d0 inset;
+  box-shadow: 0.2em 0 0 0 #2185d0 inset;
+}

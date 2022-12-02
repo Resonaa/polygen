@@ -1,5 +1,6 @@
 import path from "path";
 import fs from "fs";
+import dotenv from "dotenv";
 
 import http from "http";
 import https from "https";
@@ -9,7 +10,7 @@ import compression from "compression";
 import morgan from "morgan";
 import { createRequestHandler } from "@remix-run/express";
 
-import dotenv from "dotenv";
+import { setServer } from "~/core/server";
 
 dotenv.config({ path: ".env" });
 
@@ -18,7 +19,7 @@ const BUILD_DIR = path.join(process.cwd(), "server/build");
 
 if (!fs.existsSync(BUILD_DIR)) {
   console.warn(
-    "Build directory doesn't exist, please run `npm run dev` or `npm run build` before starting the server."
+    "Build directory doesn't exist, please run `npm run build` before starting the server."
   );
   process.exit(1);
 }
@@ -57,16 +58,7 @@ if (MODE === "production" && process.env.SSL_CERT && process.env.SSL_KEY) {
   io = new Server(httpServer);
 }
 
-io.on("connection", (socket) => {
-  console.log(socket.id, "connected");
-
-  socket.emit("confirmation", "connected!");
-
-  socket.on("event", (data) => {
-    console.log(socket.id, data);
-    socket.emit("event", "pong");
-  });
-});
+setServer(io);
 
 app.use(compression());
 
@@ -78,12 +70,12 @@ app.use(morgan("tiny"));
 app.all(
   "*",
   MODE === "production"
-    ? createRequestHandler({ build: require("./build") })
+    ? createRequestHandler({ build: require(BUILD_DIR) })
     : (req, res, next) => {
       if (Math.random() > 0.8)
         purgeRequireCache();
 
-      const build = require("./build");
+      const build = require(BUILD_DIR);
       return createRequestHandler({ build, mode: MODE })(req, res, next);
     }
 );

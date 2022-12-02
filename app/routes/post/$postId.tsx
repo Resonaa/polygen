@@ -23,7 +23,7 @@ export async function loader({ request, params }: LoaderArgs) {
 
   const post = await getPost({ id });
   if (!post) {
-    throw new Response("说说不存在", { status: 404 });
+    throw new Response("说说不存在", { status: 404, statusText: "Not Found" });
   }
 
   const comments = await getComments({ parentId: post.id, page: 1 });
@@ -45,14 +45,14 @@ export async function action({ request }: ActionArgs) {
   const parentId = Number(formData.get("parentId"));
 
   if (!parentId || parentId <= 0)
-    return json("说说ID不合法", { status: 400 });
+    return json(false, { status: 400 });
 
   if (typeof content !== "string" || content.length <= 0 || content.length >= 10000)
-    return json("评论长度应为1~10000个字符", { status: 400 });
+    return json(false, { status: 400 });
 
   await createComment({ username, content, parentId });
 
-  return json("发布成功");
+  return json(true);
 }
 
 export default function PostId() {
@@ -83,7 +83,7 @@ export default function PostId() {
 
   useEffect(() => {
     (async () => {
-      if (actionData === "发布成功" && transition.state !== "submitting") {
+      if (actionData && transition.state !== "submitting") {
         vd?.setValue("");
         const data = await ajax("post", "/post/comment", { page: 1, parentId: post.id });
 
@@ -148,10 +148,9 @@ export default function PostId() {
                   <UserLink username={user.username} />
                   <SemanticComment.Text>
                     <div id="vditor" className="h-40" />
-                    <div className="error-message">{actionData !== "发布成功" && actionData}</div>
                     <Button icon primary labelPosition="left" onClick={sendRequest}
                             loading={transition.state === "submitting"}
-                            disabled={transition.state === "submitting"} className="!mt-2">
+                            disabled={transition.state === "submitting"} className="!mt-4">
                       <Icon name="send" />
                       评论
                     </Button>
