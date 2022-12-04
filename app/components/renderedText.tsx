@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import Vditor from "vditor";
 
-export default function RenderedText({ content }: { content: string }) {
+export default function RenderedText({ content, mode }: { content: string, mode: "light" | "dark" }) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -10,19 +10,21 @@ export default function RenderedText({ content }: { content: string }) {
 
       if (cur) {
         cur.innerHTML = await Vditor.md2html(content.trim(), {
-          mode: "light",
+          mode,
           anchor: 2,
           math: {
             inlineDigit: true
           }
         });
 
+        const style = mode === "light" ? "autumn" : "monokai";
+
         Vditor.mathRender(cur);
-        Vditor.highlightRender({ style: "autumn" }, cur);
+        Vditor.highlightRender({ style }, cur);
         Vditor.codeRender(cur);
       }
     })();
-  }, [content]);
+  }, [content, mode]);
 
   return (
     <div ref={ref}>{content}</div>

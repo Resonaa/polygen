@@ -43,14 +43,14 @@ export default function Post({
           <Feed.Extra text className="max-h-72 overflow-auto !max-w-none" style={{ overflowWrap: "anywhere" }}>
             <Link to={postUrl} style={{ color: "unset" }}>
               <object>
-                <RenderedText content={content} />
+                <RenderedText content={content} mode="light" />
               </object>
             </Link>
           </Feed.Extra>
         ) : (
           <Feed.Extra text className="overflow-auto !max-w-none" style={{ overflowWrap: "anywhere" }}>
             <object>
-              <RenderedText content={content} />
+              <RenderedText content={content} mode="light" />
             </object>
           </Feed.Extra>
         )}

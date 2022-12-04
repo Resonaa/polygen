@@ -13,11 +13,15 @@ export default function GameMessage({ type, content, username, time }: Message) 
 
         <Comment.Metadata>
           {time}
-          <Label color={type === MessageType.Room ? "yellow" : "blue"} size="mini" className="!ml-2">{type}</Label>
+          {type !== MessageType.Room &&
+            (<Label color={type === MessageType.World ? "blue" : "orange"} size="mini"
+                    className="!ml-2">{type}
+            </Label>)
+          }
         </Comment.Metadata>
 
         <Comment.Text className="overflow-y-auto max-h-52">
-          <RenderedText content={content} />
+          <RenderedText content={content} mode="dark" />
         </Comment.Text>
       </Comment.Content>
     </Comment>

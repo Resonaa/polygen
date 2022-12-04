@@ -27,7 +27,7 @@ export default function Comment({
           </span>
         </SemanticComment.Metadata>
         <SemanticComment.Text className="max-h-60 overflow-auto !max-w-none">
-          <RenderedText content={content} />
+          <RenderedText content={content} mode="light" />
         </SemanticComment.Text>
         {user && <SemanticComment.Actions>
           <a onClick={() => onReplyClick(username)}>回复</a>

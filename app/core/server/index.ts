@@ -33,10 +33,10 @@ export function setServer(server: Server) {
     });
 
     socket.on("message", ({ type, content }: Message) => {
-      if (content.trim().length <= 0 || content.length > 161)
+      if (content.trim().length <= 0 || content.length > 616)
         return;
 
-      const time = new Date().toLocaleTimeString();
+      const time = new Date();
 
       if (type === MessageType.World)
         server.emit("message", { type, content, username, time });

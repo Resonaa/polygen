@@ -21,7 +21,7 @@ export default function Announcement({ id, title, content }: ann) {
       </Modal.Header>
       <Modal.Content scrolling style={{ overflowWrap: "break-word" }}>
         <Modal.Description>
-          <RenderedText content={content} />
+          <RenderedText content={content} mode="light" />
         </Modal.Description>
       </Modal.Content>
       <Modal.Actions>

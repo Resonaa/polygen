@@ -6,7 +6,7 @@ import type { Socket } from "socket.io-client";
 import { io } from "socket.io-client";
 import parser from "socket.io-msgpack-parser";
 import { useLoaderData } from "@remix-run/react";
-import { Comment, Grid, Tab, Form, Select, Button } from "semantic-ui-react";
+import { Comment, Grid, Tab, Form, Select, Button, Label } from "semantic-ui-react";
 
 import { requireAuthenticatedUser } from "~/session.server";
 import { setClient } from "~/core/client";
@@ -59,11 +59,19 @@ export default function Rid() {
     const messageEnd = useRef<HTMLDivElement>(null);
     const [messages, setMessages] = useState<Message[]>([]);
     const [delta, setDelta] = useState(0);
+    const [newCount, setNewCount] = useState(0);
+
+    const scrollDown = () => {
+      messageEnd.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+      setNewCount(0);
+    };
 
     useEffect(() => {
       if (delta <= 50)
-        messageEnd.current?.scrollIntoView({ behavior: "auto", block: "end" });
-    });
+        scrollDown();
+      else
+        setNewCount(newCount => newCount + 1);
+    }, [delta]);
 
     useEffect(() => {
       socket
@@ -80,11 +88,16 @@ export default function Rid() {
       <>
         {
           messages.map(({ type, content, username, time }, index) => (
-            <GameMessage type={type} username={username} time={time} content={content} key={index} />
+            <GameMessage type={type} username={username} time={new Date(time).toLocaleTimeString()} content={content}
+                         key={index} />
           ))
         }
 
         <div ref={messageEnd} className="h-1" />
+        {newCount > 0 &&
+          (<Label color="red" floating onClick={scrollDown} className="cursor-pointer" title={`${newCount}条未读消息`}>
+            +{newCount}
+          </Label>)}
       </>
     );
   }
@@ -97,24 +110,54 @@ export default function Rid() {
     ];
 
     const [type, setType] = useState(MessageType.Room);
-    const [content, setContent] = useState("");
-
     const contentRef = useRef<HTMLTextAreaElement>(null);
 
     const handleSubmit = () => {
-      if (content.trim().length <= 0 || content.length > 161)
+      if (!contentRef.current)
+        return;
+
+      const content = contentRef.current.value.trim();
+
+      if (content.length <= 0 || content.length > 616)
         return;
 
       socket?.emit("message", { type, content });
-      setContent("");
-      contentRef.current?.blur();
+      contentRef.current.value = "";
     };
+
+    const handleEnter = (e: KeyboardEvent) => {
+      if (!contentRef.current || e.key !== "Enter")
+        return;
+
+      if (document.activeElement === contentRef.current) {
+        e.preventDefault();
+        if (e.ctrlKey) {
+          const start = contentRef.current.selectionStart, end = contentRef.current.selectionEnd;
+          const content = contentRef.current.value;
+          contentRef.current.value = content.substring(0, start) + "\n" + content.substring(end, content.length);
+          contentRef.current.selectionStart = contentRef.current.selectionEnd = start + 1;
+        } else {
+          setTimeout(() => contentRef.current?.blur(), 200);
+          handleSubmit();
+        }
+      } else if (!e.ctrlKey) {
+        e.preventDefault();
+        contentRef.current.focus();
+      }
+    };
+
+    useEffect(() => {
+      window.addEventListener("keydown", handleEnter);
+      return () => {
+        window.removeEventListener("keydown", handleEnter);
+      };
+    });
 
     return (
       <Form inverted>
         <Form.Field>
-            <textarea rows={3} placeholder="输入聊天内容" className="!text-white !bg-black" value={content}
-                      ref={contentRef} onChange={event => setContent(event.target.value)} />
+          <textarea rows={3} placeholder="输入聊天内容" className="!text-white !bg-black !transition-colors"
+                    ref={contentRef} />
         </Form.Field>
 
         <Form.Field inline>
