@@ -41,6 +41,7 @@
     "morgan": "latest",
     "socket.io": "latest",
     "socket.io-client": "latest",
+    "socket.io-msgpack-parser": "latest",
     "vditor": "latest",
     "ts-node": "latest",
     "typescript": "latest"

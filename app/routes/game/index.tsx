@@ -56,10 +56,7 @@ export default function Index() {
         <Table celled selectable unstackable>
           <Table.Header>
             <Table.Row>
-              <Table.HeaderCell>名称</Table.HeaderCell>
-              <Table.HeaderCell>模式</Table.HeaderCell>
-              <Table.HeaderCell>地图</Table.HeaderCell>
-              <Table.HeaderCell>玩家</Table.HeaderCell>
+              {["名称", "模式", "地图", "玩家"].map(s => <Table.HeaderCell content={s} key={s} />)}
             </Table.Row>
           </Table.Header>
 
@@ -84,7 +81,7 @@ export default function Index() {
 
         {user ? (
           <Form>
-            <Form.Input label="名称" placeholder="名称" type="text" onChange={(_, data) => setId(data.value)} />
+            <Form.Input label="名称" placeholder="名称" type="text" onChange={(_, { value }) => setId(value)} />
 
             <Button primary onClick={() => {
               if (!id.trim()) return;

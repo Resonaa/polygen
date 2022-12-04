@@ -68,8 +68,8 @@ async function seed() {
 
   await prisma.announcement.create({
     data: {
-      title: "第 24 次内测已开始",
-      content: "测试内容：游戏"
+      title: "第 25 次内测已开始",
+      content: "测试内容：房内消息"
     }
   });
 

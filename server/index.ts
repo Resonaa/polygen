@@ -9,6 +9,7 @@ import { Server } from "socket.io";
 import compression from "compression";
 import morgan from "morgan";
 import { createRequestHandler } from "@remix-run/express";
+import parser from "socket.io-msgpack-parser";
 
 import { setServer } from "~/core/server";
 
@@ -53,9 +54,9 @@ if (MODE === "production" && process.env.SSL_CERT && process.env.SSL_KEY) {
     next();
   });
 
-  io = new Server(httpsServer);
+  io = new Server(httpsServer, { parser });
 } else {
-  io = new Server(httpServer);
+  io = new Server(httpServer, { parser });
 }
 
 setServer(io);

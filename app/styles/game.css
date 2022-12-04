@@ -1,3 +1,30 @@
 body {
   background: black;
 }
+
+.content > .metadata {
+  color: rgba(255, 255, 255, .7) !important;
+}
+
+.content > .text {
+  color: rgba(255, 255, 255, .9) !important;
+}
+
+textarea::selection {
+  background-color: #cce2ff !important;
+  color: #000000de !important;
+}
+
+.selection {
+  border: 1px solid rgba(255, 255, 255, .15) !important;
+  background: #1b1c1d !important;
+  color: rgba(255, 255, 255, .8) !important;
+}
+
+.selection .menu, #catch-the-cat {
+  filter: grayscale(1) invert(1);
+}
+
+.selection .divider.text {
+  color: rgba(255, 255, 255, .8) !important;
+}
