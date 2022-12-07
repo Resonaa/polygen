@@ -2,7 +2,7 @@ body {
   background: black;
 }
 
-.content > .metadata {
+.comments .time {
   color: rgba(255, 255, 255, .7) !important;
 }
 
@@ -15,16 +15,15 @@ textarea::selection {
   color: #000000de !important;
 }
 
-.selection {
-  border: 1px solid rgba(255, 255, 255, .15) !important;
-  background: #1b1c1d !important;
-  color: rgba(255, 255, 255, .8) !important;
-}
-
-.selection .menu, #catch-the-cat {
+.dropdown .menu, #catch-the-cat {
   filter: grayscale(1) invert(1);
 }
 
-.selection .divider.text {
-  color: rgba(255, 255, 255, .8) !important;
+.comment {
+  margin: .3em 0 0 !important;
+}
+
+.comment .text {
+  overflow-wrap: anywhere !important;
+  margin: 0 !important;
 }

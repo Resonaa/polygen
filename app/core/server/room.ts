@@ -2,7 +2,7 @@ import { Player } from "~/core/server/player";
 
 export const SocketRoom = {
   rid: (rid: string) => `#${rid}`,
-  username: (username: string) => `.${username}`
+  username: (username: string) => `@${username}`
 };
 
 export const enum RoomMode {

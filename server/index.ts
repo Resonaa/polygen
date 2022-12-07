@@ -13,7 +13,7 @@ import parser from "socket.io-msgpack-parser";
 
 import { setServer } from "~/core/server";
 
-dotenv.config({ path: ".env" });
+dotenv.config();
 
 const MODE = process.env.NODE_ENV;
 const BUILD_DIR = path.join(process.cwd(), "server/build");
@@ -68,14 +68,19 @@ app.use(express.static("public", { maxAge: "10m" }));
 app.use(express.static("public/build", { immutable: true, maxAge: "1y" }));
 
 app.use(morgan("tiny"));
+
+if (MODE === "development") {
+  app.get("/refresh", (_, res) => {
+    purgeRequireCache();
+    res.send("刷新成功");
+  });
+}
+
 app.all(
   "*",
   MODE === "production"
     ? createRequestHandler({ build: require(BUILD_DIR) })
     : (req, res, next) => {
-      if (Math.random() > 0.8)
-        purgeRequireCache();
-
       const build = require(BUILD_DIR);
       return createRequestHandler({ build, mode: MODE })(req, res, next);
     }

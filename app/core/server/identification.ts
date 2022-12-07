@@ -1,8 +1,7 @@
-import type { Socket } from "socket.io";
-
+import type { ServerSocket } from "~/core/types";
 import { sessionStorage, USER_SESSION_KEY } from "~/session.server";
 
-export async function identify(socket: Socket) {
+export async function identify(socket: ServerSocket) {
   const cookie = socket.request.headers.cookie;
 
   if (!cookie)

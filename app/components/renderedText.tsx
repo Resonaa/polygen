@@ -1,7 +1,11 @@
 import React, { useEffect, useRef } from "react";
 import Vditor from "vditor";
 
-export default function RenderedText({ content, mode }: { content: string, mode: "light" | "dark" }) {
+export default function RenderedText({
+                                       content,
+                                       mode,
+                                       className
+                                     }: { content: string, mode: "light" | "dark", className?: string }) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -27,6 +31,6 @@ export default function RenderedText({ content, mode }: { content: string, mode:
   }, [content, mode]);
 
   return (
-    <div ref={ref}>{content}</div>
+    <div ref={ref} className={className}>{content}</div>
   );
 }

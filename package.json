@@ -24,39 +24,39 @@
   ],
   "dependencies": {
     "@prisma/client": "latest",
+    "@remix-run/express": "latest",
     "@remix-run/node": "latest",
     "@remix-run/react": "latest",
-    "@remix-run/express": "latest",
     "bcryptjs": "latest",
-    "isbot": "latest",
-    "react": "latest",
-    "react-dom": "latest",
-    "semantic-ui-css": "latest",
-    "semantic-ui-react": "latest",
-    "tiny-invariant": "latest",
     "compression": "latest",
     "cross-env": "latest",
     "dotenv": "latest",
     "express": "latest",
+    "isbot": "latest",
     "morgan": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "semantic-ui-css": "latest",
+    "semantic-ui-react": "latest",
     "socket.io": "latest",
     "socket.io-client": "latest",
     "socket.io-msgpack-parser": "latest",
-    "vditor": "latest",
+    "tiny-invariant": "latest",
     "ts-node": "latest",
-    "typescript": "latest"
+    "typescript": "latest",
+    "vditor": "latest"
   },
   "devDependencies": {
     "@remix-run/dev": "latest",
     "@remix-run/eslint-config": "latest",
     "@types/bcryptjs": "latest",
+    "@types/compression": "latest",
     "@types/eslint": "latest",
+    "@types/express": "latest",
+    "@types/morgan": "latest",
     "@types/node": "latest",
     "@types/react": "latest",
     "@types/react-dom": "latest",
-    "@types/express": "latest",
-    "@types/compression": "latest",
-    "@types/morgan": "latest",
     "eslint": "latest",
     "npm-run-all": "latest",
     "prisma": "latest",
@@ -68,5 +68,9 @@
   },
   "prisma": {
     "seed": "ts-node --require tsconfig-paths/register prisma/seed.ts"
+  },
+  "optionalDependencies": {
+    "bufferutil": "latest",
+    "utf-8-validate": "latest"
   }
 }
