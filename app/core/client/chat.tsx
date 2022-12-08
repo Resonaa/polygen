@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { Button, Comment, Dropdown, Form } from "semantic-ui-react";
+import { Input, Comment, Dropdown } from "semantic-ui-react";
 
 import { MessageType } from "~/core/server/message";
-import { Messages } from "~/core/client/message";
+import { getColorByMessageType, Messages } from "~/core/client/message";
 import type { ClientSocket } from "~/core/types";
 
 export function Chat({ client }: { client?: ClientSocket }) {
@@ -14,11 +14,10 @@ export function Chat({ client }: { client?: ClientSocket }) {
     ];
 
     const [type, setType] = useState(MessageType.Room);
-    const contentRef = useRef<HTMLTextAreaElement>(null);
+    const contentRef = useRef<HTMLInputElement>(null);
 
     const handleSubmit = () => {
-      if (!contentRef.current)
-        return;
+      if (!contentRef.current) return;
 
       const content = contentRef.current.value.trim();
 
@@ -26,29 +25,23 @@ export function Chat({ client }: { client?: ClientSocket }) {
         return;
 
       client?.emit("message", { type, content });
+
       contentRef.current.value = "";
     };
 
     const handleEnter = (e: KeyboardEvent) => {
-      if (!contentRef.current || e.key !== "Enter")
+      const input = contentRef.current;
+
+      if (!input || e.key !== "Enter" || e.ctrlKey)
         return;
 
-      const textarea = contentRef.current;
+      e.preventDefault();
 
-      if (document.activeElement === textarea) {
-        e.preventDefault();
-        if (e.ctrlKey) {
-          const start = textarea.selectionStart, end = textarea.selectionEnd;
-          const content = textarea.value;
-          textarea.value = content.substring(0, start) + "\n" + content.substring(end, content.length);
-          textarea.selectionStart = textarea.selectionEnd = start + 1;
-        } else {
-          setTimeout(() => textarea.blur(), 200);
-          handleSubmit();
-        }
-      } else if (!e.ctrlKey) {
-        e.preventDefault();
-        textarea.focus();
+      if (document.activeElement === input) {
+        setTimeout(() => input.blur(), 200);
+        handleSubmit();
+      } else {
+        input.focus();
       }
     };
 
@@ -60,26 +53,21 @@ export function Chat({ client }: { client?: ClientSocket }) {
     });
 
     return (
-      <Form inverted>
-        <Form.Field>
-          <textarea rows={2} placeholder="输入聊天内容" className="!text-white !bg-black !transition-colors"
-                    ref={contentRef} />
-        </Form.Field>
-
-        <Form.Field>
-          <Button.Group primary inverted size="small">
-            <Dropdown className="button icon" options={options} defaultValue={MessageType.Room} floating
-                      onChange={(_, data) => setType(data.value as MessageType)} />
-            <Button onClick={handleSubmit}>发送</Button>
-          </Button.Group>
-        </Form.Field>
-      </Form>
+      <Input
+        label={<Dropdown className={`button icon ${getColorByMessageType(type)}`} options={options}
+                         defaultValue={MessageType.Room}
+                         onChange={(_, data) => setType(data.value as MessageType)} />}
+        labelPosition="right"
+        placeholder="输入聊天内容"
+        input={{ className: "!text-white !bg-black !transition-colors", ref: contentRef }}
+        fluid
+      />
     );
   }
 
   return (
     <>
-      <Comment.Group minimal className="max-h-72 overflow-auto !m-0">
+      <Comment.Group minimal className="max-h-52 overflow-auto !m-0">
         <Messages client={client} />
       </Comment.Group>
 

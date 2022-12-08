@@ -7,13 +7,22 @@ import { UserLink } from "~/components/community";
 import RenderedText from "~/components/renderedText";
 import type { ClientSocket } from "~/core/types";
 
+export function getColorByMessageType(type: MessageType) {
+  if (type === MessageType.World)
+    return "green";
+  else if (type === MessageType.Room)
+    return "blue";
+  else
+    return "orange";
+}
+
 function GameMessage({ type, content, username }: Pick<Message, "type" | "content" | "username">) {
   return (
     <Comment className="!p-0">
       <Comment.Content>
         {type !== MessageType.Room &&
-          (<Label color={type === MessageType.World ? "blue" : "orange"}
-                  size="mini" circular empty className="!ml-2" />)
+          (<Label color={getColorByMessageType(type)}
+                  size="mini" circular empty />)
         }
         <UserLink username={username} />
         <Comment.Text className="!inline">

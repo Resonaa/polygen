@@ -15,6 +15,7 @@ import { catchTheCat } from "~/core/client/catchTheCat";
 import type { ClientSocket } from "~/core/types";
 
 import game from "~/styles/game.css";
+import { GamePanel } from "~/core/client/gamePanel";
 
 export function links() {
   return [{ rel: "stylesheet", href: game }];
@@ -57,7 +58,7 @@ export default function Rid() {
 
       <Grid.Column width={4} className="!flex justify-between flex-col">
         <Segment inverted>
-          {rid}
+          <GamePanel client={client} />
         </Segment>
 
         <Segment inverted>

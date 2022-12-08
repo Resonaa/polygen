@@ -1,4 +1,3 @@
-//import type { Server } from "socket.io";
 import { identify } from "~/core/server/identification";
 import { handlePlayerJoin, handlePlayerLeave, SocketRoom } from "~/core/server/room";
 import { MessageType } from "~/core/server/message";

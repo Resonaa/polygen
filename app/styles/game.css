@@ -10,7 +10,7 @@ body {
   color: rgba(255, 255, 255, .9) !important;
 }
 
-textarea::selection {
+input::selection {
   background-color: #cce2ff !important;
   color: #000000de !important;
 }
