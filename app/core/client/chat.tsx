@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Input, Comment, Dropdown } from "semantic-ui-react";
+import { Comment, Dropdown, Input } from "semantic-ui-react";
 
 import { MessageType } from "~/core/server/message";
 import { getColorByMessageType, Messages } from "~/core/client/message";
@@ -32,16 +32,22 @@ export function Chat({ client }: { client?: ClientSocket }) {
     const handleEnter = (e: KeyboardEvent) => {
       const input = contentRef.current;
 
-      if (!input || e.key !== "Enter" || e.ctrlKey)
+      if (!input)
         return;
 
-      e.preventDefault();
+      if ((e.key === "ArrowUp" || e.key === "ArrowDown") && document.activeElement === input) {
+        e.preventDefault();
+        const types = [MessageType.Room, MessageType.World, MessageType.Team];
+        setType(type => types[(types.indexOf(type) + (e.key === "ArrowDown" ? 1 : 2)) % types.length]);
+        return;
+      } else if (e.key === "Enter" && !e.ctrlKey) {
+        e.preventDefault();
 
-      if (document.activeElement === input) {
-        setTimeout(() => input.blur(), 200);
-        handleSubmit();
-      } else {
-        input.focus();
+        if (document.activeElement === input) {
+          setTimeout(() => input.blur(), 200);
+          handleSubmit();
+        } else
+          input.focus();
       }
     };
 
@@ -55,7 +61,7 @@ export function Chat({ client }: { client?: ClientSocket }) {
     return (
       <Input
         label={<Dropdown className={`button icon ${getColorByMessageType(type)}`} options={options}
-                         defaultValue={MessageType.Room}
+                         value={type}
                          onChange={(_, data) => setType(data.value as MessageType)} />}
         labelPosition="right"
         placeholder="输入聊天内容"

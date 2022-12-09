@@ -1,4 +1,5 @@
 import { Player } from "~/core/server/player";
+import type { Server } from "~/core/types";
 
 export const SocketRoom = {
   rid: (rid: string) => `#${rid}`,
@@ -43,7 +44,7 @@ export const roomData = global.roomData ? global.roomData : initializeRoomData()
 
 global.roomData = roomData;
 
-export function handlePlayerJoin(username: string, rid: string) {
+export function handlePlayerJoin(server: Server, username: string, rid: string) {
   if (!roomData.has(rid))
     roomData.set(rid, new Room(rid));
 
@@ -52,15 +53,19 @@ export function handlePlayerJoin(username: string, rid: string) {
 
   roomData.get(rid)?.players.push(new Player(username));
 
+  server.to(SocketRoom.rid(rid)).emit("info", `${username}进入了房间`);
+
   return true;
 }
 
-export function handlePlayerLeave(username: string) {
+export function handlePlayerLeave(server: Server, username: string) {
   for (const { id, players } of roomData.values()) {
     const index = players.findIndex(player => player.username === username);
 
     if (index !== -1) {
       players.splice(index, 1);
+
+      server.to(SocketRoom.rid(id)).emit("info", `${username}离开了房间`);
 
       if (players.length === 0 && id !== "161")
         roomData.delete(id);

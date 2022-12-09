@@ -1,5 +1,5 @@
 import { Comment, Label } from "semantic-ui-react";
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 
 import type { Message } from "~/core/server/message";
 import { MessageType } from "~/core/server/message";
@@ -20,17 +20,17 @@ function GameMessage({ type, content, username }: Pick<Message, "type" | "conten
   return (
     <Comment className="!p-0">
       <Comment.Content>
-        {type !== MessageType.Room &&
-          (<Label color={getColorByMessageType(type)}
-                  size="mini" circular empty />)
-        }
-        <UserLink username={username} />
+        <UserLink username={username} style={{ color: "light" + getColorByMessageType(type) }} />
         <Comment.Text className="!inline">
           <RenderedText content={content} mode="dark" className="inline-block !ml-2" />
         </Comment.Text>
       </Comment.Content>
     </Comment>
   );
+}
+
+function Info({ content }: { content: string }) {
+  return <div className="text-center text-sm info">{content}</div>;
 }
 
 function Time({ time }: { time: number }) {
@@ -41,7 +41,7 @@ function Time({ time }: { time: number }) {
     return input <= 9 ? "0" + input : input.toString();
   }
 
-  return <div className="text-center text-sm time">{format(hours) + ":" + format(minutes)}</div>;
+  return <Info content={format(hours) + ":" + format(minutes)} />;
 }
 
 export function Messages({ client }: { client?: ClientSocket }) {
@@ -63,27 +63,33 @@ export function Messages({ client }: { client?: ClientSocket }) {
       setNewCount(newCount => newCount + 1);
   }, [delta, messages]);
 
+  const updateMessageList = (content: JSX.Element) => {
+    const comments = document.getElementsByClassName("comments")[0];
+    setDelta(comments.scrollHeight - comments.scrollTop - comments.clientHeight);
+
+    setPreviousTime(previousTime => {
+      const curTime = new Date().getTime(), deltaTime = curTime - previousTime;
+
+      if (deltaTime >= 1000 * 60 * 5) { // 5 min
+        setMessages(messages => messages.concat([<Time key={messages.length} time={curTime} />,
+          <Fragment key={messages.length + 1}>{content}</Fragment>]));
+        return curTime;
+      } else {
+        setMessages(messages => messages.concat(<Fragment key={messages.length}>{content}</Fragment>));
+        return previousTime;
+      }
+    });
+  };
+
   useEffect(() => {
     client
       ?.off("message")
       ?.on("message", ({ username, content, type }) => {
-        const e = document.getElementsByClassName("comments")[0];
-        setDelta(e.scrollHeight - e.scrollTop - e.clientHeight);
-
-        setPreviousTime(previousTime => {
-          const curTime = new Date().getTime(), deltaTime = curTime - previousTime;
-
-          if (deltaTime >= 1000 * 60 * 5) { // 5 min
-            setMessages(messages => messages.concat([<Time key={messages.length} time={curTime} />,
-              <GameMessage key={messages.length} username={username}
-                           content={content} type={type} />]));
-            return curTime;
-          } else {
-            setMessages(messages => messages.concat(<GameMessage key={messages.length} username={username}
-                                                                 content={content} type={type} />));
-            return previousTime;
-          }
-        });
+        updateMessageList(<GameMessage type={type} username={username} content={content} />);
+      })
+      ?.off("info")
+      ?.on("info", info => {
+        updateMessageList(<Info content={info} />);
       });
   }, [client]);
 
@@ -93,9 +99,9 @@ export function Messages({ client }: { client?: ClientSocket }) {
 
       <div ref={messageEnd} className="h-2" />
       {newCount > 0 &&
-        (<Label color="red" floating onClick={scrollDown} className="cursor-pointer"
-                title={`${newCount}条未读消息`}>
-          +{newCount}
+        (<Label color="red" circular size="small" floating onClick={scrollDown} className="cursor-pointer"
+                title={`${newCount}条新消息`}>
+          {newCount}
         </Label>)}
     </>
   );

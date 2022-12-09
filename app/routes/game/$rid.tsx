@@ -13,9 +13,9 @@ import { Chat } from "~/core/client/chat";
 import { Access } from "~/utils";
 import { catchTheCat } from "~/core/client/catchTheCat";
 import type { ClientSocket } from "~/core/types";
+import { GamePanel } from "~/core/client/gamePanel";
 
 import game from "~/styles/game.css";
-import { GamePanel } from "~/core/client/gamePanel";
 
 export function links() {
   return [{ rel: "stylesheet", href: game }];
@@ -56,7 +56,7 @@ export default function Rid() {
         <div id="catch-the-cat" className="flex justify-center" />
       </Grid.Column>
 
-      <Grid.Column width={4} className="!flex justify-between flex-col">
+      <Grid.Column width={4} className="!flex justify-between flex-col !p-0">
         <Segment inverted>
           <GamePanel client={client} />
         </Segment>

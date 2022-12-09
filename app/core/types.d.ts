@@ -5,6 +5,7 @@ import type { Socket as ClientSocketType } from "socket.io-client";
 
 interface ServerToClientEvents {
   message: (message: Message) => void;
+  info: (info: string) => void;
 }
 
 interface ClientToServerEvents {
