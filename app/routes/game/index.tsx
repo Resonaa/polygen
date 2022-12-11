@@ -3,6 +3,7 @@ import type { LoaderArgs } from "@remix-run/node";
 import { useLoaderData, Link } from "@remix-run/react";
 import { json } from "@remix-run/node";
 import { useState, Fragment } from "react";
+import clsx from "clsx";
 
 import Layout from "~/components/layout";
 import { requireAuthenticatedOptionalUser } from "~/session.server";
@@ -65,7 +66,7 @@ export default function Index() {
               <Table.Row key={room.id} onClick={() => {
                 if (!user) return;
                 window.open(`/game/${encodeURIComponent(room.id)}`);
-              }} className={user ? `cursor-pointer room-${room.ongoing ? "ongoing" : "ready"}` : ""}>
+              }} className={clsx(user && "cursor-pointer", "room-" + (room.ongoing ? "ongoing" : "ready"))}>
                 <Table.Cell width={3}>{room.id}</Table.Cell>
                 <Table.Cell width={2}>{room.mode}</Table.Cell>
                 <Table.Cell width={2}>{room.map}</Table.Cell>

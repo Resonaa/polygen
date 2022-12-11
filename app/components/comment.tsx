@@ -1,5 +1,4 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-
 import { Comment as SemanticComment } from "semantic-ui-react";
 
 import type { Comment as CommentType } from "~/models/comment.server";

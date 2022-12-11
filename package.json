@@ -28,6 +28,7 @@
     "@remix-run/node": "latest",
     "@remix-run/react": "latest",
     "bcryptjs": "latest",
+    "clsx": "latest",
     "compression": "latest",
     "cross-env": "latest",
     "dotenv": "latest",

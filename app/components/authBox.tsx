@@ -1,6 +1,7 @@
 import { useRef, useEffect } from "react";
 import { Form as ReactForm, Link, useActionData, useSearchParams, useTransition } from "@remix-run/react";
 import { Button, Form, Icon, Grid } from "semantic-ui-react";
+import clsx from "clsx";
 
 import logo from "../../public/images/polygen.png";
 import Layout from "./layout";
@@ -37,8 +38,8 @@ export default function AuthBox({ type }: { type: "login" | "register" }) {
             <img src={logo} alt="logo" className="mx-auto" />
           </Form.Field>
 
-          <Form.Field className={actionData?.username ? "error" : ""}>
-            <div className={`ui left icon input ${actionData?.username ? "error" : ""}`}>
+          <Form.Field className={clsx(actionData?.username && "error")}>
+            <div className={clsx("ui left icon input", actionData?.username && "error")}>
               <input
                 ref={usernameRef}
                 required
@@ -57,8 +58,8 @@ export default function AuthBox({ type }: { type: "login" | "register" }) {
             )}
           </Form.Field>
 
-          <Form.Field className={actionData?.password ? "error" : ""}>
-            <div className={`ui left icon input ${actionData?.password ? "error" : ""}`}>
+          <Form.Field className={clsx(actionData?.password && "error")}>
+            <div className={clsx("ui left icon input", actionData?.password && "error")}>
               <input
                 ref={passwordRef}
                 required
@@ -77,8 +78,8 @@ export default function AuthBox({ type }: { type: "login" | "register" }) {
           </Form.Field>
 
           {type === "register" &&
-            <Form.Field className={actionData?.repeatPassword ? "error" : ""}>
-              <div className={`ui left icon input ${actionData?.repeatPassword ? "error" : ""}`}>
+            <Form.Field className={clsx(actionData?.repeatPassword && "error")}>
+              <div className={clsx("ui left icon input", actionData?.repeatPassword && "error")}>
                 <input
                   ref={repeatPasswordRef}
                   required

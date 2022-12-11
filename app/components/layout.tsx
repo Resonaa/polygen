@@ -23,29 +23,16 @@ function NavItem({
 export default function Layout({ columns, children }: { columns: SemanticWIDTHS, children: ReactNode }) {
   const [visible, setVisible] = useState(false);
   const [top, setTop] = useState(true);
-  const [slideUp, setSlideUp] = useState(false);
   const refButton = useRef<HTMLButtonElement>(null);
 
   const user = useOptionalUser();
 
   useEffect(() => {
-    let newScrollPosition = 0, lastScrollPosition = 0;
-
     const handleScroll = (_: any) => {
       if (!document.scrollingElement)
         return;
 
-      lastScrollPosition = document.scrollingElement.scrollTop;
-
-      setTop(lastScrollPosition === 0);
-
-      if (newScrollPosition < lastScrollPosition && lastScrollPosition > 50) {
-        setSlideUp(true);
-      } else if (newScrollPosition > lastScrollPosition) {
-        setSlideUp(false);
-      }
-
-      newScrollPosition = lastScrollPosition;
+      setTop(document.scrollingElement.scrollTop === 0);
     };
 
     window.addEventListener("scroll", handleScroll, true);
@@ -56,8 +43,7 @@ export default function Layout({ columns, children }: { columns: SemanticWIDTHS,
   return (
     <>
       <Menu fixed="top" borderless
-            className={`h-14 transform duration-300 ${slideUp ? "-translate-y-full" : "translate-y-0"}
-            ${top || slideUp ? "!shadow-none" : "!shadow-lg"}`}>
+            className={"h-14 duration-300 " + (top ? "!shadow-none" : "!shadow-lg")}>
         <Container>
           <Header as={Menu.Item} className="max-sm:!hidden">
             <span className="font-semibold text-2xl">polygen</span>

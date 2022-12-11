@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Comment, Dropdown, Input } from "semantic-ui-react";
+import clsx from "clsx";
 
 import { MessageType } from "~/core/server/message";
 import { getColorByMessageType, Messages } from "~/core/client/message";
@@ -60,7 +61,7 @@ export function Chat({ client }: { client?: ClientSocket }) {
 
     return (
       <Input
-        label={<Dropdown className={`button icon ${getColorByMessageType(type)}`} options={options}
+        label={<Dropdown className={clsx("button icon", getColorByMessageType(type))} options={options}
                          value={type}
                          onChange={(_, data) => setType(data.value as MessageType)} />}
         labelPosition="right"
