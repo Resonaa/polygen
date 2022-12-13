@@ -6,7 +6,7 @@ import { useState } from "react";
 import type { Post as PostType } from "~/models/post.server";
 import { Avatar, SafeDeltaDate, UserLink } from "~/components/community";
 import RenderedText from "~/components/renderedText";
-import { formatDate } from "~/components/community";
+import { formatDate, formatLargeNumber } from "~/components/community";
 import { useOptionalUser, ajax } from "~/utils";
 
 export default function Post({
@@ -25,6 +25,8 @@ export default function Post({
 
   const [favour, setFavour] = useState(user ? favouredBy.some(({ username }) => username === user.username) : false);
   const [likes, setLikes] = useState(favouredBy.length);
+
+  const views = formatLargeNumber(viewCount);
 
   return (
     <Feed.Event>
@@ -56,8 +58,16 @@ export default function Post({
         )}
 
         <Feed.Meta>
-          <Link to={postUrl}><Icon name="eye" />{viewCount}</Link>
-          <Link to={postUrl} className="!ml-6"><Icon name="comment" />{commentAmount}</Link>
+          {link ? (
+            <>
+              <Link to={postUrl}><Icon name="eye" />{views}</Link>
+              <Link to={postUrl} className="!ml-6"><Icon name="comment" />{commentAmount}</Link>
+            </>) : (
+            <>
+              <Icon name="eye" />{views}
+              <Icon name="comment" className="!ml-6" />{commentAmount}
+            </>)}
+
           <Feed.Like className={`!ml-6 ${favour ? "active" : ""}`} onClick={async () => {
             if (favour || !user)
               return;

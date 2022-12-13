@@ -3,17 +3,17 @@ import { useEffect, useState } from "react";
 import type { LoaderArgs, ActionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Button, Feed, Grid, Header, Icon, Segment } from "semantic-ui-react";
+import Vditor from "vditor";
 
 import Layout from "../components/layout";
 import Announcement from "~/components/announcement";
 import { Access, ajax, vditorConfig } from "~/utils";
+import Post from "~/components/post";
+import { Avatar, UserLink } from "~/components/community";
 
 import { getAnnouncements } from "~/models/announcement.server";
 import { requireAuthenticatedOptionalUser, requireAuthenticatedUser } from "~/session.server";
 import { createPost, getPosts } from "~/models/post.server";
-import Post from "~/components/post";
-import { Avatar, UserLink } from "~/components/community";
-import Vditor from "vditor";
 
 export function meta() {
   return {
@@ -135,7 +135,7 @@ export default function Index() {
                 </Feed.Summary>
 
                 <Feed.Extra text className="!max-w-none">
-                  <div id="vditor" className="h-40" />
+                  <div id="vditor" className="h-44" />
                   <Button icon primary labelPosition="left" onClick={sendRequest}
                           loading={transition.state === "submitting"}
                           disabled={transition.state === "submitting"} className="!mt-4">

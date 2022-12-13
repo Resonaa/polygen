@@ -12,7 +12,7 @@ export default function Comment({
                                   content,
                                   createdAt,
                                   onReplyClick
-                                }: Pick<CommentType, "username" | "content"> & { createdAt: string, onReplyClick: (_: string) => void }) {
+                                }: Pick<CommentType, "username" | "content"> & { createdAt: string, onReplyClick: () => void }) {
   const user = useOptionalUser();
 
   return (
@@ -29,7 +29,7 @@ export default function Comment({
           <RenderedText content={content} mode="light" />
         </SemanticComment.Text>
         {user && <SemanticComment.Actions>
-          <a onClick={() => onReplyClick(username)}>回复</a>
+          <a onClick={onReplyClick}>回复</a>
         </SemanticComment.Actions>}
       </SemanticComment.Content>
     </SemanticComment>

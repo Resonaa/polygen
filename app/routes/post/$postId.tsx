@@ -74,9 +74,9 @@ export default function PostId() {
   const submit = useSubmit();
 
   const sendRequest = () => {
-    const content = vd?.getValue();
+    const content = vd?.getValue()?.trim();
 
-    if (content?.trim()) {
+    if (content && content.length > 0 && content.length <= 10000) {
       submit({ content, parentId: String(post.id) }, { method: "post" });
     }
   };
@@ -87,11 +87,15 @@ export default function PostId() {
         vd?.setValue("");
         const data = await ajax("post", "/post/comment", { page: 1, parentId: post.id });
 
-        setComments(posts => {
-          const maxId = posts[0].id, newMaxId = data[0].id;
-          const page = Math.ceil(posts.length / 10);
+        setComments(comments => {
+          if (comments.length === 0) {
+            return data;
+          }
 
-          return data.slice(0, newMaxId - maxId).concat(posts).slice(0, page * 10);
+          const maxId = comments[0].id, newMaxId = data[0].id;
+          const page = Math.ceil(comments.length / 10);
+
+          return data.slice(0, newMaxId - maxId).concat(comments).slice(0, page * 10);
         });
       }
     })();
@@ -131,6 +135,11 @@ export default function PostId() {
     return () => window.removeEventListener("scroll", handleScroll, true);
   }, [post.id]);
 
+  const handleReplyClick = () => {
+    vd?.blur();
+    vd?.focus();
+  };
+
   return (
     <Layout columns={2}>
       <Grid.Column width={12}>
@@ -147,7 +156,7 @@ export default function PostId() {
                 <SemanticComment.Content>
                   <UserLink username={user.username} />
                   <SemanticComment.Text>
-                    <div id="vditor" className="h-40" />
+                    <div id="vditor" className="h-44" />
                     <Button icon primary labelPosition="left" onClick={sendRequest}
                             loading={transition.state === "submitting"}
                             disabled={transition.state === "submitting"} className="!mt-4">
@@ -160,11 +169,7 @@ export default function PostId() {
 
           {comments.map(({ id, content, username, createdAt }) => (
             <Comment key={id} content={content} username={username} createdAt={createdAt}
-                     onReplyClick={(username) => {
-                       vd?.setValue(`@${username} ${vd?.getValue()}`);
-                       vd?.focus();
-                     }
-                     } />
+                     onReplyClick={handleReplyClick} />
           ))}
         </SemanticComment.Group>
       </Grid.Column>
@@ -190,7 +195,7 @@ export default function PostId() {
           </List>
 
           {user && (
-            <Button primary size="tiny" onClick={() => vd?.focus()}>回复</Button>
+            <Button primary size="small" onClick={handleReplyClick}>回复</Button>
           )}
         </Segment>
       </Grid.Column>

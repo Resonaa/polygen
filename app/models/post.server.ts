@@ -21,8 +21,11 @@ export async function getPost({ id }: Pick<Post, "id">) {
 }
 
 export async function getPosts(page: number) {
+  const firstPost = await prisma.post.findFirst({ orderBy: { id: "desc" } });
+  const maxId = firstPost ? firstPost.id : 0;
+
   await prisma.post.updateMany({
-    where: { id: { gte: (page - 1) * 10, lte: page * 10 } },
+    where: { id: { gt: maxId - page * 10 } },
     data: { viewCount: { increment: 1 } }
   });
 
