@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Comment, Dropdown, Input } from "semantic-ui-react";
+import { Dropdown, Input } from "semantic-ui-react";
 import clsx from "clsx";
 
 import { MessageType } from "~/core/server/message";
@@ -74,9 +74,9 @@ export function Chat({ client }: { client?: ClientSocket }) {
 
   return (
     <>
-      <Comment.Group minimal className="max-h-52 overflow-auto !m-0">
+      <div className="messages max-h-52 overflow-auto !m-0">
         <Messages client={client} />
-      </Comment.Group>
+      </div>
 
       <ChatForm />
     </>

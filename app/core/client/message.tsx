@@ -1,4 +1,4 @@
-import { Comment, Label } from "semantic-ui-react";
+import { Label } from "semantic-ui-react";
 import { Fragment, useEffect, useRef, useState } from "react";
 
 import type { Message } from "~/core/server/message";
@@ -18,14 +18,10 @@ export function getColorByMessageType(type: MessageType) {
 
 function GameMessage({ type, content, username }: Pick<Message, "type" | "content" | "username">) {
   return (
-    <Comment className="!p-0">
-      <Comment.Content>
-        <UserLink username={username} style={{ color: "light" + getColorByMessageType(type) }} />
-        <Comment.Text className="!inline">
-          <RenderedText content={content} mode="dark" className="inline-block !ml-2" />
-        </Comment.Text>
-      </Comment.Content>
-    </Comment>
+    <div>
+      <UserLink username={username} style={{ color: "light" + getColorByMessageType(type) }} />
+      <RenderedText content={content} mode="dark" className="inline-block !ml-2" />
+    </div>
   );
 }
 
@@ -57,15 +53,15 @@ export function Messages({ client }: { client?: ClientSocket }) {
   };
 
   useEffect(() => {
-    if (delta <= 100)
+    if (delta <= 80)
       scrollDown();
     else
       setNewCount(newCount => newCount + 1);
   }, [delta, messages]);
 
   const updateMessageList = (content: JSX.Element) => {
-    const comments = document.getElementsByClassName("comments")[0];
-    setDelta(comments.scrollHeight - comments.scrollTop - comments.clientHeight);
+    const messages = document.getElementsByClassName("messages")[0];
+    setDelta(messages.scrollHeight - messages.scrollTop - messages.clientHeight);
 
     setPreviousTime(previousTime => {
       const curTime = new Date().getTime(), deltaTime = curTime - previousTime;

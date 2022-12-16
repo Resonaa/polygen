@@ -2,12 +2,12 @@ body {
   background: black;
 }
 
-.comments .info {
-  color: rgba(255, 255, 255, .7) !important;
+.messages .info {
+  color: rgba(255, 255, 255, .6);
 }
 
-.content > .text {
-  color: rgba(255, 255, 255, .9) !important;
+.messages > div > div {
+  overflow-wrap: anywhere;
 }
 
 input::selection {
@@ -17,13 +17,4 @@ input::selection {
 
 .dropdown .menu, #catch-the-cat {
   filter: grayscale(1) invert(1);
-}
-
-.comment {
-  margin: .3em 0 0 !important;
-}
-
-.comment .text {
-  overflow-wrap: anywhere !important;
-  margin: 0 !important;
 }
