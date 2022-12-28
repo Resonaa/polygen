@@ -69,13 +69,6 @@ app.use(express.static("public/build", { immutable: true, maxAge: "1y" }));
 
 app.use(morgan("tiny"));
 
-if (MODE === "development") {
-  app.get("/refresh", (_, res) => {
-    purgeRequireCache();
-    res.send("刷新成功");
-  });
-}
-
 app.all(
   "*",
   MODE === "production"
@@ -85,19 +78,3 @@ app.all(
       return createRequestHandler({ build, mode: MODE })(req, res, next);
     }
 );
-
-/**
- * Purge require cache on requests for "server side HMR".
- *
- * This won't let you have in-memory objects between requests in development,
- * alternatively you can set up nodemon/pm2-dev to restart the server on
- * file changes, we prefer the DX of this though, so we've included it
- * for you by default.
- */
-function purgeRequireCache() {
-  for (const key in require.cache) {
-    if (key.startsWith(BUILD_DIR)) {
-      delete require.cache[key];
-    }
-  }
-}

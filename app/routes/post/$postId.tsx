@@ -1,15 +1,24 @@
 import type { LoaderArgs, ActionArgs, MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import invariant from "tiny-invariant";
 import { useActionData, useLoaderData, useSubmit, useTransition } from "@remix-run/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Vditor from "vditor";
-import { Button, Feed, Grid, Header, Icon, Segment, Comment as SemanticComment, List } from "semantic-ui-react";
+import {
+  Button,
+  Feed,
+  Grid,
+  Header,
+  Icon,
+  Segment,
+  Comment as SemanticComment,
+  List,
+  Pagination
+} from "semantic-ui-react";
 
 import { getPost } from "~/models/post.server";
 import { requireAuthenticatedOptionalUser, requireAuthenticatedUser } from "~/session.server";
 import { Access, ajax, vditorConfig } from "~/utils";
-import { createComment, getComments } from "~/models/comment.server";
+import { createComment } from "~/models/comment.server";
 import Layout from "~/components/layout";
 import { Avatar, formatDate, UserLink } from "~/components/community";
 import Post from "~/components/post";
@@ -18,22 +27,22 @@ import Comment from "~/components/comment";
 export async function loader({ request, params }: LoaderArgs) {
   const user = await requireAuthenticatedOptionalUser(request, Access.VisitWebsite);
 
-  invariant(params.postId, "缺少postId");
   const id = Number(params.postId);
+  if (!id) {
+    throw new Response("请求无效", { status: 400, statusText: "Bad Request" });
+  }
 
   const post = await getPost({ id });
   if (!post) {
     throw new Response("说说不存在", { status: 404, statusText: "Not Found" });
   }
 
-  const comments = await getComments({ parentId: post.id, page: 1 });
-
-  return json({ post, comments, user });
+  return json({ post, user });
 }
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
   return {
-    title: `${data.post.username}的说说 - polygen`
+    title: data ? `${data.post.username}的说说 - polygen` : "错误 - polygen"
   };
 };
 
@@ -56,10 +65,14 @@ export async function action({ request }: ActionArgs) {
 }
 
 export default function PostId() {
-  const { user, post, comments: originalComments } = useLoaderData<typeof loader>();
-  const [comments, setComments] = useState(originalComments);
+  const { user, post } = useLoaderData<typeof loader>();
+  const [comments, setComments] = useState([]);
 
   const [vd, setVd] = useState<Vditor>();
+
+  const [page, setPage] = useState(1);
+
+  const anchor = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const vditor = new Vditor("vditor", {
@@ -82,61 +95,30 @@ export default function PostId() {
   };
 
   useEffect(() => {
-    (async () => {
-      if (actionData && transition.state !== "submitting") {
-        vd?.setValue("");
-        const data = await ajax("post", "/post/comment", { page: 1, parentId: post.id });
+    if (actionData && transition.state !== "submitting") {
+      vd?.setValue("");
+      setPage(page => {
+        if (page === 1) {
+          ajax("post", "/post/comment", {
+            page: 1,
+            parentId: post.id
+          }).then(data => setComments(data));
+        }
 
-        setComments(comments => {
-          if (comments.length === 0) {
-            return data;
-          }
-
-          const maxId = comments[0].id, newMaxId = data[0].id;
-          const page = Math.ceil(comments.length / 10);
-
-          return data.slice(0, newMaxId - maxId).concat(comments).slice(0, page * 10);
-        });
-      }
-    })();
+        return 1;
+      });
+    }
   }, [actionData, vd, transition.state, post.id]);
 
   useEffect(() => {
-    let flag = true, page = 1;
-
-    const handleScroll = async () => {
-      if (page === -1)
-        return;
-
-      const element = document.scrollingElement;
-
-      if (!element)
-        return;
-
-      const delta = element.scrollHeight - element.scrollTop - element.clientHeight;
-
-      if (flag && delta <= 5) {
-        flag = false;
-
-        page++;
-        const data = await ajax("post", "/post/comment", { page, parentId: post.id });
-
-        if (data.length < 10)
-          page = -1;
-
-        setComments(comments => comments.concat(data));
-      } else if (delta > 50) {
-        flag = true;
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll, true);
-
-    return () => window.removeEventListener("scroll", handleScroll, true);
-  }, [post.id]);
+    ajax("post", "/post/comment", {
+      page,
+      parentId: post.id
+    }).then(data => setComments(data));
+  }, [page, post.id]);
 
   const handleReplyClick = () => {
-    vd?.blur();
+    anchor.current?.scrollIntoView({ behavior: "smooth", block: "center" });
     vd?.focus();
   };
 
@@ -167,11 +149,31 @@ export default function PostId() {
                 </SemanticComment.Content>
               </SemanticComment>)}
 
+          <div ref={anchor} />
+
           {comments.map(({ id, content, username, createdAt }) => (
             <Comment key={id} content={content} username={username} createdAt={createdAt}
                      onReplyClick={handleReplyClick} />
           ))}
         </SemanticComment.Group>
+
+        {post._count.comments > 10 && (
+          <Pagination
+            secondary
+            ellipsisItem={null}
+            activePage={page}
+            firstItem={{ content: <Icon name="angle double left" />, icon: true }}
+            lastItem={{ content: <Icon name="angle double right" />, icon: true }}
+            prevItem={{ content: <Icon name="angle left" />, icon: true }}
+            nextItem={{ content: <Icon name="angle right" />, icon: true }}
+            boundaryRange={0}
+            siblingRange={2}
+            totalPages={Math.ceil(post._count.comments / 10)}
+            onPageChange={(_, { activePage }) => {
+              setPage(activePage as number);
+              handleReplyClick();
+            }}
+          />)}
       </Grid.Column>
 
       <Grid.Column width={4}>

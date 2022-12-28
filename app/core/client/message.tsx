@@ -86,6 +86,10 @@ export function Messages({ client }: { client?: ClientSocket }) {
       ?.off("info")
       ?.on("info", info => {
         updateMessageList(<Info content={info} />);
+      })
+      ?.off("disconnect")
+      ?.on("disconnect", () => {
+        updateMessageList(<Info content={"连接断开"} />);
       });
   }, [client]);
 

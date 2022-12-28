@@ -5,7 +5,7 @@ import { prisma } from "~/db.server";
 export type { Post } from "@prisma/client";
 
 export async function getPost({ id }: Pick<Post, "id">) {
-  await prisma.post.update({
+  await prisma.post.updateMany({
     where: { id },
     data: {
       viewCount: {
