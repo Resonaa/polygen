@@ -3,7 +3,6 @@ import { Fragment, useEffect, useRef, useState } from "react";
 
 import type { Message } from "~/core/server/message";
 import { MessageType } from "~/core/server/message";
-import { UserLink } from "~/components/community";
 import RenderedText from "~/components/renderedText";
 import type { ClientSocket } from "~/core/types";
 
@@ -19,7 +18,7 @@ export function getColorByMessageType(type: MessageType) {
 function GameMessage({ type, content, username }: Pick<Message, "type" | "content" | "username">) {
   return (
     <div>
-      <UserLink username={username} style={{ color: "light" + getColorByMessageType(type) }} />
+      <a href={`/user/${username}`} style={{ color: "light" + getColorByMessageType(type) }}>{username}</a>
       <RenderedText content={content} mode="dark" className="inline-block !ml-2" />
     </div>
   );
@@ -61,7 +60,9 @@ export function Messages({ client }: { client?: ClientSocket }) {
 
   const updateMessageList = (content: JSX.Element) => {
     const messages = document.getElementsByClassName("messages")[0];
-    setDelta(messages.scrollHeight - messages.scrollTop - messages.clientHeight);
+
+    if (messages)
+      setDelta(messages.scrollHeight - messages.scrollTop - messages.clientHeight);
 
     setPreviousTime(previousTime => {
       const curTime = new Date().getTime(), deltaTime = curTime - previousTime;

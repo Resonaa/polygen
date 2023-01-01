@@ -218,7 +218,7 @@ export const enum Access {
  * Configuration for the Vditor editor
  */
 export const vditorConfig = {
-  height: 160,
+  height: 120,
   toolbar: [
     "upload", "record", "|", "undo", "redo", "|", "fullscreen",
     {

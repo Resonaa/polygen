@@ -14,6 +14,7 @@ import { Avatar, UserLink } from "~/components/community";
 import { getAnnouncements } from "~/models/announcement.server";
 import { requireAuthenticatedOptionalUser, requireAuthenticatedUser } from "~/session.server";
 import { createPost, getPosts } from "~/models/post.server";
+import clsx from "clsx";
 
 export function meta() {
   return {
@@ -62,6 +63,9 @@ export default function Index() {
   const actionData = useActionData<typeof action>();
   const submit = useSubmit();
 
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+
   const sendRequest = () => {
     const content = vd?.getValue();
 
@@ -86,39 +90,18 @@ export default function Index() {
     })();
   }, [actionData, vd, transition.state]);
 
-  useEffect(() => {
-    let flag = true, page = 1;
+  const loadMore = () => {
+    if (page === -1 || loading)
+      return;
 
-    const handleScroll = async () => {
-      if (page === -1)
-        return;
+    setLoading(true);
 
-      const element = document.scrollingElement;
-
-      if (!element)
-        return;
-
-      const delta = element.scrollHeight - element.scrollTop - element.clientHeight;
-
-      if (flag && delta <= 5) {
-        flag = false;
-
-        page++;
-        const data = await ajax("post", "/post/page", { page });
-
-        if (data.length < 10)
-          page = -1;
-
-        setPosts(posts => posts.concat(data));
-      } else if (delta > 50) {
-        flag = true;
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll, true);
-
-    return () => window.removeEventListener("scroll", handleScroll, true);
-  }, []);
+    ajax("post", "/post/page", { page: page + 1 }).then(data => {
+      setLoading(false);
+      setPage(data.length < 10 ? -1 : page + 1);
+      setPosts(posts => posts.concat(data));
+    });
+  };
 
   return (
     <Layout columns={2}>
@@ -135,7 +118,7 @@ export default function Index() {
                 </Feed.Summary>
 
                 <Feed.Extra text className="!max-w-none">
-                  <div id="vditor" className="h-44" />
+                  <div id="vditor" className="h-32" />
                   <Button icon primary labelPosition="left" onClick={sendRequest}
                           loading={transition.state === "submitting"}
                           disabled={transition.state === "submitting"} className="!mt-4">
@@ -150,6 +133,12 @@ export default function Index() {
             <Post key={id} id={id} content={content} username={username} createdAt={createdAt}
                   viewCount={viewCount} commentAmount={comments} favouredBy={favouredBy} link />
           ))}
+
+          {page !== -1 &&
+            (<Segment textAlign="center" loading={loading} basic onClick={loadMore}
+                      className={clsx(!loading && "cursor-pointer")}>
+              点击查看更多...
+            </Segment>)}
         </Feed>
       </Grid.Column>
 

@@ -1,5 +1,4 @@
 import { Link } from "@remix-run/react";
-import type { CSSProperties } from "react";
 import { useEffect, useState } from "react";
 
 export function Avatar({ username }: { username: string }) {
@@ -10,9 +9,9 @@ export function Avatar({ username }: { username: string }) {
   );
 }
 
-export function UserLink({ username, style }: { username: string, style?: CSSProperties }) {
+export function UserLink({ username }: { username: string }) {
   return (
-    <Link to={`/user/${username}`} className="user" style={style}>{username}</Link>
+    <Link to={`/user/${username}`} className="user">{username}</Link>
   );
 }
 

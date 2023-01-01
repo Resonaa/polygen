@@ -26,7 +26,7 @@ export default function Footer() {
             <Header as="h4" inverted>
               Copyleft&nbsp;
               <span style={{ transform: "scale(-1,1)", display: "inline-block" }}>©</span>
-              &nbsp;2022 polygen
+              &nbsp;2022-2023 polygen
             </Header>
             <p>
               This page is unlicensed under the <a href="https://unlicense.org/">Unlicense</a>.

@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import type { LoaderArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useEffect, useState } from "react";
@@ -49,6 +48,18 @@ export default function Rid() {
   }, [rid, client]);
 
   useEffect(catchTheCat, []);
+
+  useEffect(() => {
+    const listener = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = "";
+      return "";
+    };
+
+    window.addEventListener("beforeunload", listener, true);
+
+    return () => window.removeEventListener("beforeunload", listener, true);
+  }, []);
 
   return (
     <Grid stackable container inverted className="!m-0 h-full" style={{ width: "100% !important" }}>

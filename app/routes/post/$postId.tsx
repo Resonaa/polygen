@@ -119,7 +119,6 @@ export default function PostId() {
 
   const handleReplyClick = () => {
     anchor.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-    vd?.focus();
   };
 
   return (
@@ -138,7 +137,7 @@ export default function PostId() {
                 <SemanticComment.Content>
                   <UserLink username={user.username} />
                   <SemanticComment.Text>
-                    <div id="vditor" className="h-44" />
+                    <div id="vditor" className="h-32" />
                     <Button icon primary labelPosition="left" onClick={sendRequest}
                             loading={transition.state === "submitting"}
                             disabled={transition.state === "submitting"} className="!mt-4">
@@ -162,10 +161,16 @@ export default function PostId() {
             secondary
             ellipsisItem={null}
             activePage={page}
-            firstItem={{ content: <Icon name="angle double left" />, icon: true }}
-            lastItem={{ content: <Icon name="angle double right" />, icon: true }}
-            prevItem={{ content: <Icon name="angle left" />, icon: true }}
-            nextItem={{ content: <Icon name="angle right" />, icon: true }}
+            firstItem={{ content: <Icon name="angle double left" />, icon: true, disabled: page === 1 }}
+            lastItem={{
+              content: <Icon name="angle double right" />, icon: true,
+              disabled: page === Math.ceil(post._count.comments / 10)
+            }}
+            prevItem={{ content: <Icon name="angle left" />, icon: true, disabled: page === 1 }}
+            nextItem={{
+              content: <Icon name="angle right" />, icon: true,
+              disabled: page === Math.ceil(post._count.comments / 10)
+            }}
             boundaryRange={0}
             siblingRange={2}
             totalPages={Math.ceil(post._count.comments / 10)}
