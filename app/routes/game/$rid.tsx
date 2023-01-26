@@ -10,7 +10,6 @@ import { requireAuthenticatedUser } from "~/session.server";
 import { registerClientSocket } from "~/core/client";
 import { Chat } from "~/core/client/chat";
 import { Access } from "~/utils";
-import { catchTheCat } from "~/core/client/catchTheCat";
 import type { ClientSocket } from "~/core/types";
 import { GamePanel } from "~/core/client/gamePanel";
 
@@ -47,25 +46,9 @@ export default function Rid() {
     registerClientSocket(client, rid);
   }, [rid, client]);
 
-  useEffect(catchTheCat, []);
-
-  useEffect(() => {
-    const listener = (e: BeforeUnloadEvent) => {
-      e.preventDefault();
-      e.returnValue = "";
-      return "";
-    };
-
-    window.addEventListener("beforeunload", listener, true);
-
-    return () => window.removeEventListener("beforeunload", listener, true);
-  }, []);
-
   return (
     <Grid stackable container inverted className="!m-0 h-full" style={{ width: "100% !important" }}>
-      <Grid.Column width={12}>
-        <div id="catch-the-cat" className="flex justify-center" />
-      </Grid.Column>
+      <Grid.Column width={12} className="h-full" />
 
       <Grid.Column width={4} className="!flex justify-between flex-col !p-0">
         <Segment inverted>

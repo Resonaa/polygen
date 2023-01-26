@@ -35,6 +35,7 @@
     "express": "latest",
     "isbot": "latest",
     "morgan": "latest",
+    "pixi.js": "latest",
     "react": "latest",
     "react-dom": "latest",
     "semantic-ui-css": "latest",

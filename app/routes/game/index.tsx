@@ -63,7 +63,7 @@ export default function Index() {
 
           <Table.Body>
             {rooms.map(room => (
-              <Table.Row key={room.id} onClick={() => {
+              <Table.Row key={room.id} title={user ? "点击加入" : "登陆后加入"} onClick={() => {
                 if (!user) return;
                 window.open(`/game/${encodeURIComponent(room.id)}`);
               }} className={clsx(user && "cursor-pointer", "room-" + (room.ongoing ? "ongoing" : "ready"))}>

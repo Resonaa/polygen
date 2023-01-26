@@ -9,6 +9,7 @@ import Layout from "../components/layout";
 import Announcement from "~/components/announcement";
 import { Access, ajax, vditorConfig } from "~/utils";
 import Post from "~/components/post";
+import Quote from "~/components/quote";
 import { Avatar, UserLink } from "~/components/community";
 
 import { getAnnouncements } from "~/models/announcement.server";
@@ -144,6 +145,15 @@ export default function Index() {
 
       <Grid.Column width={4}>
         <Header as="h4" attached="top" block>
+          <Icon name="quote left" className="!text-base !align-baseline" />
+          一言
+        </Header>
+        <Segment attached="bottom" textAlign="center">
+          <Quote />
+        </Segment>
+
+        <Header as="h4" attached="top" block>
+          <Icon name="info" className="!text-base !align-baseline" />
           本站公告
         </Header>
         <Segment attached="bottom">

@@ -4,7 +4,7 @@ import { Link } from "@remix-run/react";
 import { useState } from "react";
 
 import type { Post as PostType } from "~/models/post.server";
-import { Avatar, SafeDeltaDate, UserLink } from "~/components/community";
+import { Avatar, relativeDate, UserLink } from "~/components/community";
 import RenderedText from "~/components/renderedText";
 import { formatDate, formatLargeNumber } from "~/components/community";
 import { useOptionalUser, ajax } from "~/utils";
@@ -37,7 +37,7 @@ export default function Post({
         <Feed.Summary>
           <UserLink username={username} />
           <Feed.Date title={formatDate(createdAt)}>
-            <SafeDeltaDate date={createdAt} />
+            {relativeDate(createdAt)}
           </Feed.Date>
         </Feed.Summary>
 

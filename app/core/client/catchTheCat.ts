@@ -17,7 +17,7 @@ export function catchTheCat() {
     parent: "catch-the-cat",
     statusBarAlign: "center",
     credit: "polygen",
-    backgroundColor: 0x000000
+    backgroundColor: 0xffffff
   });
 
   return () => {
