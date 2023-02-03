@@ -24,7 +24,7 @@ export function meta() {
 }
 
 export async function loader({ request, params }: LoaderArgs) {
-  await requireAuthenticatedUser(request, Access.PlayGame);
+  await requireAuthenticatedUser(request, Access.Gaming);
 
   return json(params.rid);
 }

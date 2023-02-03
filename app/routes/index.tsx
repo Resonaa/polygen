@@ -24,7 +24,7 @@ export function meta() {
 }
 
 export async function loader({ request }: LoaderArgs) {
-  const user = await requireAuthenticatedOptionalUser(request, Access.VisitWebsite);
+  const user = await requireAuthenticatedOptionalUser(request, Access.Basic);
   const announcements = await getAnnouncements();
   const posts = await getPosts(1);
 
@@ -137,7 +137,7 @@ export default function Index() {
 
           {page !== -1 &&
             (<Segment textAlign="center" loading={loading} basic onClick={loadMore}
-                      className={clsx(!loading && "cursor-pointer")}>
+                      className={clsx(!loading && "cursor-pointer text-gray-400")}>
               点击查看更多...
             </Segment>)}
         </Feed>

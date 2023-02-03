@@ -69,16 +69,15 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
     return path;
   }
 
-  function update(i: number, j: number) {
+  function update(i: number, j: number, clean?: boolean) {
     if (i < 1 || i > size || j < 1 || j > size) {
       return;
     }
 
-    const selectedState = selected.length > 0 &&
-      getDir(selected[0]).find(([dx, dy]) => selected[0] + dx === i && selected[1] + dy === j);
+    const selectedState = selected.length > 0 && i === selected[0] && j === selected[1];
 
-    graphics.lineStyle(1);
-    graphics.beginFill(selectedState ? Color.Selected : Color.Empty);
+    graphics.lineStyle(selectedState || clean ? 3 : 1, selectedState && !clean ? Color.SelectedBorder : undefined);
+    graphics.beginFill(Color.Empty, selectedState ? 0.3 : undefined);
     graphics.drawPolygon(getHexagonPath(i, j));
     graphics.endFill();
   }
@@ -96,6 +95,9 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
 
     selected = [];
 
+    update(preSelectedX, preSelectedY, true);
+    update(preSelectedX, preSelectedY);
+
     for (let [dx, dy] of getDir(preSelectedX)) {
       update(dx + preSelectedX, dy + preSelectedY);
     }
@@ -108,9 +110,7 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
 
     selected = [i, j];
 
-    for (let [dx, dy] of getDir(i)) {
-      update(dx + i, dy + j);
-    }
+    update(i, j);
   }
 
   function setHitArea() {

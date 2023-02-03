@@ -5,7 +5,7 @@ import { logout, requireAuthenticatedUser } from "~/session.server";
 import { Access } from "~/utils";
 
 export async function action({ request }: ActionArgs) {
-  await requireAuthenticatedUser(request, Access.VisitWebsite);
+  await requireAuthenticatedUser(request, Access.Basic);
 
   return logout(request);
 }

@@ -153,20 +153,28 @@ export const enum Access {
    *
    * You are encouraged to require this access as often as possible to keep banned users away.
    */
-  VisitWebsite = 0,
+  Basic = 0,
 
   /**
    * Whether a user can send posts, comments or in-game messages.
    *
    * Every registered user has this access.
    */
+
   Community = 1,
   /**
    * Whether a user can join or create rooms.
    *
    * Every registered user has this access.
    */
-  PlayGame = 1,
+  Gaming = 1,
+
+  /**
+   * Whether a user update personal settings.
+   *
+   * Every registered user has this access.
+   */
+  Settings = 1,
 
   /**
    * Whether a user can update or delete posts and comments from others.

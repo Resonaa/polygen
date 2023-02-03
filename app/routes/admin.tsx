@@ -13,7 +13,7 @@ export function meta() {
 }
 
 export async function loader({ request }: LoaderArgs) {
-  return await requireAuthenticatedOptionalUser(request, Access.VisitWebsite);
+  return await requireAuthenticatedOptionalUser(request, Access.Basic);
 }
 
 function AdminMenu() {

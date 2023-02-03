@@ -1,7 +1,7 @@
 import type { SemanticICONS, SemanticWIDTHS } from "semantic-ui-react";
 import { Button, Container, Dropdown, Grid, Header, Icon, Menu, Sidebar } from "semantic-ui-react";
 import type { ReactNode } from "react";
-import { useEffect, useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { Form, Link, NavLink } from "@remix-run/react";
 
 import Footer from "./footer";
@@ -22,28 +22,13 @@ function NavItem({
 
 export default function Layout({ columns, children }: { columns: SemanticWIDTHS, children: ReactNode }) {
   const [visible, setVisible] = useState(false);
-  const [top, setTop] = useState(true);
   const refButton = useRef<HTMLButtonElement>(null);
 
   const user = useOptionalUser();
 
-  useEffect(() => {
-    const handleScroll = (_: any) => {
-      if (!document.scrollingElement)
-        return;
-
-      setTop(document.scrollingElement.scrollTop === 0);
-    };
-
-    window.addEventListener("scroll", handleScroll, true);
-
-    return () => window.removeEventListener("scroll", handleScroll, true);
-  }, []);
-
   return (
     <>
-      <Menu fixed="top" borderless
-            className={"h-14 duration-300 " + (top ? "!shadow-none" : "!shadow-lg")}>
+      <Menu fixed="top" borderless className="h-14">
         <Container>
           <Header as={Menu.Item} className="max-sm:!hidden">
             <span className="font-semibold text-2xl">polygen</span>
@@ -64,7 +49,7 @@ export default function Layout({ columns, children }: { columns: SemanticWIDTHS,
                   <Dropdown.Item as={"a"}>
                     <Icon name="user" />主页
                   </Dropdown.Item>
-                  <Dropdown.Item as={"a"}>
+                  <Dropdown.Item as={Link} to="/settings">
                     <Icon name="cog" />设置
                   </Dropdown.Item>
 

@@ -30,7 +30,7 @@ export function meta() {
 
 export async function loader({ request }: LoaderArgs) {
   return json({
-    user: await requireAuthenticatedOptionalUser(request, Access.VisitWebsite)
+    user: await requireAuthenticatedOptionalUser(request, Access.Basic)
   });
 }
 

@@ -7,7 +7,7 @@ import { Access, safeRedirect, validatePassword, validateUsername } from "~/util
 import AuthBox from "../components/authBox";
 
 export async function loader({ request }: LoaderArgs) {
-  if (await requireAuthenticatedOptionalUser(request, Access.VisitWebsite))
+  if (await requireAuthenticatedOptionalUser(request, Access.Basic))
     return redirect("/");
 
   return null;

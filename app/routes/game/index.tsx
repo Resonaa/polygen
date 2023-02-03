@@ -18,7 +18,7 @@ export function meta() {
 }
 
 export async function loader({ request }: LoaderArgs) {
-  const user = await requireAuthenticatedOptionalUser(request, Access.VisitWebsite);
+  const user = await requireAuthenticatedOptionalUser(request, Access.Basic);
 
   const rooms = roomData;
   const roomList = [];

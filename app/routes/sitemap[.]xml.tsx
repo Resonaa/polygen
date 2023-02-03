@@ -21,7 +21,7 @@ function generateSiteMap() {
 }
 
 export async function loader({ request }: LoaderArgs) {
-  await requireAuthenticatedOptionalUser(request, Access.VisitWebsite);
+  await requireAuthenticatedOptionalUser(request, Access.Basic);
 
   return new Response(generateSiteMap(), {
     status: 200,

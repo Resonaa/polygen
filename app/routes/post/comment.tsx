@@ -5,11 +5,11 @@ import { Access } from "~/utils";
 import { getComments } from "~/models/comment.server";
 
 export async function loader({ request }: ActionArgs) {
-  return await requireAuthenticatedOptionalUser(request, Access.VisitWebsite);
+  return await requireAuthenticatedOptionalUser(request, Access.Basic);
 }
 
 export async function action({ request }: ActionArgs) {
-  await requireAuthenticatedOptionalUser(request, Access.VisitWebsite);
+  await requireAuthenticatedOptionalUser(request, Access.Basic);
 
   const data = await request.json();
   const parentId = data.parentId;

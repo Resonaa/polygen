@@ -25,7 +25,7 @@ import Post from "~/components/post";
 import Comment from "~/components/comment";
 
 export async function loader({ request, params }: LoaderArgs) {
-  const user = await requireAuthenticatedOptionalUser(request, Access.VisitWebsite);
+  const user = await requireAuthenticatedOptionalUser(request, Access.Basic);
 
   const id = Number(params.postId);
   if (!id) {

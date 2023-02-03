@@ -6,11 +6,11 @@ import { Access } from "~/utils";
 import { sendFavour } from "~/models/post.server";
 
 export async function loader({ request }: ActionArgs) {
-  return await requireAuthenticatedOptionalUser(request, Access.VisitWebsite);
+  return await requireAuthenticatedOptionalUser(request, Access.Basic);
 }
 
 export async function action({ request }: ActionArgs) {
-  const { username } = await requireAuthenticatedUser(request, Access.VisitWebsite);
+  const { username } = await requireAuthenticatedUser(request, Access.Basic);
 
   const data = await request.json();
   const id = data.id;
