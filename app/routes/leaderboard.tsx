@@ -1,11 +1,8 @@
-import { Grid } from "semantic-ui-react";
 import type { LoaderArgs } from "@remix-run/node";
 
 import Layout from "~/components/layout";
 import { requireAuthenticatedOptionalUser } from "~/session.server";
 import { Access } from "~/utils";
-import { useEffect } from "react";
-import { catchTheCat } from "~/core/client/catchTheCat";
 
 export function meta() {
   return {
@@ -18,13 +15,9 @@ export async function loader({ request }: LoaderArgs) {
 }
 
 export default function Leaderboard() {
-  useEffect(catchTheCat, []);
-
   return (
     <Layout columns={1}>
-      <Grid.Column className="text-center">
-        <div id="catch-the-cat" className="flex justify-center" />
-      </Grid.Column>
+      <iframe src="https://hexpansion.io/" title="hexpansion" className="w-full select-none" />
     </Layout>
   );
 }

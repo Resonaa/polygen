@@ -1,6 +1,7 @@
 import type { ClientSocket } from "../types";
-import { Color } from "~/core/client/colors";
+import { colors, SpecialColor } from "~/core/client/colors";
 import { getDir } from "~/core/server/game/utils";
+import { randInt } from "~/core/client/utils";
 
 import * as PIXI from "pixi.js";
 
@@ -23,7 +24,17 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
   const graphics = new PIXI.Graphics();
 
   const size = 20;
-  let selected: number[] = [];
+
+  let selected: number[] = [], hovered: number[] = [];
+
+  let gm: number[][] = [];
+  for (let i = 0; i <= size; i++) {
+    gm.push([]);
+
+    for (let j = 0; j <= size; j++) {
+      gm[i].push(randInt(0, 12));
+    }
+  }
 
   let hexagonWidth: number, hexagonHeight: number, hexagonWidthSmall: number,
     hexagonRadius: number, startX: number,
@@ -74,10 +85,16 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
       return;
     }
 
-    const selectedState = selected.length > 0 && i === selected[0] && j === selected[1];
+    const isSelected = selected.length > 0 && i === selected[0] && j === selected[1];
+    const isHovered = hovered.length > 0 && i === hovered[0] && j === hovered[1];
 
-    graphics.lineStyle(selectedState || clean ? 3 : 1, selectedState && !clean ? Color.SelectedBorder : undefined);
-    graphics.beginFill(Color.Empty, selectedState ? 0.3 : undefined);
+    const fillColor = colors[gm[i][j]];
+
+    const lineWidth = isSelected || clean ? 4 : isHovered ? 2 : 0.5;
+    const lineColor = (isSelected || isHovered) && !clean ? SpecialColor.SelectedBorder : undefined;
+
+    graphics.lineStyle(lineWidth, lineColor);
+    graphics.beginFill(fillColor);
     graphics.drawPolygon(getHexagonPath(i, j));
     graphics.endFill();
   }
@@ -113,6 +130,37 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
     update(i, j);
   }
 
+  function unHover() {
+    const [preHoveredX, preHoveredY] = hovered;
+
+    hovered = [];
+
+    update(preHoveredX, preHoveredY, true);
+    update(preHoveredX, preHoveredY);
+
+    for (let [dx, dy] of getDir(preHoveredX)) {
+      update(dx + preHoveredX, dy + preHoveredY);
+    }
+
+    if (selected.length > 0) {
+      update(selected[0], selected[1]);
+    }
+  }
+
+  function hover(i: number, j: number) {
+    if (hovered.length > 0) {
+      unHover();
+    }
+
+    hovered = [i, j];
+
+    update(i, j);
+
+    if (selected.length > 0) {
+      update(selected[0], selected[1]);
+    }
+  }
+
   function setHitArea() {
     const [x, y] = getHexagonUpperLeftPos(1, 1);
     let hexagon = getHexagonPath(1, 1);
@@ -132,7 +180,7 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
         hit.cursor = "pointer";
         hit.interactive = true;
 
-        hit.on("pointerdown", () => select(i, j));
+        hit.on("pointerdown", () => select(i, j)).on("pointerenter", () => hover(i, j)).on("pointerleave", unHover);
 
         app.stage.addChild(hit);
       }
@@ -147,6 +195,7 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
   document.onclick = (event) => {
     if (event.target !== document.querySelector("canvas")) {
       unSelect();
+      unHover();
     }
   };
 }
