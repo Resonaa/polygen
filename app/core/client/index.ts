@@ -22,23 +22,34 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
   container.appendChild(app.view as HTMLCanvasElement);
 
   const graphics = new PIXI.Graphics();
+  app.stage.addChild(graphics);
+
+  const textures = [undefined, PIXI.Texture.from("/images/general.png"),
+    PIXI.Texture.from("/images/city.png"),
+    PIXI.Texture.from("/images/mountain.png"),
+    PIXI.Texture.from("/images/obstacle.png")];
 
   const size = 20;
 
   let selected: number[] = [], hovered: number[] = [];
 
-  let gm: number[][] = [];
+  let gm: number[][][] = [];
   for (let i = 0; i <= size; i++) {
     gm.push([]);
 
     for (let j = 0; j <= size; j++) {
-      gm[i].push(randInt(0, 12));
+      const n = randInt(0, 8);
+
+      gm[i].push([randInt(0, 12), randInt(0, 9) * Math.pow(10, n), randInt(0, 4)]);
     }
   }
 
   let hexagonWidth: number, hexagonHeight: number, hexagonWidthSmall: number,
     hexagonRadius: number, startX: number,
     startY: number;
+
+  let images: PIXI.Sprite[][] = [[]];
+  let texts: PIXI.Text[][] = [[]];
 
   function setDefaultWidth() {
     const width = app.view.width;
@@ -80,6 +91,85 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
     return path;
   }
 
+  function setImage() {
+    for (let i = 1; i <= size; i++) {
+      images.push([new PIXI.Sprite()]);
+
+      for (let j = 1; j <= size; j++) {
+        const image = new PIXI.Sprite();
+
+        const [x, y] = getHexagonUpperLeftPos(i, j);
+
+        image.width = image.height = hexagonHeight / 1.5;
+
+        image.x = x + (hexagonWidth - image.width) / 2;
+        image.y = y + (hexagonHeight - image.height) / 2;
+
+        images[i].push(image);
+        app.stage.addChild(image);
+      }
+    }
+  }
+
+  function setText() {
+    const style = new PIXI.TextStyle({
+      fontSize: hexagonWidth / 2.2,
+      fill: SpecialColor.SelectedBorder,
+      fontWeight: "bold"
+    });
+
+    for (let i = 1; i <= size; i++) {
+      texts.push([new PIXI.Text()]);
+
+      for (let j = 1; j <= size; j++) {
+        const text = new PIXI.Text("", style);
+
+        texts[i].push(text);
+        app.stage.addChild(text);
+      }
+    }
+  }
+
+  function updateAmount(i: number, j: number, amount: number) {
+    let text;
+
+    if (amount <= 0) {
+      text = "";
+    } else if (amount < 1000) {
+      text = String(amount);
+    } else if (amount < 10000) {
+      text = String(Math.round(amount / 100) / 10) + "k";
+    } else if (amount < 100000) {
+      text = String(Math.round(amount / 1000)) + "k";
+    } else if (amount < 10000000) {
+      text = String(Math.round(amount / 100000) / 10) + "m";
+    } else if (amount < 100000000) {
+      text = String(Math.round(amount / 1000000)) + "m";
+    } else {
+      const power = Math.round(Math.log10(amount));
+      text = `${Math.round(amount / Math.pow(10, power))}^${power}`;
+    }
+
+    texts[i][j].text = text;
+
+    const [x, y] = getHexagonUpperLeftPos(i, j);
+    const width = texts[i][j].width;
+    const height = texts[i][j].height;
+
+    texts[i][j].x = x + (hexagonWidth - width) / 2;
+    texts[i][j].y = y + (hexagonHeight - height) / 2;
+  }
+
+  function updateImage(i: number, j: number, type: number) {
+    const texture = textures[type];
+
+    if (!texture) {
+      return;
+    }
+
+    images[i][j].texture = texture;
+  }
+
   function update(i: number, j: number, clean?: boolean) {
     if (i < 1 || i > size || j < 1 || j > size) {
       return;
@@ -88,7 +178,7 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
     const isSelected = selected.length > 0 && i === selected[0] && j === selected[1];
     const isHovered = hovered.length > 0 && i === hovered[0] && j === hovered[1];
 
-    const fillColor = colors[gm[i][j]];
+    const fillColor = colors[gm[i][j][0]];
 
     const lineWidth = isSelected || clean ? 4 : isHovered ? 2 : 0.5;
     const lineColor = (isSelected || isHovered) && !clean ? SpecialColor.SelectedBorder : undefined;
@@ -97,6 +187,9 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
     graphics.beginFill(fillColor);
     graphics.drawPolygon(getHexagonPath(i, j));
     graphics.endFill();
+
+    updateImage(i, j, gm[i][j][2]);
+    updateAmount(i, j, gm[i][j][1]);
   }
 
   function updateAll() {
@@ -178,7 +271,7 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
 
         hit.hitArea = new PIXI.Polygon(hexagon);
         hit.cursor = "pointer";
-        hit.interactive = true;
+        hit.eventMode = "static";
 
         hit.on("pointerdown", () => select(i, j)).on("pointerenter", () => hover(i, j)).on("pointerleave", unHover);
 
@@ -188,8 +281,9 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
   }
 
   setDefaultWidth();
+  setImage();
+  setText();
   updateAll();
-  app.stage.addChild(graphics);
   setHitArea();
 
   document.onclick = (event) => {
