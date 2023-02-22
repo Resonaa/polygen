@@ -1,8 +1,10 @@
 export const enum LandType {
   Land,
-  Crown,
+  General,
   City,
-  Mountain
+  Mountain,
+  Obstacle,
+  Unknown
 }
 
 export class Land {

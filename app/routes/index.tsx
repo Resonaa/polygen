@@ -16,6 +16,7 @@ import { getAnnouncements } from "~/models/announcement.server";
 import { requireAuthenticatedOptionalUser, requireAuthenticatedUser } from "~/session.server";
 import { createPost, getPosts } from "~/models/post.server";
 import clsx from "clsx";
+import CountDown from "~/components/countdown";
 
 export function meta() {
   return {
@@ -153,13 +154,21 @@ export default function Index() {
         </Segment>
 
         <Header as="h4" attached="top" block>
-          <Icon name="info" className="!text-base !align-baseline" />
+          <Icon name="bullhorn" className="!text-base !align-baseline" />
           本站公告
         </Header>
         <Segment attached="bottom">
           {announcements.map(({ id, title, content }) => (
             <Announcement id={id} title={title} content={content} key={id} />
           ))}
+        </Segment>
+
+        <Header as="h4" attached="top" block>
+          <Icon name="calendar alternate" className="!text-base !align-baseline" />
+          倒计时
+        </Header>
+        <Segment attached="bottom" textAlign="center">
+          <CountDown />
         </Segment>
       </Grid.Column>
     </Layout>

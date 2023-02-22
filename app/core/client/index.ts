@@ -1,9 +1,12 @@
 import type { ClientSocket } from "../types";
 import { colors, SpecialColor } from "~/core/client/colors";
-import { getDir } from "~/core/server/game/utils";
+import { getNeighbours } from "~/core/server/game/utils";
 import { randInt } from "~/core/client/utils";
 
 import * as PIXI from "pixi.js";
+import { generateRandomMap } from "~/core/server/game/generator";
+import { RoomMode } from "~/core/server/room";
+import { LandType } from "~/core/server/game/land";
 
 export function registerClientSocket(client: ClientSocket, rid: string) {
   client.on("connect", () => {
@@ -29,20 +32,9 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
     PIXI.Texture.from("/images/mountain.png"),
     PIXI.Texture.from("/images/obstacle.png")];
 
-  const size = 20;
-
   let selected: number[] = [], hovered: number[] = [];
 
-  let gm: number[][][] = [];
-  for (let i = 0; i <= size; i++) {
-    gm.push([]);
-
-    for (let j = 0; j <= size; j++) {
-      const n = randInt(0, 8);
-
-      gm[i].push([randInt(0, 12), randInt(0, 9) * Math.pow(10, n), randInt(0, 4)]);
-    }
-  }
+  let gm = generateRandomMap(randInt(2, 10), RoomMode.Hexagon);
 
   let hexagonWidth: number, hexagonHeight: number, hexagonWidthSmall: number,
     hexagonRadius: number, startX: number,
@@ -55,8 +47,8 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
     const width = app.view.width;
     const height = app.view.height;
 
-    const maxXWidth = width / (size + 0.5);
-    const maxYWidth = height / (1 + (size - 1) * 0.75) / (2 / Math.sqrt(3));
+    const maxXWidth = width / (gm.size + 0.5);
+    const maxYWidth = height / (1 + (gm.size - 1) * 0.75) / (2 / Math.sqrt(3));
 
     hexagonWidth = Math.min(maxXWidth, maxYWidth);
     hexagonHeight = 2 / Math.sqrt(3) * hexagonWidth;
@@ -64,7 +56,7 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
     hexagonWidthSmall = hexagonWidth / 2 / Math.sqrt(3); // l * sqrt(3) / 6
     hexagonRadius = hexagonWidthSmall * 2;
 
-    const realWidth = hexagonWidth * (size + 0.5), realHeight = hexagonHeight * (1 + (size - 1) * 0.75);
+    const realWidth = hexagonWidth * (gm.size + 0.5), realHeight = hexagonHeight * (1 + (gm.size - 1) * 0.75);
 
     startX = (width - realWidth) / 1.3;
     startY = (height - realHeight) / 2;
@@ -92,10 +84,10 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
   }
 
   function setImage() {
-    for (let i = 1; i <= size; i++) {
+    for (let i = 1; i <= gm.size; i++) {
       images.push([new PIXI.Sprite()]);
 
-      for (let j = 1; j <= size; j++) {
+      for (let j = 1; j <= gm.size; j++) {
         const image = new PIXI.Sprite();
 
         const [x, y] = getHexagonUpperLeftPos(i, j);
@@ -118,10 +110,10 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
       fontWeight: "bold"
     });
 
-    for (let i = 1; i <= size; i++) {
+    for (let i = 1; i <= gm.size; i++) {
       texts.push([new PIXI.Text()]);
 
-      for (let j = 1; j <= size; j++) {
+      for (let j = 1; j <= gm.size; j++) {
         const text = new PIXI.Text("", style);
 
         texts[i].push(text);
@@ -171,14 +163,20 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
   }
 
   function update(i: number, j: number, clean?: boolean) {
-    if (i < 1 || i > size || j < 1 || j > size) {
+    if (i < 1 || i > gm.size || j < 1 || j > gm.size) {
       return;
     }
 
     const isSelected = selected.length > 0 && i === selected[0] && j === selected[1];
     const isHovered = hovered.length > 0 && i === hovered[0] && j === hovered[1];
 
-    const fillColor = colors[gm[i][j][0]];
+    const land = gm.get(i, j);
+
+    let fillColor = colors[land.color];
+
+    if (land.color === 0 && land.type === LandType.Land) {
+      fillColor = SpecialColor.Empty;
+    }
 
     const lineWidth = isSelected || clean ? 4 : isHovered ? 2 : 0.5;
     const lineColor = (isSelected || isHovered) && !clean ? SpecialColor.SelectedBorder : undefined;
@@ -188,13 +186,13 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
     graphics.drawPolygon(getHexagonPath(i, j));
     graphics.endFill();
 
-    updateImage(i, j, gm[i][j][2]);
-    updateAmount(i, j, gm[i][j][1]);
+    updateImage(i, j, land.type);
+    updateAmount(i, j, land.amount);
   }
 
   function updateAll() {
-    for (let i = 1; i <= size; i++) {
-      for (let j = 1; j <= size; j++) {
+    for (let i = 1; i <= gm.size; i++) {
+      for (let j = 1; j <= gm.size; j++) {
         update(i, j);
       }
     }
@@ -208,8 +206,8 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
     update(preSelectedX, preSelectedY, true);
     update(preSelectedX, preSelectedY);
 
-    for (let [dx, dy] of getDir(preSelectedX)) {
-      update(dx + preSelectedX, dy + preSelectedY);
+    for (let [nx, ny] of getNeighbours(gm, [preSelectedX, preSelectedY])) {
+      update(nx, ny);
     }
   }
 
@@ -231,8 +229,8 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
     update(preHoveredX, preHoveredY, true);
     update(preHoveredX, preHoveredY);
 
-    for (let [dx, dy] of getDir(preHoveredX)) {
-      update(dx + preHoveredX, dy + preHoveredY);
+    for (let [nx, ny] of getNeighbours(gm, [preHoveredX, preHoveredY])) {
+      update(nx, ny);
     }
 
     if (selected.length > 0) {
@@ -262,8 +260,12 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
       hexagon[p + 1] -= y;
     }
 
-    for (let i = 1; i <= size; i++) {
-      for (let j = 1; j <= size; j++) {
+    for (let i = 1; i <= gm.size; i++) {
+      for (let j = 1; j <= gm.size; j++) {
+        if (gm.get(i, j).type === LandType.Mountain) {
+          continue;
+        }
+
         const hit = new PIXI.Sprite();
 
         const [x, y] = getHexagonUpperLeftPos(i, j);
