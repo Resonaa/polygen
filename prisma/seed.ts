@@ -68,8 +68,8 @@ async function seed() {
 
   await prisma.announcement.create({
     data: {
-      title: "第 26 次内测已开始",
-      content: "测试内容：地图生成器"
+      title: "第 27 次内测已开始",
+      content: "测试内容：地图缩放与拖动\n\n提示：本次测试可能产生**兼容性问题**，欢迎反馈"
     }
   });
 

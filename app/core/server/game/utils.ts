@@ -17,7 +17,7 @@ export function getNeighbours(gm: Map, cur: number[]) {
 }
 
 export function playerCountToSize(playerCount: number) {
-  return 14 + Math.ceil((playerCount - 2) / 2) * 2;
+  return Math.ceil(Math.sqrt(78 * playerCount));
 }
 
 export function astar(map: Map, from: number[], to: number[]) {

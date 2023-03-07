@@ -1,14 +1,24 @@
 import type { RoomMode } from "~/core/server/room";
 import { Map } from "~/core/server/game/map";
 import { playerCountToSize, astar } from "~/core/server/game/utils";
-import { randInt } from "~/core/client/utils";
+import { randInt, shuffle } from "~/core/client/utils";
 import { LandType } from "~/core/server/game/land";
 
 const cityDensity = 0.05;
 const mountainDensity = 0.13;
 
-function randPos(size: number) {
-  return [randInt(1, size), randInt(1, size)];
+function generateRandomPos(size: number) {
+  let ans = [];
+
+  for (let i = 1; i <= size; i++) {
+    for (let j = 1; j <= size; j++) {
+      ans.push([i, j]);
+    }
+  }
+
+  shuffle(ans);
+
+  return ans;
 }
 
 export function generateRandomMap(playerCount: number, mode: RoomMode): Map {
@@ -16,26 +26,26 @@ export function generateRandomMap(playerCount: number, mode: RoomMode): Map {
 
   const size = map.size, gm = map.gm;
 
-  for (let i = 1; i <= mountainDensity * size * size; i++) {
-    while (true) {
-      const [x, y] = randPos(size);
+  let randPos = generateRandomPos(size);
 
-      if (gm[x][y].type === LandType.Land) {
-        gm[x][y].type = LandType.Mountain;
-        break;
-      }
+  for (let i = 1; i <= mountainDensity * size * size; i++) {
+    const pos = randPos.shift();
+
+    if (pos) {
+      gm[pos[0]][pos[1]].type = LandType.Mountain;
+    } else {
+      return generateRandomMap(playerCount, mode);
     }
   }
 
   for (let i = 1; i <= cityDensity * size * size; i++) {
-    while (true) {
-      const [x, y] = randPos(size);
+    const pos = randPos.shift();
 
-      if (gm[x][y].type === LandType.Land) {
-        gm[x][y].type = LandType.City;
-        gm[x][y].amount = randInt(41, 50);
-        break;
-      }
+    if (pos) {
+      gm[pos[0]][pos[1]].type = LandType.City;
+      gm[pos[0]][pos[1]].amount = randInt(41, 50);
+    } else {
+      return generateRandomMap(playerCount, mode);
     }
   }
 
@@ -48,15 +58,10 @@ export function generateRandomMap(playerCount: number, mode: RoomMode): Map {
       return generateRandomMap(playerCount, mode);
     }
 
-    let ans = [];
+    const ans = randPos.shift();
 
-    while (true) {
-      const [x, y] = randPos(size);
-
-      if (gm[x][y].type === LandType.Land) {
-        ans = [x, y];
-        break;
-      }
+    if (!ans) {
+      return generateRandomMap(playerCount, mode);
     }
 
     if (i === 1) {

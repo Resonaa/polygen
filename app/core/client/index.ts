@@ -34,7 +34,7 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
 
   let selected: number[] = [], hovered: number[] = [];
 
-  let gm = generateRandomMap(randInt(2, 10), RoomMode.Hexagon);
+  let gm = generateRandomMap(randInt(2, 16), RoomMode.Hexagon);
 
   let hexagonWidth: number, hexagonHeight: number, hexagonWidthSmall: number,
     hexagonRadius: number, startX: number,
@@ -42,24 +42,26 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
 
   let images: PIXI.Sprite[][] = [[]];
   let texts: PIXI.Text[][] = [[]];
+  let hitAreas: PIXI.Sprite[][] = [[]];
+
+  let scale = 1, deltaX = 0, deltaY = 0;
 
   function setDefaultWidth() {
-    const width = app.view.width;
-    const height = app.view.height;
-
-    const maxXWidth = width / (gm.size + 0.5);
-    const maxYWidth = height / (1 + (gm.size - 1) * 0.75) / (2 / Math.sqrt(3));
+    const maxXWidth = app.view.width / (gm.size + 0.5);
+    const maxYWidth = app.view.height / (1 + (gm.size - 1) * 0.75) / (2 / Math.sqrt(3));
 
     hexagonWidth = Math.min(maxXWidth, maxYWidth);
     hexagonHeight = 2 / Math.sqrt(3) * hexagonWidth;
 
     hexagonWidthSmall = hexagonWidth / 2 / Math.sqrt(3); // l * sqrt(3) / 6
     hexagonRadius = hexagonWidthSmall * 2;
+  }
 
+  function setStartXY() {
     const realWidth = hexagonWidth * (gm.size + 0.5), realHeight = hexagonHeight * (1 + (gm.size - 1) * 0.75);
 
-    startX = (width - realWidth) / 1.3;
-    startY = (height - realHeight) / 2;
+    startX = (app.view.width - realWidth) / 2;
+    startY = (app.view.height - realHeight) / 2;
   }
 
   function getHexagonUpperLeftPos(i: number, j: number) {
@@ -83,12 +85,23 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
     return path;
   }
 
-  function setImage() {
+  function addImage() {
     for (let i = 1; i <= gm.size; i++) {
       images.push([new PIXI.Sprite()]);
 
       for (let j = 1; j <= gm.size; j++) {
         const image = new PIXI.Sprite();
+
+        images[i].push(image);
+        app.stage.addChild(image);
+      }
+    }
+  }
+
+  function setImage() {
+    for (let i = 1; i <= gm.size; i++) {
+      for (let j = 1; j <= gm.size; j++) {
+        const image = images[i][j];
 
         const [x, y] = getHexagonUpperLeftPos(i, j);
 
@@ -96,9 +109,19 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
 
         image.x = x + (hexagonWidth - image.width) / 2;
         image.y = y + (hexagonHeight - image.height) / 2;
+      }
+    }
+  }
 
-        images[i].push(image);
-        app.stage.addChild(image);
+  function addText() {
+    for (let i = 1; i <= gm.size; i++) {
+      texts.push([new PIXI.Text()]);
+
+      for (let j = 1; j <= gm.size; j++) {
+        const text = new PIXI.Text("");
+
+        texts[i].push(text);
+        app.stage.addChild(text);
       }
     }
   }
@@ -111,13 +134,8 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
     });
 
     for (let i = 1; i <= gm.size; i++) {
-      texts.push([new PIXI.Text()]);
-
       for (let j = 1; j <= gm.size; j++) {
-        const text = new PIXI.Text("", style);
-
-        texts[i].push(text);
-        app.stage.addChild(text);
+        texts[i][j].style = style;
       }
     }
   }
@@ -139,7 +157,7 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
       text = String(Math.round(amount / 1000000)) + "m";
     } else {
       const power = Math.round(Math.log10(amount));
-      text = `${Math.round(amount / Math.pow(10, power))}^${power}`;
+      text = `${Math.round(amount / Math.pow(10, power))}e${power}`;
     }
 
     texts[i][j].text = text;
@@ -195,6 +213,14 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
       for (let j = 1; j <= gm.size; j++) {
         update(i, j);
       }
+    }
+
+    if (hovered.length > 0) {
+      update(hovered[0], hovered[1]);
+    }
+
+    if (selected.length > 0) {
+      update(selected[0], selected[1]);
     }
   }
 
@@ -252,6 +278,25 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
     }
   }
 
+  function addHitArea() {
+    for (let i = 1; i <= gm.size; i++) {
+      hitAreas.push([new PIXI.Sprite()]);
+
+      for (let j = 1; j <= gm.size; j++) {
+        const hit = new PIXI.Sprite();
+
+        if (gm.get(i, j).type !== LandType.Mountain) {
+          hit.cursor = "pointer";
+          hit.eventMode = "static";
+          hit.on("pointerdown", () => select(i, j)).on("pointerenter", () => hover(i, j)).on("pointerleave", unHover);
+        }
+
+        app.stage.addChild(hit);
+        hitAreas[i].push(hit);
+      }
+    }
+  }
+
   function setHitArea() {
     const [x, y] = getHexagonUpperLeftPos(1, 1);
     let hexagon = getHexagonPath(1, 1);
@@ -262,30 +307,27 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
 
     for (let i = 1; i <= gm.size; i++) {
       for (let j = 1; j <= gm.size; j++) {
-        if (gm.get(i, j).type === LandType.Mountain) {
-          continue;
-        }
-
-        const hit = new PIXI.Sprite();
+        const hit = hitAreas[i][j];
 
         const [x, y] = getHexagonUpperLeftPos(i, j);
         hit.position.set(x, y);
 
         hit.hitArea = new PIXI.Polygon(hexagon);
-        hit.cursor = "pointer";
-        hit.eventMode = "static";
-
-        hit.on("pointerdown", () => select(i, j)).on("pointerenter", () => hover(i, j)).on("pointerleave", unHover);
-
-        app.stage.addChild(hit);
       }
     }
   }
 
   setDefaultWidth();
+  setStartXY();
+
+  addImage();
   setImage();
+
+  addText();
   setText();
   updateAll();
+
+  addHitArea();
   setHitArea();
 
   document.onclick = (event) => {
@@ -294,4 +336,59 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
       unHover();
     }
   };
+
+  function reDraw() {
+    setDefaultWidth();
+
+    hexagonWidth *= scale;
+    hexagonHeight *= scale;
+    hexagonRadius *= scale;
+    hexagonWidthSmall *= scale;
+
+    setStartXY();
+
+    startX += deltaX;
+    startY += deltaY;
+
+    setImage();
+    setText();
+    setHitArea();
+
+    graphics.clear();
+
+    updateAll();
+  }
+
+  const canvas = app.view as HTMLCanvasElement;
+
+  canvas.addEventListener("wheel", event => {
+    event.preventDefault();
+
+    scale += event.deltaY * -0.002;
+    scale = Math.min(Math.max(.125, scale), 4);
+
+    reDraw();
+  });
+
+  canvas.addEventListener("mousedown", event => {
+    const startX = event.pageX, startY = event.pageY;
+    const initialDeltaX = deltaX, initialDeltaY = deltaY;
+
+    canvas.onmousemove = event => {
+      const newDeltaX = event.pageX - startX, newDeltaY = event.pageY - startY;
+
+      if (Math.abs(newDeltaX) <= 10 && Math.abs(newDeltaY) <= 10) {
+        return;
+      }
+
+      deltaX = initialDeltaX + newDeltaX;
+      deltaY = initialDeltaY + newDeltaY;
+
+      reDraw();
+    };
+
+    canvas.onmouseup = () => {
+      canvas.onmousemove = canvas.onmouseup = null;
+    };
+  });
 }
