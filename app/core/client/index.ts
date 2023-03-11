@@ -19,8 +19,8 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
 
   const app = new PIXI.Application({
     antialias: true,
-    width: container.clientWidth - 28,
-    height: container.clientHeight - 28
+    width: container.clientWidth,
+    height: container.clientHeight
   });
 
   container.appendChild(app.view as HTMLCanvasElement);

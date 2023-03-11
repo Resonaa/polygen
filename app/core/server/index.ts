@@ -15,12 +15,11 @@ export function setServer(server: Server) {
     socket.leave(socket.id);
 
     socket.data.username = username;
-    console.log(username, "connected");
 
     let rid: string;
 
     socket.on("joinRoom", _rid => {
-      server.in(SocketRoom.rid(_rid)).disconnectSockets();
+      server.in(SocketRoom.usernameRid(username, _rid)).disconnectSockets();
       handlePlayerLeave(server, username, _rid);
 
       rid = _rid;
@@ -28,6 +27,7 @@ export function setServer(server: Server) {
 
       socket.join(SocketRoom.username(username));
       socket.join(SocketRoom.rid(rid));
+      socket.join(SocketRoom.usernameRid(username, rid));
       handlePlayerJoin(server, username, rid);
     });
 
@@ -42,7 +42,6 @@ export function setServer(server: Server) {
     });
 
     socket.on("disconnect", () => {
-      console.log(username, "disconnected");
       handlePlayerLeave(server, username, rid);
     });
   });

@@ -3,7 +3,8 @@ import type { Server } from "~/core/types";
 
 export const SocketRoom = {
   rid: (rid: string) => `#${rid}`,
-  username: (username: string) => `@${username}`
+  username: (username: string) => `@${username}`,
+  usernameRid: (username: string, rid: string) => `@${username}#${rid}`
 };
 
 export const enum RoomMode {
