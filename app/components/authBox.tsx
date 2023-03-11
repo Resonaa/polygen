@@ -1,5 +1,5 @@
 import { useRef, useEffect } from "react";
-import { Form as ReactForm, Link, useActionData, useSearchParams, useTransition } from "@remix-run/react";
+import { Form as ReactForm, Link, useActionData, useSearchParams, useNavigation } from "@remix-run/react";
 import { Button, Form, Icon, Grid } from "semantic-ui-react";
 import clsx from "clsx";
 
@@ -17,7 +17,7 @@ export default function AuthBox({ type }: { type: "login" | "register" }) {
   const passwordRef = useRef<HTMLInputElement>(null);
   const repeatPasswordRef = useRef<HTMLInputElement>(null);
 
-  const transition = useTransition();
+  const navigation = useNavigation();
 
   useEffect(() => {
     if (actionData?.username) {
@@ -99,8 +99,8 @@ export default function AuthBox({ type }: { type: "login" | "register" }) {
           }
 
           <input type="hidden" name="redirectTo" value={redirectTo} />
-          <Button fluid primary size="large" type="submit" loading={transition.state === "submitting"}
-                  disabled={transition.state === "submitting"}>
+          <Button fluid primary size="large" type="submit" loading={navigation.state === "submitting"}
+                  disabled={navigation.state === "submitting"}>
             {type === "login" ? "登录" : "注册"}
           </Button>
 

@@ -1,5 +1,6 @@
 import type { ClientSocket } from "../types";
 import { colors, SpecialColor } from "~/core/client/colors";
+import type { Pos } from "~/core/server/game/utils";
 import { getNeighbours } from "~/core/server/game/utils";
 import { randInt } from "~/core/client/utils";
 
@@ -32,7 +33,7 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
     PIXI.Texture.from("/images/mountain.png"),
     PIXI.Texture.from("/images/obstacle.png")];
 
-  let selected: number[] = [], hovered: number[] = [];
+  let selected: Pos | null = null, hovered: Pos | null = null;
 
   let gm = generateRandomMap(randInt(2, 16), RoomMode.Hexagon);
 
@@ -64,15 +65,15 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
     startY = (app.view.height - realHeight) / 2;
   }
 
-  function getHexagonUpperLeftPos(i: number, j: number) {
+  function getHexagonUpperLeftPos([i, j]: Pos) {
     const upperLeftX = startX + (j - 1) * hexagonWidth + (i % 2 === 0 ? hexagonWidth / 2 : 0);
     const upperLeftY = startY + (i - 1) * 0.75 * hexagonHeight;
 
     return [upperLeftX, upperLeftY];
   }
 
-  function getHexagonPath(i: number, j: number) {
-    const [upperLeftX, upperLeftY] = getHexagonUpperLeftPos(i, j);
+  function getHexagonPath(pos: Pos) {
+    const [upperLeftX, upperLeftY] = getHexagonUpperLeftPos(pos);
 
     let path = [upperLeftX, upperLeftY + hexagonWidthSmall];
 
@@ -103,7 +104,7 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
       for (let j = 1; j <= gm.size; j++) {
         const image = images[i][j];
 
-        const [x, y] = getHexagonUpperLeftPos(i, j);
+        const [x, y] = getHexagonUpperLeftPos([i, j]);
 
         image.width = image.height = hexagonHeight / 1.5;
 
@@ -140,7 +141,7 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
     }
   }
 
-  function updateAmount(i: number, j: number, amount: number) {
+  function updateAmount([i, j]: Pos, amount: number) {
     let text;
 
     if (amount <= 0) {
@@ -162,7 +163,7 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
 
     texts[i][j].text = text;
 
-    const [x, y] = getHexagonUpperLeftPos(i, j);
+    const [x, y] = getHexagonUpperLeftPos([i, j]);
     const width = texts[i][j].width;
     const height = texts[i][j].height;
 
@@ -170,7 +171,7 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
     texts[i][j].y = y + (hexagonHeight - height) / 2;
   }
 
-  function updateImage(i: number, j: number, type: number) {
+  function updateImage([i, j]: Pos, type: number) {
     const texture = textures[type];
 
     if (!texture) {
@@ -180,15 +181,15 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
     images[i][j].texture = texture;
   }
 
-  function update(i: number, j: number, clean?: boolean) {
-    if (i < 1 || i > gm.size || j < 1 || j > gm.size) {
+  function update(pos: Pos, clean?: boolean) {
+    if (!gm.check(pos)) {
       return;
     }
 
-    const isSelected = selected.length > 0 && i === selected[0] && j === selected[1];
-    const isHovered = hovered.length > 0 && i === hovered[0] && j === hovered[1];
+    const isSelected = selected && selected.join() === pos.join();
+    const isHovered = hovered && hovered.join() === pos.join();
 
-    const land = gm.get(i, j);
+    const land = gm.get(pos);
 
     let fillColor = colors[land.color];
 
@@ -196,85 +197,86 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
       fillColor = SpecialColor.Empty;
     }
 
-    const lineWidth = isSelected || clean ? 4 : isHovered ? 2 : 0.5;
+    const lineWidth = isSelected || clean ? 4 : isHovered ? 2 : 1;
     const lineColor = (isSelected || isHovered) && !clean ? SpecialColor.SelectedBorder : undefined;
 
     graphics.lineStyle(lineWidth, lineColor);
     graphics.beginFill(fillColor);
-    graphics.drawPolygon(getHexagonPath(i, j));
+    graphics.drawPolygon(getHexagonPath(pos));
     graphics.endFill();
 
-    updateImage(i, j, land.type);
-    updateAmount(i, j, land.amount);
+    updateImage(pos, land.type);
+    updateAmount(pos, land.amount);
   }
 
   function updateAll() {
     for (let i = 1; i <= gm.size; i++) {
       for (let j = 1; j <= gm.size; j++) {
-        update(i, j);
+        update([i, j]);
       }
     }
 
-    if (hovered.length > 0) {
-      update(hovered[0], hovered[1]);
+    if (hovered) {
+      update(hovered);
     }
 
-    if (selected.length > 0) {
-      update(selected[0], selected[1]);
+    if (selected) {
+      update(selected);
     }
   }
 
   function unSelect() {
-    const [preSelectedX, preSelectedY] = selected;
+    if (!selected) {
+      return;
+    }
 
-    selected = [];
+    const preSelected = selected;
 
-    update(preSelectedX, preSelectedY, true);
-    update(preSelectedX, preSelectedY);
+    selected = null;
 
-    for (let [nx, ny] of getNeighbours(gm, [preSelectedX, preSelectedY])) {
-      update(nx, ny);
+    update(preSelected, true);
+    update(preSelected);
+
+    for (let neighbour of getNeighbours(gm, preSelected)) {
+      update(neighbour);
     }
   }
 
-  function select(i: number, j: number) {
-    if (selected.length > 0) {
-      unSelect();
-    }
+  function select(pos: Pos) {
+    unSelect();
 
-    selected = [i, j];
-
-    update(i, j);
+    selected = pos;
+    update(pos);
   }
 
   function unHover() {
-    const [preHoveredX, preHoveredY] = hovered;
-
-    hovered = [];
-
-    update(preHoveredX, preHoveredY, true);
-    update(preHoveredX, preHoveredY);
-
-    for (let [nx, ny] of getNeighbours(gm, [preHoveredX, preHoveredY])) {
-      update(nx, ny);
+    if (!hovered) {
+      return;
     }
 
-    if (selected.length > 0) {
-      update(selected[0], selected[1]);
+    const preHovered = hovered;
+
+    hovered = null;
+    update(preHovered, true);
+    update(preHovered);
+
+    for (let neighbour of getNeighbours(gm, preHovered)) {
+      update(neighbour);
+    }
+
+    if (selected) {
+      update(selected);
     }
   }
 
-  function hover(i: number, j: number) {
-    if (hovered.length > 0) {
-      unHover();
-    }
+  function hover(pos: Pos) {
+    unHover();
 
-    hovered = [i, j];
+    hovered = pos;
+    update(pos);
 
-    update(i, j);
-
-    if (selected.length > 0) {
-      update(selected[0], selected[1]);
+    if (selected) {
+      update(selected);
     }
   }
 
@@ -283,12 +285,12 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
       hitAreas.push([new PIXI.Sprite()]);
 
       for (let j = 1; j <= gm.size; j++) {
-        const hit = new PIXI.Sprite();
+        const hit = new PIXI.Sprite(), pos = [i, j] as Pos;
 
-        if (gm.get(i, j).type !== LandType.Mountain) {
+        if (gm.get(pos).type !== LandType.Mountain) {
           hit.cursor = "pointer";
-          hit.eventMode = "static";
-          hit.on("pointerdown", () => select(i, j)).on("pointerenter", () => hover(i, j)).on("pointerleave", unHover);
+          hit.interactive = true;
+          hit.on("pointerdown", () => select(pos)).on("pointerenter", () => hover(pos)).on("pointerleave", unHover);
         }
 
         app.stage.addChild(hit);
@@ -298,8 +300,8 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
   }
 
   function setHitArea() {
-    const [x, y] = getHexagonUpperLeftPos(1, 1);
-    let hexagon = getHexagonPath(1, 1);
+    const [x, y] = getHexagonUpperLeftPos([1, 1]);
+    let hexagon = getHexagonPath([1, 1]);
     for (let p = 0; p < hexagon.length; p += 2) {
       hexagon[p] -= x;
       hexagon[p + 1] -= y;
@@ -309,7 +311,7 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
       for (let j = 1; j <= gm.size; j++) {
         const hit = hitAreas[i][j];
 
-        const [x, y] = getHexagonUpperLeftPos(i, j);
+        const [x, y] = getHexagonUpperLeftPos([i, j]);
         hit.position.set(x, y);
 
         hit.hitArea = new PIXI.Polygon(hexagon);
@@ -330,7 +332,7 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
   addHitArea();
   setHitArea();
 
-  document.onclick = (event) => {
+  document.onclick = event => {
     if (event.target !== document.querySelector("canvas")) {
       unSelect();
       unHover();
@@ -361,16 +363,14 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
 
   const canvas = app.view as HTMLCanvasElement;
 
-  canvas.addEventListener("wheel", event => {
-    event.preventDefault();
-
+  canvas.onwheel = event => {
     scale += event.deltaY * -0.002;
-    scale = Math.min(Math.max(.125, scale), 4);
+    scale = Math.min(Math.max(0.125, scale), 4);
 
     reDraw();
-  });
+  };
 
-  canvas.addEventListener("mousedown", event => {
+  canvas.onmousedown = event => {
     const startX = event.pageX, startY = event.pageY;
     const initialDeltaX = deltaX, initialDeltaY = deltaY;
 
@@ -390,5 +390,5 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
     canvas.onmouseup = () => {
       canvas.onmousemove = canvas.onmouseup = null;
     };
-  });
+  };
 }

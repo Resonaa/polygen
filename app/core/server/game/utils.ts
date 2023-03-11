@@ -2,6 +2,8 @@ import type { RoomMode } from "~/core/server/room";
 import type { Map } from "~/core/server/game/map";
 import { LandType } from "~/core/server/game/land";
 
+export type Pos = [number, number];
+
 export function getDir(mode: RoomMode, row: number) {
   if (row % 2 === 0) {
     return [[-1, 0], [-1, 1], [0, 1], [1, 1], [1, 0], [0, -1]];
@@ -10,9 +12,9 @@ export function getDir(mode: RoomMode, row: number) {
   }
 }
 
-export function getNeighbours(gm: Map, cur: number[]) {
+export function getNeighbours(gm: Map, cur: Pos) {
   return getDir(gm.mode, cur[0])
-    .map(([dx, dy]) => [dx + cur[0], dy + cur[1]])
+    .map(([dx, dy]) => [dx + cur[0], dy + cur[1]] as Pos)
     .filter(([x, y]) => x >= 1 && x <= gm.size && y >= 1 && y <= gm.size);
 }
 
@@ -20,7 +22,7 @@ export function playerCountToSize(playerCount: number) {
   return Math.ceil(Math.sqrt(78 * playerCount));
 }
 
-export function astar(map: Map, from: number[], to: number[]) {
+export function astar(map: Map, from: Pos, to: Pos) {
   let vis: boolean[][] = [];
   for (let i = 0; i <= map.size; i++) {
     vis.push([]);
@@ -30,7 +32,7 @@ export function astar(map: Map, from: number[], to: number[]) {
     }
   }
 
-  let q: [number[], number][] = [[from, 0]];
+  let q: [Pos, number][] = [[from, 0]];
 
   vis[from[0]][from[1]] = true;
 
@@ -44,7 +46,7 @@ export function astar(map: Map, from: number[], to: number[]) {
     const [cur, len] = front;
 
     for (let nxt of getNeighbours(map, cur)) {
-      if (vis[nxt[0]][nxt[1]] || [LandType.Mountain, LandType.City].includes(map.get(nxt[0], nxt[1]).type)) {
+      if (vis[nxt[0]][nxt[1]] || [LandType.Mountain, LandType.City].includes(map.get(nxt).type)) {
         continue;
       }
 

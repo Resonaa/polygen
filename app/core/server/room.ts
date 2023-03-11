@@ -58,17 +58,20 @@ export function handlePlayerJoin(server: Server, username: string, rid: string) 
   return true;
 }
 
-export function handlePlayerLeave(server: Server, username: string) {
-  for (const { id, players } of roomData.values()) {
-    const index = players.findIndex(player => player.username === username);
+export function handlePlayerLeave(server: Server, username: string, rid: string) {
+  const room = roomData.get(rid);
 
-    if (index !== -1) {
-      players.splice(index, 1);
+  if (!room) {
+    return;
+  }
 
-      server.to(SocketRoom.rid(id)).emit("info", `${username}离开了房间`);
+  const index = room.players.findIndex(player => player.username === username);
+  if (index !== -1) {
+    room.players.splice(index, 1);
 
-      if (players.length === 0 && id !== "161")
-        roomData.delete(id);
-    }
+    server.to(SocketRoom.rid(rid)).emit("info", `${username}离开了房间`);
+
+    if (room.players.length === 0 && rid !== "161")
+      roomData.delete(rid);
   }
 }

@@ -1,5 +1,6 @@
 import { Land } from "~/core/server/game/land";
 import { RoomMode } from "~/core/server/room";
+import type { Pos } from "~/core/server/game/utils";
 
 export class Map {
   size: number;
@@ -20,7 +21,11 @@ export class Map {
     }
   }
 
-  get(i: number, j: number) {
+  get([i, j]: Pos) {
     return this.gm[i][j];
+  }
+
+  check([i, j]: Pos) {
+    return i >= 1 && i <= this.size && j >= 1 && j <= this.size;
   }
 }

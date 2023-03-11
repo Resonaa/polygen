@@ -12,9 +12,7 @@ export function setServer(server: Server) {
       return;
     }
 
-    server.in(SocketRoom.username(username)).disconnectSockets();
     socket.leave(socket.id);
-    handlePlayerLeave(server, username);
 
     socket.data.username = username;
     console.log(username, "connected");
@@ -22,9 +20,12 @@ export function setServer(server: Server) {
     let rid: string;
 
     socket.on("joinRoom", _rid => {
-      handlePlayerLeave(server, username);
+      server.in(SocketRoom.rid(_rid)).disconnectSockets();
+      handlePlayerLeave(server, username, _rid);
+
       rid = _rid;
       socket.data.rid = rid;
+
       socket.join(SocketRoom.username(username));
       socket.join(SocketRoom.rid(rid));
       handlePlayerJoin(server, username, rid);
@@ -42,7 +43,7 @@ export function setServer(server: Server) {
 
     socket.on("disconnect", () => {
       console.log(username, "disconnected");
-      handlePlayerLeave(server, username);
+      handlePlayerLeave(server, username, rid);
     });
   });
 }

@@ -16,7 +16,7 @@ export async function loader({ request }: LoaderArgs) {
   return await requireAuthenticatedOptionalUser(request, Access.Settings);
 }
 
-function Settings() {
+function SettingsMenu() {
   function Setting({ id, name }: { id: string, name: string }) {
     return (
       <Menu.Item as={NavLink} to={id}>
@@ -38,11 +38,11 @@ function Settings() {
   );
 }
 
-export default function Admin() {
+export default function Settings() {
   return (
     <Layout columns={2}>
       <Grid.Column width={3}>
-        <Settings />
+        <SettingsMenu />
       </Grid.Column>
 
       <Grid.Column width={13}>

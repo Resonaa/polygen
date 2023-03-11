@@ -1,6 +1,6 @@
 import type { LoaderArgs, ActionArgs, MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { useActionData, useLoaderData, useSubmit, useTransition } from "@remix-run/react";
+import { useActionData, useLoaderData, useSubmit, useNavigation } from "@remix-run/react";
 import { useEffect, useRef, useState } from "react";
 import Vditor from "vditor";
 import {
@@ -82,7 +82,7 @@ export default function PostId() {
     });
   }, []);
 
-  const transition = useTransition();
+  const navigation = useNavigation();
   const actionData = useActionData<typeof action>();
   const submit = useSubmit();
 
@@ -95,7 +95,7 @@ export default function PostId() {
   };
 
   useEffect(() => {
-    if (actionData && transition.state !== "submitting") {
+    if (actionData && navigation.state !== "submitting") {
       vd?.setValue("");
       setPage(page => {
         if (page === 1) {
@@ -108,7 +108,7 @@ export default function PostId() {
         return 1;
       });
     }
-  }, [actionData, vd, transition.state, post.id]);
+  }, [actionData, vd, navigation.state, post.id]);
 
   useEffect(() => {
     ajax("post", "/post/comment", {
@@ -139,8 +139,8 @@ export default function PostId() {
                   <SemanticComment.Text>
                     <div id="vditor" className="h-32" />
                     <Button icon primary labelPosition="left" onClick={sendRequest}
-                            loading={transition.state === "submitting"}
-                            disabled={transition.state === "submitting"} className="!mt-4">
+                            loading={navigation.state === "submitting"}
+                            disabled={navigation.state === "submitting"} className="!mt-4">
                       <Icon name="send" />
                       评论
                     </Button>

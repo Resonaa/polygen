@@ -1,5 +1,6 @@
 import type { RoomMode } from "~/core/server/room";
 import { Map } from "~/core/server/game/map";
+import type { Pos } from "~/core/server/game/utils";
 import { playerCountToSize, astar } from "~/core/server/game/utils";
 import { randInt, shuffle } from "~/core/client/utils";
 import { LandType } from "~/core/server/game/land";
@@ -12,7 +13,7 @@ function generateRandomPos(size: number) {
 
   for (let i = 1; i <= size; i++) {
     for (let j = 1; j <= size; j++) {
-      ans.push([i, j]);
+      ans.push([i, j] as Pos);
     }
   }
 

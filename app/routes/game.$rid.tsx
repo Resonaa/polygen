@@ -48,7 +48,7 @@ export default function Rid() {
 
   return (
     <Grid stackable container inverted className="!m-0 h-full" style={{ width: "100% !important" }}>
-      <Grid.Column width={12} className="h-full" />
+      <Grid.Column width={12} className="h-full !p-0" />
 
       <Grid.Column width={4} className="!flex justify-between flex-col !p-0">
         <Segment inverted>

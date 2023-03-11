@@ -1,4 +1,4 @@
-import { useActionData, useLoaderData, useSubmit, useTransition } from "@remix-run/react";
+import { useActionData, useLoaderData, useSubmit, useNavigation } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import type { LoaderArgs, ActionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
@@ -61,7 +61,7 @@ export default function Index() {
     });
   }, []);
 
-  const transition = useTransition();
+  const navigation = useNavigation();
   const actionData = useActionData<typeof action>();
   const submit = useSubmit();
 
@@ -78,7 +78,7 @@ export default function Index() {
 
   useEffect(() => {
     (async () => {
-      if (actionData && transition.state !== "submitting") {
+      if (actionData && navigation.state !== "submitting") {
         vd?.setValue("");
         const data = await ajax("post", "/post/page", { page: 1 });
 
@@ -90,7 +90,7 @@ export default function Index() {
         });
       }
     })();
-  }, [actionData, vd, transition.state]);
+  }, [actionData, vd, navigation.state]);
 
   const loadMore = () => {
     if (page === -1 || loading)
@@ -122,8 +122,8 @@ export default function Index() {
                 <Feed.Extra text className="!max-w-none">
                   <div id="vditor" className="h-32" />
                   <Button icon primary labelPosition="left" onClick={sendRequest}
-                          loading={transition.state === "submitting"}
-                          disabled={transition.state === "submitting"} className="!mt-4">
+                          loading={navigation.state === "submitting"}
+                          disabled={navigation.state === "submitting"} className="!mt-4">
                     <Icon name="send" />
                     发布
                   </Button>
