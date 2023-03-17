@@ -12,7 +12,7 @@ export function getColorByMessageType(type: MessageType) {
   else if (type === MessageType.Room)
     return "blue";
   else
-    return "orange";
+    return "salmon";
 }
 
 function GameMessage({ type, content, username }: Pick<Message, "type" | "content" | "username">) {

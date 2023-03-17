@@ -15,8 +15,20 @@ input::selection {
   color: #000000de !important;
 }
 
-.dropdown .menu, #catch-the-cat {
-  filter: grayscale(1) invert(1);
+input {
+  border-width: 1.5px !important;
+}
+
+input.房间:focus {
+  border-color: lightblue !important;
+}
+
+input.世界:focus {
+  border-color: lightgreen !important;
+}
+
+input.队伍:focus {
+  border-color: lightsalmon !important;
 }
 
 canvas {

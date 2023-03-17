@@ -1,19 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import { Dropdown, Input } from "semantic-ui-react";
-import clsx from "clsx";
+import { Input } from "semantic-ui-react";
 
 import { MessageType } from "~/core/server/message";
-import { getColorByMessageType, Messages } from "~/core/client/message";
+import { Messages } from "~/core/client/message";
 import type { ClientSocket } from "~/core/types";
 
 export function Chat({ client }: { client?: ClientSocket }) {
   function ChatForm() {
-    const options = [
-      { key: MessageType.Room, text: MessageType.Room, value: MessageType.Room },
-      { key: MessageType.World, text: MessageType.World, value: MessageType.World },
-      { key: MessageType.Team, text: MessageType.Team, value: MessageType.Team }
-    ];
-
     const [type, setType] = useState(MessageType.Room);
     const contentRef = useRef<HTMLInputElement>(null);
 
@@ -45,7 +38,7 @@ export function Chat({ client }: { client?: ClientSocket }) {
         e.preventDefault();
 
         if (document.activeElement === input) {
-          setTimeout(() => input.blur(), 200);
+          setTimeout(() => input.blur(), 100);
           handleSubmit();
         } else
           input.focus();
@@ -61,12 +54,8 @@ export function Chat({ client }: { client?: ClientSocket }) {
 
     return (
       <Input
-        label={<Dropdown className={clsx("button icon", getColorByMessageType(type))} options={options}
-                         value={type}
-                         onChange={(_, data) => setType(data.value as MessageType)} />}
-        labelPosition="right"
-        placeholder="输入聊天内容"
-        input={{ className: "!text-white !bg-black !transition-colors", ref: contentRef }}
+        placeholder={`发送至：${type}`}
+        input={{ className: `!text-white !bg-black !transition-colors ${type}`, ref: contentRef }}
         fluid
       />
     );
