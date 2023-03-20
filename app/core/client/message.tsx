@@ -98,7 +98,7 @@ export function Messages({ client }: { client?: ClientSocket }) {
     <>
       {messages}
 
-      <div ref={messageEnd} className="h-2" />
+      <div ref={messageEnd} className="h-1" />
       {newCount > 0 &&
         (<Label color="red" circular size="small" floating onClick={scrollDown} className="cursor-pointer"
                 title={`${newCount}条新消息`}>

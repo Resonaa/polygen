@@ -51,11 +51,11 @@ export default function Rid() {
       <Grid.Column width={12} className="h-full !p-0" />
 
       <Grid.Column width={4} className="!flex justify-between flex-col !p-0">
-        <Segment inverted>
+        <Segment inverted className="!pr-0">
           <GamePanel client={client} />
         </Segment>
 
-        <Segment inverted>
+        <Segment inverted className="!pr-0 !pb-0 !pt-2">
           <Chat client={client} />
         </Segment>
       </Grid.Column>

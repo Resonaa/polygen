@@ -55,7 +55,7 @@ export function Chat({ client }: { client?: ClientSocket }) {
     return (
       <Input
         placeholder={`发送至：${type}`}
-        input={{ className: `!text-white !bg-black !transition-colors ${type}`, ref: contentRef }}
+        input={{ className: `!text-white !bg-black !transition-colors ${type}`, ref: contentRef, autoComplete: "off" }}
         fluid
       />
     );

@@ -14,7 +14,7 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
     client.emit("joinRoom", rid);
   });
 
-  const container = document.querySelector(".twelve");
+  const container = document.querySelector(".ui.grid.container");
   if (!container) return;
 
   const app = new PIXI.Application({
@@ -23,7 +23,7 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
     height: container.clientHeight
   });
 
-  container.appendChild(app.view as HTMLCanvasElement);
+  container.prepend(app.view as HTMLCanvasElement);
 
   const graphics = new PIXI.Graphics();
   app.stage.addChild(graphics);
@@ -216,13 +216,8 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
       }
     }
 
-    if (hovered) {
-      update(hovered);
-    }
-
-    if (selected) {
-      update(selected);
-    }
+    hovered && update(hovered);
+    selected && update(selected);
   }
 
   function unSelect() {
@@ -264,9 +259,7 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
       update(neighbour);
     }
 
-    if (selected) {
-      update(selected);
-    }
+    selected && update(selected);
   }
 
   function hover(pos: Pos) {
@@ -275,9 +268,7 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
     hovered = pos;
     update(pos);
 
-    if (selected) {
-      update(selected);
-    }
+    selected && update(selected);
   }
 
   function addHitArea() {
@@ -290,7 +281,9 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
         if (gm.get(pos).type !== LandType.Mountain) {
           hit.cursor = "pointer";
           hit.interactive = true;
-          hit.on("pointerdown", () => select(pos)).on("pointerenter", () => hover(pos)).on("pointerleave", unHover);
+          hit.on("pointerdown", () => select(pos))
+            .on("pointerenter", () => hover(pos))
+            .on("pointerleave", unHover);
         }
 
         app.stage.addChild(hit);
@@ -307,6 +300,8 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
       hexagon[p + 1] -= y;
     }
 
+    const polygon = new PIXI.Polygon(hexagon);
+
     for (let i = 1; i <= gm.size; i++) {
       for (let j = 1; j <= gm.size; j++) {
         const hit = hitAreas[i][j];
@@ -314,7 +309,7 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
         const [x, y] = getHexagonUpperLeftPos([i, j]);
         hit.position.set(x, y);
 
-        hit.hitArea = new PIXI.Polygon(hexagon);
+        hit.hitArea = polygon;
       }
     }
   }
