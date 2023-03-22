@@ -6,7 +6,7 @@ import { randInt, shuffle } from "~/core/client/utils";
 import { LandType } from "~/core/server/game/land";
 
 const cityDensity = 0.05;
-const mountainDensity = 0.13;
+const mountainDensity = 0.15;
 
 function generateRandomPos(size: number) {
   let ans = [];

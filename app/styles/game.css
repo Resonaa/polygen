@@ -32,15 +32,10 @@ input.队伍:focus {
 }
 
 canvas {
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  padding-left: 0 !important;
-  padding-right: 0 !important;
   z-index: 1;
 }
 
 .ui.inverted.segment {
-  background: rgba(27, 28, 29, 0.8) !important;
+  background: rgba(27, 28, 29, 0.7) !important;
   z-index: 2;
 }
