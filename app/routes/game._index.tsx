@@ -1,5 +1,5 @@
 import { Grid, Header, Table, Form, Button } from "semantic-ui-react";
-import type { LoaderArgs } from "@remix-run/node";
+import type { LoaderArgs, V2_MetaFunction } from "@remix-run/node";
 import { useLoaderData, Link } from "@remix-run/react";
 import { json } from "@remix-run/node";
 import { useState, Fragment } from "react";
@@ -10,24 +10,15 @@ import { requireAuthenticatedOptionalUser } from "~/session.server";
 import { Access } from "~/utils";
 import { UserLink } from "~/components/community";
 import type { Player } from "~/core/server/player";
+import { roomData } from "~/core/server/room";
 
-export function meta() {
-  return {
-    title: "大厅 - polygen"
-  };
-}
+export const meta: V2_MetaFunction = () => {
+  return [{ title: "大厅 - polygen" }];
+};
 
 export async function loader({ request }: LoaderArgs) {
   const user = await requireAuthenticatedOptionalUser(request, Access.Basic);
-
-  const rooms = roomData;
-  const roomList = [];
-
-  for (const room of rooms.values()) {
-    roomList.push(room);
-  }
-
-  return json({ rooms: roomList, user });
+  return json({ rooms: Array.from(roomData.values()), user });
 }
 
 function PlayerListString({ players }: { players: Player[] }) {
@@ -63,10 +54,9 @@ export default function Index() {
 
           <Table.Body>
             {rooms.map(room => (
-              <Table.Row key={room.id} title={user ? "点击加入" : "登陆后加入"} onClick={() => {
-                if (!user) return;
-                window.open(`/game/${encodeURIComponent(room.id)}`);
-              }} className={clsx(user && "cursor-pointer", "room-" + (room.ongoing ? "ongoing" : "ready"))}>
+              <Table.Row key={room.id} title={user ? "点击加入" : "登录后加入"} onClick={() =>
+                user && window.open("/game/" + encodeURIComponent(room.id))
+              } className={clsx(user && "cursor-pointer", "room-" + (room.ongoing ? "ongoing" : "ready"))}>
                 <Table.Cell width={3}>{room.id}</Table.Cell>
                 <Table.Cell width={2}>{room.mode}</Table.Cell>
                 <Table.Cell width={2}>{room.map}</Table.Cell>
@@ -84,14 +74,13 @@ export default function Index() {
           <Form>
             <Form.Input label="名称" placeholder="名称" type="text" onChange={(_, { value }) => setId(value)} />
 
-            <Button primary onClick={() => {
-              if (!id.trim()) return;
-              window.open(`/game/${id.trim()}`);
-            }}>创建房间</Button>
+            <Button primary onClick={() =>
+              id.trim() && window.open("/game/" + id.trim())
+            }>创建房间</Button>
           </Form>
         ) : (
           <>
-            请<Link to="/login">登录</Link>后加入或创建房间
+            请<Link to="/login" prefetch="intent">登录</Link>后加入或创建房间
           </>
         )}
       </Grid.Column>

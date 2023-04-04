@@ -43,7 +43,7 @@ export default function Post({
 
         {link ? (
           <Feed.Extra text className="max-h-72 overflow-auto !max-w-none" style={{ overflowWrap: "anywhere" }}>
-            <Link to={postUrl} style={{ color: "unset" }}>
+            <Link to={postUrl} style={{ color: "unset" }} prefetch="intent">
               <object>
                 <RenderedText content={content} mode="light" />
               </object>
@@ -60,8 +60,8 @@ export default function Post({
         <Feed.Meta>
           {link ? (
             <>
-              <Link to={postUrl}><Icon name="eye" />{views}</Link>
-              <Link to={postUrl} className="!ml-6"><Icon name="comment" />{commentAmount}</Link>
+              <Link to={postUrl}><Icon name="eye" prefetch="intent" />{views}</Link>
+              <Link to={postUrl} className="!ml-6" prefetch="intent"><Icon name="comment" />{commentAmount}</Link>
             </>) : (
             <>
               <Icon name="eye" />{views}

@@ -3,7 +3,7 @@ export const enum LandType {
   General,
   City,
   Mountain,
-  Obstacle,
+  UnknownMountain,
   Unknown
 }
 

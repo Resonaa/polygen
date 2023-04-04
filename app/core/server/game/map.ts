@@ -1,4 +1,4 @@
-import { Land } from "~/core/server/game/land";
+import { Land, LandType } from "~/core/server/game/land";
 import { RoomMode } from "~/core/server/room";
 import type { Pos } from "~/core/server/game/utils";
 
@@ -27,5 +27,10 @@ export class Map {
 
   check([i, j]: Pos) {
     return i >= 1 && i <= this.size && j >= 1 && j <= this.size;
+  }
+
+  accessible(pos: Pos) {
+    const land = this.get(pos);
+    return land.type !== LandType.Mountain && land.type !== LandType.UnknownMountain;
   }
 }

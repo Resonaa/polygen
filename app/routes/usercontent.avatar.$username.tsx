@@ -1,15 +1,10 @@
 import type { LoaderArgs } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
-
-import fs from "fs";
+import fs from "fs-extra";
 
 export async function loader({ params }: LoaderArgs) {
-  const username = params?.username?.replace(".jpg", "");
-
   try {
-    const data = fs.readFileSync(`${process.cwd()}/public/usercontent/avatar/${username}.jpg`);
-
-    return new Response(data, { status: 200 });
+    return new Response(await fs.readFile("./public/usercontent/avatar/" + params?.username));
   } catch (_) {
     return redirect("/images/defaultAvatar.jpg");
   }

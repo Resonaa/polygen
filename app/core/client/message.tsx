@@ -47,7 +47,7 @@ export function Messages({ client }: { client?: ClientSocket }) {
   const [, setPreviousTime] = useState(0);
 
   const scrollDown = () => {
-    messageEnd.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+    messageEnd.current?.scrollIntoView(false);
     setNewCount(0);
   };
 

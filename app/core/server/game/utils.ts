@@ -4,7 +4,7 @@ import { LandType } from "~/core/server/game/land";
 
 export type Pos = [number, number];
 
-export function getDir(mode: RoomMode, row: number) {
+export function getDir(mode: RoomMode, row: number): [number, number][] {
   if (row % 2 === 0) {
     return [[-1, 0], [-1, 1], [0, 1], [1, 1], [1, 0], [0, -1]];
   } else {

@@ -1,11 +1,13 @@
+import * as PIXI from "pixi.js";
+
 import { Map } from "../server/game/map";
 import type { Pos } from "~/core/server/game/utils";
+import { getDir, getNeighbours } from "~/core/server/game/utils";
 import { colors, SpecialColor } from "~/core/client/colors";
 import { formatLargeNumber } from "~/core/client/utils";
 import { LandType } from "~/core/server/game/land";
-import { getNeighbours } from "~/core/server/game/utils";
 
-import * as PIXI from "pixi.js";
+import { getSettings } from "~/core/client/settings";
 
 export class Renderer {
   gm: Map = new Map();
@@ -33,9 +35,14 @@ export class Renderer {
   private deltaX = 0;
   private deltaY = 0;
 
+  private extraTexts: (string | undefined)[][] = [[]];
+
+  handleMove: (from: Pos, to: Pos) => any = () => false;
+
   constructor(canvas: HTMLCanvasElement) {
     this.app = new PIXI.Application({
       antialias: true,
+      powerPreference: "high-performance",
       view: canvas,
       height: canvas.clientHeight,
       width: canvas.clientWidth
@@ -44,6 +51,8 @@ export class Renderer {
     this.app.stage.addChild(this.graphics);
 
     canvas.onwheel = event => {
+      event.preventDefault();
+
       this.scale += event.deltaY * -0.002;
       this.scale = Math.min(Math.max(0.125, this.scale), 4);
 
@@ -70,6 +79,38 @@ export class Renderer {
       canvas.onmouseup = () => {
         canvas.onmousemove = canvas.onmouseup = null;
       };
+    };
+
+    const settings = getSettings();
+
+    document.onkeydown = event => {
+      if (document.activeElement !== document.body) {
+        return;
+      }
+
+      event.preventDefault();
+
+      const eventKey = event.key === " " ? "Space" : event.key.toUpperCase();
+
+      const keys = settings.game.keys[this.gm.mode];
+      for (let [index, key] of keys.move.entries()) {
+        if (key === eventKey && this.selected) {
+          const from = this.selected;
+          const dir = getDir(this.gm.mode, from[0])[index];
+          const to = [from[0] + dir[0], from[1] + dir[1]] as Pos;
+
+          if (this.gm.check(to) && this.gm.accessible(to)) {
+            if (this.handleMove(from, to) === false) {
+              return;
+            }
+
+            this.unHover();
+            this.select(to);
+          }
+
+          return;
+        }
+      }
     };
   }
 
@@ -157,7 +198,7 @@ export class Renderer {
       this.texts.push([new PIXI.Text()]);
 
       for (let j = 1; j <= this.gm.size; j++) {
-        const text = new PIXI.Text("", style);
+        const text = new PIXI.Text(undefined, style);
         this.texts[i].push(text);
         this.app.stage.addChild(text);
       }
@@ -169,7 +210,10 @@ export class Renderer {
     const amount = this.gm.get([i, j]).amount;
     const text = this.texts[i][j];
 
-    if (amount !== 0) {
+    const extraText = this.extraTexts[i][j];
+    if (extraText) {
+      text.text = extraText;
+    } else if (amount !== 0) {
       text.text = amount;
 
       if (text.width > maxWidth) {
@@ -209,6 +253,8 @@ export class Renderer {
 
     if (land.color === 0 && land.type === LandType.Land) {
       fillColor = SpecialColor.Empty;
+    } else if (land.type === LandType.Mountain) {
+      fillColor = SpecialColor.Mountain;
     }
 
     const lineWidth = selected || clean ? 4 : hovered ? 2 : 1;
@@ -298,9 +344,9 @@ export class Renderer {
       for (let j = 1; j <= this.gm.size; j++) {
         const hit = new PIXI.Sprite(), pos = [i, j] as Pos;
 
-        if (this.gm.get(pos).type !== LandType.Mountain) {
+        if (this.gm.accessible(pos)) {
           hit.cursor = "pointer";
-          hit.interactive = true;
+          hit.eventMode = "static";
           hit.on("pointerdown", () => this.select(pos))
             .on("pointerenter", () => this.hover(pos));
         }
@@ -333,12 +379,25 @@ export class Renderer {
     }
   }
 
+  private addExtraTexts() {
+    this.extraTexts = [[]];
+
+    for (let i = 1; i <= this.gm.size; i++) {
+      this.extraTexts.push([undefined]);
+
+      for (let j = 1; j <= this.gm.size; j++) {
+        this.extraTexts[i].push(undefined);
+      }
+    }
+  }
+
   bind(gm: Map) {
     this.gm = gm;
 
     this.addImages();
     this.addTexts();
     this.addHitAreas();
+    this.addExtraTexts();
 
     this.selected = this.hovered = null;
     this.scale = 1;
@@ -355,5 +414,14 @@ export class Renderer {
 
     this.graphics.clear();
     this.updateAll();
+  }
+
+  extraText([i, j]: Pos, text?: string) {
+    this.extraTexts[i][j] = text;
+    this.update([i, j]);
+  }
+
+  destroy() {
+    this.app.destroy(true, true);
   }
 }

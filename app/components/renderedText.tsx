@@ -11,20 +11,17 @@ export default function RenderedText({
   useEffect(() => {
     (async () => {
       const cur = ref.current;
+      if (!cur) {
+        return;
+      }
 
-      if (cur) {
-        cur.innerHTML = await Vditor.md2html(content.trim(), {
-          mode,
-          anchor: 2,
-          math: {
-            inlineDigit: true
-          }
-        });
-
-        const style = mode === "light" ? "autumn" : "monokai";
+      if (mode === "light") {
+        await Vditor.preview(cur, content, { mode, hljs: { style: "autumn" }, math: { inlineDigit: true } });
+      } else {
+        cur.innerHTML = await Vditor.md2html(content.trim(), { mode, math: { inlineDigit: true } });
 
         Vditor.mathRender(cur);
-        Vditor.highlightRender({ style }, cur);
+        Vditor.highlightRender({ style: "autumn" }, cur);
         Vditor.codeRender(cur);
       }
     })();

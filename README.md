@@ -14,11 +14,8 @@
   ```shell
   npm run setup
   ```
-- 启动服务器
+- 构建并运行
   ```shell
-  npm run dev
+  npm run build
+  npm run start
   ```
-
-## HTTPS
-
-HTTPS 服务默认关闭，在  `.env` 中填写证书路径即可开启

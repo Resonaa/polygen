@@ -14,7 +14,7 @@ function NavItem({
                    className
                  }: { to: string, text: string, icon: SemanticICONS, className?: string }) {
   return (
-    <Menu.Item as={NavLink} className={className} to={to}>
+    <Menu.Item as={NavLink} className={className} to={to} prefetch="intent">
       <Icon name={icon} />{text}
     </Menu.Item>
   );

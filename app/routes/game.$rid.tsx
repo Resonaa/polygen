@@ -1,4 +1,4 @@
-import type { LoaderArgs } from "@remix-run/node";
+import type { LoaderArgs, V2_MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
@@ -19,13 +19,12 @@ export function links() {
   return [{ rel: "stylesheet", href: game }];
 }
 
-export function meta() {
-  return { title: "游戏 - polygen" };
-}
+export const meta: V2_MetaFunction = () => {
+  return [{ title: "游戏 - polygen" }];
+};
 
 export async function loader({ request, params }: LoaderArgs) {
   await requireAuthenticatedUser(request, Access.Gaming);
-
   return json(params.rid);
 }
 
@@ -57,7 +56,7 @@ export default function Rid() {
           <GamePanel client={client} />
         </Segment>
 
-        <Segment inverted className="!pr-0 !pb-0 !pt-2">
+        <Segment inverted className="!pr-0 !pb-0 !pt-2 !pl-2.5">
           <Chat client={client} />
         </Segment>
       </Grid.Column>

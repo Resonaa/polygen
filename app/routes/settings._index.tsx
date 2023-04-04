@@ -1,6 +1,19 @@
 import { Header, TextArea, Form, Button, Icon } from "semantic-ui-react";
+import { useEffect, useState } from "react";
+
+import { getSettings, SETTINGS_KEY } from "~/core/client/settings";
 
 export default function Index() {
+  const [settings, setSettings] = useState("");
+
+  function exportSettings() {
+    getSettings();
+    const settings = localStorage.getItem(SETTINGS_KEY);
+    setSettings(settings ? settings : "");
+  }
+
+  useEffect(exportSettings, []);
+
   return (
     <>
       <Header as="h4">个人设置</Header>
@@ -13,16 +26,20 @@ export default function Index() {
       </p>
 
       <Form>
-        <TextArea rows={2} placeholder="导入/导出数据" />
+        <TextArea rows={2} placeholder="导入/导出数据" value={settings}
+                  onChange={(_, { value }) => setSettings(value as string)} />
       </Form>
 
       <Button.Group fluid className="!mt-4">
-        <Button primary icon labelPosition="left">
+        <Button primary icon labelPosition="left" onClick={exportSettings}>
           <Icon name="upload" />
           导出数据
         </Button>
 
-        <Button negative icon labelPosition="left">
+        <Button negative icon labelPosition="left" onClick={() => {
+          localStorage.setItem(SETTINGS_KEY, settings);
+          window.location.reload();
+        }}>
           <Icon name="download" />
           导入数据
         </Button>

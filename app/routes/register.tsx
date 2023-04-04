@@ -1,4 +1,4 @@
-import type { ActionArgs, LoaderArgs } from "@remix-run/node";
+import type { ActionArgs, LoaderArgs, V2_MetaFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 
 import { createUserSession, requireAuthenticatedOptionalUser } from "~/session.server";
@@ -50,11 +50,9 @@ export async function action({ request }: ActionArgs) {
   return createUserSession(request, username, redirectTo);
 }
 
-export function meta() {
-  return {
-    title: "注册 - polygen"
-  };
-}
+export const meta: V2_MetaFunction = () => {
+  return [{ title: "注册 - polygen" }];
+};
 
 export default function Register() {
   return (

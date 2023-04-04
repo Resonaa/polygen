@@ -7,7 +7,7 @@ export const SocketRoom = {
   usernameRid: (username: string, rid: string) => `@${username}#${rid}`
 };
 
-export const enum RoomMode {
+export enum RoomMode {
   Hexagon = "六边形"
 }
 

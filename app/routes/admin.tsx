@@ -1,16 +1,14 @@
 import { Grid, Menu } from "semantic-ui-react";
 import { NavLink, Outlet } from "@remix-run/react";
-import type { LoaderArgs } from "@remix-run/node";
+import type { LoaderArgs, V2_MetaFunction } from "@remix-run/node";
 
 import Layout from "~/components/layout";
 import { requireAuthenticatedOptionalUser } from "~/session.server";
 import { Access } from "~/utils";
 
-export function meta() {
-  return {
-    title: "管理后台 - polygen"
-  };
-}
+export const meta: V2_MetaFunction = () => {
+  return [{ title: "管理后台 - polygen" }];
+};
 
 export async function loader({ request }: LoaderArgs) {
   return await requireAuthenticatedOptionalUser(request, Access.Basic);

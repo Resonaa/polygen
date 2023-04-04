@@ -16,4 +16,6 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
 
   const renderer = new Renderer(canvas);
   renderer.bind(gm);
+
+  renderer.handleMove = () => true;
 }

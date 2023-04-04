@@ -1,9 +1,10 @@
 import { useActionData, useLoaderData, useSubmit, useNavigation } from "@remix-run/react";
 import { useEffect, useState } from "react";
-import type { LoaderArgs, ActionArgs } from "@remix-run/node";
+import type { LoaderArgs, ActionArgs, V2_MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Button, Feed, Grid, Header, Icon, Segment } from "semantic-ui-react";
 import Vditor from "vditor";
+import clsx from "clsx";
 
 import Layout from "../components/layout";
 import Announcement from "~/components/announcement";
@@ -15,14 +16,11 @@ import { Avatar, UserLink } from "~/components/community";
 import { getAnnouncements } from "~/models/announcement.server";
 import { requireAuthenticatedOptionalUser, requireAuthenticatedUser } from "~/session.server";
 import { createPost, getPosts } from "~/models/post.server";
-import clsx from "clsx";
 import CountDown from "~/components/countdown";
 
-export function meta() {
-  return {
-    title: "首页 - polygen"
-  };
-}
+export const meta: V2_MetaFunction = () => {
+  return [{ title: "首页 - polygen" }];
+};
 
 export async function loader({ request }: LoaderArgs) {
   const user = await requireAuthenticatedOptionalUser(request, Access.Basic);

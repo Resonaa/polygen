@@ -110,12 +110,12 @@ export default function AuthBox({ type }: { type: "login" | "register" }) {
               {type === "login" ?
                 <>
                   没有账号？
-                  <Link to="/register">注册</Link>
+                  <Link to="/register" prefetch="intent">注册</Link>
                 </>
                 :
                 <>
                   已有账号？
-                  <Link to="/login">登录</Link>
+                  <Link to="/login" prefetch="intent">登录</Link>
                 </>
               }
             </Form.Field>

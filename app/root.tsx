@@ -2,7 +2,16 @@
 
 import type { LoaderArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, useCatch } from "@remix-run/react";
+import {
+  isRouteErrorResponse,
+  Links,
+  LiveReload,
+  Outlet,
+  Scripts,
+  Meta,
+  ScrollRestoration,
+  useRouteError
+} from "@remix-run/react";
 import { Grid } from "semantic-ui-react";
 
 import tailwind from "./styles/tailwind.css";
@@ -20,12 +29,14 @@ export function links() {
     { rel: "stylesheet", href: vditor }];
 }
 
-export function meta() {
-  return {
-    charset: "utf-8",
-    viewport: "width=device-width, initial-scale=1, shrink-to-fit=no",
-    title: "polygen"
-  };
+function GlobalMeta() {
+  return (
+    <>
+      <meta charSet="uft-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+      <meta title="polygen" />
+    </>
+  );
 }
 
 export async function loader({ request }: LoaderArgs) {
@@ -34,12 +45,38 @@ export async function loader({ request }: LoaderArgs) {
   });
 }
 
-export function CatchBoundary() {
-  const caught = useCatch();
+export function ErrorBoundary() {
+  const error = useRouteError() as any;
+
+  if (isRouteErrorResponse(error)) {
+    return (
+      <html>
+      <head>
+        <GlobalMeta />
+        <title>错误 - polygen</title>
+        <Meta />
+        <Links />
+      </head>
+
+      <body>
+      <Layout columns={1}>
+        <Grid.Column>
+          <h1>{error.status} {error.statusText}</h1>
+          {error.data}
+        </Grid.Column>
+      </Layout>
+      <Scripts />
+      </body>
+      </html>
+    );
+  }
+
+  const errorMessage = error.message ? error.message : "Unknown Error";
 
   return (
     <html>
     <head>
+      <GlobalMeta />
       <title>错误 - polygen</title>
       <Meta />
       <Links />
@@ -48,29 +85,7 @@ export function CatchBoundary() {
     <body>
     <Layout columns={1}>
       <Grid.Column>
-        <h1>{caught.status} {caught.statusText}</h1>
-        {caught.data}
-      </Grid.Column>
-    </Layout>
-    <Scripts />
-    </body>
-    </html>
-  );
-}
-
-export function ErrorBoundary({ error }: { error: Error }) {
-  return (
-    <html>
-    <head>
-      <title>错误 - polygen</title>
-      <Meta />
-      <Links />
-    </head>
-
-    <body>
-    <Layout columns={1}>
-      <Grid.Column>
-        <h1>{error.message}</h1>
+        <h1>{errorMessage}</h1>
       </Grid.Column>
     </Layout>
     <Scripts />
@@ -83,6 +98,7 @@ export default function App() {
   return (
     <html lang="zh">
     <head>
+      <GlobalMeta />
       <Meta />
       <Links />
     </head>

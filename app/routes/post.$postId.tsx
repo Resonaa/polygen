@@ -1,4 +1,4 @@
-import type { LoaderArgs, ActionArgs, MetaFunction } from "@remix-run/node";
+import type { LoaderArgs, ActionArgs, V2_MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useActionData, useLoaderData, useSubmit, useNavigation } from "@remix-run/react";
 import { useEffect, useRef, useState } from "react";
@@ -40,10 +40,8 @@ export async function loader({ request, params }: LoaderArgs) {
   return json({ post, user });
 }
 
-export const meta: MetaFunction<typeof loader> = ({ data }) => {
-  return {
-    title: data ? `${data.post.username}的说说 - polygen` : "错误 - polygen"
-  };
+export const meta: V2_MetaFunction<typeof loader> = ({ data }) => {
+  return [{ title: data ? `${data.post.username}的说说 - polygen` : "错误 - polygen" }];
 };
 
 export async function action({ request }: ActionArgs) {

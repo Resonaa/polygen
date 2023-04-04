@@ -1,0 +1,147 @@
+import type { LoaderArgs } from "@remix-run/node";
+import { useEffect, useState } from "react";
+import { Menu, Table, Grid } from "semantic-ui-react";
+
+import { requireAuthenticatedUser } from "~/session.server";
+import { Access } from "~/utils";
+import { Map } from "~/core/server/game/map";
+import { Renderer } from "~/core/client/renderer";
+import { LandType } from "~/core/server/game/land";
+import type { Pos } from "~/core/server/game/utils";
+import { getNeighbours } from "~/core/server/game/utils";
+import { RoomMode } from "~/core/server/room";
+import { getSettings, saveSettings, Settings } from "~/core/client/settings";
+
+export async function loader({ request }: LoaderArgs) {
+  return await requireAuthenticatedUser(request, Access.Settings);
+}
+
+export default function Keys() {
+  const [mode, setMode] = useState(RoomMode.Hexagon);
+
+  useEffect(() => {
+    const settings = getSettings();
+
+    const canvas = document.createElement("canvas");
+    canvas.style.width = "100%";
+    canvas.style.height = "300px";
+    document.querySelector(".equal > .column")?.appendChild(canvas);
+
+    const renderer = new Renderer(canvas);
+
+    const gm = new Map(7, mode);
+
+    const selectHome: Pos = [(gm.size + 1) / 2, (gm.size + 1) / 2];
+    const selectTopLeft: Pos = [1, 1];
+    const splitArmy: Pos = [2, 2];
+    const clearMovements: Pos = [2, 6];
+
+    gm.get(selectHome).type = LandType.General;
+    gm.get(selectHome).color = 1;
+
+    for (let neighbour of getNeighbours(gm, selectHome)) {
+      gm.get(neighbour).color = 2;
+    }
+
+    gm.get(selectTopLeft).color = 3;
+
+    gm.get(splitArmy).color = 4;
+
+    gm.get(clearMovements).color = 5;
+
+
+    renderer.bind(gm);
+
+    const keys = settings.game.keys[mode];
+
+    renderer.extraText(selectHome, keys.selectHome);
+    renderer.extraText(splitArmy, keys.splitArmy);
+    renderer.extraText(selectTopLeft, keys.selectTopLeft);
+    renderer.extraText(clearMovements, keys.clearMovements);
+
+    for (let [index, neighbour] of getNeighbours(gm, selectHome).entries()) {
+      renderer.extraText(neighbour, keys.move[index]);
+    }
+
+    document.onkeydown = event => {
+      event.preventDefault();
+
+      if (event.repeat) {
+        return;
+      }
+
+      const key = event.key === " " ? "Space" : event.key.toUpperCase();
+      const pos = renderer.selected;
+
+      if (!pos) {
+        return;
+      }
+
+      let save = false;
+
+      if (pos.join() === selectHome.join()) {
+        keys.selectHome = key;
+        save = true;
+      } else if (pos.join() === selectTopLeft.join()) {
+        keys.selectTopLeft = key;
+        save = true;
+      } else if (pos.join() === clearMovements.join()) {
+        keys.clearMovements = key;
+        save = true;
+      } else if (pos.join() === splitArmy.join()) {
+        keys.splitArmy = key;
+        save = true;
+      } else {
+        for (let [index, neighbour] of getNeighbours(gm, selectHome).entries()) {
+          if (neighbour.join() === pos.join()) {
+            keys.move[index] = key;
+            save = true;
+            break;
+          }
+        }
+      }
+
+      if (save) {
+        renderer.extraText(pos, key);
+        saveSettings(settings);
+      }
+    };
+
+    return () => {
+      document.onkeydown = null;
+      renderer.destroy();
+    };
+  }, [mode]);
+
+  const headerRow = ["颜色", "描述", "默认值"];
+
+  const defaultSettings = new Settings({}).merge();
+
+  const tableData = [["红色", "选家", defaultSettings.game.keys[mode].selectHome],
+    ["蓝色", "移动", defaultSettings.game.keys[mode].move.toString()],
+    ["绿色", "选择左上角领地", defaultSettings.game.keys[mode].selectTopLeft],
+    ["青色", "半兵", defaultSettings.game.keys[mode].splitArmy],
+    ["橙色", "清除全部移动", defaultSettings.game.keys[mode].clearMovements]];
+
+  return (
+    <div>
+      <p>提示：选中领地，按下对应按键以修改键位，数据将自动更新。</p>
+
+      <Menu text>
+        <Menu.Item header>模式</Menu.Item>
+        {Object.values(RoomMode).map(name => (
+          <Menu.Item key={name} name={name} active={mode === name} onClick={() => setMode(name as RoomMode)} />
+        ))}
+      </Menu>
+
+      <Grid stackable columns="equal">
+        <Grid.Column />
+
+        <Grid.Column>
+          <Table unstackable celled headerRow={headerRow} tableData={tableData}
+                 renderBodyRow={(cells, key) => ({ cells, key })} />
+        </Grid.Column>
+      </Grid>
+    </div>
+  );
+}

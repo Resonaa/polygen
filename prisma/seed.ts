@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import fs from "fs";
+import fs from "fs-extra";
 
 import { hashPassword } from "~/utils";
 
@@ -42,7 +42,7 @@ async function seed() {
   });
 
 
-  const longPost = fs.readFileSync(process.cwd() + "/app/entry.client.tsx").toString();
+  const longPost = await fs.readFile(process.cwd() + "/app/entry.client.tsx");
 
   const post = await prisma.post.create({
     data: {
@@ -68,8 +68,8 @@ async function seed() {
 
   await prisma.announcement.create({
     data: {
-      title: "第 27 次内测已开始",
-      content: "测试内容：地图缩放与拖动\n\n提示：本次测试可能产生**兼容性问题**，欢迎反馈"
+      title: "第 28 次内测已开始",
+      content: "测试内容：移动\n\n提示：\n- 您可能需要[设置键位](/settings/keys)\n- 本次测试可能产生**兼容性问题**，欢迎反馈"
     }
   });
 
@@ -77,8 +77,8 @@ async function seed() {
 }
 
 seed()
-  .catch((e) => {
-    console.error(e);
+  .catch(error => {
+    console.error(error);
     process.exit(1);
   })
   .finally(async () => {
