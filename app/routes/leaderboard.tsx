@@ -16,7 +16,7 @@ export async function loader({ request }: LoaderArgs) {
 export default function Leaderboard() {
   return (
     <Layout columns={1}>
-      <iframe src="https://hexpansion.io/" title="hexpansion" className="w-full select-none" />
+      <iframe src="https://hexpansion.io/" title="hexpansion" className="w-full select-none border-none" />
     </Layout>
   );
 }

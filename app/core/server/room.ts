@@ -33,15 +33,11 @@ export class Room {
 
 export type RoomData = Map<string, Room>;
 
-function initializeRoomData() {
-  return new Map([["161", new Room("161")]]);
-}
-
 declare global {
   var roomData: RoomData;
 }
 
-export const roomData = global.roomData ? global.roomData : initializeRoomData();
+export const roomData = global.roomData ? global.roomData : new Map<string, Room>();
 
 global.roomData = roomData;
 
@@ -72,7 +68,7 @@ export function handlePlayerLeave(server: Server, username: string, rid: string)
 
     server.to(SocketRoom.rid(rid)).emit("info", `${username}离开了房间`);
 
-    if (room.players.length === 0 && rid !== "161")
+    if (room.players.length === 0)
       roomData.delete(rid);
   }
 }

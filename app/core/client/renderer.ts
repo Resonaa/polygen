@@ -2,7 +2,6 @@ import * as PIXI from "pixi.js";
 
 import { Map } from "../server/game/map";
 import type { Pos } from "~/core/server/game/utils";
-import { getDir, getNeighbours } from "~/core/server/game/utils";
 import { colors, SpecialColor } from "~/core/client/colors";
 import { formatLargeNumber } from "~/core/client/utils";
 import { LandType } from "~/core/server/game/land";
@@ -23,7 +22,7 @@ export class Renderer {
   selected: Pos | null = null;
   private hovered: Pos | null = null;
 
-  private hexagonWidth: number = 0;
+  private pileWidth: number = 0;
   private startX: number = 0;
   private startY: number = 0;
 
@@ -96,7 +95,7 @@ export class Renderer {
       for (let [index, key] of keys.move.entries()) {
         if (key === eventKey && this.selected) {
           const from = this.selected;
-          const dir = getDir(this.gm.mode, from[0])[index];
+          const dir = this.gm.dir(from)[index];
           const to = [from[0] + dir[0], from[1] + dir[1]] as Pos;
 
           if (this.gm.check(to) && this.gm.accessible(to)) {
@@ -117,33 +116,33 @@ export class Renderer {
   private resize() {
     const width = this.app.view.width, height = this.app.view.height;
 
-    const maxXWidth = width / (this.gm.size + 0.5);
-    const maxYWidth = height / (1 + (this.gm.size - 1) * 0.75) / (2 / Math.sqrt(3));
-    this.hexagonWidth = Math.min(maxXWidth, maxYWidth) * this.scale;
+    const maxXWidth = width / (1 + 0.75 * (this.gm.width - 1));
+    const maxYWidth = 4 * height / (Math.sqrt(3) * (1 + 2 * this.gm.height));
+    this.pileWidth = Math.min(maxXWidth, maxYWidth) * this.scale;
 
-    const realWidth = this.hexagonWidth * (this.gm.size + 0.5),
-      realHeight = 2 / Math.sqrt(3) * this.hexagonWidth * (1 + (this.gm.size - 1) * 0.75);
+    const realWidth = this.pileWidth * (1 + 0.75 * (this.gm.width - 1)),
+      realHeight = Math.sqrt(3) / 4 * this.pileWidth * (1 + 2 * this.gm.height);
 
     this.startX = (width - realWidth) / 2 + this.deltaX;
     this.startY = (height - realHeight) / 2 + this.deltaY;
   }
 
-  private getHexagonUpperLeftPos([i, j]: Pos) {
-    const upperLeftX = this.startX + (j - 1) * this.hexagonWidth + (i % 2 === 0 ? this.hexagonWidth / 2 : 0);
-    const upperLeftY = this.startY + (i - 1) * 0.75 * 2 / Math.sqrt(3) * this.hexagonWidth;
+  private getPileUpperLeftPos([i, j]: Pos) {
+    const upperLeftX = this.startX + 0.75 * (j - 1) * this.pileWidth;
+    const upperLeftY = this.startY + Math.sqrt(3) / 4 * this.pileWidth * (2 * (i - 1) + (j % 2 === 0 ? 1 : 0));
 
     return [upperLeftX, upperLeftY];
   }
 
-  private getHexagonPath(pos: Pos) {
-    const [upperLeftX, upperLeftY] = this.getHexagonUpperLeftPos(pos), hexagonWidth = this.hexagonWidth;
+  private getPilePath(pos: Pos) {
+    const [upperLeftX, upperLeftY] = this.getPileUpperLeftPos(pos), pileWidth = this.pileWidth;
 
-    return [upperLeftX, upperLeftY + hexagonWidth / 2 / Math.sqrt(3),
-      upperLeftX, upperLeftY + hexagonWidth / 2 / Math.sqrt(3) + hexagonWidth / Math.sqrt(3),
-      upperLeftX + hexagonWidth / 2, upperLeftY + 2 / Math.sqrt(3) * hexagonWidth,
-      upperLeftX + hexagonWidth, upperLeftY + hexagonWidth / 2 / Math.sqrt(3) + hexagonWidth / Math.sqrt(3),
-      upperLeftX + hexagonWidth, upperLeftY + hexagonWidth / 2 / Math.sqrt(3),
-      upperLeftX + hexagonWidth / 2, upperLeftY];
+    return [upperLeftX + pileWidth / 4, upperLeftY,
+      upperLeftX + 0.75 * pileWidth, upperLeftY,
+      upperLeftX + pileWidth, upperLeftY + Math.sqrt(3) / 4 * pileWidth,
+      upperLeftX + 0.75 * pileWidth, upperLeftY + Math.sqrt(3) / 2 * pileWidth,
+      upperLeftX + pileWidth / 4, upperLeftY + Math.sqrt(3) / 2 * pileWidth,
+      upperLeftX, upperLeftY + Math.sqrt(3) / 4 * pileWidth];
   }
 
   private addImages() {
@@ -154,10 +153,10 @@ export class Renderer {
 
     this.images = [[]];
 
-    for (let i = 1; i <= this.gm.size; i++) {
+    for (let i = 1; i <= this.gm.height; i++) {
       this.images.push([new PIXI.Sprite()]);
 
-      for (let j = 1; j <= this.gm.size; j++) {
+      for (let j = 1; j <= this.gm.width; j++) {
         const image = new PIXI.Sprite();
         this.images[i].push(image);
         this.app.stage.addChild(image);
@@ -166,16 +165,16 @@ export class Renderer {
   }
 
   private setImages() {
-    for (let i = 1; i <= this.gm.size; i++) {
-      for (let j = 1; j <= this.gm.size; j++) {
+    for (let i = 1; i <= this.gm.height; i++) {
+      for (let j = 1; j <= this.gm.width; j++) {
         const image = this.images[i][j];
 
-        const [x, y] = this.getHexagonUpperLeftPos([i, j]);
+        const [x, y] = this.getPileUpperLeftPos([i, j]);
 
-        image.width = image.height = 2 / Math.sqrt(3) * this.hexagonWidth / 1.5;
+        image.width = image.height = this.pileWidth * (3 - Math.sqrt(3)) / 2;
 
-        image.x = x + (this.hexagonWidth - image.width) / 2;
-        image.y = y + (2 / Math.sqrt(3) * this.hexagonWidth - image.height) / 2;
+        image.x = x + (this.pileWidth - image.width) / 2;
+        image.y = y + (Math.sqrt(3) / 2 * this.pileWidth - image.height) / 2;
       }
     }
   }
@@ -194,10 +193,10 @@ export class Renderer {
       fontWeight: "bold"
     });
 
-    for (let i = 1; i <= this.gm.size; i++) {
+    for (let i = 1; i <= this.gm.height; i++) {
       this.texts.push([new PIXI.Text()]);
 
-      for (let j = 1; j <= this.gm.size; j++) {
+      for (let j = 1; j <= this.gm.width; j++) {
         const text = new PIXI.Text(undefined, style);
         this.texts[i].push(text);
         this.app.stage.addChild(text);
@@ -206,7 +205,7 @@ export class Renderer {
   }
 
   private updateAmount([i, j]: Pos) {
-    const maxWidth = this.hexagonWidth, maxHeight = 2 / Math.sqrt(3) * this.hexagonWidth;
+    const maxWidth = this.pileWidth, maxHeight = Math.sqrt(3) / 2 * this.pileWidth;
     const amount = this.gm.get([i, j]).amount;
     const text = this.texts[i][j];
 
@@ -223,7 +222,7 @@ export class Renderer {
       text.text = formatLargeNumber(amount);
     }
 
-    const [x, y] = this.getHexagonUpperLeftPos([i, j]);
+    const [x, y] = this.getPileUpperLeftPos([i, j]);
     const width = text.width;
     const height = text.height;
 
@@ -262,7 +261,7 @@ export class Renderer {
 
     this.graphics.lineStyle(lineWidth, lineColor)
       .beginFill(fillColor)
-      .drawPolygon(this.getHexagonPath(pos))
+      .drawPolygon(this.getPilePath(pos))
       .endFill();
 
     this.updateType(pos);
@@ -270,8 +269,8 @@ export class Renderer {
   }
 
   updateAll() {
-    for (let i = 1; i <= this.gm.size; i++) {
-      for (let j = 1; j <= this.gm.size; j++) {
+    for (let i = 1; i <= this.gm.height; i++) {
+      for (let j = 1; j <= this.gm.width; j++) {
         this.update([i, j]);
       }
     }
@@ -292,7 +291,7 @@ export class Renderer {
     this.update(preSelected, true);
     this.update(preSelected);
 
-    for (let neighbour of getNeighbours(this.gm, preSelected)) {
+    for (let neighbour of this.gm.neighbours(preSelected)) {
       this.update(neighbour);
     }
   }
@@ -314,7 +313,7 @@ export class Renderer {
     this.update(preHovered, true);
     this.update(preHovered);
 
-    for (let neighbour of getNeighbours(this.gm, preHovered)) {
+    for (let neighbour of this.gm.neighbours(preHovered)) {
       this.update(neighbour);
     }
 
@@ -338,17 +337,18 @@ export class Renderer {
 
     this.hitAreas = [[]];
 
-    for (let i = 1; i <= this.gm.size; i++) {
+    for (let i = 1; i <= this.gm.height; i++) {
       this.hitAreas.push([new PIXI.Sprite()]);
 
-      for (let j = 1; j <= this.gm.size; j++) {
+      for (let j = 1; j <= this.gm.width; j++) {
         const hit = new PIXI.Sprite(), pos = [i, j] as Pos;
 
         if (this.gm.accessible(pos)) {
           hit.cursor = "pointer";
           hit.eventMode = "static";
           hit.on("pointerdown", () => this.select(pos))
-            .on("pointerenter", () => this.hover(pos));
+            .on("pointerenter", () => this.hover(pos))
+            .on("pointerleave", () => this.unHover());
         }
 
         this.app.stage.addChild(hit);
@@ -358,20 +358,20 @@ export class Renderer {
   }
 
   private setHitAreas() {
-    const [x, y] = this.getHexagonUpperLeftPos([1, 1]);
-    let hexagon = this.getHexagonPath([1, 1]);
-    for (let p = 0; p < hexagon.length; p += 2) {
-      hexagon[p] -= x;
-      hexagon[p + 1] -= y;
+    const [x, y] = this.getPileUpperLeftPos([1, 1]);
+    let path = this.getPilePath([1, 1]);
+    for (let p = 0; p < path.length; p += 2) {
+      path[p] -= x;
+      path[p + 1] -= y;
     }
 
-    const polygon = new PIXI.Polygon(hexagon);
+    const polygon = new PIXI.Polygon(path);
 
-    for (let i = 1; i <= this.gm.size; i++) {
-      for (let j = 1; j <= this.gm.size; j++) {
+    for (let i = 1; i <= this.gm.height; i++) {
+      for (let j = 1; j <= this.gm.width; j++) {
         const hit = this.hitAreas[i][j];
 
-        const [x, y] = this.getHexagonUpperLeftPos([i, j]);
+        const [x, y] = this.getPileUpperLeftPos([i, j]);
         hit.position.set(x, y);
 
         hit.hitArea = polygon;
@@ -382,10 +382,10 @@ export class Renderer {
   private addExtraTexts() {
     this.extraTexts = [[]];
 
-    for (let i = 1; i <= this.gm.size; i++) {
+    for (let i = 1; i <= this.gm.height; i++) {
       this.extraTexts.push([undefined]);
 
-      for (let j = 1; j <= this.gm.size; j++) {
+      for (let j = 1; j <= this.gm.width; j++) {
         this.extraTexts[i].push(undefined);
       }
     }

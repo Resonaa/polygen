@@ -17,7 +17,7 @@ export async function loader({ request }: LoaderArgs) {
 function SettingsMenu() {
   function Setting({ id, name }: { id: string, name: string }) {
     return (
-      <Menu.Item as={NavLink} to={id}>
+      <Menu.Item as={NavLink} to={id} prefetch="intent">
         {name}
       </Menu.Item>
     );

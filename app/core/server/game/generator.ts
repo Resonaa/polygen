@@ -8,11 +8,11 @@ import { LandType } from "~/core/server/game/land";
 const cityDensity = 0.05;
 const mountainDensity = 0.15;
 
-function generateRandomPos(size: number) {
+function generateRandomPos(width: number, height: number) {
   let ans = [];
 
-  for (let i = 1; i <= size; i++) {
-    for (let j = 1; j <= size; j++) {
+  for (let i = 1; i <= height; i++) {
+    for (let j = 1; j <= width; j++) {
       ans.push([i, j] as Pos);
     }
   }
@@ -23,13 +23,14 @@ function generateRandomPos(size: number) {
 }
 
 export function generateRandomMap(playerCount: number, mode: RoomMode): Map {
-  let map = new Map(playerCountToSize(playerCount), mode);
+  const [width, height] = playerCountToSize(playerCount);
+  let map = new Map(width, height, mode);
 
-  const size = map.size, gm = map.gm;
+  const gm = map.gm;
 
-  let randPos = generateRandomPos(size);
+  let randPos = generateRandomPos(width, height);
 
-  for (let i = 1; i <= mountainDensity * size * size; i++) {
+  for (let i = 1; i <= mountainDensity * width * height; i++) {
     const pos = randPos.shift();
 
     if (pos) {
@@ -39,7 +40,7 @@ export function generateRandomMap(playerCount: number, mode: RoomMode): Map {
     }
   }
 
-  for (let i = 1; i <= cityDensity * size * size; i++) {
+  for (let i = 1; i <= cityDensity * width * height; i++) {
     const pos = randPos.shift();
 
     if (pos) {

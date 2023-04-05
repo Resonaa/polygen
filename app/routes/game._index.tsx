@@ -10,7 +10,7 @@ import { requireAuthenticatedOptionalUser } from "~/session.server";
 import { Access } from "~/utils";
 import { UserLink } from "~/components/community";
 import type { Player } from "~/core/server/player";
-import { roomData } from "~/core/server/room";
+import { Room, roomData } from "~/core/server/room";
 
 export const meta: V2_MetaFunction = () => {
   return [{ title: "大厅 - polygen" }];
@@ -18,7 +18,13 @@ export const meta: V2_MetaFunction = () => {
 
 export async function loader({ request }: LoaderArgs) {
   const user = await requireAuthenticatedOptionalUser(request, Access.Basic);
-  return json({ rooms: Array.from(roomData.values()), user });
+
+  let rooms = roomData;
+  if (rooms.size === 0) {
+    rooms.set("161", new Room("161"));
+  }
+
+  return json({ rooms: Array.from(rooms.values()), user });
 }
 
 function PlayerListString({ players }: { players: Player[] }) {

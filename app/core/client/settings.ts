@@ -40,11 +40,11 @@ function merge(from: any, to: any) {
 
 export class Settings {
   private readonly settings: Partial<ISettings>;
-  private defaultSettings: ISettings = {
+  static defaultSettings: ISettings = {
     game: {
       keys: {
         [RoomMode.Hexagon]: {
-          move: ["W", "E", "D", "S", "A", "Q"],
+          move: ["Q", "W", "E", "D", "S", "A"],
           clearMovements: "F",
           splitArmy: "R",
           selectHome: "G",
@@ -59,7 +59,7 @@ export class Settings {
   }
 
   merge() {
-    return merge(this.defaultSettings, this.settings) as ISettings;
+    return merge(Settings.defaultSettings, this.settings) as ISettings;
   }
 }
 

@@ -1,6 +1,6 @@
 import type { LoaderArgs } from "@remix-run/node";
 import { useEffect, useState } from "react";
-import { Menu, Table, Grid } from "semantic-ui-react";
+import { Menu, Table, Grid, Button } from "semantic-ui-react";
 
 import { requireAuthenticatedUser } from "~/session.server";
 import { Access } from "~/utils";
@@ -8,7 +8,6 @@ import { Map } from "~/core/server/game/map";
 import { Renderer } from "~/core/client/renderer";
 import { LandType } from "~/core/server/game/land";
 import type { Pos } from "~/core/server/game/utils";
-import { getNeighbours } from "~/core/server/game/utils";
 import { RoomMode } from "~/core/server/room";
 import { getSettings, saveSettings, Settings } from "~/core/client/settings";
 
@@ -29,9 +28,10 @@ export default function Keys() {
 
     const renderer = new Renderer(canvas);
 
-    const gm = new Map(7, mode);
+    const size = 7;
+    const gm = new Map(size, size, mode);
 
-    const selectHome: Pos = [(gm.size + 1) / 2, (gm.size + 1) / 2];
+    const selectHome: Pos = [(size + 1) / 2, (size + 1) / 2];
     const selectTopLeft: Pos = [1, 1];
     const splitArmy: Pos = [2, 2];
     const clearMovements: Pos = [2, 6];
@@ -39,7 +39,7 @@ export default function Keys() {
     gm.get(selectHome).type = LandType.General;
     gm.get(selectHome).color = 1;
 
-    for (let neighbour of getNeighbours(gm, selectHome)) {
+    for (let neighbour of gm.neighbours(selectHome)) {
       gm.get(neighbour).color = 2;
     }
 
@@ -59,7 +59,7 @@ export default function Keys() {
     renderer.extraText(selectTopLeft, keys.selectTopLeft);
     renderer.extraText(clearMovements, keys.clearMovements);
 
-    for (let [index, neighbour] of getNeighbours(gm, selectHome).entries()) {
+    for (let [index, neighbour] of gm.neighbours(selectHome).entries()) {
       renderer.extraText(neighbour, keys.move[index]);
     }
 
@@ -92,7 +92,7 @@ export default function Keys() {
         keys.splitArmy = key;
         save = true;
       } else {
-        for (let [index, neighbour] of getNeighbours(gm, selectHome).entries()) {
+        for (let [index, neighbour] of gm.neighbours(selectHome).entries()) {
           if (neighbour.join() === pos.join()) {
             keys.move[index] = key;
             save = true;
@@ -115,13 +115,20 @@ export default function Keys() {
 
   const headerRow = ["颜色", "描述", "默认值"];
 
-  const defaultSettings = new Settings({}).merge();
+  const defaultSettings = Settings.defaultSettings;
 
   const tableData = [["红色", "选家", defaultSettings.game.keys[mode].selectHome],
     ["蓝色", "移动", defaultSettings.game.keys[mode].move.toString()],
     ["绿色", "选择左上角领地", defaultSettings.game.keys[mode].selectTopLeft],
     ["青色", "半兵", defaultSettings.game.keys[mode].splitArmy],
     ["橙色", "清除全部移动", defaultSettings.game.keys[mode].clearMovements]];
+
+  const resetToDefault = () => {
+    let settings = getSettings();
+    settings.game.keys[mode] = Settings.defaultSettings.game.keys[mode];
+    saveSettings(settings);
+    window.location.reload();
+  };
 
   return (
     <div>
@@ -140,6 +147,8 @@ export default function Keys() {
         <Grid.Column>
           <Table unstackable celled headerRow={headerRow} tableData={tableData}
                  renderBodyRow={(cells, key) => ({ cells, key })} />
+
+          <Button negative onClick={resetToDefault}>恢复默认</Button>
         </Grid.Column>
       </Grid>
     </div>

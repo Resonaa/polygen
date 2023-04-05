@@ -3,7 +3,6 @@ import { Form as ReactForm, Link, useActionData, useSearchParams, useNavigation 
 import { Button, Form, Icon, Grid } from "semantic-ui-react";
 import clsx from "clsx";
 
-import logo from "../../public/images/polygen.png";
 import Layout from "./layout";
 import type { action } from "~/routes/register";
 
@@ -34,8 +33,8 @@ export default function AuthBox({ type }: { type: "login" | "register" }) {
       <Grid.Column className="my-auto !flex justify-center">
         <Form as={ReactForm} size="large" className="max-sm:w-full bg-white p-8 m-auto" method="post"
               action={`/${type}`}>
-          <Form.Field>
-            <img src={logo} alt="logo" className="mx-auto" />
+          <Form.Field className="text-center">
+            <img src="/images/polygen.png" alt="logo" />
           </Form.Field>
 
           <Form.Field className={clsx(actionData?.username && "error")}>
@@ -105,7 +104,7 @@ export default function AuthBox({ type }: { type: "login" | "register" }) {
           </Button>
 
           <div className="text-center">
-            <hr className="h-px bg-slate-200 borderless my-3.5" />
+            <hr className="my-3.5" />
             <Form.Field className="text-base">
               {type === "login" ?
                 <>

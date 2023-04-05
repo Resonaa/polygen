@@ -65,8 +65,8 @@ export default function Layout({ columns, children }: { columns: SemanticWIDTHS,
                 </Dropdown.Menu>
               </Dropdown>
               : <>
-                <Button as={Link} to="/login">登录</Button>
-                <Button as={Link} primary to="/register" className="!ml-7">注册</Button>
+                <Button as={Link} to="/login" prefetch="intent">登录</Button>
+                <Button as={Link} primary to="/register" className="!ml-7" prefetch="intent">注册</Button>
               </>
             }
           </Menu.Item>

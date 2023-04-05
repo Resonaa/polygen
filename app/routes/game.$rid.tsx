@@ -53,7 +53,7 @@ export default function Rid() {
 
       <Grid.Column width={4} className="!flex justify-between flex-col !p-0">
         <Segment inverted className="!pr-0">
-          <GamePanel client={client} />
+          <GamePanel client={client} rid={rid} />
         </Segment>
 
         <Segment inverted className="!pr-0 !pb-0 !pt-2 !pl-2.5">

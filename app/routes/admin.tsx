@@ -17,7 +17,7 @@ export async function loader({ request }: LoaderArgs) {
 function AdminMenu() {
   function AdminItem({ id, name }: { id: string, name: string }) {
     return (
-      <Menu.Item as={NavLink} to={id}>
+      <Menu.Item as={NavLink} to={id} prefetch="intent">
         {name}
       </Menu.Item>
     );
