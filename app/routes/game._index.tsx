@@ -12,9 +12,7 @@ import { UserLink } from "~/components/community";
 import type { Player } from "~/core/server/player";
 import { Room, roomData } from "~/core/server/room";
 
-export const meta: V2_MetaFunction = () => {
-  return [{ title: "大厅 - polygen" }];
-};
+export const meta: V2_MetaFunction = () => [{ title: "大厅 - polygen" }];
 
 export async function loader({ request }: LoaderArgs) {
   const user = await requireAuthenticatedOptionalUser(request, Access.Basic);
@@ -24,7 +22,7 @@ export async function loader({ request }: LoaderArgs) {
     rooms.set("161", new Room("161"));
   }
 
-  return json({ rooms: Array.from(rooms.values()), user });
+  return json({ rooms: Array.from(rooms.values()).map(room => room.export()), user });
 }
 
 function PlayerListString({ players }: { players: Player[] }) {

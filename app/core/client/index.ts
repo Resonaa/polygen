@@ -1,8 +1,8 @@
 import type { ClientSocket } from "../types";
 import { randInt } from "~/core/client/utils";
 import { generateRandomMap } from "~/core/server/game/generator";
-import { RoomMode } from "~/core/server/room";
 import { Renderer } from "~/core/client/renderer";
+import { MapMode } from "~/core/server/game/map";
 
 export function registerClientSocket(client: ClientSocket, rid: string) {
   client.on("connect", () => {
@@ -12,7 +12,7 @@ export function registerClientSocket(client: ClientSocket, rid: string) {
   const canvas = document.querySelector("canvas");
   if (!canvas) return;
 
-  const gm = generateRandomMap(randInt(2, 16), RoomMode.Hexagon);
+  const gm = generateRandomMap(randInt(2, 16), MapMode.Hexagon);
 
   const renderer = new Renderer(canvas);
   renderer.bind(gm);

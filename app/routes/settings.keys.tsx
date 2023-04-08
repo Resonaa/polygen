@@ -4,11 +4,10 @@ import { Menu, Table, Grid, Button } from "semantic-ui-react";
 
 import { requireAuthenticatedUser } from "~/session.server";
 import { Access } from "~/utils";
-import { Map } from "~/core/server/game/map";
+import { Map, MapMode } from "~/core/server/game/map";
 import { Renderer } from "~/core/client/renderer";
 import { LandType } from "~/core/server/game/land";
 import type { Pos } from "~/core/server/game/utils";
-import { RoomMode } from "~/core/server/room";
 import { getSettings, saveSettings, Settings } from "~/core/client/settings";
 
 export async function loader({ request }: LoaderArgs) {
@@ -16,7 +15,7 @@ export async function loader({ request }: LoaderArgs) {
 }
 
 export default function Keys() {
-  const [mode, setMode] = useState(RoomMode.Hexagon);
+  const [mode, setMode] = useState(MapMode.Hexagon);
 
   useEffect(() => {
     const settings = getSettings();
@@ -136,8 +135,8 @@ export default function Keys() {
 
       <Menu text>
         <Menu.Item header>模式</Menu.Item>
-        {Object.values(RoomMode).map(name => (
-          <Menu.Item key={name} name={name} active={mode === name} onClick={() => setMode(name as RoomMode)} />
+        {Object.values(MapMode).map(name => (
+          <Menu.Item key={name} name={name} active={mode === name} onClick={() => setMode(name as MapMode)} />
         ))}
       </Menu>
 

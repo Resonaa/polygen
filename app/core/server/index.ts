@@ -1,5 +1,5 @@
 import { identify } from "~/core/server/identification";
-import { handlePlayerJoin, handlePlayerLeave, SocketRoom } from "~/core/server/room";
+import { handlePlayerJoin, handlePlayerJoinTeam, handlePlayerLeave, SocketRoom } from "~/core/server/room";
 import { MessageType } from "~/core/server/message";
 import type { Server } from "~/core/types";
 
@@ -25,7 +25,6 @@ export function setServer(server: Server) {
       rid = _rid;
       socket.data.rid = rid;
 
-      socket.join(SocketRoom.username(username));
       socket.join(SocketRoom.rid(rid));
       socket.join(SocketRoom.usernameRid(username, rid));
       handlePlayerJoin(server, username, rid);
@@ -41,8 +40,8 @@ export function setServer(server: Server) {
         server.to(SocketRoom.rid(rid)).emit("message", { type, content, username });
     });
 
-    socket.on("disconnect", () => {
-      handlePlayerLeave(server, username, rid);
-    });
+    socket.on("disconnect", () => handlePlayerLeave(server, username, rid));
+
+    socket.on("joinTeam", team => handlePlayerJoinTeam(server, username, rid, team));
   });
 }

@@ -1,6 +1,7 @@
 import LZString from "lz-string";
 
-import { RoomMode } from "~/core/server/room";
+
+import { MapMode } from "~/core/server/game/map";
 
 export type IKey = string;
 
@@ -15,7 +16,7 @@ export interface IKeys {
 export interface ISettings {
   game: {
     keys: {
-      [RoomMode.Hexagon]: IKeys
+      [MapMode.Hexagon]: IKeys
     }
   };
 }
@@ -43,7 +44,7 @@ export class Settings {
   static defaultSettings: ISettings = {
     game: {
       keys: {
-        [RoomMode.Hexagon]: {
+        [MapMode.Hexagon]: {
           move: ["Q", "W", "E", "D", "S", "A"],
           clearMovements: "F",
           splitArmy: "R",

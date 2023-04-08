@@ -1,14 +1,17 @@
 import { Land, LandType } from "~/core/server/game/land";
-import { RoomMode } from "~/core/server/room";
 import type { Pos } from "~/core/server/game/utils";
+
+export enum MapMode {
+  Hexagon = "六边形"
+}
 
 export class Map {
   width: number;
   height: number;
   gm: Land[][];
-  mode: RoomMode;
+  mode: MapMode;
 
-  constructor(width: number = 0, height: number = 0, mode: RoomMode = RoomMode.Hexagon) {
+  constructor(width: number = 0, height: number = 0, mode: MapMode = MapMode.Hexagon) {
     this.width = width;
     this.height = height;
     this.gm = [];

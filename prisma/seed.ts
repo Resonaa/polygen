@@ -68,8 +68,8 @@ async function seed() {
 
   await prisma.announcement.create({
     data: {
-      title: "第 28 次内测已开始",
-      content: "测试内容：移动\n\n提示：\n- 您可能需要[设置键位](/settings/keys)\n- 本次测试可能产生**兼容性问题**，欢迎反馈"
+      title: "第 29 次内测已开始",
+      content: "测试内容：队伍\n\n提示：由于测试需要，地图暂时隐藏"
     }
   });
 

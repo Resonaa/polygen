@@ -40,9 +40,7 @@ export async function loader({ request, params }: LoaderArgs) {
   return json({ post, user });
 }
 
-export const meta: V2_MetaFunction<typeof loader> = ({ data }) => {
-  return [{ title: data ? `${data.post.username}的说说 - polygen` : "错误 - polygen" }];
-};
+export const meta: V2_MetaFunction<typeof loader> = ({ data }) => [{ title: data ? `${data.post.username}的说说 - polygen` : "错误 - polygen" }];
 
 export async function action({ request }: ActionArgs) {
   const formData = await request.formData();

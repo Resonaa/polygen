@@ -18,9 +18,7 @@ import { requireAuthenticatedOptionalUser, requireAuthenticatedUser } from "~/se
 import { createPost, getPosts } from "~/models/post.server";
 import CountDown from "~/components/countdown";
 
-export const meta: V2_MetaFunction = () => {
-  return [{ title: "首页 - polygen" }];
-};
+export const meta: V2_MetaFunction = () => [{ title: "首页 - polygen" }];
 
 export async function loader({ request }: LoaderArgs) {
   const user = await requireAuthenticatedOptionalUser(request, Access.Basic);

@@ -5,9 +5,7 @@ import Layout from "~/components/layout";
 import { requireAuthenticatedOptionalUser } from "~/session.server";
 import { Access } from "~/utils";
 
-export const meta: V2_MetaFunction = () => {
-  return [{ title: "排行榜 - polygen" }];
-};
+export const meta: V2_MetaFunction = () => [{ title: "排行榜 - polygen" }];
 
 export async function loader({ request }: LoaderArgs) {
   return await requireAuthenticatedOptionalUser(request, Access.Basic);

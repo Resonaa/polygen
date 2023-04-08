@@ -50,9 +50,7 @@ export async function action({ request }: ActionArgs) {
   return createUserSession(request, username, redirectTo);
 }
 
-export const meta: V2_MetaFunction = () => {
-  return [{ title: "注册 - polygen" }];
-};
+export const meta: V2_MetaFunction = () => [{ title: "注册 - polygen" }];
 
 export default function Register() {
   return (

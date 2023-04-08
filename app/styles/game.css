@@ -39,3 +39,24 @@ canvas {
   background: rgba(27, 28, 29, 0.7) !important;
   z-index: 2;
 }
+
+.ui.centered.cards {
+  background: #1b1c1d;
+}
+
+.ui.centered.cards > .card {
+  background-color: black;
+  width: unset !important;
+}
+
+.ui.centered.cards > .card.disabled {
+  opacity: .85 !important;
+}
+
+.ui.centered.cards > .card:not(.disabled):hover {
+  background: unset !important;
+}
+
+.ui.centered.cards > .card > .content > div {
+  color: rgba(255, 255, 255, .9);
+}

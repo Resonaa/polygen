@@ -34,9 +34,7 @@ export async function action({ request }: ActionArgs) {
   return createUserSession(request, username, redirectTo);
 }
 
-export const meta: V2_MetaFunction = () => {
-  return [{ title: "登录 - polygen" }];
-};
+export const meta: V2_MetaFunction = () => [{ title: "登录 - polygen" }];
 
 export default function Login() {
   return (

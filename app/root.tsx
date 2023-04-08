@@ -1,6 +1,6 @@
 // noinspection HtmlRequiredTitleElement
 
-import type { LoaderArgs } from "@remix-run/node";
+import type { LoaderArgs, LinksFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import {
   isRouteErrorResponse,
@@ -22,12 +22,10 @@ import { requireAuthenticatedOptionalUser } from "./session.server";
 import Layout from "~/components/layout";
 import { Access } from "~/utils";
 
-export function links() {
-  return [
-    { rel: "stylesheet", href: tailwind },
-    { rel: "stylesheet", href: semantic },
-    { rel: "stylesheet", href: vditor }];
-}
+export const links: LinksFunction = () => [
+  { rel: "stylesheet", href: tailwind },
+  { rel: "stylesheet", href: semantic },
+  { rel: "stylesheet", href: vditor }];
 
 function GlobalMeta() {
   return (

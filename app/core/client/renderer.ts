@@ -58,11 +58,11 @@ export class Renderer {
       this.redraw();
     };
 
-    canvas.onmousedown = event => {
+    canvas.onpointerdown = event => {
       const startX = event.pageX, startY = event.pageY;
       const initialDeltaX = this.deltaX, initialDeltaY = this.deltaY;
 
-      canvas.onmousemove = event => {
+      canvas.onpointermove = event => {
         const newDeltaX = event.pageX - startX, newDeltaY = event.pageY - startY;
 
         if (Math.abs(newDeltaX) <= 10 && Math.abs(newDeltaY) <= 10) {
@@ -75,8 +75,9 @@ export class Renderer {
         this.redraw();
       };
 
-      canvas.onmouseup = () => {
-        canvas.onmousemove = canvas.onmouseup = null;
+      canvas.onpointerup = event => {
+        event.preventDefault();
+        canvas.onpointermove = canvas.onpointerup = null;
       };
     };
 
@@ -346,7 +347,7 @@ export class Renderer {
         if (this.gm.accessible(pos)) {
           hit.cursor = "pointer";
           hit.eventMode = "static";
-          hit.on("pointerdown", () => this.select(pos))
+          hit.on("pointerup", () => this.select(pos))
             .on("pointerenter", () => this.hover(pos))
             .on("pointerleave", () => this.unHover());
         }

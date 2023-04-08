@@ -1,4 +1,5 @@
-import type { RoomMode } from "~/core/server/room";
+
+import type { MapMode } from "~/core/server/game/map";
 import { Map } from "~/core/server/game/map";
 import type { Pos } from "~/core/server/game/utils";
 import { playerCountToSize, astar } from "~/core/server/game/utils";
@@ -22,7 +23,7 @@ function generateRandomPos(width: number, height: number) {
   return ans;
 }
 
-export function generateRandomMap(playerCount: number, mode: RoomMode): Map {
+export function generateRandomMap(playerCount: number, mode: MapMode): Map {
   const [width, height] = playerCountToSize(playerCount);
   let map = new Map(width, height, mode);
 
