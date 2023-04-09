@@ -1,5 +1,5 @@
 import { identify } from "~/core/server/identification";
-import { handlePlayerJoin, handlePlayerJoinTeam, handlePlayerLeave, SocketRoom } from "~/core/server/room";
+import { RoomManager, SocketRoom } from "~/core/server/room";
 import { MessageType } from "~/core/server/message";
 import type { Server } from "~/core/types";
 
@@ -16,18 +16,19 @@ export function setServer(server: Server) {
 
     socket.data.username = username;
 
-    let rid: string;
+    const rm = new RoomManager(server);
 
-    socket.on("joinRoom", _rid => {
-      server.in(SocketRoom.usernameRid(username, _rid)).disconnectSockets();
-      handlePlayerLeave(server, username, _rid);
+    socket.on("joinRoom", rid => {
+      rm.rid = rid;
+      server.in(SocketRoom.usernameRid(username, rid)).disconnectSockets();
 
-      rid = _rid;
+      rm.leave(username);
+
       socket.data.rid = rid;
 
       socket.join(SocketRoom.rid(rid));
       socket.join(SocketRoom.usernameRid(username, rid));
-      handlePlayerJoin(server, username, rid);
+      rm.join(username);
     });
 
     socket.on("message", ({ type, content }) => {
@@ -36,12 +37,14 @@ export function setServer(server: Server) {
 
       if (type === MessageType.World)
         server.emit("message", { type, content, username });
-      else if (type === MessageType.Room && rid)
-        server.to(SocketRoom.rid(rid)).emit("message", { type, content, username });
+      else if (type === MessageType.Room && rm.rid)
+        server.to(SocketRoom.rid(rm.rid)).emit("message", { type, content, username });
     });
 
-    socket.on("disconnect", () => handlePlayerLeave(server, username, rid));
+    socket.on("disconnect", () => rm.leave(username));
 
-    socket.on("joinTeam", team => handlePlayerJoinTeam(server, username, rid, team));
+    socket.on("joinTeam", team => rm.team(username, team));
+
+    socket.on("ready", () => rm.ready(username));
   });
 }

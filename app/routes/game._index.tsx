@@ -9,7 +9,6 @@ import Layout from "~/components/layout";
 import { requireAuthenticatedOptionalUser } from "~/session.server";
 import { Access } from "~/utils";
 import { UserLink } from "~/components/community";
-import type { Player } from "~/core/server/player";
 import { Room, roomData } from "~/core/server/room";
 
 export const meta: V2_MetaFunction = () => [{ title: "大厅 - polygen" }];
@@ -17,21 +16,21 @@ export const meta: V2_MetaFunction = () => [{ title: "大厅 - polygen" }];
 export async function loader({ request }: LoaderArgs) {
   const user = await requireAuthenticatedOptionalUser(request, Access.Basic);
 
-  let rooms = roomData;
-  if (rooms.size === 0) {
-    rooms.set("161", new Room("161"));
+  const rooms = Array.from(roomData.values()).map(room => room.export());
+  if (rooms.length === 0) {
+    rooms.push(new Room("161").export());
   }
 
-  return json({ rooms: Array.from(rooms.values()).map(room => room.export()), user });
+  return json({ rooms, user });
 }
 
-function PlayerListString({ players }: { players: Player[] }) {
+function PlayerListString({ players }: { players: string[] }) {
   return (
     <>
       {players.length === 0 ? "0玩家" : `${players.length}玩家: `}
-      {players.map(({ username }, index) => (
+      {players.map((player, index) => (
         <Fragment key={index}>
-          <UserLink username={username} />
+          <UserLink username={player} />
           {index !== players.length - 1 && ", "}
         </Fragment>
       ))}

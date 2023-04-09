@@ -1,4 +1,3 @@
-import { Player } from "~/core/server/player";
 import type { Server } from "~/core/types";
 import { Map as GameMap } from "~/core/server/game/map";
 
@@ -13,11 +12,13 @@ export const enum RoomMap {
 
 export class Room {
   id: string;
-  teams: Map<number, Player[]>;
+  teams: Map<number, string[]>;
   private map: RoomMap;
   private ongoing: boolean;
 
   private gm: GameMap;
+
+  private readyPlayers: Set<string>;
 
   constructor(id: string) {
     this.id = id;
@@ -26,6 +27,8 @@ export class Room {
 
     this.map = RoomMap.Random;
     this.gm = new GameMap();
+
+    this.readyPlayers = new Set();
   }
 
   export() {
@@ -35,7 +38,7 @@ export class Room {
   }
 
   simplifyTeams() {
-    let newTeams = new Map<number, Player[]>();
+    let newTeams: typeof this.teams = new Map();
     let teamCnt = 1;
 
     for (let [team, players] of this.teams) {
@@ -64,10 +67,9 @@ export class Room {
     }
   }
 
-  removePlayer(username: string) {
+  removePlayer(player: string) {
     for (let [team, players] of this.teams) {
-      const index = players.findIndex(player => player.username === username);
-
+      const index = players.indexOf(player);
       if (index !== -1) {
         players.splice(index, 1);
         if (players.length === 0) {
@@ -80,8 +82,8 @@ export class Room {
     return false;
   }
 
-  addPlayer(player: Player, team?: number) {
-    this.removePlayer(player.username);
+  addPlayer(player: string, team?: number) {
+    this.removePlayer(player);
 
     if (team === undefined) {
       team = this.getNewTeamId();
@@ -94,11 +96,25 @@ export class Room {
 
     item.push(player);
     this.teams.set(team, item);
+
+    if (team === 0) {
+      return this.readyPlayers.delete(player);
+    }
   }
 
   exportTeams() {
     this.simplifyTeams();
     return Array.from(this.teams.entries());
+  }
+
+  toggleReady(player: string) {
+    if (!this.readyPlayers.delete(player)) {
+      this.readyPlayers.add(player);
+    }
+  }
+
+  exportReadyPlayers() {
+    return Array.from(this.readyPlayers.values());
   }
 }
 
@@ -112,50 +128,75 @@ export const roomData = global.roomData ? global.roomData : new Map<string, Room
 
 global.roomData = roomData;
 
-export function handlePlayerJoin(server: Server, username: string, rid: string) {
-  let room = roomData.get(rid);
+export class RoomManager {
+  private server: Server;
+  rid: string = "";
 
-  if (!room) {
-    room = new Room(rid);
-    roomData.set(rid, room);
+  constructor(server: Server) {
+    this.server = server;
   }
 
-  if (room.exportPlayers().some(player => player.username === username)) {
-    return false;
+  join(player: string) {
+    let room = roomData.get(this.rid);
+
+    if (!room) {
+      room = new Room(this.rid);
+      roomData.set(this.rid, room);
+    }
+
+    if (room.exportPlayers().includes(player)) {
+      return false;
+    }
+
+    room.addPlayer(player);
+
+    this.server.to(SocketRoom.rid(this.rid)).emit("info", `${player}进入了房间`);
+    this.server.to(SocketRoom.rid(this.rid)).emit("updateTeams", room.exportTeams());
+
+    return true;
   }
 
-  room.addPlayer(new Player(username));
+  leave(player: string) {
+    const room = roomData.get(this.rid);
 
-  server.to(SocketRoom.rid(rid)).emit("info", `${username}进入了房间`);
-  server.to(SocketRoom.rid(rid)).emit("updateTeams", room.exportTeams());
+    if (!room) {
+      return;
+    }
 
-  return true;
-}
+    if (room.removePlayer(player)) {
+      this.server.to(SocketRoom.rid(this.rid)).emit("info", `${player}离开了房间`);
+      this.server.to(SocketRoom.rid(this.rid)).emit("updateTeams", room.exportTeams());
 
-export function handlePlayerLeave(server: Server, username: string, rid: string) {
-  const room = roomData.get(rid);
-
-  if (!room) {
-    return;
+      if (room.teams.size === 0)
+        roomData.delete(this.rid);
+    }
   }
 
-  if (room.removePlayer(username)) {
-    server.to(SocketRoom.rid(rid)).emit("info", `${username}离开了房间`);
-    server.to(SocketRoom.rid(rid)).emit("updateTeams", room.exportTeams());
+  team(player: string, team?: number) {
+    const room = roomData.get(this.rid);
 
-    if (room.teams.size === 0)
-      roomData.delete(rid);
+    if (!room) {
+      return;
+    }
+
+    const shouldUpdateReadyPlayers = room.addPlayer(player, team);
+
+    this.server.to(SocketRoom.rid(this.rid)).emit("updateTeams", room.exportTeams());
+
+    if (shouldUpdateReadyPlayers) {
+      this.server.to(SocketRoom.rid(this.rid)).emit("updateReadyPlayers", room.exportReadyPlayers());
+    }
   }
-}
 
-export function handlePlayerJoinTeam(server: Server, username: string, rid: string, team?: number) {
-  const room = roomData.get(rid);
+  ready(player: string) {
+    const room = roomData.get(this.rid);
 
-  if (!room) {
-    return;
+    if (!room) {
+      return;
+    }
+
+    room.toggleReady(player);
+
+    this.server.to(SocketRoom.rid(this.rid)).emit("updateReadyPlayers", room.exportReadyPlayers());
   }
-
-  room.addPlayer(new Player(username), team);
-
-  server.to(SocketRoom.rid(rid)).emit("updateTeams", room.exportTeams());
 }

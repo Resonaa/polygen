@@ -46,7 +46,7 @@ async function seed() {
 
   const post = await prisma.post.create({
     data: {
-      content: `\`\`\`typescript\n${longPost}\`\`\``,
+      content: `\`\`\`typescript\n${longPost}\n\`\`\``,
       user: { connect: { username: "user" } }
     }
   });

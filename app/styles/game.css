@@ -47,10 +47,7 @@ canvas {
 .ui.centered.cards > .card {
   background-color: black;
   width: unset !important;
-}
-
-.ui.centered.cards > .card.disabled {
-  opacity: .85 !important;
+  box-shadow: none;
 }
 
 .ui.centered.cards > .card:not(.disabled):hover {

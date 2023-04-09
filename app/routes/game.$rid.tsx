@@ -49,7 +49,7 @@ export default function Rid() {
     <Grid stackable container inverted className="!m-0 h-full" style={{ width: "100% !important" }}>
       <canvas className={clsx("w-full h-full absolute !px-0", !showCanvas && "hidden")} />
 
-      <Grid.Column width={12} className="h-full !p-0">
+      <Grid.Column width={12} className="h-full !p-0 !flex flex-col justify-center items-center">
         <Segment inverted>
           <GamePanel client={client} />
         </Segment>

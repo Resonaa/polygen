@@ -3,6 +3,14 @@ import { LandType } from "~/core/server/game/land";
 
 export type Pos = [number, number];
 
+export function getMinReadyPlayerCount(playerCount: number) {
+  if (playerCount === 0) {
+    return 0;
+  } else {
+    return Math.floor((playerCount + 2) / 2);
+  }
+}
+
 export function playerCountToSize(playerCount: number) {
   const piles = 80 * playerCount;
   const r = 1.2;

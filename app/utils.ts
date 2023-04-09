@@ -65,7 +65,7 @@ export function useOptionalUser() {
     return undefined;
   }
 
-  return data.user;
+  return data.user as User;
 }
 
 /**
