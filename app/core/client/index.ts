@@ -22,6 +22,8 @@ export function registerClientSocket(client: ClientSocket, rid: string, setShowC
 
   renderer.handleSplitArmy = () => halfTag = !halfTag;
 
+  renderer.handleClearMovements = () => client?.emit("clearMovements");
+
   let gm: Map;
 
   client.on("gameStart", ({ maybeMap, myColor }) => {

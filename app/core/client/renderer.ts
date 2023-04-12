@@ -38,6 +38,7 @@ export class Renderer {
 
   handleMove: (from: Pos, to: Pos) => any = () => false;
   handleSplitArmy: () => any = () => false;
+  handleClearMovements: () => any = () => false;
 
   private myColor: number = 0;
 
@@ -117,6 +118,27 @@ export class Renderer {
 
       if (eventKey === keys.splitArmy) {
         this.handleSplitArmy();
+      } else if (eventKey === keys.clearMovements) {
+        this.handleClearMovements();
+      } else if (eventKey === keys.selectHome) {
+        for (let i = 1; i <= this.gm.height; i++) {
+          for (let j = 1; j <= this.gm.width; j++) {
+            const land = this.gm.get([i, j]);
+            if (land.color === this.myColor && land.type === LandType.General) {
+              this.select([i, j]);
+              return;
+            }
+          }
+        }
+      } else if (eventKey === keys.selectTopLeft) {
+        for (let i = 1; i <= this.gm.height; i++) {
+          for (let j = 1; j <= this.gm.width; j++) {
+            if (this.gm.get([i, j]).color === this.myColor) {
+              this.select([i, j]);
+              return;
+            }
+          }
+        }
       }
     };
   }

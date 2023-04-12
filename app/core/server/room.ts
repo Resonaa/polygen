@@ -271,7 +271,7 @@ export class Room {
           for (let i = 1; i <= this.gm.height; i++) {
             for (let j = 1; j <= this.gm.width; j++) {
               const land = this.gm.get([i, j]);
-              if (land.color === toLand.color) {
+              if (land.color === toColor) {
                 land.color = fromLand.color;
                 land.amount = Math.ceil(land.amount / 2);
               }
@@ -575,5 +575,15 @@ export class RoomManager {
     const winners = room.teamsInGame.get(winner) as string[];
     this.server.to(SocketRoom.rid(this.rid)).emit("win", winners.join(", "));
     this.server.to(SocketRoom.rid(this.rid)).emit("updateReadyPlayers", room.exportReadyPlayers());
+  }
+
+  clearMovements(player: string) {
+    const room = roomData.get(this.rid);
+
+    if (!room || !room.ongoing || !room.gamingPlayers.has(player)) {
+      return;
+    }
+
+    room.movements.delete(player);
   }
 }
