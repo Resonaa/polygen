@@ -4,5 +4,6 @@ export const colors = [0x808080, 0xff0000, 0x4363d8, 0x008000, 0x008080, 0xf5823
 export const enum SpecialColor {
   SelectedBorder = 0xffffff,
   Empty = 0xdcdcdc,
-  Mountain = 0xbbbbbb
+  Mountain = 0xbbbbbb,
+  Unknown = 0x636363
 }

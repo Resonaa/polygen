@@ -17,7 +17,7 @@ export class Renderer {
   private readonly textures = [undefined, PIXI.Texture.from("/images/general.png"),
     PIXI.Texture.from("/images/city.png"),
     PIXI.Texture.from("/images/mountain.png"),
-    PIXI.Texture.from("/images/obstacle.png")];
+    PIXI.Texture.from("/images/obstacle.png"), undefined];
 
   selected: Pos | null = null;
   private hovered: Pos | null = null;
@@ -37,14 +37,17 @@ export class Renderer {
   private extraTexts: (string | undefined)[][] = [[]];
 
   handleMove: (from: Pos, to: Pos) => any = () => false;
+  handleSplitArmy: () => any = () => false;
+
+  private myColor: number = 0;
 
   constructor(canvas: HTMLCanvasElement) {
     this.app = new PIXI.Application({
       antialias: true,
       powerPreference: "high-performance",
       view: canvas,
-      height: canvas.clientHeight,
-      width: canvas.clientWidth
+      height: canvas.parentElement?.clientHeight,
+      width: canvas.parentElement?.clientWidth
     });
 
     this.app.stage.addChild(this.graphics);
@@ -110,6 +113,10 @@ export class Renderer {
 
           return;
         }
+      }
+
+      if (eventKey === keys.splitArmy) {
+        this.handleSplitArmy();
       }
     };
   }
@@ -189,7 +196,7 @@ export class Renderer {
     this.texts = [[]];
 
     const style = new PIXI.TextStyle({
-      fontSize: 15,
+      fontSize: 16,
       fill: SpecialColor.SelectedBorder,
       fontWeight: "bold"
     });
@@ -232,7 +239,9 @@ export class Renderer {
   }
 
   private updateType([i, j]: Pos) {
-    const texture = this.textures[this.gm.get([i, j]).type];
+    const type = this.gm.get([i, j]).type;
+    const texture = type === LandType.UnknownCity || type === LandType.UnknownMountain
+      ? this.textures[4] : this.textures[type];
 
     if (texture) {
       this.images[i][j].texture = texture;
@@ -255,6 +264,8 @@ export class Renderer {
       fillColor = SpecialColor.Empty;
     } else if (land.type === LandType.Mountain) {
       fillColor = SpecialColor.Mountain;
+    } else if (land.type >= LandType.UnknownCity) {
+      fillColor = SpecialColor.Unknown;
     }
 
     const lineWidth = selected || clean ? 4 : hovered ? 2 : 1;
@@ -267,6 +278,7 @@ export class Renderer {
 
     this.updateType(pos);
     this.updateAmount(pos);
+    this.updateHit(pos);
   }
 
   updateAll() {
@@ -330,6 +342,11 @@ export class Renderer {
     this.selected && this.update(this.selected);
   }
 
+  updateSelectedAndHovered() {
+    this.hovered && this.update(this.hovered);
+    this.selected && this.update(this.selected);
+  }
+
   private addHitAreas() {
     for (const hitArea of this.hitAreas.flat()) {
       this.app.stage.removeChild(hitArea);
@@ -342,19 +359,27 @@ export class Renderer {
       this.hitAreas.push([new PIXI.Sprite()]);
 
       for (let j = 1; j <= this.gm.width; j++) {
-        const hit = new PIXI.Sprite(), pos = [i, j] as Pos;
-
-        if (this.gm.accessible(pos)) {
-          hit.cursor = "pointer";
-          hit.eventMode = "static";
-          hit.on("pointerup", () => this.select(pos))
-            .on("pointerenter", () => this.hover(pos))
-            .on("pointerleave", () => this.unHover());
-        }
-
+        const hit = new PIXI.Sprite();
         this.app.stage.addChild(hit);
         this.hitAreas[i].push(hit);
       }
+    }
+  }
+
+  private updateHit(pos: Pos) {
+    const hittable = this.gm.accessible(pos) && (this.myColor === 0 || this.gm.get(pos).color === this.myColor)
+      , hit = this.hitAreas[pos[0]][pos[1]];
+
+    if (hittable && hit.cursor !== "pointer") {
+      hit.cursor = "pointer";
+      hit.eventMode = "static";
+      hit.on("pointerup", () => this.select(pos))
+        .on("pointerenter", () => this.hover(pos))
+        .on("pointerleave", () => this.unHover());
+    } else if (!hittable && hit.cursor === "pointer") {
+      hit.cursor = "default";
+      hit.eventMode = "none";
+      hit.off("pointerup").off("pointerenter").off("pointerleave");
     }
   }
 
@@ -392,8 +417,9 @@ export class Renderer {
     }
   }
 
-  bind(gm: Map) {
+  bind(gm: Map, myColor: number) {
     this.gm = gm;
+    this.myColor = myColor;
 
     this.addImages();
     this.addTexts();

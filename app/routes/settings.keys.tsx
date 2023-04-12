@@ -21,8 +21,6 @@ export default function Keys() {
     const settings = getSettings();
 
     const canvas = document.createElement("canvas");
-    canvas.style.width = "100%";
-    canvas.style.height = "300px";
     document.querySelector(".equal > .column")?.appendChild(canvas);
 
     const renderer = new Renderer(canvas);
@@ -49,7 +47,7 @@ export default function Keys() {
     gm.get(clearMovements).color = 5;
 
 
-    renderer.bind(gm);
+    renderer.bind(gm, 0);
 
     const keys = settings.game.keys[mode];
 
@@ -141,7 +139,7 @@ export default function Keys() {
       </Menu>
 
       <Grid stackable columns="equal">
-        <Grid.Column />
+        <Grid.Column height="300px" className="sm:mr-4" />
 
         <Grid.Column>
           <Table unstackable celled headerRow={headerRow} tableData={tableData}

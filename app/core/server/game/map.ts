@@ -1,8 +1,17 @@
+import type { LandColor, MaybeLand } from "~/core/server/game/land";
 import { Land, LandType } from "~/core/server/game/land";
 import type { Pos } from "~/core/server/game/utils";
+import type { Room } from "~/core/server/room";
 
 export enum MapMode {
   Hexagon = "六边形"
+}
+
+export interface MaybeMap {
+  width: number;
+  height: number;
+  gm: MaybeLand[][];
+  mode: MapMode;
 }
 
 export class Map {
@@ -30,6 +39,10 @@ export class Map {
     return this.gm[i][j];
   }
 
+  set([i, j]: Pos, land: Land) {
+    this.gm[i][j] = land;
+  }
+
   check([i, j]: Pos) {
     return i >= 1 && i <= this.height && j >= 1 && j <= this.width;
   }
@@ -39,7 +52,7 @@ export class Map {
     return land.type !== LandType.Mountain && land.type !== LandType.UnknownMountain;
   }
 
-  dir([_, j]: Pos): [number, number][] {
+  dir([, j]: Pos): [number, number][] {
     if (j % 2 === 1) {
       return [[-1, -1], [-1, 0], [-1, 1], [0, 1], [1, 0], [0, -1]];
     } else {
@@ -51,5 +64,50 @@ export class Map {
     return this.dir([i, j])
       .map(([dx, dy]) => [dx + i, dy + j] as Pos)
       .filter(pos => this.check(pos));
+  }
+
+  export(): MaybeMap {
+    return { width: this.width, height: this.height, mode: this.mode, gm: JSON.parse(JSON.stringify(this.gm)) };
+  }
+
+  static from(maybeMap: MaybeMap) {
+    let map = new this();
+
+    map.width = maybeMap.width;
+    map.height = maybeMap.height;
+    map.mode = maybeMap.mode;
+    map.gm = maybeMap.gm.map(row => row.map(maybeLand => Land.from(maybeLand)));
+
+    return map;
+  }
+
+  ownedByTeam(pos: Pos, myColor: LandColor, teams: Room["gameTeams"]) {
+    const land = this.get(pos);
+    return teams.get(myColor) === teams.get(land.color);
+  }
+
+  mask(myColor: LandColor, teams: Room["gameTeams"]): MaybeMap {
+    let ans = this.export();
+
+    for (let i = 1; i <= this.height; i++) {
+      for (let j = 1; j <= this.width; j++) {
+        const pos = [i, j] as Pos;
+        if (myColor !== 0 && !this.ownedByTeam(pos, myColor, teams) &&
+          !this.neighbours(pos).some(neighbour => this.ownedByTeam(neighbour, myColor, teams))) {
+          let land = this.get(pos);
+          if (land.type === LandType.Mountain) {
+            ans.gm[i][j].type = LandType.UnknownMountain;
+          } else if (land.type === LandType.City) {
+            ans.gm[i][j].type = LandType.UnknownCity;
+          } else {
+            ans.gm[i][j].type = LandType.Unknown;
+          }
+
+          ans.gm[i][j].color = ans.gm[i][j].amount = 0;
+        }
+      }
+    }
+
+    return ans;
   }
 }

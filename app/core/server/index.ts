@@ -46,5 +46,7 @@ export function setServer(server: Server) {
     socket.on("joinTeam", team => rm.team(username, team));
 
     socket.on("ready", () => rm.ready(username));
+
+    socket.on("move", movement => rm.addMovement(username, movement));
   });
 }

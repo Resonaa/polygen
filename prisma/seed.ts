@@ -68,8 +68,8 @@ async function seed() {
 
   await prisma.announcement.create({
     data: {
-      title: "第 29 次内测已开始",
-      content: "测试内容：队伍\n\n提示：由于测试需要，地图暂时隐藏"
+      title: "第 30 次内测已开始",
+      content: "测试内容：游戏\n\n提示：本次测试可能有较多的 **Bug**，欢迎反馈"
     }
   });
 

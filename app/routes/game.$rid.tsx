@@ -30,6 +30,8 @@ export default function Rid() {
   const [client, setClient] = useState<ClientSocket>();
   const rid = useLoaderData<typeof loader>();
 
+  const [showCanvas, setShowCanvas] = useState(false);
+
   useEffect(() => {
     const client = io({ parser });
     setClient(client);
@@ -40,17 +42,15 @@ export default function Rid() {
 
   useEffect(() => {
     if (!client) return;
-    registerClientSocket(client, rid);
+    registerClientSocket(client, rid, setShowCanvas);
   }, [rid, client]);
-
-  const [showCanvas,] = useState(false);
 
   return (
     <Grid stackable container inverted className="!m-0 h-full" style={{ width: "100% !important" }}>
       <canvas className={clsx("w-full h-full absolute !px-0", !showCanvas && "hidden")} />
 
       <Grid.Column width={12} className="h-full !p-0 !flex flex-col justify-center items-center">
-        <Segment inverted>
+        <Segment inverted className={clsx(showCanvas && "hidden")}>
           <GamePanel client={client} />
         </Segment>
       </Grid.Column>
