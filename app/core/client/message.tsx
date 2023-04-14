@@ -79,18 +79,17 @@ export function Messages({ client }: { client?: ClientSocket }) {
   };
 
   useEffect(() => {
+    if (!client) {
+      return;
+    }
+
     client
-      ?.off("message")
-      ?.on("message", ({ username, content, type }) => updateMessageList(<GameMessage type={type} username={username}
-                                                                                      content={content} />))
-      ?.off("info")
-      ?.on("info", info => updateMessageList(<Info content={info} />))
-      ?.off("disconnect")
-      ?.on("disconnect", () => updateMessageList(<Info content={"连接断开"} />))
-      ?.off("win")
-      ?.on("win", winnerStr => updateMessageList(<Info content={winnerStr + "赢了"} />))
-      ?.off("die")
-      ?.on("die", () => updateMessageList(<Info content="您死了" />));
+      .on("message", ({ username, content, type }) => updateMessageList(<GameMessage content={content} type={type}
+                                                                                     username={username} />))
+      .on("info", info => updateMessageList(<Info content={info} />))
+      .on("disconnect", () => updateMessageList(<Info content={"连接断开"} />))
+      .on("win", winnerStr => updateMessageList(<Info content={winnerStr + "赢了"} />))
+      .on("die", () => updateMessageList(<Info content="您死了" />));
   }, [client]);
 
   return (

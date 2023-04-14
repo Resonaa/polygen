@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "semantic-ui-react";
 
 import { MessageType } from "~/core/server/message";
@@ -8,23 +8,19 @@ import type { ClientSocket } from "~/core/types";
 export function Chat({ client }: { client?: ClientSocket }) {
   function ChatForm() {
     const [type, setType] = useState(MessageType.Room);
-    const contentRef = useRef<HTMLInputElement>(null);
+    const [content, setContent] = useState("");
 
     const handleSubmit = () => {
-      if (!contentRef.current) return;
-
-      const content = contentRef.current.value.trim();
-
       if (content.length <= 0 || content.length > 616)
         return;
 
       client?.emit("message", { type, content });
 
-      contentRef.current.value = "";
+      setContent("");
     };
 
     const handleEnter = (e: KeyboardEvent) => {
-      const input = contentRef.current;
+      const input = document.querySelector("input");
 
       if (!input)
         return;
@@ -55,8 +51,12 @@ export function Chat({ client }: { client?: ClientSocket }) {
     return (
       <Input
         placeholder={`发送至：${type}`}
-        input={{ className: `!text-white !bg-black !transition-colors ${type}`, ref: contentRef, autoComplete: "off" }}
+        input={{
+          className: `!text-white !bg-black !transition-colors ${type}`, autoComplete: "off",
+          value: content
+        }}
         fluid
+        onChange={(_, { value }) => setContent(value)}
       />
     );
   }

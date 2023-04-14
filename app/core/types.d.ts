@@ -25,6 +25,7 @@ interface ClientToServerEvents {
   ready: () => void;
   move: (movement: [Pos, Pos, boolean]) => void;
   clearMovements: () => void;
+  surrender: () => void;
 }
 
 interface InterServerEvents {

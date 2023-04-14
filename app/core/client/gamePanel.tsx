@@ -1,17 +1,25 @@
-import { Header, Card, Icon, Button } from "semantic-ui-react";
+import { Header, Card, Icon, Button, Grid, Segment } from "semantic-ui-react";
 import { Fragment, useEffect, useState } from "react";
 import clsx from "clsx";
 
 import type { ClientSocket } from "~/core/types";
 import { useUser } from "~/utils";
 import { getMinReadyPlayerCount } from "~/core/server/game/utils";
+import { registerClientSocket } from "~/core/client/index";
 
-export function GamePanel({ client }: { client?: ClientSocket }) {
+export function GamePanel({ client, rid }: { client?: ClientSocket, rid: string }) {
   const [teamData, setTeamData] = useState<[number, string[]][]>([[0, []]]);
   const [readyPlayers, setReadyPlayers] = useState<string[]>([]);
+  const [showCanvas, setShowCanvas] = useState(false);
 
   useEffect(() => {
-    client?.off("updateTeams").on("updateTeams", teamData => {
+    if (!client) {
+      return;
+    }
+
+    registerClientSocket(client, rid, setShowCanvas);
+
+    client.on("updateTeams", teamData => {
       teamData.sort((a, b) => a[0] - b[0]);
 
       if (teamData[0][0] === 0) {
@@ -24,10 +32,10 @@ export function GamePanel({ client }: { client?: ClientSocket }) {
       }
 
       setTeamData(teamData);
-    })?.off("updateReadyPlayers")?.on("updateReadyPlayers", readyPlayers => {
+    }).on("updateReadyPlayers", readyPlayers => {
       setReadyPlayers(readyPlayers);
     });
-  }, [client]);
+  }, [client, rid]);
 
   const user = useUser();
 
@@ -50,57 +58,63 @@ export function GamePanel({ client }: { client?: ClientSocket }) {
 
   return (
     <>
-      <Header textAlign="center" as="h3">选择队伍</Header>
-      <Card.Group centered>
-        {teamData.map(([team, players]) => {
-          const disabled = players.includes(user.username);
-          return (
-            <Card key={team} className={clsx(disabled && "disabled")}
-                  onClick={disabled ? undefined : () => client?.emit("joinTeam", team)}>
-              <Card.Content>
-                <Card.Header textAlign="center">
-                  {team === 0 ? "Spectators" : `Team ${team}`}
-                </Card.Header>
-                <Card.Description textAlign="center">
-                  <PlayerList players={players} />
-                </Card.Description>
-              </Card.Content>
-            </Card>
-          );
-        })
-        }
+      <canvas className={clsx("w-full h-full absolute !px-0", !showCanvas && "hidden")} />
 
-        {(() => {
-          const disabled = !teamData.some(([team, players]) =>
-            players.includes(user.username) &&
-            (team === 0 || players.some(player => player !== user.username)));
-          return (
-            <Card
-              onClick={disabled ? undefined : () => client?.emit("joinTeam", undefined)}
-              className={clsx(disabled && "disabled")}>
-              <Card.Content>
-                <Card.Header textAlign="center">
-                  <Icon name="add circle" />
-                </Card.Header>
-                <Card.Description textAlign="center">
-                  创建新队伍
-                </Card.Description>
-              </Card.Content>
-            </Card>
-          );
-        })()}
-      </Card.Group>
+      <Grid.Column width={12} className="h-full !p-0 !flex flex-col justify-center items-center">
+        <Segment inverted className={clsx(showCanvas && "hidden")}>
+          <Header textAlign="center" as="h3">选择队伍</Header>
+          <Card.Group centered>
+            {teamData.map(([team, players]) => {
+              const disabled = players.includes(user.username);
+              return (
+                <Card key={team} className={clsx(disabled && "disabled")}
+                      onClick={disabled ? undefined : () => client?.emit("joinTeam", team)}>
+                  <Card.Content>
+                    <Card.Header textAlign="center">
+                      {team === 0 ? "Spectators" : `Team ${team}`}
+                    </Card.Header>
+                    <Card.Description textAlign="center">
+                      <PlayerList players={players} />
+                    </Card.Description>
+                  </Card.Content>
+                </Card>
+              );
+            })
+            }
 
-      <div className="text-center mt-4">
-        <Button inverted color="green" disabled={teamData.slice(-1)[0][1].includes(user.username)}
-                active={readyPlayers.includes(user.username)}
-                onClick={event => {
-                  client?.emit("ready");
-                  (event.target as HTMLButtonElement).blur();
-                }}>
-          准备开始({readyPlayers.length}/{getMinReadyPlayerCount(teamData.map(([, players]) => players).slice(0, -1).flat().length)})
-        </Button>
-      </div>
+            {(() => {
+              const disabled = !teamData.some(([team, players]) =>
+                players.includes(user.username) &&
+                (team === 0 || players.some(player => player !== user.username)));
+              return (
+                <Card
+                  onClick={disabled ? undefined : () => client?.emit("joinTeam", undefined)}
+                  className={clsx(disabled && "disabled")}>
+                  <Card.Content>
+                    <Card.Header textAlign="center">
+                      <Icon name="add circle" />
+                    </Card.Header>
+                    <Card.Description textAlign="center">
+                      创建新队伍
+                    </Card.Description>
+                  </Card.Content>
+                </Card>
+              );
+            })()}
+          </Card.Group>
+
+          <div className="text-center mt-4">
+            <Button inverted color="green" disabled={teamData.slice(-1)[0][1].includes(user.username)}
+                    active={readyPlayers.includes(user.username)}
+                    onClick={event => {
+                      client?.emit("ready");
+                      (event.target as HTMLButtonElement).blur();
+                    }}>
+              准备开始({readyPlayers.length}/{getMinReadyPlayerCount(teamData.map(([, players]) => players).slice(0, -1).flat().length)})
+            </Button>
+          </div>
+        </Segment>
+      </Grid.Column>
     </>
   );
 }

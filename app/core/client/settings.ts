@@ -10,7 +10,8 @@ export interface IKeys {
   selectHome: IKey,
   selectTopLeft: IKey,
   splitArmy: IKey,
-  clearMovements: IKey
+  clearMovements: IKey,
+  surrender: IKey
 }
 
 export interface ISettings {
@@ -49,7 +50,8 @@ export class Settings {
           clearMovements: "F",
           splitArmy: "R",
           selectHome: "G",
-          selectTopLeft: "Space"
+          selectTopLeft: "Space",
+          surrender: "ESCAPE"
         }
       }
     }

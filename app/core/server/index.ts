@@ -50,5 +50,7 @@ export function setServer(server: Server) {
     socket.on("move", movement => rm.addMovement(username, movement));
 
     socket.on("clearMovements", () => rm.clearMovements(username));
+
+    socket.on("surrender", () => rm.surrender(username));
   });
 }

@@ -24,6 +24,8 @@ export function registerClientSocket(client: ClientSocket, rid: string, setShowC
 
   renderer.handleClearMovements = () => client?.emit("clearMovements");
 
+  renderer.handleSurrender = () => client?.emit("surrender");
+
   let gm: Map;
 
   client.on("gameStart", ({ maybeMap, myColor }) => {

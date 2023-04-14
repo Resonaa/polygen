@@ -586,4 +586,17 @@ export class RoomManager {
 
     room.movements.delete(player);
   }
+
+  surrender(player: string) {
+    const room = roomData.get(this.rid);
+
+    if (!room || !room.ongoing || !room.gamingPlayers.has(player) || !room.playerToColor(player)) {
+      return;
+    }
+
+    room.gamingPlayers.delete(player);
+    room.colors.delete(room.playerToColor(player));
+
+    this.server.to(SocketRoom.usernameRid(player, this.rid)).emit("die");
+  }
 }

@@ -14,10 +14,10 @@ export class Renderer {
   private app: PIXI.Application;
   private readonly graphics: PIXI.Graphics = new PIXI.Graphics();
 
-  private readonly textures = [undefined, PIXI.Texture.from("/images/general.png"),
+  private readonly textures = [PIXI.Texture.EMPTY, PIXI.Texture.from("/images/general.png"),
     PIXI.Texture.from("/images/city.png"),
     PIXI.Texture.from("/images/mountain.png"),
-    PIXI.Texture.from("/images/obstacle.png"), undefined];
+    PIXI.Texture.from("/images/obstacle.png"), PIXI.Texture.EMPTY];
 
   selected: Pos | null = null;
   private hovered: Pos | null = null;
@@ -39,6 +39,7 @@ export class Renderer {
   handleMove: (from: Pos, to: Pos) => any = () => false;
   handleSplitArmy: () => any = () => false;
   handleClearMovements: () => any = () => false;
+  handleSurrender: () => any = () => false;
 
   private myColor: number = 0;
 
@@ -69,7 +70,7 @@ export class Renderer {
       canvas.onpointermove = event => {
         const newDeltaX = event.pageX - startX, newDeltaY = event.pageY - startY;
 
-        if (Math.abs(newDeltaX) <= 10 && Math.abs(newDeltaY) <= 10) {
+        if (Math.abs(newDeltaX) <= 20 && Math.abs(newDeltaY) <= 20) {
           return;
         }
 
@@ -139,6 +140,8 @@ export class Renderer {
             }
           }
         }
+      } else if (eventKey === keys.surrender) {
+        this.handleSurrender();
       }
     };
   }
@@ -262,12 +265,8 @@ export class Renderer {
 
   private updateType([i, j]: Pos) {
     const type = this.gm.get([i, j]).type;
-    const texture = type === LandType.UnknownCity || type === LandType.UnknownMountain
-      ? this.textures[4] : this.textures[type];
-
-    if (texture) {
-      this.images[i][j].texture = texture;
-    }
+    this.images[i][j].texture = type === LandType.UnknownCity || type === LandType.UnknownMountain
+      ? this.textures[4] : this.textures[type]
   }
 
   update(pos: Pos, clean?: boolean) {
