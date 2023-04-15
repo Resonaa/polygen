@@ -484,7 +484,10 @@ export class RoomManager {
       return;
     }
 
-    const allPlayers = room.exportPlayers(), readyPlayers = room.exportReadyPlayers();
+    const allPlayers = Array.from(room.teams.entries())
+      .filter(([teamId,]) => teamId !== 0)
+      .map(([, players]) => players)
+      .flat(), readyPlayers = room.exportReadyPlayers();
 
     if (allPlayers.length >= 2 && readyPlayers.length >= getMinReadyPlayerCount(allPlayers.length)) {
       const teamCount = room.exportTeams()
@@ -598,6 +601,10 @@ export class RoomManager {
     room.colors.delete(room.playerToColor(player));
 
     this.server.to(SocketRoom.usernameRid(player, this.rid)).emit("die");
+    this.server.to(SocketRoom.usernameRid(player, this.rid)).emit("gameStart", {
+      maybeMap: room.gm.export(),
+      myColor: -1
+    });
   }
 
   teamMessage(sender: string, content: string) {
