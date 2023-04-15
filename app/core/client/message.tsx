@@ -15,10 +15,10 @@ export function getColorByMessageType(type: MessageType) {
     return "salmon";
 }
 
-function GameMessage({ type, content, username }: Pick<Message, "type" | "content" | "username">) {
+function GameMessage({ type, content, sender }: Pick<Message, "type" | "content" | "sender">) {
   return (
     <div>
-      <a href={`/user/${username}`} style={{ color: "light" + getColorByMessageType(type) }}>{username}</a>
+      <a href={`/user/${sender}`} style={{ color: "light" + getColorByMessageType(type) }}>{sender}</a>
       <RenderedText content={content} mode="dark" className="inline-block !ml-2" />
     </div>
   );
@@ -84,8 +84,8 @@ export function Messages({ client }: { client?: ClientSocket }) {
     }
 
     client
-      .on("message", ({ username, content, type }) => updateMessageList(<GameMessage content={content} type={type}
-                                                                                     username={username} />))
+      .on("message", ({ sender, content, type }) => updateMessageList(<GameMessage content={content} type={type}
+                                                                                   sender={sender} />))
       .on("info", info => updateMessageList(<Info content={info} />))
       .on("disconnect", () => updateMessageList(<Info content={"连接断开"} />))
       .on("win", winnerStr => updateMessageList(<Info content={winnerStr + "赢了"} />))

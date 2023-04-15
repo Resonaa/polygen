@@ -7,6 +7,7 @@ import { generateRandomMap } from "~/core/server/game/generator";
 import { shuffle } from "~/core/client/utils";
 import type { LandColor, MaybeLand } from "~/core/server/game/land";
 import { LandType } from "~/core/server/game/land";
+import { MessageType } from "~/core/server/message";
 
 export const SocketRoom = {
   rid: (rid: string) => `#${rid}`,
@@ -156,14 +157,18 @@ export class Room {
   gameStart() {
     this.gameTeams.clear();
     this.gamingPlayers.clear();
-    for (let [teamId, players] of this.teams) {
+
+    let players: string[] = [];
+    for (let [teamId, playersInTeam] of this.teams) {
       if (teamId === 0) {
         continue;
       }
 
-      for (let player of players) {
+      for (let player of playersInTeam) {
         this.gamingPlayers.add(player);
       }
+
+      players.push(...playersInTeam);
     }
 
     this.ongoing = true;
@@ -172,7 +177,6 @@ export class Room {
       this.gm = generateRandomMap(this.gamingPlayers.size, this.gm.mode);
     }
 
-    let players = Array.from(this.gamingPlayers.values());
     shuffle(players);
 
     this.colors = new Map(Array.from(players.entries()).map(([color, player]) => [color + 1, player]));
@@ -285,18 +289,14 @@ export class Room {
   }
 
   moveAll() {
-    const players = Array.from(this.gamingPlayers.values());
-    shuffle(players);
-
     let deaths = [];
 
-    for (let player of players) {
+    for (let [color, player] of this.colors) {
       const movements = this.movements.get(player);
       if (!movements) {
         continue;
       }
 
-      const color = this.playerToColor(player);
       while (movements.length > 0 && !this.checkMovement(movements[0], color)) {
         movements.shift();
       }
@@ -598,5 +598,27 @@ export class RoomManager {
     room.colors.delete(room.playerToColor(player));
 
     this.server.to(SocketRoom.usernameRid(player, this.rid)).emit("die");
+  }
+
+  teamMessage(sender: string, content: string) {
+    const room = roomData.get(this.rid);
+
+    if (!room) {
+      return;
+    }
+
+    const teams = room.ongoing ? room.teamsInGame : room.teams;
+
+    for (let [, players] of teams) {
+      if (players.includes(sender)) {
+        for (let receiver of players) {
+          this.server.to(SocketRoom.usernameRid(receiver, this.rid)).emit("message", {
+            type: MessageType.Team,
+            content,
+            sender
+          });
+        }
+      }
+    }
   }
 }

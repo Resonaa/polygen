@@ -3,13 +3,7 @@ export function randInt(min: number, max: number) {
 }
 
 export function shuffle(array: Array<any>) {
-  for (let i = 1; i < array.length; i++) {
-    const j = randInt(0, i - 1);
-
-    const tmp = array[i];
-    array[i] = array[j];
-    array[j] = tmp;
-  }
+  array.sort(() => Math.random() - 0.5);
 }
 
 export function formatLargeNumber(n: number): string {

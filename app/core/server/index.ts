@@ -35,10 +35,15 @@ export function setServer(server: Server) {
       if (content.trim().length <= 0 || content.length > 616)
         return;
 
-      if (type === MessageType.World)
-        server.emit("message", { type, content, username });
-      else if (type === MessageType.Room && rm.rid)
-        server.to(SocketRoom.rid(rm.rid)).emit("message", { type, content, username });
+      if (type === MessageType.World) {
+        server.emit("message", { type, content, sender: username });
+      }
+      else if (type === MessageType.Room && rm.rid) {
+        server.to(SocketRoom.rid(rm.rid)).emit("message", { type, content, sender: username });
+      }
+      else if (type === MessageType.Team) {
+        rm.teamMessage(username, content);
+      }
     });
 
     socket.on("disconnect", () => rm.leave(username));
