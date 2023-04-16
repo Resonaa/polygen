@@ -20,7 +20,6 @@ export class Renderer {
     PIXI.Texture.from("/images/obstacle.png"), PIXI.Texture.EMPTY];
 
   selected: Pos | null = null;
-  private hovered: Pos | null = null;
 
   private pileWidth: number = 0;
   private startX: number = 0;
@@ -109,7 +108,6 @@ export class Renderer {
               return;
             }
 
-            this.unHover();
             this.select(to);
           }
 
@@ -266,16 +264,15 @@ export class Renderer {
   private updateType([i, j]: Pos) {
     const type = this.gm.get([i, j]).type;
     this.images[i][j].texture = type === LandType.UnknownCity || type === LandType.UnknownMountain
-      ? this.textures[4] : this.textures[type]
+      ? this.textures[4] : this.textures[type];
   }
 
-  update(pos: Pos, clean?: boolean) {
+  update(pos: Pos) {
     if (!this.gm.check(pos)) {
       return;
     }
 
     const selected = this.selected && this.selected.join() === pos.join();
-    const hovered = this.hovered && this.hovered.join() === pos.join();
 
     const land = this.gm.get(pos);
 
@@ -289,10 +286,11 @@ export class Renderer {
       fillColor = SpecialColor.Unknown;
     }
 
-    const lineWidth = selected || clean ? 4 : hovered ? 2 : 1;
-    const lineColor = (selected || hovered) && !clean ? SpecialColor.SelectedBorder : undefined;
+    const lineWidth = selected ? 4 : 1;
+    const alignment = selected ? 0 : 0.5;
+    const lineColor = selected ? SpecialColor.SelectedBorder : undefined;
 
-    this.graphics.lineStyle(lineWidth, lineColor)
+    this.graphics.lineStyle(lineWidth, lineColor, 1, alignment)
       .beginFill(fillColor)
       .drawPolygon(this.getPilePath(pos))
       .endFill();
@@ -309,7 +307,6 @@ export class Renderer {
       }
     }
 
-    this.hovered && this.update(this.hovered);
     this.selected && this.update(this.selected);
   }
 
@@ -319,53 +316,14 @@ export class Renderer {
     }
 
     const preSelected = this.selected;
-
     this.selected = null;
-
-    this.update(preSelected, true);
     this.update(preSelected);
-
-    for (let neighbour of this.gm.neighbours(preSelected)) {
-      this.update(neighbour);
-    }
   }
 
   private select(pos: Pos) {
     this.unSelect();
     this.selected = pos;
     this.update(pos);
-  }
-
-  unHover() {
-    if (!this.hovered) {
-      return;
-    }
-
-    const preHovered = this.hovered;
-
-    this.hovered = null;
-    this.update(preHovered, true);
-    this.update(preHovered);
-
-    for (let neighbour of this.gm.neighbours(preHovered)) {
-      this.update(neighbour);
-    }
-
-    this.selected && this.update(this.selected);
-  }
-
-  private hover(pos: Pos) {
-    this.unHover();
-
-    this.hovered = pos;
-    this.update(pos);
-
-    this.selected && this.update(this.selected);
-  }
-
-  updateSelectedAndHovered() {
-    this.hovered && this.update(this.hovered);
-    this.selected && this.update(this.selected);
   }
 
   private addHitAreas() {
@@ -394,13 +352,11 @@ export class Renderer {
     if (hittable && hit.cursor !== "pointer") {
       hit.cursor = "pointer";
       hit.eventMode = "static";
-      hit.on("pointerup", () => this.select(pos))
-        .on("pointerenter", () => this.hover(pos))
-        .on("pointerleave", () => this.unHover());
+      hit.on("pointerup", () => this.select(pos));
     } else if (!hittable && hit.cursor === "pointer") {
       hit.cursor = "default";
       hit.eventMode = "none";
-      hit.off("pointerup").off("pointerenter").off("pointerleave");
+      hit.off("pointerup");
     }
   }
 
@@ -447,7 +403,7 @@ export class Renderer {
     this.addHitAreas();
     this.addExtraTexts();
 
-    this.selected = this.hovered = null;
+    this.selected = null;
     this.scale = 1;
     this.deltaX = this.deltaY = 0;
 

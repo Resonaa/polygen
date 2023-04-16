@@ -63,7 +63,7 @@ export function Chat({ client }: { client?: ClientSocket }) {
 
   return (
     <>
-      <div className="messages max-h-52 overflow-auto !m-0">
+      <div className="messages max-h-56 overflow-auto !m-0">
         <Messages client={client} />
       </div>
 

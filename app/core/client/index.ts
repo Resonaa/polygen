@@ -39,6 +39,5 @@ export function registerClientSocket(client: ClientSocket, rid: string, setShowC
       gm.set(pos, Land.from(maybeLand));
       renderer.update(pos);
     }
-    renderer.updateSelectedAndHovered();
   });
 }

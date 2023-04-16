@@ -25,7 +25,7 @@ function GameMessage({ type, content, sender }: Pick<Message, "type" | "content"
 }
 
 function Info({ content }: { content: string }) {
-  return <div className="text-center text-sm info">{content}</div>;
+  return <div className="text-center text-xs info">{content}</div>;
 }
 
 function Time({ time }: { time: number }) {

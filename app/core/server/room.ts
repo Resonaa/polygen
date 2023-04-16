@@ -614,6 +614,11 @@ export class RoomManager {
       return;
     }
 
+    if (room.ongoing && !room.gamingPlayers.has(sender) && room.playerToTeam(sender) !== 0) {
+      this.server.to(SocketRoom.usernameRid(sender, this.rid)).emit("info", "游戏中仅参战玩家可发送队伍消息");
+      return;
+    }
+
     const teams = room.ongoing ? room.teamsInGame : room.teams;
 
     for (let [, players] of teams) {

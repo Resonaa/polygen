@@ -10,7 +10,7 @@ export function RoomInfo({ client, rid }: { client?: ClientSocket, rid: string }
     <>
       房间名称：
       <span title="复制链接" className="cursor-pointer hover:underline" onClick={copyLink}>
-        {rid}<Icon name="copy" />
+        {rid}<Icon name="copy" size="mini" />
       </span>
     </>
   );
