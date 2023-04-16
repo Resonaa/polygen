@@ -507,7 +507,7 @@ export class RoomManager {
         });
       }
 
-      for (let player of allPlayers) {
+      for (let player of room.exportPlayers()) {
         if (!room.gamingPlayers.has(player)) {
           this.server.to(SocketRoom.usernameRid(player, this.rid)).emit("gameStart", {
             maybeMap: room.gm.export(),
