@@ -1,6 +1,6 @@
-import { Grid, Menu } from "semantic-ui-react";
-import { NavLink, Outlet } from "@remix-run/react";
 import type { LoaderArgs, V2_MetaFunction } from "@remix-run/node";
+import { NavLink, Outlet } from "@remix-run/react";
+import { Grid, Menu } from "semantic-ui-react";
 
 import Layout from "~/components/layout";
 import { requireAuthenticatedOptionalUser } from "~/session.server";

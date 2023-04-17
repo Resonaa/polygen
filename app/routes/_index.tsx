@@ -1,22 +1,22 @@
-import { useActionData, useLoaderData, useSubmit, useNavigation } from "@remix-run/react";
-import { useEffect, useState } from "react";
 import type { LoaderArgs, ActionArgs, V2_MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
+import { useActionData, useLoaderData, useSubmit, useNavigation } from "@remix-run/react";
+import clsx from "clsx";
+import { useEffect, useState } from "react";
 import { Button, Feed, Grid, Header, Icon, Segment } from "semantic-ui-react";
 import Vditor from "vditor";
-import clsx from "clsx";
 
-import Layout from "../components/layout";
 import Announcement from "~/components/announcement";
-import { Access, ajax, vditorConfig } from "~/utils";
+import { Avatar, UserLink } from "~/components/community";
+import CountDown from "~/components/countdown";
 import Post from "~/components/post";
 import Quote from "~/components/quote";
-import { Avatar, UserLink } from "~/components/community";
-
 import { getAnnouncements } from "~/models/announcement.server";
-import { requireAuthenticatedOptionalUser, requireAuthenticatedUser } from "~/session.server";
 import { createPost, getPosts } from "~/models/post.server";
-import CountDown from "~/components/countdown";
+import { requireAuthenticatedOptionalUser, requireAuthenticatedUser } from "~/session.server";
+import { Access, ajax, vditorConfig } from "~/utils";
+
+import Layout from "../components/layout";
 
 export const meta: V2_MetaFunction = () => [{ title: "首页 - polygen" }];
 

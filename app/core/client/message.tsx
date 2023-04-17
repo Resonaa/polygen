@@ -1,9 +1,9 @@
-import { Label } from "semantic-ui-react";
 import { Fragment, useEffect, useRef, useState } from "react";
+import { Label } from "semantic-ui-react";
 
+import RenderedText from "~/components/renderedText";
 import type { Message } from "~/core/server/message";
 import { MessageType } from "~/core/server/message";
-import RenderedText from "~/components/renderedText";
 import type { ClientSocket } from "~/core/types";
 
 export function getColorByMessageType(type: MessageType) {

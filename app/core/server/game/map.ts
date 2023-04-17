@@ -67,17 +67,13 @@ export class Map {
   }
 
   export(): MaybeMap {
-    return { width: this.width, height: this.height, mode: this.mode, gm: JSON.parse(JSON.stringify(this.gm)) };
+    const gm = this.gm.map(row => row.map(land => land.export()));
+    return { width: this.width, height: this.height, mode: this.mode, gm };
   }
 
-  static from(maybeMap: MaybeMap) {
-    let map = new this();
-
-    map.width = maybeMap.width;
-    map.height = maybeMap.height;
-    map.mode = maybeMap.mode;
-    map.gm = maybeMap.gm.map(row => row.map(maybeLand => Land.from(maybeLand)));
-
+  static from({ width, height, mode, gm }: MaybeMap) {
+    let map = new this(width, height, mode);
+    map.gm = gm.map(row => row.map(maybeLand => Land.from(maybeLand)));
     return map;
   }
 
@@ -96,14 +92,14 @@ export class Map {
           !this.neighbours(pos).some(neighbour => this.ownedByTeam(neighbour, myColor, teams))) {
           let land = this.get(pos);
           if (land.type === LandType.Mountain) {
-            ans.gm[i][j].type = LandType.UnknownMountain;
+            ans.gm[i][j].t = LandType.UnknownMountain;
           } else if (land.type === LandType.City) {
-            ans.gm[i][j].type = LandType.UnknownCity;
+            ans.gm[i][j].t = LandType.UnknownCity;
           } else {
-            ans.gm[i][j].type = LandType.Unknown;
+            ans.gm[i][j].t = LandType.Unknown;
           }
 
-          ans.gm[i][j].color = ans.gm[i][j].amount = 0;
+          ans.gm[i][j].c = ans.gm[i][j].a = 0;
         }
       }
     }

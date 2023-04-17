@@ -1,12 +1,12 @@
 import * as PIXI from "pixi.js";
 
-import { Map } from "../server/game/map";
-import type { Pos } from "~/core/server/game/utils";
 import { colors, SpecialColor } from "~/core/client/colors";
+import { getSettings } from "~/core/client/settings";
 import { formatLargeNumber } from "~/core/client/utils";
 import { LandType } from "~/core/server/game/land";
+import type { Pos } from "~/core/server/game/utils";
 
-import { getSettings } from "~/core/client/settings";
+import { Map } from "../server/game/map";
 
 export class Renderer {
   gm: Map = new Map();

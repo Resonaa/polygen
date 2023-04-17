@@ -1,10 +1,10 @@
 import type { Server as ServerType, Socket as SocketType } from "socket.io";
 import type { Socket as ClientSocketType } from "socket.io-client";
 
-import type { Message } from "~/core/server/message";
+import type { LandColor, MaybeLand } from "~/core/server/game/land";
 import type { MaybeMap } from "~/core/server/game/map";
 import type { Pos } from "~/core/server/game/utils";
-import type { LandColor, MaybeLand } from "~/core/server/game/land";
+import type { Message } from "~/core/server/message";
 import type { TeamId } from "~/core/server/room";
 
 interface ServerToClientEvents {
@@ -13,7 +13,8 @@ interface ServerToClientEvents {
   updateTeams: (teams: [TeamId, string[]][]) => void;
   updateReadyPlayers: (readyPlayers: string[]) => void;
   gameStart: ({ maybeMap, myColor }: { maybeMap: MaybeMap, myColor: LandColor }) => void;
-  patch: ({ turn, updates }: { turn: number, updates: [Pos, MaybeLand][] }) => void;
+  patch: (updates: [Pos, MaybeLand][]) => void;
+  rank: (rank: [LandColor, string, number, number][]) => void;
   die: () => void;
   win: (winnerStr: string) => void;
 }

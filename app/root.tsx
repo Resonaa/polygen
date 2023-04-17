@@ -12,15 +12,15 @@ import {
   ScrollRestoration,
   useRouteError
 } from "@remix-run/react";
-import { Grid } from "semantic-ui-react";
-
-import tailwind from "./styles/tailwind.css";
 import semantic from "semantic-ui-css/semantic.min.css";
+import { Grid } from "semantic-ui-react";
 import vditor from "vditor/dist/index.css";
 
-import { requireAuthenticatedOptionalUser } from "./session.server";
 import Layout from "~/components/layout";
 import { Access } from "~/utils";
+
+import { requireAuthenticatedOptionalUser } from "./session.server";
+import tailwind from "./styles/tailwind.css";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: tailwind },

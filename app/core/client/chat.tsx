@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { Input } from "semantic-ui-react";
 
-import { MessageType } from "~/core/server/message";
 import { Messages } from "~/core/client/message";
+import { MessageType } from "~/core/server/message";
 import type { ClientSocket } from "~/core/types";
 
 export function Chat({ client }: { client?: ClientSocket }) {

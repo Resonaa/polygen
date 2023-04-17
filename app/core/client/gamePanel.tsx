@@ -1,11 +1,11 @@
-import { Header, Card, Icon, Button, Grid, Segment } from "semantic-ui-react";
-import { Fragment, useEffect, useState } from "react";
 import clsx from "clsx";
+import { Fragment, useEffect, useState } from "react";
+import { Header, Card, Icon, Button, Grid, Segment } from "semantic-ui-react";
 
+import { registerClientSocket } from "~/core/client/index";
+import { getMinReadyPlayerCount } from "~/core/server/game/utils";
 import type { ClientSocket } from "~/core/types";
 import { useUser } from "~/utils";
-import { getMinReadyPlayerCount } from "~/core/server/game/utils";
-import { registerClientSocket } from "~/core/client/index";
 
 export function GamePanel({ client, rid }: { client?: ClientSocket, rid: string }) {
   const [teamData, setTeamData] = useState<[number, string[]][]>([[0, []]]);

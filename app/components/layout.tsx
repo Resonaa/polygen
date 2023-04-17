@@ -1,11 +1,12 @@
-import type { SemanticICONS, SemanticWIDTHS } from "semantic-ui-react";
-import { Button, Container, Dropdown, Grid, Header, Icon, Menu, Sidebar } from "semantic-ui-react";
+import { Form, Link, NavLink } from "@remix-run/react";
 import type { ReactNode } from "react";
 import { useState, useRef } from "react";
-import { Form, Link, NavLink } from "@remix-run/react";
+import type { SemanticICONS, SemanticWIDTHS } from "semantic-ui-react";
+import { Button, Container, Dropdown, Grid, Header, Icon, Menu, Sidebar } from "semantic-ui-react";
+
+import { useOptionalUser } from "~/utils";
 
 import Footer from "./footer";
-import { useOptionalUser } from "~/utils";
 
 function NavItem({
                    to,

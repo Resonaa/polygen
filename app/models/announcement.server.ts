@@ -1,5 +1,6 @@
-import { prisma } from "~/db.server";
 import type { Announcement } from "@prisma/client";
+
+import { prisma } from "~/db.server";
 
 export type { Announcement } from "@prisma/client";
 

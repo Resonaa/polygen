@@ -1,10 +1,11 @@
-import { useRef, useEffect } from "react";
 import { Form as ReactForm, Link, useActionData, useSearchParams, useNavigation } from "@remix-run/react";
-import { Button, Form, Icon, Grid } from "semantic-ui-react";
 import clsx from "clsx";
+import { useRef, useEffect } from "react";
+import { Button, Form, Icon, Grid } from "semantic-ui-react";
+
+import type { action } from "~/routes/register";
 
 import Layout from "./layout";
-import type { action } from "~/routes/register";
 
 export default function AuthBox({ type }: { type: "login" | "register" }) {
   const [searchParams] = useSearchParams();

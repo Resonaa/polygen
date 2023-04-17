@@ -18,17 +18,15 @@ export function formatDate(date: string) {
   return new Date(date).toLocaleString().replace(/\//g, "-");
 }
 
-function padZero(num: number, zeroes: number) {
-  const s = num.toString();
-
-  return "0".repeat(Math.max(0, zeroes - s.length)) + s;
+export function padZero(num: string, zeroes: number) {
+  return "0".repeat(Math.max(0, zeroes - num.length)) + num;
 }
 
 export function relativeDate(date: string) {
   const now = new Date(), past = new Date(date);
 
-  const pastHours = padZero(past.getHours(), 2),
-    pastMinutes = padZero(past.getMinutes(), 2);
+  const pastHours = padZero(past.getHours().toString(), 2),
+    pastMinutes = padZero(past.getMinutes().toString(), 2);
 
   if (now.getFullYear() !== past.getFullYear()) {
     return `${past.getFullYear()}/${past.getMonth() + 1}/${past.getDate()} ${pastHours}:${pastMinutes}`;

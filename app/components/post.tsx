@@ -1,12 +1,12 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { Feed, Icon } from "semantic-ui-react";
 import { Link } from "@remix-run/react";
 import { useState } from "react";
+import { Feed, Icon } from "semantic-ui-react";
 
-import type { Post as PostType } from "~/models/post.server";
 import { Avatar, relativeDate, UserLink } from "~/components/community";
-import RenderedText from "~/components/renderedText";
 import { formatDate, formatLargeNumber } from "~/components/community";
+import RenderedText from "~/components/renderedText";
+import type { Post as PostType } from "~/models/post.server";
 import { useOptionalUser, ajax } from "~/utils";
 
 export default function Post({

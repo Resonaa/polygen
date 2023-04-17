@@ -1,9 +1,9 @@
 import type { ActionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 
+import { sendFavour } from "~/models/post.server";
 import { requireAuthenticatedOptionalUser, requireAuthenticatedUser } from "~/session.server";
 import { Access } from "~/utils";
-import { sendFavour } from "~/models/post.server";
 
 export async function loader({ request }: ActionArgs) {
   return await requireAuthenticatedOptionalUser(request, Access.Basic);

@@ -1,13 +1,13 @@
-import type { Server } from "~/core/types";
+import { shuffle } from "~/core/client/utils";
+import { generateRandomMap } from "~/core/server/game/generator";
+import type { LandColor, MaybeLand } from "~/core/server/game/land";
+import { LandType } from "~/core/server/game/land";
 import type { MaybeMap } from "~/core/server/game/map";
 import { Map as GameMap } from "~/core/server/game/map";
 import type { Pos } from "~/core/server/game/utils";
 import { getMinReadyPlayerCount } from "~/core/server/game/utils";
-import { generateRandomMap } from "~/core/server/game/generator";
-import { shuffle } from "~/core/client/utils";
-import type { LandColor, MaybeLand } from "~/core/server/game/land";
-import { LandType } from "~/core/server/game/land";
 import { MessageType } from "~/core/server/message";
+import type { Server } from "~/core/types";
 
 export const SocketRoom = {
   rid: (rid: string) => `#${rid}`,
@@ -351,7 +351,7 @@ export class Room {
       for (let i = 1; i <= this.gm.height; i++) {
         for (let j = 1; j <= this.gm.width; j++) {
           const preLand = pre.gm[i][j], nowLand = now.gm[i][j];
-          if (preLand.color !== nowLand.color || preLand.amount !== nowLand.amount || preLand.type !== nowLand.type) {
+          if (preLand.c !== nowLand.c || preLand.a !== nowLand.a || preLand.t !== nowLand.t) {
             patch.push([[i, j] as Pos, nowLand]);
           }
         }
@@ -361,6 +361,66 @@ export class Room {
     }
 
     return res;
+  }
+
+  rankAll() {
+    let ans: [LandColor, string, number, number][] = [], data: Map<LandColor, [number, number]> = new Map();
+
+    for (let i = 1; i <= this.gm.height; i++) {
+      for (let j = 1; j <= this.gm.width; j++) {
+        const land = this.gm.get([i, j]);
+        if (land.color === 0 || !this.colors.has(land.color) || !this.gamingPlayers.has(this.colors.get(land.color) as string)) {
+          continue;
+        }
+
+        const datum = data.get(land.color);
+        if (!datum) {
+          data.set(land.color, [1, land.amount]);
+        } else {
+          data.set(land.color, [datum[0] + 1, datum[1] + land.amount]);
+        }
+      }
+    }
+
+    let teamData: Map<TeamId, [number, number]> = new Map();
+
+    for (let [color, [land, army]] of data) {
+      ans.push([color, this.colors.get(color) as string, land, army]);
+
+      const team = this.gameTeams.get(color) as number;
+      const datum = teamData.get(team);
+      if (!datum) {
+        teamData.set(team, [land, army]);
+      } else {
+        teamData.set(team, [land + datum[0], army + datum[1]]);
+      }
+    }
+
+    ans.sort((a, b) => {
+      const teamA = this.gameTeams.get(a[0]) as TeamId, teamB = this.gameTeams.get(b[0]) as TeamId;
+      if (teamA !== teamB) {
+        const dataA = teamData.get(teamA) as [number, number], dataB = teamData.get(teamB) as [number, number];
+        return dataA[1] !== dataB[1] ? dataB[1] - dataA[1] : dataB[0] - dataA[0];
+      } else {
+        const dataA = data.get(a[0]) as [number, number], dataB = data.get(b[0]) as [number, number];
+        return dataA[1] !== dataB[1] ? dataB[1] - dataA[1] : dataB[0] - dataA[0];
+      }
+    });
+
+    if (Array.from(this.teamsInGame.entries()).some(([teamId, players]) => teamId !== 0 && players.length > 1)) {
+      let lastTeam = 0;
+      for (let i = 0; i < ans.length; i++) {
+        const color = ans[i][0];
+        const team = this.gameTeams.get(color) as TeamId;
+        if (team !== lastTeam) {
+          lastTeam = team;
+          const [land, army] = teamData.get(team) as [number, number];
+          ans.splice(i, 0, [-1, `Team ${team}`, land, army]);
+        }
+      }
+    }
+
+    return ans;
   }
 }
 
@@ -545,10 +605,14 @@ export class RoomManager {
 
     room.addArmy();
 
+    const rank = room.rankAll();
+
     const patches = room.patchAll(preMap, preColors);
     for (let [player, patch] of patches) {
-      this.server.to(SocketRoom.usernameRid(player, this.rid)).emit("patch", { turn: room.turn, updates: patch });
+      this.server.to(SocketRoom.usernameRid(player, this.rid)).emit("patch", patch);
     }
+
+    this.server.to(SocketRoom.rid(this.rid)).emit("rank", rank);
   }
 
   addMovement(player: string, movement: [Pos, Pos, boolean]) {

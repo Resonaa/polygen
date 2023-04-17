@@ -1,6 +1,6 @@
 import { identify } from "~/core/server/identification";
-import { RoomManager, SocketRoom } from "~/core/server/room";
 import { MessageType } from "~/core/server/message";
+import { RoomManager, SocketRoom } from "~/core/server/room";
 import type { Server } from "~/core/types";
 
 export function setServer(server: Server) {

@@ -1,5 +1,5 @@
-import type { Map } from "~/core/server/game/map";
 import { LandType } from "~/core/server/game/land";
+import type { Map } from "~/core/server/game/map";
 
 export type Pos = [number, number];
 

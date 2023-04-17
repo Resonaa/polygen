@@ -1,8 +1,9 @@
 import type { ActionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
+
+import { getComments } from "~/models/comment.server";
 import { requireAuthenticatedOptionalUser } from "~/session.server";
 import { Access } from "~/utils";
-import { getComments } from "~/models/comment.server";
 
 export async function loader({ request }: ActionArgs) {
   return await requireAuthenticatedOptionalUser(request, Access.Basic);

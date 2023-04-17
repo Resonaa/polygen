@@ -1,10 +1,10 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { Comment as SemanticComment } from "semantic-ui-react";
 
-import type { Comment as CommentType } from "~/models/comment.server";
 import { formatDate } from "~/components/community";
 import { Avatar, relativeDate, UserLink } from "~/components/community";
 import RenderedText from "~/components/renderedText";
+import type { Comment as CommentType } from "~/models/comment.server";
 import { useOptionalUser } from "~/utils";
 
 export default function Comment({

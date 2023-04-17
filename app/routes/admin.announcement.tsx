@@ -1,13 +1,13 @@
-import Vditor from "vditor";
-import { useEffect, useRef, useState } from "react";
-import { Button, Icon } from "semantic-ui-react";
-import { useSubmit } from "@remix-run/react";
 import type { ActionArgs, LoaderArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
+import { useSubmit } from "@remix-run/react";
+import { useEffect, useRef, useState } from "react";
+import { Button, Icon } from "semantic-ui-react";
+import Vditor from "vditor";
 
-import { Access, vditorConfig } from "~/utils";
 import { createAnnouncement } from "~/models/announcement.server";
 import { requireAuthenticatedUser } from "~/session.server";
+import { Access, vditorConfig } from "~/utils";
 
 export async function action({ request }: ActionArgs) {
   await requireAuthenticatedUser(request, Access.ManageAnnouncement);

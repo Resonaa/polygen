@@ -17,7 +17,7 @@ input::selection {
 
 input {
   border-width: 1.5px !important;
-  padding: 9.5px !important;
+  padding: 9.5px 12px !important;
 }
 
 input.房间:focus {
@@ -57,4 +57,8 @@ canvas {
 
 .ui.centered.cards > .card > .content > div {
   color: rgba(255, 255, 255, .9);
+}
+
+.ui.inverted.table {
+  background: unset !important;
 }

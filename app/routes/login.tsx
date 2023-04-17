@@ -1,9 +1,10 @@
 import type { ActionArgs, LoaderArgs, V2_MetaFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 
-import { createUserSession, requireAuthenticatedOptionalUser } from "~/session.server";
 import { verifyLogin } from "~/models/user.server";
+import { createUserSession, requireAuthenticatedOptionalUser } from "~/session.server";
 import { Access, safeRedirect, validatePassword, validateUsername } from "~/utils";
+
 import AuthBox from "../components/authBox";
 
 export async function loader({ request }: LoaderArgs) {

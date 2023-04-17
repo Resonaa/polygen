@@ -1,10 +1,10 @@
 
+import { randInt, shuffle } from "~/core/client/utils";
+import { LandType } from "~/core/server/game/land";
 import type { MapMode } from "~/core/server/game/map";
 import { Map } from "~/core/server/game/map";
 import type { Pos } from "~/core/server/game/utils";
 import { playerCountToSize, astar } from "~/core/server/game/utils";
-import { randInt, shuffle } from "~/core/client/utils";
-import { LandType } from "~/core/server/game/land";
 
 const cityDensity = 0.05;
 const mountainDensity = 0.15;

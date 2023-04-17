@@ -11,9 +11,9 @@ export const enum LandType {
 export type LandColor = number;
 
 export interface MaybeLand {
-  color: LandColor;
-  type: LandType;
-  amount: number;
+  c: LandColor;
+  t: LandType;
+  a: number;
 }
 
 export class Land {
@@ -27,13 +27,11 @@ export class Land {
     this.amount = amount;
   }
 
-  static from(maybeLand: MaybeLand) {
-    let land = new this();
+  static from({ c, t, a }: MaybeLand) {
+    return new this(c, t, a);
+  }
 
-    land.color = maybeLand.color;
-    land.type = maybeLand.type;
-    land.amount = maybeLand.amount;
-
-    return land;
+  export(): MaybeLand {
+    return { c: this.color, t: this.type, a: this.amount };
   }
 }

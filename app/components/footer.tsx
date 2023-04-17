@@ -1,5 +1,5 @@
-import { Container, Grid, Header, List, Segment } from "semantic-ui-react";
 import { Link } from "@remix-run/react";
+import { Container, Grid, Header, List, Segment } from "semantic-ui-react";
 
 export default function Footer() {
   return (

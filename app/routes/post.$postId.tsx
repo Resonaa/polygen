@@ -2,7 +2,6 @@ import type { LoaderArgs, ActionArgs, V2_MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useActionData, useLoaderData, useSubmit, useNavigation } from "@remix-run/react";
 import { useEffect, useRef, useState } from "react";
-import Vditor from "vditor";
 import {
   Button,
   Feed,
@@ -14,15 +13,16 @@ import {
   List,
   Pagination
 } from "semantic-ui-react";
+import Vditor from "vditor";
 
+import Comment from "~/components/comment";
+import { Avatar, formatDate, UserLink } from "~/components/community";
+import Layout from "~/components/layout";
+import Post from "~/components/post";
+import { createComment } from "~/models/comment.server";
 import { getPost } from "~/models/post.server";
 import { requireAuthenticatedOptionalUser, requireAuthenticatedUser } from "~/session.server";
 import { Access, ajax, vditorConfig } from "~/utils";
-import { createComment } from "~/models/comment.server";
-import Layout from "~/components/layout";
-import { Avatar, formatDate, UserLink } from "~/components/community";
-import Post from "~/components/post";
-import Comment from "~/components/comment";
 
 export async function loader({ request, params }: LoaderArgs) {
   const user = await requireAuthenticatedOptionalUser(request, Access.Basic);

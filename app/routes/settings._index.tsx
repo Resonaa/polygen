@@ -1,5 +1,5 @@
-import { Header, TextArea, Form, Button, Icon } from "semantic-ui-react";
 import { useEffect, useState } from "react";
+import { Header, TextArea, Form, Button, Icon } from "semantic-ui-react";
 
 import { getSettings, SETTINGS_KEY } from "~/core/client/settings";
 

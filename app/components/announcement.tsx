@@ -1,8 +1,8 @@
-import { Button, Modal } from "semantic-ui-react";
 import { useState } from "react";
+import { Button, Modal } from "semantic-ui-react";
 
-import type { Announcement as ann } from "~/models/announcement.server";
 import RenderedText from "~/components/renderedText";
+import type { Announcement as ann } from "~/models/announcement.server";
 
 export default function Announcement({ id, title, content }: ann) {
   const [open, setOpen] = useState(false);
