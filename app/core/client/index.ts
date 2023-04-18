@@ -1,5 +1,5 @@
 import { Renderer } from "~/core/client/renderer";
-import { Land } from "~/core/server/game/land";
+import { LandType } from "~/core/server/game/land";
 import { Map } from "~/core/server/game/map";
 
 import type { ClientSocket } from "../types";
@@ -37,8 +37,27 @@ export function registerClientSocket(client: ClientSocket, rid: string, setShowC
     setShowCanvas(false);
   }).on("patch", updates => {
     for (let [pos, maybeLand] of updates) {
-      gm.set(pos, Land.from(maybeLand));
-      renderer.update(pos);
+      let land = gm.get(pos);
+
+      if (maybeLand.t !== undefined) {
+        land.type = maybeLand.t;
+        renderer.updateType(pos);
+
+        if (maybeLand.c === undefined && ((land.color === 0 && land.type === LandType.Land) || land.type >= LandType.City)) {
+          renderer.updateGraphics(pos);
+        }
+      }
+
+      if (maybeLand.c !== undefined) {
+        land.color = maybeLand.c;
+        renderer.updateGraphics(pos);
+        renderer.updateHit(pos);
+      }
+
+      if (maybeLand.a !== undefined) {
+        land.amount = maybeLand.a;
+        renderer.updateAmount(pos);
+      }
     }
   });
 }

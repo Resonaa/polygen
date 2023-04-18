@@ -44,6 +44,8 @@ export class Room {
 
   turn: number;
 
+  surrenders: Set<string>;
+
   constructor(id: string) {
     this.id = id;
     this.ongoing = false;
@@ -59,6 +61,7 @@ export class Room {
     this.gameTeams = new Map();
     this.gamingPlayers = new Set();
     this.movements = new Map();
+    this.surrenders = new Set();
     this.turn = 0;
   }
 
@@ -123,16 +126,15 @@ export class Room {
     this.removePlayer(player);
 
     if (team === undefined) {
-      team = this.getNewTeamId();
+      team = this.ongoing ? this.playerToTeam(player, this.teamsInGame) : this.getNewTeamId();
     }
 
     let item = this.teams.get(team);
-    if (!item) {
-      item = [];
+    if (item) {
+      item.push(player);
+    } else {
+      this.teams.set(team, [player]);
     }
-
-    item.push(player);
-    this.teams.set(team, item);
 
     if (team === 0) {
       return this.readyPlayers.delete(player);
@@ -219,9 +221,9 @@ export class Room {
     return winner;
   }
 
-  playerToTeam(player: string) {
-    const res = Array.from(this.teams.entries()).find(([, players]) => players.includes(player));
-    return (res as [TeamId, string[]])[0];
+  playerToTeam(player: string, teams: Room["teams"] = this.teams) {
+    const res = Array.from(teams.entries()).find(([, players]) => players.includes(player));
+    return res ? res[0] : 0;
   }
 
   gameEnd() {
@@ -231,6 +233,7 @@ export class Room {
     this.colors.clear();
     this.gameTeams.clear();
     this.movements.clear();
+    this.surrenders.clear();
     this.turn = 0;
 
     if (this.gameInterval) {
@@ -340,19 +343,33 @@ export class Room {
   }
 
   patchAll(preMap: MaybeMap, preColors: Room["colors"]) {
-    let res: Map<string, [Pos, MaybeLand][]> = new Map(), preGm = GameMap.from(preMap);
+    let res: Map<string, [Pos, Partial<MaybeLand>][]> = new Map(), preGm = GameMap.from(preMap);
     for (let player of this.exportPlayers()) {
       const preColor = this.playerToColor(player, preColors), nowColor = this.playerToColor(player);
       const pre = preGm.mask(preColor, this.gameTeams);
       const now = this.gm.mask(nowColor, this.gameTeams);
 
-      let patch: [Pos, MaybeLand][] = [];
+      let patch: [Pos, Partial<MaybeLand>][] = [];
 
       for (let i = 1; i <= this.gm.height; i++) {
         for (let j = 1; j <= this.gm.width; j++) {
           const preLand = pre.gm[i][j], nowLand = now.gm[i][j];
-          if (preLand.c !== nowLand.c || preLand.a !== nowLand.a || preLand.t !== nowLand.t) {
-            patch.push([[i, j] as Pos, nowLand]);
+          let partial: Partial<MaybeLand> = {};
+
+          if (preLand.c !== nowLand.c) {
+            partial.c = nowLand.c;
+          }
+
+          if (preLand.t !== nowLand.t) {
+            partial.t = nowLand.t;
+          }
+
+          if (preLand.a !== nowLand.a) {
+            partial.a = nowLand.a;
+          }
+
+          if (partial.a !== undefined || partial.c !== undefined || partial.t !== undefined) {
+            patch.push([[i, j] as Pos, partial]);
           }
         }
       }
@@ -593,6 +610,19 @@ export class RoomManager {
       this.endGame(winner);
     }
 
+    for (let player of room.surrenders) {
+      room.gamingPlayers.delete(player);
+      room.colors.delete(room.playerToColor(player));
+
+      this.server.to(SocketRoom.usernameRid(player, this.rid)).emit("die");
+      this.server.to(SocketRoom.usernameRid(player, this.rid)).emit("gameStart", {
+        maybeMap: room.gm.export(),
+        myColor: -1
+      });
+
+      room.surrenders.delete(player);
+    }
+
     room.turn++;
 
     const preMap = room.gm.export(),
@@ -657,18 +687,11 @@ export class RoomManager {
   surrender(player: string) {
     const room = roomData.get(this.rid);
 
-    if (!room || !room.ongoing || !room.gamingPlayers.has(player) || !room.playerToColor(player)) {
+    if (!room || !room.ongoing || !room.gamingPlayers.has(player) || !room.playerToColor(player) || room.surrenders.has(player)) {
       return;
     }
 
-    room.gamingPlayers.delete(player);
-    room.colors.delete(room.playerToColor(player));
-
-    this.server.to(SocketRoom.usernameRid(player, this.rid)).emit("die");
-    this.server.to(SocketRoom.usernameRid(player, this.rid)).emit("gameStart", {
-      maybeMap: room.gm.export(),
-      myColor: -1
-    });
+    room.surrenders.add(player);
   }
 
   teamMessage(sender: string, content: string) {

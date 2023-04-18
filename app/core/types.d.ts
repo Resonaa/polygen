@@ -13,7 +13,7 @@ interface ServerToClientEvents {
   updateTeams: (teams: [TeamId, string[]][]) => void;
   updateReadyPlayers: (readyPlayers: string[]) => void;
   gameStart: ({ maybeMap, myColor }: { maybeMap: MaybeMap, myColor: LandColor }) => void;
-  patch: (updates: [Pos, MaybeLand][]) => void;
+  patch: (updates: [Pos, Partial<MaybeLand>][]) => void;
   rank: (rank: [LandColor, string, number, number][]) => void;
   die: () => void;
   win: (winnerStr: string) => void;

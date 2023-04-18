@@ -92,13 +92,13 @@ export class Renderer {
         return;
       }
 
-      event.preventDefault();
-
       const eventKey = event.key === " " ? "Space" : event.key.toUpperCase();
 
       const keys = settings.game.keys[this.gm.mode];
       for (let [index, key] of keys.move.entries()) {
         if (key === eventKey && this.selected) {
+          event.preventDefault();
+
           const from = this.selected;
           const dir = this.gm.dir(from)[index];
           const to = [from[0] + dir[0], from[1] + dir[1]] as Pos;
@@ -116,10 +116,13 @@ export class Renderer {
       }
 
       if (eventKey === keys.splitArmy) {
+        event.preventDefault();
         this.handleSplitArmy();
       } else if (eventKey === keys.clearMovements) {
+        event.preventDefault();
         this.handleClearMovements();
       } else if (eventKey === keys.selectHome) {
+        event.preventDefault();
         for (let i = 1; i <= this.gm.height; i++) {
           for (let j = 1; j <= this.gm.width; j++) {
             const land = this.gm.get([i, j]);
@@ -130,6 +133,7 @@ export class Renderer {
           }
         }
       } else if (eventKey === keys.selectTopLeft) {
+        event.preventDefault();
         for (let i = 1; i <= this.gm.height; i++) {
           for (let j = 1; j <= this.gm.width; j++) {
             if (this.gm.get([i, j]).color === this.myColor) {
@@ -139,6 +143,7 @@ export class Renderer {
           }
         }
       } else if (eventKey === keys.surrender) {
+        event.preventDefault();
         this.handleSurrender();
       }
     };
@@ -235,7 +240,7 @@ export class Renderer {
     }
   }
 
-  private updateAmount([i, j]: Pos) {
+  updateAmount([i, j]: Pos) {
     const maxWidth = this.pileWidth, maxHeight = Math.sqrt(3) / 2 * this.pileWidth;
     const amount = this.gm.get([i, j]).amount;
     const text = this.texts[i][j];
@@ -261,17 +266,13 @@ export class Renderer {
     text.y = y + (maxHeight - height) / 2;
   }
 
-  private updateType([i, j]: Pos) {
+  updateType([i, j]: Pos) {
     const type = this.gm.get([i, j]).type;
     this.images[i][j].texture = type === LandType.UnknownCity || type === LandType.UnknownMountain
       ? this.textures[4] : this.textures[type];
   }
 
-  update(pos: Pos) {
-    if (!this.gm.check(pos)) {
-      return;
-    }
-
+  updateGraphics(pos: Pos) {
     const selected = this.selected && this.selected.join() === pos.join();
 
     const land = this.gm.get(pos);
@@ -294,7 +295,10 @@ export class Renderer {
       .beginFill(fillColor)
       .drawPolygon(this.getPilePath(pos))
       .endFill();
+  }
 
+  updateLand(pos: Pos) {
+    this.updateGraphics(pos);
     this.updateType(pos);
     this.updateAmount(pos);
     this.updateHit(pos);
@@ -303,11 +307,11 @@ export class Renderer {
   updateAll() {
     for (let i = 1; i <= this.gm.height; i++) {
       for (let j = 1; j <= this.gm.width; j++) {
-        this.update([i, j]);
+        this.updateLand([i, j]);
       }
     }
 
-    this.selected && this.update(this.selected);
+    this.selected && this.updateGraphics(this.selected);
   }
 
   unSelect() {
@@ -317,13 +321,13 @@ export class Renderer {
 
     const preSelected = this.selected;
     this.selected = null;
-    this.update(preSelected);
+    this.updateGraphics(preSelected);
   }
 
   private select(pos: Pos) {
     this.unSelect();
     this.selected = pos;
-    this.update(pos);
+    this.updateGraphics(pos);
   }
 
   private addHitAreas() {
@@ -345,7 +349,7 @@ export class Renderer {
     }
   }
 
-  private updateHit(pos: Pos) {
+  updateHit(pos: Pos) {
     const hittable = this.gm.accessible(pos) && (this.myColor === 0 || this.gm.get(pos).color === this.myColor)
       , hit = this.hitAreas[pos[0]][pos[1]];
 
@@ -422,7 +426,7 @@ export class Renderer {
 
   extraText([i, j]: Pos, text?: string) {
     this.extraTexts[i][j] = text;
-    this.update([i, j]);
+    this.updateAmount([i, j]);
   }
 
   destroy() {
