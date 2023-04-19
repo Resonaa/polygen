@@ -1,5 +1,5 @@
 import { shuffle } from "~/core/client/utils";
-import { generateRandomMap } from "~/core/server/game/generator";
+import { generateMap } from "~/core/server/game/generator";
 import type { LandColor, MaybeLand } from "~/core/server/game/land";
 import { LandType } from "~/core/server/game/land";
 import type { MaybeMap } from "~/core/server/game/map";
@@ -15,7 +15,8 @@ export const SocketRoom = {
 };
 
 export const enum RoomMap {
-  Random = "随机地图"
+  Random = "随机地图",
+  Empty = "空白地图"
 }
 
 export type TeamId = number;
@@ -53,7 +54,7 @@ export class Room {
 
     this.teamsInGame = new Map();
 
-    this.map = RoomMap.Random;
+    this.map = RoomMap.Empty;
     this.gm = new GameMap();
 
     this.readyPlayers = new Set();
@@ -175,9 +176,7 @@ export class Room {
 
     this.ongoing = true;
 
-    if (this.map === RoomMap.Random) {
-      this.gm = generateRandomMap(this.gamingPlayers.size, this.gm.mode);
-    }
+    this.gm = generateMap(this.gamingPlayers.size, this.gm.mode, this.map);
 
     shuffle(players);
 

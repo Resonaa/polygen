@@ -6,7 +6,7 @@ import { formatLargeNumber } from "~/core/client/utils";
 import { LandType } from "~/core/server/game/land";
 import type { Pos } from "~/core/server/game/utils";
 
-import { Map } from "../server/game/map";
+import { Map, MapMode } from "../server/game/map";
 
 export class Renderer {
   gm: Map = new Map();
@@ -21,7 +21,7 @@ export class Renderer {
 
   selected: Pos | null = null;
 
-  private pileWidth: number = 0;
+  private pileSize: number = 0;
   private startX: number = 0;
   private startY: number = 0;
 
@@ -151,34 +151,71 @@ export class Renderer {
 
   private resize() {
     const width = this.app.view.width, height = this.app.view.height;
+    let maxXWidth, maxYWidth, realWidth, realHeight;
 
-    const maxXWidth = width / (1 + 0.75 * (this.gm.width - 1));
-    const maxYWidth = 4 * height / (Math.sqrt(3) * (1 + 2 * this.gm.height));
-    this.pileWidth = Math.min(maxXWidth, maxYWidth) * this.scale;
+    switch (this.gm.mode) {
+      case MapMode.Hexagon: {
+        maxXWidth = width / (1 + 0.75 * (this.gm.width - 1));
+        maxYWidth = 4 * height / (Math.sqrt(3) * (1 + 2 * this.gm.height));
+        break;
+      }
+      case MapMode.Square: {
+        maxXWidth = width / this.gm.width;
+        maxYWidth = height / this.gm.height;
+        break;
+      }
+    }
 
-    const realWidth = this.pileWidth * (1 + 0.75 * (this.gm.width - 1)),
-      realHeight = Math.sqrt(3) / 4 * this.pileWidth * (1 + 2 * this.gm.height);
+    this.pileSize = Math.min(maxXWidth, maxYWidth) * this.scale;
+
+    switch (this.gm.mode) {
+      case MapMode.Hexagon: {
+        realWidth = this.pileSize * (1 + 0.75 * (this.gm.width - 1));
+        realHeight = Math.sqrt(3) / 4 * this.pileSize * (1 + 2 * this.gm.height);
+        break;
+      }
+      case MapMode.Square: {
+        realWidth = this.pileSize * this.gm.width;
+        realHeight = this.pileSize * this.gm.height;
+        break;
+      }
+    }
 
     this.startX = (width - realWidth) / 2 + this.deltaX;
     this.startY = (height - realHeight) / 2 + this.deltaY;
   }
 
   private getPileUpperLeftPos([i, j]: Pos) {
-    const upperLeftX = this.startX + 0.75 * (j - 1) * this.pileWidth;
-    const upperLeftY = this.startY + Math.sqrt(3) / 4 * this.pileWidth * (2 * (i - 1) + (j % 2 === 0 ? 1 : 0));
-
-    return [upperLeftX, upperLeftY];
+    switch (this.gm.mode) {
+      case MapMode.Hexagon: {
+        return [this.startX + 0.75 * (j - 1) * this.pileSize,
+          this.startY + Math.sqrt(3) / 4 * this.pileSize * (2 * (i - 1) + (j % 2 === 0 ? 1 : 0))];
+      }
+      case MapMode.Square: {
+        return [this.startX + (j - 1) * this.pileSize, this.startY + (i - 1) * this.pileSize];
+      }
+    }
   }
 
   private getPilePath(pos: Pos) {
-    const [upperLeftX, upperLeftY] = this.getPileUpperLeftPos(pos), pileWidth = this.pileWidth;
+    const [upperLeftX, upperLeftY] = this.getPileUpperLeftPos(pos), pileWidth = this.pileSize;
 
-    return [upperLeftX + pileWidth / 4, upperLeftY,
-      upperLeftX + 0.75 * pileWidth, upperLeftY,
-      upperLeftX + pileWidth, upperLeftY + Math.sqrt(3) / 4 * pileWidth,
-      upperLeftX + 0.75 * pileWidth, upperLeftY + Math.sqrt(3) / 2 * pileWidth,
-      upperLeftX + pileWidth / 4, upperLeftY + Math.sqrt(3) / 2 * pileWidth,
-      upperLeftX, upperLeftY + Math.sqrt(3) / 4 * pileWidth];
+    switch (this.gm.mode) {
+      case MapMode.Hexagon: {
+        return [upperLeftX + pileWidth / 4, upperLeftY,
+          upperLeftX + 0.75 * pileWidth, upperLeftY,
+          upperLeftX + pileWidth, upperLeftY + Math.sqrt(3) / 4 * pileWidth,
+          upperLeftX + 0.75 * pileWidth, upperLeftY + Math.sqrt(3) / 2 * pileWidth,
+          upperLeftX + pileWidth / 4, upperLeftY + Math.sqrt(3) / 2 * pileWidth,
+          upperLeftX, upperLeftY + Math.sqrt(3) / 4 * pileWidth];
+      }
+      case MapMode.Square: {
+        return [upperLeftX, upperLeftY,
+          upperLeftX + pileWidth, upperLeftY,
+          upperLeftX + pileWidth, upperLeftY + pileWidth,
+          upperLeftX, upperLeftY + pileWidth];
+      }
+    }
   }
 
   private addImages() {
@@ -207,10 +244,20 @@ export class Renderer {
 
         const [x, y] = this.getPileUpperLeftPos([i, j]);
 
-        image.width = image.height = this.pileWidth * (3 - Math.sqrt(3)) / 2;
-
-        image.x = x + (this.pileWidth - image.width) / 2;
-        image.y = y + (Math.sqrt(3) / 2 * this.pileWidth - image.height) / 2;
+        switch (this.gm.mode) {
+          case MapMode.Hexagon: {
+            image.width = image.height = this.pileSize * (3 - Math.sqrt(3)) / 2;
+            image.x = x + (this.pileSize - image.width) / 2;
+            image.y = y + (Math.sqrt(3) / 2 * this.pileSize - image.height) / 2;
+            break;
+          }
+          case MapMode.Square: {
+            image.width = image.height = this.pileSize * 0.78;
+            image.x = x + (this.pileSize - image.width) / 2;
+            image.y = y + (this.pileSize - image.height) / 2;
+            break;
+          }
+        }
       }
     }
   }
@@ -241,7 +288,20 @@ export class Renderer {
   }
 
   updateAmount([i, j]: Pos) {
-    const maxWidth = this.pileWidth, maxHeight = Math.sqrt(3) / 2 * this.pileWidth;
+    let maxWidth, maxHeight;
+
+    switch (this.gm.mode) {
+      case MapMode.Hexagon: {
+        maxWidth = this.pileSize;
+        maxHeight = Math.sqrt(3) / 2 * this.pileSize;
+        break;
+      }
+      case MapMode.Square: {
+        maxWidth = maxHeight = this.pileSize;
+        break;
+      }
+    }
+
     const amount = this.gm.get([i, j]).amount;
     const text = this.texts[i][j];
 

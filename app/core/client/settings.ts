@@ -17,7 +17,8 @@ export interface IKeys {
 export interface ISettings {
   game: {
     keys: {
-      [MapMode.Hexagon]: IKeys
+      [MapMode.Hexagon]: IKeys,
+      [MapMode.Square]: IKeys
     }
   };
 }
@@ -47,6 +48,14 @@ export class Settings {
       keys: {
         [MapMode.Hexagon]: {
           move: ["Q", "W", "E", "D", "S", "A"],
+          clearMovements: "F",
+          splitArmy: "R",
+          selectHome: "G",
+          selectTopLeft: "Space",
+          surrender: "ESCAPE"
+        },
+        [MapMode.Square]: {
+          move: ["W", "A", "S", "D"],
           clearMovements: "F",
           splitArmy: "R",
           selectHome: "G",

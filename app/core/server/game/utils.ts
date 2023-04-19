@@ -1,5 +1,5 @@
-import { LandType } from "~/core/server/game/land";
 import type { Map } from "~/core/server/game/map";
+import { MapMode } from "~/core/server/game/map";
 
 export type Pos = [number, number];
 
@@ -11,9 +11,20 @@ export function getMinReadyPlayerCount(playerCount: number) {
   }
 }
 
-export function playerCountToSize(playerCount: number) {
+export function playerCountToSize(playerCount: number, mode: MapMode) {
   const piles = 80 * playerCount;
-  const r = 1.2;
+  let r;
+
+  switch (mode) {
+    case MapMode.Hexagon: {
+      r = 1.2;
+      break;
+    }
+    default: {
+      r = 1;
+    }
+  }
+
   return [Math.floor(Math.sqrt(piles / r) * r), Math.floor(Math.sqrt(piles / r))];
 }
 
@@ -41,16 +52,16 @@ export function astar(map: Map, from: Pos, to: Pos) {
     const [cur, len] = front;
 
     for (let nxt of map.neighbours(cur)) {
-      if (vis[nxt[0]][nxt[1]] || [LandType.Mountain, LandType.City].includes(map.get(nxt).type)) {
+      if (vis[nxt[0]][nxt[1]] || !map.accessible(nxt)) {
         continue;
       }
 
       vis[nxt[0]][nxt[1]] = true;
-
       q.push([nxt, len + 1]);
 
-      if (nxt[0] === to[0] && nxt[1] === to[1])
+      if (nxt[0] === to[0] && nxt[1] === to[1]) {
         return len + 1;
+      }
     }
   }
 

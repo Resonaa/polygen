@@ -1,10 +1,10 @@
-
 import { randInt, shuffle } from "~/core/client/utils";
 import { LandType } from "~/core/server/game/land";
 import type { MapMode } from "~/core/server/game/map";
 import { Map } from "~/core/server/game/map";
 import type { Pos } from "~/core/server/game/utils";
 import { playerCountToSize, astar } from "~/core/server/game/utils";
+import { RoomMap } from "~/core/server/room";
 
 const cityDensity = 0.05;
 const mountainDensity = 0.15;
@@ -23,8 +23,8 @@ function generateRandomPos(width: number, height: number) {
   return ans;
 }
 
-export function generateRandomMap(playerCount: number, mode: MapMode): Map {
-  const [width, height] = playerCountToSize(playerCount);
+function generateRandomMap(playerCount: number, mode: MapMode): Map {
+  const [width, height] = playerCountToSize(playerCount, mode);
   let map = new Map(width, height, mode);
 
   const gm = map.gm;
@@ -97,4 +97,70 @@ export function generateRandomMap(playerCount: number, mode: MapMode): Map {
   }
 
   return map;
+}
+
+function generateEmptyMap(playerCount: number, mode: MapMode): Map {
+  const [width, height] = playerCountToSize(playerCount, mode);
+  let map = new Map(width, height, mode);
+
+  const gm = map.gm;
+
+  let randPos = generateRandomPos(width, height);
+
+  let generals = [];
+  let calcTimes = 0;
+
+  for (let i = 1; i <= playerCount; i++) {
+    calcTimes++;
+    if (calcTimes >= 100) {
+      return generateEmptyMap(playerCount, mode);
+    }
+
+    const ans = randPos.shift();
+
+    if (!ans) {
+      return generateEmptyMap(playerCount, mode);
+    }
+
+    if (i === 1) {
+      gm[ans[0]][ans[1]].amount = 1;
+      gm[ans[0]][ans[1]].color = i;
+      gm[ans[0]][ans[1]].type = LandType.General;
+    } else {
+      let tooClose = false;
+
+      for (let last of generals) {
+        if (astar(map, ans, last) > 5) {
+          continue;
+        }
+
+        tooClose = true;
+        i--;
+        break;
+      }
+
+      if (tooClose) {
+        continue;
+      } else {
+        gm[ans[0]][ans[1]].amount = 1;
+        gm[ans[0]][ans[1]].type = LandType.General;
+        gm[ans[0]][ans[1]].color = i;
+      }
+    }
+
+    generals.push(ans);
+  }
+
+  return map;
+}
+
+export function generateMap(playerCount: number, mode: MapMode, map: RoomMap) {
+  switch (map) {
+    case RoomMap.Random: {
+      return generateRandomMap(playerCount, mode);
+    }
+    case RoomMap.Empty: {
+      return generateEmptyMap(playerCount, mode);
+    }
+  }
 }
