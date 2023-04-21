@@ -14,7 +14,7 @@ export const SocketRoom = {
   usernameRid: (username: string, rid: string) => `@${username}#${rid}`
 };
 
-export const enum RoomMap {
+export enum RoomMap {
   Random = "随机地图",
   Empty = "空白地图"
 }
@@ -23,47 +23,27 @@ export type TeamId = number;
 
 export class Room {
   id: string;
-  teams: Map<TeamId, string[]>;
-  private map: RoomMap;
-  ongoing: boolean;
 
-  gm: GameMap;
+  map: RoomMap = RoomMap.Empty;
+  gm: GameMap = new GameMap();
+  speed: number = 1;
 
-  private readyPlayers: Set<string>;
+  teams: Map<TeamId, string[]> = new Map();
+  readyPlayers: Set<string> = new Set();
 
-  colors: Map<LandColor, string>;
+  ongoing: boolean = false;
 
-  teamsInGame: Map<TeamId, string[]>;
-
-  gameTeams: Map<LandColor, TeamId>;
-
-  gamingPlayers: Set<string>;
-
+  colors: Map<LandColor, string> = new Map();
+  teamsInGame: Map<TeamId, string[]> = new Map();
+  gameTeams: Map<LandColor, TeamId> = new Map();
+  gamingPlayers: Set<string> = new Set();
   gameInterval: NodeJS.Timer | undefined;
-
-  movements: Map<string, [Pos, Pos, boolean][]>;
-
-  turn: number;
-
-  surrenders: Set<string>;
+  movements: Map<string, [Pos, Pos, boolean][]> = new Map();
+  turn: number = 0;
+  surrenders: Set<string> = new Set();
 
   constructor(id: string) {
     this.id = id;
-    this.ongoing = false;
-    this.teams = new Map();
-
-    this.teamsInGame = new Map();
-
-    this.map = RoomMap.Empty;
-    this.gm = new GameMap();
-
-    this.readyPlayers = new Set();
-    this.colors = new Map();
-    this.gameTeams = new Map();
-    this.gamingPlayers = new Set();
-    this.movements = new Map();
-    this.surrenders = new Set();
-    this.turn = 0;
   }
 
   export() {
@@ -505,6 +485,7 @@ export class RoomManager {
     }
 
     if (room.removePlayer(player)) {
+      room.readyPlayers.delete(player);
       this.server.to(SocketRoom.rid(this.rid)).emit("info", `${player}离开了房间`);
       this.server.to(SocketRoom.rid(this.rid)).emit("updateTeams", room.exportTeams());
       this.server.to(SocketRoom.rid(this.rid)).emit("updateReadyPlayers", room.exportReadyPlayers());
@@ -592,7 +573,7 @@ export class RoomManager {
         }
       }
 
-      room.gameInterval = setInterval(() => this.game(), 250);
+      room.gameInterval = setInterval(() => this.game(), 250 / room.speed);
     }
   }
 
@@ -604,7 +585,6 @@ export class RoomManager {
     }
 
     const winner = room.winCheck();
-
     if (winner) {
       this.endGame(winner);
     }
@@ -620,6 +600,12 @@ export class RoomManager {
       });
 
       room.surrenders.delete(player);
+
+      const winner = room.winCheck();
+      if (winner) {
+        this.endGame(winner);
+        break;
+      }
     }
 
     room.turn++;
