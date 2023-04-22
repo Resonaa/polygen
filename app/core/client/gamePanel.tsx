@@ -61,8 +61,8 @@ export function GamePanel({ client, rid }: { client?: ClientSocket, rid: string 
       <canvas className={clsx("w-full h-full absolute !px-0", !showCanvas && "hidden")} />
 
       <Grid.Column width={12} className="h-full !p-0 !flex flex-col justify-center items-center">
-        <Segment inverted className={clsx(showCanvas && "hidden")}>
-          <Header textAlign="center" as="h3">选择队伍</Header>
+        <Segment inverted style={{ background: "unset !important" }} className={clsx(showCanvas && "hidden")}>
+          <Header textAlign="center" as="h3" className="!pb-2">选择队伍</Header>
           <Card.Group centered>
             {teamData.map(([team, players]) => {
               const disabled = players.includes(user.username);
@@ -103,9 +103,9 @@ export function GamePanel({ client, rid }: { client?: ClientSocket, rid: string 
             })()}
           </Card.Group>
 
-          <div className="text-center mt-4">
+          <div className="text-center mt-7">
             <Button inverted color="green" disabled={teamData.slice(-1)[0][1].includes(user.username)}
-                    active={readyPlayers.includes(user.username)}
+                    active={readyPlayers.includes(user.username)} size="large"
                     onClick={event => {
                       client?.emit("ready");
                       (event.target as HTMLButtonElement).blur();

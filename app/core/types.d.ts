@@ -6,6 +6,7 @@ import type { MaybeMap } from "~/core/server/game/map";
 import type { Pos } from "~/core/server/game/utils";
 import type { Message } from "~/core/server/message";
 import type { TeamId } from "~/core/server/room";
+import type { MaxVotedItems, VoteData, VoteItem, VoteValue } from "~/core/server/vote";
 
 interface ServerToClientEvents {
   message: (message: Message) => void;
@@ -17,6 +18,7 @@ interface ServerToClientEvents {
   rank: (rank: [LandColor, string, number, number][]) => void;
   die: () => void;
   win: (winnerStr: string) => void;
+  updateVotes: ({ data, ans }: { data: VoteData, ans: MaxVotedItems }) => void;
 }
 
 interface ClientToServerEvents {
@@ -27,6 +29,7 @@ interface ClientToServerEvents {
   move: (movement: [Pos, Pos, boolean]) => void;
   clearMovements: () => void;
   surrender: () => void;
+  vote: <T extends VoteItem>(item: T, value: VoteValue<T>) => void;
 }
 
 interface InterServerEvents {

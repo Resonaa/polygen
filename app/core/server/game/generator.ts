@@ -4,7 +4,7 @@ import type { MapMode } from "~/core/server/game/map";
 import { Map } from "~/core/server/game/map";
 import type { Pos } from "~/core/server/game/utils";
 import { playerCountToSize, astar } from "~/core/server/game/utils";
-import { RoomMap } from "~/core/server/room";
+import { RoomMap } from "~/core/server/vote";
 
 const cityDensity = 0.05;
 const mountainDensity = 0.15;

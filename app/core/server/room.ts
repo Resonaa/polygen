@@ -7,6 +7,8 @@ import { Map as GameMap } from "~/core/server/game/map";
 import type { Pos } from "~/core/server/game/utils";
 import { getMinReadyPlayerCount } from "~/core/server/game/utils";
 import { MessageType } from "~/core/server/message";
+import type { MaxVotedItems, VoteData , VoteItem, VoteValue } from "~/core/server/vote";
+import { clearAllVotesOfPlayer, getMaxVotedItem, vote } from "~/core/server/vote";
 import type { Server } from "~/core/types";
 
 export const SocketRoom = {
@@ -14,19 +16,15 @@ export const SocketRoom = {
   usernameRid: (username: string, rid: string) => `@${username}#${rid}`
 };
 
-export enum RoomMap {
-  Random = "随机地图",
-  Empty = "空白地图"
-}
-
 export type TeamId = number;
 
 export class Room {
   id: string;
 
-  map: RoomMap = RoomMap.Empty;
   gm: GameMap = new GameMap();
-  speed: number = 1;
+
+  voteData: VoteData = {};
+  voteAns: MaxVotedItems = getMaxVotedItem(this.voteData);
 
   teams: Map<TeamId, string[]> = new Map();
   readyPlayers: Set<string> = new Set();
@@ -49,7 +47,9 @@ export class Room {
   export() {
     this.simplifyTeams();
     const players = this.exportPlayers();
-    return { id: this.id, ongoing: this.ongoing, players, map: this.map, mode: this.gm.mode };
+    const map = this.voteAns.map;
+    const mode = this.voteAns.mode;
+    return { id: this.id, ongoing: this.ongoing, players, map, mode };
   }
 
   simplifyTeams() {
@@ -156,7 +156,7 @@ export class Room {
 
     this.ongoing = true;
 
-    this.gm = generateMap(this.gamingPlayers.size, this.gm.mode, this.map);
+    this.gm = generateMap(this.gamingPlayers.size, this.voteAns.mode, this.voteAns.map);
 
     shuffle(players);
 
@@ -271,9 +271,13 @@ export class Room {
   }
 
   moveAll() {
-    let deaths = [];
+    let deaths: string[] = [];
 
     for (let [color, player] of this.colors) {
+      if (deaths.includes(player)) {
+        continue;
+      }
+
       const movements = this.movements.get(player);
       if (!movements) {
         continue;
@@ -294,9 +298,6 @@ export class Room {
         if (!username) {
           continue;
         }
-
-        this.gamingPlayers.delete(username);
-        this.colors.delete(deadPlayer);
         deaths.push(username);
       }
     }
@@ -418,6 +419,12 @@ export class Room {
 
     return ans;
   }
+
+  removeVotesOf(player: string) {
+    const updated = clearAllVotesOfPlayer(this.voteData, player);
+    this.voteAns = getMaxVotedItem(this.voteData);
+    return updated;
+  }
 }
 
 export type RoomData = Map<string, Room>;
@@ -486,9 +493,15 @@ export class RoomManager {
 
     if (room.removePlayer(player)) {
       room.readyPlayers.delete(player);
+      const shouldUpdateVotes = room.removeVotesOf(player);
+
       this.server.to(SocketRoom.rid(this.rid)).emit("info", `${player}离开了房间`);
       this.server.to(SocketRoom.rid(this.rid)).emit("updateTeams", room.exportTeams());
       this.server.to(SocketRoom.rid(this.rid)).emit("updateReadyPlayers", room.exportReadyPlayers());
+      shouldUpdateVotes && this.server.to(SocketRoom.rid(this.rid)).emit("updateVotes", {
+        data: room.voteData,
+        ans: room.voteAns
+      });
 
       if (room.teams.size === 0) {
         roomData.delete(this.rid);
@@ -515,6 +528,14 @@ export class RoomManager {
 
     if (shouldUpdateReadyPlayers) {
       this.server.to(SocketRoom.rid(this.rid)).emit("updateReadyPlayers", room.exportReadyPlayers());
+    }
+
+    if (team === 0) {
+      const shouldUpdateVotes = room.removeVotesOf(player);
+      shouldUpdateVotes && this.server.to(SocketRoom.rid(this.rid)).emit("updateVotes", {
+        data: room.voteData,
+        ans: room.voteAns
+      });
     }
 
     this.checkStart();
@@ -573,7 +594,7 @@ export class RoomManager {
         }
       }
 
-      room.gameInterval = setInterval(() => this.game(), 250 / room.speed);
+      room.gameInterval = setInterval(() => this.game(), 250 / room.voteAns.speed);
     }
   }
 
@@ -615,6 +636,8 @@ export class RoomManager {
 
     const deaths = room.moveAll();
     for (let deadPlayer of deaths) {
+      room.gamingPlayers.delete(deadPlayer);
+      room.colors.delete(room.playerToColor(deadPlayer));
       this.server.to(SocketRoom.usernameRid(deadPlayer, this.rid)).emit("die");
     }
 
@@ -704,5 +727,21 @@ export class RoomManager {
         }
       }
     }
+  }
+
+  vote<T extends VoteItem>(item: T, value: VoteValue<T>, player: string) {
+    const room = roomData.get(this.rid);
+
+    if (!room || room.ongoing) {
+      return;
+    }
+
+    vote(room.voteData, item, value, player);
+    room.voteAns = getMaxVotedItem(room.voteData);
+
+    this.server.to(SocketRoom.rid(this.rid)).emit("updateVotes", {
+      data: room.voteData,
+      ans: room.voteAns
+    });
   }
 }

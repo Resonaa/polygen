@@ -1,40 +1,94 @@
 import { MapMode } from "~/core/server/game/map";
-import { RoomMap } from "~/core/server/room";
 
 type ArrElement<ArrType extends readonly unknown[]> =
   ArrType extends readonly (infer ElementType)[] ? ElementType : never;
 
+export enum RoomMap {
+  Random = "随机地图",
+  Empty = "空白地图"
+}
+
 export const voteItems = {
-  mode: Object.values(MapMode),
-  map: Object.values(RoomMap)
+  mode: [MapMode.Square, MapMode.Hexagon],
+  map: [RoomMap.Empty, RoomMap.Random],
+  speed: [1]
 };
 
+export type VoteItem = keyof typeof voteItems;
+
+export type VoteValue<T extends VoteItem> = ArrElement<(typeof voteItems)[T]>;
+
+export type MaxVotedItems = {
+  [item in VoteItem]: VoteValue<item>;
+}
+
 export type VoteData = {
-  [item in keyof typeof voteItems]?: [ArrElement<(typeof voteItems)[item]>, string[]][];
+  [item in VoteItem]?: [VoteValue<item>, string[]][];
 }
 
 function sortVotes(data: VoteData) {
   for (let arr of Object.values(data)) {
-    arr.sort(([, a], [, b]) => b.length - a.length);
+    arr.sort(([itemA, a], [itemB, b]) => {
+      if (a.length !== b.length) {
+        return b.length - a.length;
+      } else {
+        return itemA.toString() > itemB.toString() ? 1 : -1;
+      }
+    });
   }
 }
 
-export function vote<T extends keyof typeof voteItems>(data: VoteData, item: T, value: ArrElement<(typeof voteItems)[T]>, player: string) {
+export function clearAllVotesOfPlayer(data: VoteData, player: string) {
+  let updated = false;
+
+  for (let [key, arr] of Object.entries(data)) {
+    const valueIndex = arr.findIndex(([, players]) => players.includes(player));
+    if (valueIndex !== -1) {
+      const playerId = arr[valueIndex][1].indexOf(player);
+      arr[valueIndex][1].splice(playerId, 1);
+      updated = true;
+      if (arr[valueIndex][1].length === 0) {
+        arr.splice(valueIndex, 1);
+      }
+      if (arr.length === 0) {
+        data[key as keyof typeof voteItems] = undefined;
+      }
+    }
+  }
+
+  return updated;
+}
+
+export function vote<T extends VoteItem>(data: VoteData, item: T, value: VoteValue<T>, player: string) {
   let list = data[item];
-  let shouldUpdate = true;
   if (list) {
-    const index = list.findIndex(([voteItem,]) => voteItem === item);
+    const preVotedValueIndex = list.findIndex(([, players]) => players.includes(player));
+    if (preVotedValueIndex !== -1) {
+      const playerId = list[preVotedValueIndex][1].indexOf(player);
+      list[preVotedValueIndex][1].splice(playerId, 1);
+      if (list[preVotedValueIndex][1].length === 0) {
+        list.splice(preVotedValueIndex, 1);
+      }
+    }
+
+    const index = list.findIndex(([voteValue,]) => voteValue === value);
     if (index === -1) {
       list.push([value, [player]]);
-    } else if (!list[index][1].includes(player)) {
-      list[index][1].push(player);
     } else {
-      shouldUpdate = false;
+      list[index][1].push(player);
     }
   } else {
     data[item] = [[value, [player]]] as any;
   }
 
-  shouldUpdate && sortVotes(data);
-  return shouldUpdate;
+  sortVotes(data);
+}
+
+export function getMaxVotedItem(data: VoteData) {
+  let ans: Partial<MaxVotedItems> = {};
+  for (let key in voteItems) {
+    const item = key as VoteItem;
+    ans[item] = data[item] ? (data[item] as any[])[0] : voteItems[item][0];
+  }
+  return ans as MaxVotedItems;
 }

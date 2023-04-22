@@ -1,6 +1,5 @@
 import LZString from "lz-string";
 
-
 import { MapMode } from "~/core/server/game/map";
 
 export type IKey = string;
@@ -17,8 +16,7 @@ export interface IKeys {
 export interface ISettings {
   game: {
     keys: {
-      [MapMode.Hexagon]: IKeys,
-      [MapMode.Square]: IKeys
+      [mode in MapMode]: IKeys
     }
   };
 }
