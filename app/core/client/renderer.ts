@@ -2,7 +2,7 @@ import * as PIXI from "pixi.js";
 
 import { colors, SpecialColor } from "~/core/client/colors";
 import { getSettings } from "~/core/client/settings";
-import { formatLargeNumber } from "~/core/client/utils";
+import { formatLargeNumber, getPileSizeByScale, getScaleByPileSize } from "~/core/client/utils";
 import { LandType } from "~/core/server/game/land";
 import type { Pos } from "~/core/server/game/utils";
 
@@ -56,10 +56,11 @@ export class Renderer {
     canvas.onwheel = event => {
       event.preventDefault();
 
-      this.scale += event.deltaY * -0.002;
-      this.scale = Math.min(Math.max(0.125, this.scale), 4);
-
-      this.redraw();
+      const newScale = this.scale + (event.deltaY > 0 ? -1 : 1);
+      if (newScale >= 1 && newScale <= 15) {
+        this.scale = newScale;
+        this.redraw();
+      }
     };
 
     canvas.onpointerdown = event => {
@@ -149,9 +150,9 @@ export class Renderer {
     };
   }
 
-  private resize() {
+  private setDefaultScale() {
     const width = this.app.view.width, height = this.app.view.height;
-    let maxXWidth, maxYWidth, realWidth, realHeight;
+    let maxXWidth, maxYWidth;
 
     switch (this.gm.mode) {
       case MapMode.Hexagon: {
@@ -166,7 +167,13 @@ export class Renderer {
       }
     }
 
-    this.pileSize = Math.min(maxXWidth, maxYWidth) * this.scale;
+    this.pileSize = Math.min(maxXWidth, maxYWidth);
+    this.scale = getScaleByPileSize(this.pileSize);
+  }
+
+  private resize() {
+    this.pileSize = getPileSizeByScale(this.scale);
+    let realWidth, realHeight;
 
     switch (this.gm.mode) {
       case MapMode.Hexagon: {
@@ -181,8 +188,8 @@ export class Renderer {
       }
     }
 
-    this.startX = (width - realWidth) / 2 + this.deltaX;
-    this.startY = (height - realHeight) / 2 + this.deltaY;
+    this.startX = (this.app.view.width - realWidth) / 2 + this.deltaX;
+    this.startY = (this.app.view.height - realHeight) / 2 + this.deltaY;
   }
 
   private getPileUpperLeftPos([i, j]: Pos) {
@@ -252,7 +259,7 @@ export class Renderer {
             break;
           }
           case MapMode.Square: {
-            image.width = image.height = this.pileSize * 0.78;
+            image.width = image.height = this.pileSize * 0.78125;
             image.x = x + (this.pileSize - image.width) / 2;
             image.y = y + (this.pileSize - image.height) / 2;
             break;
@@ -347,7 +354,7 @@ export class Renderer {
       fillColor = SpecialColor.Unknown;
     }
 
-    const lineWidth = selected ? 4 : 1;
+    const lineWidth = selected ? (this.pileSize <= 25 ? 3 : 4) : 1;
     const alignment = selected ? 0 : 0.5;
     const lineColor = selected ? SpecialColor.SelectedBorder : undefined;
 
@@ -468,9 +475,9 @@ export class Renderer {
     this.addExtraTexts();
 
     this.selected = null;
-    this.scale = 1;
     this.deltaX = this.deltaY = 0;
 
+    this.setDefaultScale();
     this.redraw();
   }
 

@@ -8,7 +8,7 @@ export enum RoomMap {
   Empty = "空白地图"
 }
 
-export const voteItems = {
+const voteItems = {
   mode: [MapMode.Square, MapMode.Hexagon],
   map: [RoomMap.Empty, RoomMap.Random],
   speed: [1]
