@@ -30,8 +30,6 @@ export class Renderer {
   private hitAreas: PIXI.Sprite[][] = [[]];
 
   private scale = 1;
-  private deltaX = 0;
-  private deltaY = 0;
 
   private extraTexts: (string | undefined)[][] = [[]];
 
@@ -65,17 +63,22 @@ export class Renderer {
 
     canvas.onpointerdown = event => {
       const startX = event.pageX, startY = event.pageY;
-      const initialDeltaX = this.deltaX, initialDeltaY = this.deltaY;
+      const initialStartX = this.startX, initialStartY = this.startY;
+      let flag = false;
 
       canvas.onpointermove = event => {
-        const newDeltaX = event.pageX - startX, newDeltaY = event.pageY - startY;
+        const deltaX = event.pageX - startX, deltaY = event.pageY - startY;
 
-        if (Math.abs(newDeltaX) <= 20 && Math.abs(newDeltaY) <= 20) {
+        if (Math.abs(deltaX) > 20 || Math.abs(deltaY) > 20) {
+          flag = true;
+        }
+
+        if (!flag) {
           return;
         }
 
-        this.deltaX = initialDeltaX + newDeltaX;
-        this.deltaY = initialDeltaY + newDeltaY;
+        this.startX = initialStartX + deltaX;
+        this.startY = initialStartY + deltaY;
 
         this.redraw();
       };
@@ -150,6 +153,25 @@ export class Renderer {
     };
   }
 
+  private getStartPos() {
+    let realWidth, realHeight;
+
+    switch (this.gm.mode) {
+      case MapMode.Hexagon: {
+        realWidth = this.pileSize * (1 + 0.75 * (this.gm.width - 1));
+        realHeight = Math.sqrt(3) / 4 * this.pileSize * (1 + 2 * this.gm.height);
+        break;
+      }
+      case MapMode.Square: {
+        realWidth = this.pileSize * this.gm.width;
+        realHeight = this.pileSize * this.gm.height;
+        break;
+      }
+    }
+
+    return [(this.app.view.width - realWidth) / 2, (this.app.view.height - realHeight) / 2];
+  }
+
   private setDefaultScale() {
     const width = this.app.view.width, height = this.app.view.height;
     let maxXWidth, maxYWidth;
@@ -169,27 +191,20 @@ export class Renderer {
 
     this.pileSize = Math.min(maxXWidth, maxYWidth);
     this.scale = getScaleByPileSize(this.pileSize);
+    this.pileSize = getPileSizeByScale(this.scale);
+
+    [this.startX, this.startY] = this.getStartPos();
   }
 
   private resize() {
+    const previousPileSize = this.pileSize;
     this.pileSize = getPileSizeByScale(this.scale);
-    let realWidth, realHeight;
+    const rate = this.pileSize / previousPileSize;
 
-    switch (this.gm.mode) {
-      case MapMode.Hexagon: {
-        realWidth = this.pileSize * (1 + 0.75 * (this.gm.width - 1));
-        realHeight = Math.sqrt(3) / 4 * this.pileSize * (1 + 2 * this.gm.height);
-        break;
-      }
-      case MapMode.Square: {
-        realWidth = this.pileSize * this.gm.width;
-        realHeight = this.pileSize * this.gm.height;
-        break;
-      }
-    }
+    const width = this.app.view.width, height = this.app.view.height;
 
-    this.startX = (this.app.view.width - realWidth) / 2 + this.deltaX;
-    this.startY = (this.app.view.height - realHeight) / 2 + this.deltaY;
+    this.startX = width / 2 - rate * (width / 2 - this.startX);
+    this.startY = height / 2 - rate * (height / 2 - this.startY);
   }
 
   private getPileUpperLeftPos([i, j]: Pos) {
@@ -475,7 +490,6 @@ export class Renderer {
     this.addExtraTexts();
 
     this.selected = null;
-    this.deltaX = this.deltaY = 0;
 
     this.setDefaultScale();
     this.redraw();

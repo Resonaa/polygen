@@ -147,8 +147,7 @@ export default function PostId() {
           <div ref={anchor} />
 
           {comments.map(({ id, content, username, createdAt }) => (
-            <Comment key={id} content={content} username={username} createdAt={createdAt}
-                     onReplyClick={handleReplyClick} />
+            <Comment key={id} content={content} username={username} createdAt={createdAt} />
           ))}
         </SemanticComment.Group>
 

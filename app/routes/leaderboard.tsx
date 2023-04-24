@@ -1,6 +1,5 @@
 import type { LoaderArgs, V2_MetaFunction } from "@remix-run/node";
 
-
 import Layout from "~/components/layout";
 import { requireAuthenticatedOptionalUser } from "~/session.server";
 import { Access } from "~/utils";
