@@ -7,7 +7,7 @@ import { Map as GameMap } from "~/core/server/game/map";
 import type { Pos } from "~/core/server/game/utils";
 import { getMinReadyPlayerCount } from "~/core/server/game/utils";
 import { MessageType } from "~/core/server/message";
-import type { MaxVotedItems, VoteData , VoteItem, VoteValue } from "~/core/server/vote";
+import type { MaxVotedItems, VoteData, VoteItem, VoteValue } from "~/core/server/vote";
 import { clearAllVotesOfPlayer, getMaxVotedItem, vote } from "~/core/server/vote";
 import type { Server } from "~/core/types";
 
@@ -465,6 +465,10 @@ export class RoomManager {
     this.server.to(SocketRoom.rid(this.rid)).emit("info", `${player}进入了房间`);
     this.server.to(SocketRoom.rid(this.rid)).emit("updateTeams", room.exportTeams());
     this.server.to(SocketRoom.rid(this.rid)).emit("updateReadyPlayers", room.exportReadyPlayers());
+    this.server.to(SocketRoom.usernameRid(player, this.rid)).emit("updateVotes", {
+      data: room.voteData,
+      ans: room.voteAns
+    });
 
     if (room.ongoing) {
       if (room.gamingPlayers.has(player)) {
@@ -574,6 +578,12 @@ export class RoomManager {
       if (teamCount < 2) {
         return;
       }
+
+      room.voteAns = getMaxVotedItem(room.voteData);
+      this.server.to(SocketRoom.rid(this.rid)).emit("updateVotes", {
+        data: room.voteData,
+        ans: room.voteAns
+      });
 
       room.gameStart();
       const masks = room.maskAll();

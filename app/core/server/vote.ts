@@ -1,3 +1,4 @@
+import { shuffle } from "~/core/client/utils";
 import { MapMode } from "~/core/server/game/map";
 
 type ArrElement<ArrType extends readonly unknown[]> =
@@ -8,13 +9,19 @@ export enum RoomMap {
   Empty = "空白地图"
 }
 
-const voteItems = {
-  mode: [MapMode.Square, MapMode.Hexagon],
-  map: [RoomMap.Empty, RoomMap.Random],
-  speed: [1]
+export const voteItems = {
+  mode: [MapMode.Hexagon, MapMode.Square],
+  map: [RoomMap.Random, RoomMap.Empty],
+  speed: [1, 0.5, 0.75, 1.25, 1.5]
 };
 
 export type VoteItem = keyof typeof voteItems;
+
+export const translations: { [item in VoteItem]: string } = {
+  mode: "模式",
+  map: "地图",
+  speed: "速度"
+};
 
 export type VoteValue<T extends VoteItem> = ArrElement<(typeof voteItems)[T]>;
 
@@ -28,7 +35,7 @@ export type VoteData = {
 
 function sortVotes(data: VoteData) {
   for (let arr of Object.values(data)) {
-    arr.sort(([itemA, a], [itemB, b]) => {
+    arr && arr.sort(([itemA, a], [itemB, b]) => {
       if (a.length !== b.length) {
         return b.length - a.length;
       } else {
@@ -66,8 +73,14 @@ export function vote<T extends VoteItem>(data: VoteData, item: T, value: VoteVal
     if (preVotedValueIndex !== -1) {
       const playerId = list[preVotedValueIndex][1].indexOf(player);
       list[preVotedValueIndex][1].splice(playerId, 1);
+
+      const preVotedValue = list[preVotedValueIndex][0];
       if (list[preVotedValueIndex][1].length === 0) {
         list.splice(preVotedValueIndex, 1);
+      }
+      if (preVotedValue === value) {
+        sortVotes(data);
+        return;
       }
     }
 
@@ -88,7 +101,14 @@ export function getMaxVotedItem(data: VoteData) {
   let ans: Partial<MaxVotedItems> = {};
   for (let key in voteItems) {
     const item = key as VoteItem;
-    ans[item] = data[item] ? (data[item] as any[])[0] : voteItems[item][0];
+    if (data[item] && data[item]?.length) {
+      const items = data[item] as Array<ArrElement<NonNullable<VoteData[typeof item]>>>;
+      let choices = items.filter(([, players]) => players.length === items[0][1].length);
+      shuffle(choices);
+      ans[item] = choices[0][0] as any;
+    } else {
+      ans[item] = voteItems[item][0] as any;
+    }
   }
   return ans as MaxVotedItems;
 }

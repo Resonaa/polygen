@@ -29,7 +29,7 @@ interface ClientToServerEvents {
   move: (movement: [Pos, Pos, boolean]) => void;
   clearMovements: () => void;
   surrender: () => void;
-  vote: <T extends VoteItem>(item: T, value: VoteValue<T>) => void;
+  vote: <T extends VoteItem>({ item, value }: { item: T, value: VoteValue<T> }) => void;
 }
 
 interface InterServerEvents {
