@@ -10,8 +10,9 @@ import Announcement from "~/components/announcement";
 import { Avatar, UserLink } from "~/components/community";
 import CountDown from "~/components/countdown";
 import Post from "~/components/post";
-import Quote from "~/components/quote";
+import { RecentComments } from "~/components/recentComments";
 import { getAnnouncements } from "~/models/announcement.server";
+import { getComments } from "~/models/comment.server";
 import { createPost, getPosts } from "~/models/post.server";
 import { requireAuthenticatedOptionalUser, requireAuthenticatedUser } from "~/session.server";
 import { Access, ajax, vditorConfig } from "~/utils";
@@ -24,8 +25,9 @@ export async function loader({ request }: LoaderArgs) {
   const user = await requireAuthenticatedOptionalUser(request, Access.Basic);
   const announcements = await getAnnouncements();
   const posts = await getPosts(1);
+  const recentComments = await getComments({ page: 1 });
 
-  return json({ announcements, user, originalPosts: posts });
+  return json({ announcements, user, originalPosts: posts, recentComments });
 }
 
 
@@ -44,7 +46,7 @@ export async function action({ request }: ActionArgs) {
 }
 
 export default function Index() {
-  const { announcements, user, originalPosts } = useLoaderData<typeof loader>();
+  const { announcements, user, originalPosts, recentComments } = useLoaderData<typeof loader>();
   const [posts, setPosts] = useState(originalPosts);
 
   const [vd, setVd] = useState<Vditor>();
@@ -142,16 +144,8 @@ export default function Index() {
 
       <Grid.Column width={4}>
         <Header as="h4" attached="top" block>
-          <Icon name="quote left" className="!text-base !align-baseline" />
-          一言
-        </Header>
-        <Segment attached="bottom" textAlign="center">
-          <Quote />
-        </Segment>
-
-        <Header as="h4" attached="top" block>
           <Icon name="bullhorn" className="!text-base !align-baseline" />
-          本站公告
+          公告
         </Header>
         <Segment attached="bottom">
           {announcements.map(({ id, title, content }) => (
@@ -165,6 +159,14 @@ export default function Index() {
         </Header>
         <Segment attached="bottom" textAlign="center">
           <CountDown />
+        </Segment>
+
+        <Header as="h4" attached="top" block>
+          <Icon name="comments" className="!text-base !align-baseline" />
+          最新评论
+        </Header>
+        <Segment attached="bottom">
+          <RecentComments comments={recentComments} />
         </Segment>
       </Grid.Column>
     </Layout>

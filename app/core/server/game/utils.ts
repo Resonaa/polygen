@@ -12,7 +12,8 @@ export function getMinReadyPlayerCount(playerCount: number) {
 }
 
 export function playerCountToSize(playerCount: number, mode: MapMode) {
-  const piles = 80 * playerCount;
+  //const piles = 80 * playerCount;
+  const piles = 50 * 50;
   let r;
 
   switch (mode) {

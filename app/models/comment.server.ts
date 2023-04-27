@@ -4,9 +4,9 @@ import { prisma } from "~/db.server";
 
 export type { Comment } from "@prisma/client";
 
-export function getComments({ parentId, page }: Pick<Comment, "parentId"> & { page: number }) {
+export function getComments({ parentId, page }: { parentId?: Comment["parentId"], page: number }) {
   return prisma.comment.findMany({
-    where: { parentId },
+    where: parentId ? { parentId } : undefined,
     orderBy: { id: "desc" },
     skip: (page - 1) * 10,
     take: 10

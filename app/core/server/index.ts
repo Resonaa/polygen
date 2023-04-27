@@ -14,8 +14,6 @@ export function setServer(server: Server) {
 
     socket.leave(socket.id);
 
-    socket.data.username = username;
-
     const rm = new RoomManager(server);
 
     socket.on("joinRoom", rid => {
@@ -23,8 +21,6 @@ export function setServer(server: Server) {
       server.in(SocketRoom.usernameRid(username, rid)).disconnectSockets();
 
       rm.leave(username);
-
-      socket.data.rid = rid;
 
       socket.join(SocketRoom.rid(rid));
       socket.join(SocketRoom.usernameRid(username, rid));
