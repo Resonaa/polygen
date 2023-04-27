@@ -49,7 +49,7 @@ export function clearAllVotesOfPlayer(data: VoteData, player: string) {
   let updated = false;
 
   for (let [key, arr] of Object.entries(data)) {
-    const valueIndex = arr.findIndex(([, players]) => players.includes(player));
+    const valueIndex = arr ? arr.findIndex(([, players]) => players.includes(player)) : -1;
     if (valueIndex !== -1) {
       const playerId = arr[valueIndex][1].indexOf(player);
       arr[valueIndex][1].splice(playerId, 1);
