@@ -14,7 +14,7 @@ interface ExportedComments {
 
 export function RecentComments({ comments }: { comments: ExportedComments[] }) {
   return (
-    <SemanticComment.Group size="small" minimal>
+    <SemanticComment.Group minimal>
       {comments.map(({ username, content, parentId, createdAt }) => (
         <SemanticComment key={createdAt}>
           <Avatar username={username} />

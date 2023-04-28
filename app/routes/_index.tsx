@@ -157,7 +157,7 @@ export default function Index() {
           <Icon name="calendar alternate" className="!text-base !align-baseline" />
           倒计时
         </Header>
-        <Segment attached="bottom" textAlign="center">
+        <Segment attached="bottom">
           <CountDown />
         </Segment>
 

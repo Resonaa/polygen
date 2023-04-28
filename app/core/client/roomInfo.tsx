@@ -49,7 +49,7 @@ export function RoomInfo({ client, rid }: { client?: ClientSocket, rid: string }
     rank.length === 0 ?
       (
         <>
-          <Header textAlign="center" as="h3" className="!pt-1.5">房间信息</Header>
+          <Header textAlign="center" as="h4" className="!pt-1.5">房间信息</Header>
           <Vote type={type} client={client} voteData={voteData} setType={setType} />
 
           <List relaxed className="!pt-1 !pr-1">

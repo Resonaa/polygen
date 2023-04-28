@@ -45,7 +45,7 @@ export default function Index() {
 
   return (
     <Layout columns={2}>
-      <Grid.Column width={13}>
+      <Grid.Column width={12}>
         <Header as="h3">加入房间</Header>
 
         <Table celled selectable unstackable>
@@ -70,7 +70,7 @@ export default function Index() {
         </Table>
       </Grid.Column>
 
-      <Grid.Column width={3}>
+      <Grid.Column width={4}>
         <Header as="h3">创建房间</Header>
 
         {user ? (

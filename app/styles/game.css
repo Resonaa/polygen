@@ -21,7 +21,7 @@ input {
 }
 
 input.房间:focus {
-  border-color: lightblue !important;
+  border-color: lightskyblue !important;
 }
 
 input.世界:focus {

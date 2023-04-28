@@ -237,5 +237,5 @@ export const vditorConfig = {
   toolbarConfig: { pin: true },
   resize: { enable: true },
   tab: "    ",
-  preview: { math: { inlineDigit: true }, hljs: { style: "autumn" } }
+  preview: { math: { inlineDigit: true }, hljs: { style: "monokai" } }
 };

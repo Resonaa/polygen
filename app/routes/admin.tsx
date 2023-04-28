@@ -26,8 +26,8 @@ function AdminMenu() {
       <Menu.Item>
         用户
         <Menu.Menu>
-          <AdminItem id="userData" name="数据管理" />
           <AdminItem id="access" name="权限管理" />
+          <AdminItem id="userData" name="数据管理" />
         </Menu.Menu>
       </Menu.Item>
 

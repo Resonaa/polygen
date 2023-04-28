@@ -1,7 +1,7 @@
 @tailwind utilities;
 
 .error-message {
-  @apply pt-1 text-red-700;
+  @apply pt-1 text-red-500;
 }
 
 .room-ready {
