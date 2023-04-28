@@ -87,7 +87,7 @@ export function Messages({ client }: { client?: ClientSocket }) {
       .on("message", ({ sender, content, type }) => updateMessageList(<GameMessage content={content} type={type}
                                                                                    sender={sender} />))
       .on("info", info => updateMessageList(<Info content={info} />))
-      .on("disconnect", () => updateMessageList(<Info content={"连接断开"} />))
+      .on("disconnect", () => updateMessageList(<Info content={"链接断开"} />))
       .on("win", winnerStr => updateMessageList(<Info content={winnerStr + "赢了"} />))
       .on("die", () => updateMessageList(<Info content="您死了" />));
   }, [client]);

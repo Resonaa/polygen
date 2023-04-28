@@ -17,7 +17,7 @@ export default function Footer() {
             <Header inverted as="h4" content="社区" />
             <List link inverted>
               <List.Item as="a" href="https://github.com/jwcub/polygen">开源仓库</List.Item>
-              <List.Item as="a" href="https://jq.qq.com/?_wv=1027&k=nfUjZSBS">官方 QQ 群</List.Item>
+              <List.Item as="a" href="https://jq.qq.com/?_wv=1027&k=nfUjZSBS">宫方 QQ 群</List.Item>
             </List>
           </Grid.Column>
           <Grid.Column width={7}>

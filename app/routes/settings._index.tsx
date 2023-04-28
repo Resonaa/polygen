@@ -19,7 +19,7 @@ export default function Index() {
       <Header as="h4">个人设置</Header>
 
       <p>
-        <strong>所有设置数据保存在本地，清空浏览器缓存会导致数据丢失。</strong>
+        <strong>所有设置数据保存在本地，清空浏览器缓存会导致数据丢矢。</strong>
       </p>
       <p>
         若您有备份数据的需要，可以在下方导入/导出数据：
