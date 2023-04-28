@@ -42,7 +42,7 @@ export async function action({ request }: ActionArgs) {
 
   if (await getUserByUsername(username))
     return json(
-      { username: "用户名己存在", password: null, repeatPassword: null },
+      { username: "用户名已存在", password: null, repeatPassword: null },
       { status: 400 }
     );
 

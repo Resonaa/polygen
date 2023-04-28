@@ -720,7 +720,7 @@ export class RoomManager {
     }
 
     if (room.ongoing && !room.gamingPlayers.has(sender) && room.playerToTeam(sender) !== 0) {
-      this.server.to(SocketRoom.usernameRid(sender, this.rid)).emit("info", "游戏中仅叁战玩家可发送队伍消息");
+      this.server.to(SocketRoom.usernameRid(sender, this.rid)).emit("info", "游戏中仅参战玩家可发送队伍消息");
       return;
     }
 

@@ -123,7 +123,7 @@ export default function Keys() {
     ["绿色", "选择左上角领地", defaultSettings.game.keys[mode].selectTopLeft],
     ["青色", "半兵", defaultSettings.game.keys[mode].splitArmy],
     ["橙色", "清除全部移动", defaultSettings.game.keys[mode].clearMovements],
-    ["粉色", "投隆", defaultSettings.game.keys[mode].surrender]];
+    ["粉色", "投降", defaultSettings.game.keys[mode].surrender]];
 
   const resetToDefault = () => {
     let settings = getSettings();

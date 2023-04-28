@@ -57,7 +57,7 @@ export default function Index() {
 
           <Table.Body>
             {rooms.map(room => (
-              <Table.Row key={room.id} title={user ? "点击加人" : "登录后加入"} onClick={() =>
+              <Table.Row key={room.id} title={user ? "点击加入" : "登录后加入"} onClick={() =>
                 user && window.open("/game/" + encodeURIComponent(room.id))
               } className={clsx(user && "cursor-pointer", "room-" + (room.ongoing ? "ongoing" : "ready"))}>
                 <Table.Cell width={3}>{room.id}</Table.Cell>
@@ -83,7 +83,7 @@ export default function Index() {
           </Form>
         ) : (
           <>
-            请<Link to="/login" prefetch="intent">登陆</Link>后加入或创建房间
+            请<Link to="/login" prefetch="intent">登录</Link>后加入或创建房间
           </>
         )}
       </Grid.Column>

@@ -84,7 +84,7 @@ export function RoomInfo({ client, rid }: { client?: ClientSocket, rid: string }
           <Table.Header>
             <Table.Row>
               <Table.HeaderCell>玩家</Table.HeaderCell>
-              <Table.HeaderCell>邻地</Table.HeaderCell>
+              <Table.HeaderCell>领地</Table.HeaderCell>
               <Table.HeaderCell>兵力</Table.HeaderCell>
             </Table.Row>
           </Table.Header>
