@@ -1,12 +1,31 @@
 import type { User } from "@prisma/client";
 
 import { prisma } from "~/db.server";
-import { comparePassword, hashPassword } from "~/utils";
+import { comparePassword, hashPassword } from "~/session.server";
 
 export type { User } from "@prisma/client";
 
-export async function getUserByUsername(username: User["username"]) {
+function getUserByUsername(username: User["username"]) {
   return prisma.user.findUnique({ where: { username } });
+}
+
+export async function getUserWithoutPasswordByUsername(username: User["username"]) {
+  const user = await getUserByUsername(username);
+
+  if (!user) {
+    return null;
+  }
+
+  const { password: _password, ...userWithoutPassword } = user;
+  return userWithoutPassword;
+}
+
+export async function getStatsByUsername(username: User["username"]) {
+  const data = await prisma.user.findUnique({
+    where: { username },
+    include: { _count: { select: { comments: true, posts: true } } }
+  });
+  return { posts: data?._count.posts, comments: data?._count.comments };
 }
 
 export async function createUser(username: User["username"], password: string) {

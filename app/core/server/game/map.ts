@@ -21,7 +21,7 @@ export class Map {
   gm: Land[][];
   mode: MapMode;
 
-  constructor(width: number = 0, height: number = 0, mode: MapMode = MapMode.Square) {
+  constructor(width: number = 0, height: number = 0, mode: MapMode = MapMode.Hexagon) {
     this.width = width;
     this.height = height;
     this.gm = [];

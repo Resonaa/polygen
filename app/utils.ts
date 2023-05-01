@@ -1,5 +1,4 @@
 import { useMatches } from "@remix-run/react";
-import bcrypt from "bcryptjs";
 import { useMemo } from "react";
 
 import type { User } from "~/models/user.server";
@@ -84,22 +83,6 @@ export function useUser() {
 }
 
 /**
- * Validate the given username.
- * @param username Anything that could be a username
- */
-export function validateUsername(username: unknown): username is string {
-  return typeof username === "string" && /^[\u4e00-\u9fa5_a-zA-Z0-9]{3,16}$/.test(username);
-}
-
-/**
- * Validate the given password.
- * @param password Anything that could be a password
- */
-export function validatePassword(password: unknown): password is string {
-  return typeof password === "string" && password.length >= 6;
-}
-
-/**
  * Send an AJAX request.
  * @param method Request method
  * @param url Request url
@@ -116,24 +99,6 @@ export async function ajax(method: string, url: string, data: any = {}) {
   };
 
   return await (await fetch(url, options)).json();
-}
-
-/**
- * Hash the given password.
- * @param password The given password
- * @returns Hash value of the password
- */
-export function hashPassword(password: string) {
-  return bcrypt.hash(password, 10);
-}
-
-/**
- * Check if the password matches the hash value.
- * @param input The given password
- * @param hash The given hash value to compare against
- */
-export function comparePassword(input: string, hash: string) {
-  return bcrypt.compare(input, hash);
 }
 
 /**
@@ -226,16 +191,22 @@ export const enum Access {
  * Configuration for the Vditor editor
  */
 export const vditorConfig = {
-  height: 120,
-  toolbar: [
-    "upload", "record", "|", "undo", "redo", "|", "fullscreen",
-    {
-      name: "more",
-      toolbar: ["both", "edit-mode", "export", "outline", "preview"]
-    }
-  ],
-  toolbarConfig: { pin: true },
+  height: 90,
+  toolbar: [],
+  toolbarConfig: { hide: true },
   resize: { enable: true },
   tab: "    ",
-  preview: { math: { inlineDigit: true }, hljs: { style: "monokai" } }
+  preview: {
+    math: { inlineDigit: true }, hljs: { style: "github" }, theme: {
+      current: "light",
+      list: {
+        "light": "Light"
+      },
+      path: `/dist/css/content-theme`,
+    }
+  },
+  cdn: "",
+  hint: {
+    emoji: {}
+  }
 };

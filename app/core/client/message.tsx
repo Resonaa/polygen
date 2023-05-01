@@ -10,7 +10,7 @@ export function getColorByMessageType(type: MessageType) {
   if (type === MessageType.World)
     return "green";
   else if (type === MessageType.Room)
-    return "skyblue";
+    return "blue";
   else
     return "salmon";
 }

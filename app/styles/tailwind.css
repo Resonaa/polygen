@@ -4,6 +4,10 @@
   @apply pt-1 text-red-500;
 }
 
+.vditor-toolbar {
+  display: none !important;
+}
+
 .room-ready {
   -webkit-box-shadow: 0.2em 0 0 0 #21ba45 inset;
   box-shadow: 0.2em 0 0 0 #21ba45 inset;

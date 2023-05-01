@@ -6,12 +6,13 @@ type ArrElement<ArrType extends readonly unknown[]> =
 
 export enum RoomMap {
   Random = "随机地图",
-  Empty = "空白地图"
+  Empty = "空白地图",
+  Maze = "迷宫地图"
 }
 
 export const voteItems = {
   mode: [MapMode.Hexagon, MapMode.Square],
-  map: [RoomMap.Random, RoomMap.Empty],
+  map: [RoomMap.Random, RoomMap.Empty, RoomMap.Maze],
   speed: [1, 0.5, 0.75, 1.25, 1.5]
 };
 

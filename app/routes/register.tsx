@@ -1,9 +1,14 @@
 import type { ActionArgs, LoaderArgs, V2_MetaFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 
-import { createUser, getUserByUsername } from "~/models/user.server";
-import { createUserSession, requireAuthenticatedOptionalUser } from "~/session.server";
-import { Access, safeRedirect, validatePassword, validateUsername } from "~/utils";
+import { createUser, getUserWithoutPasswordByUsername } from "~/models/user.server";
+import {
+  createUserSession,
+  requireAuthenticatedOptionalUser,
+  validatePassword,
+  validateUsername
+} from "~/session.server";
+import { Access, safeRedirect } from "~/utils";
 
 import AuthBox from "../components/authBox";
 
@@ -40,7 +45,7 @@ export async function action({ request }: ActionArgs) {
       { status: 400 }
     );
 
-  if (await getUserByUsername(username))
+  if (await getUserWithoutPasswordByUsername(username))
     return json(
       { username: "用户名已存在", password: null, repeatPassword: null },
       { status: 400 }

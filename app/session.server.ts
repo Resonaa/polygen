@@ -1,8 +1,9 @@
 import { createCookieSessionStorage, redirect } from "@remix-run/node";
+import bcrypt from "bcryptjs";
 import invariant from "tiny-invariant";
 
 import type { User } from "~/models/user.server";
-import { getUserByUsername } from "~/models/user.server";
+import { getUserWithoutPasswordByUsername } from "~/models/user.server";
 import type { Access } from "~/utils";
 
 invariant(process.env.SESSION_SECRET, "SESSION_SECRET must be set");
@@ -35,10 +36,10 @@ export async function getUser(request: Request) {
   const username = await getUsername(request);
   if (username === undefined) return null;
 
-  const user = await getUserByUsername(username);
+  const user = await getUserWithoutPasswordByUsername(username);
   if (user) return user;
 
-  throw await logout(request);
+  throw await logout(request, request.url);
 }
 
 async function requireUsername(
@@ -56,10 +57,10 @@ async function requireUsername(
 async function requireUser(request: Request) {
   const username = await requireUsername(request);
 
-  const user = await getUserByUsername(username);
+  const user = await getUserWithoutPasswordByUsername(username);
   if (user) return user;
 
-  throw await logout(request);
+  throw await logout(request, request.url);
 }
 
 export async function requireAuthenticatedUser(request: Request, access: Access) {
@@ -94,11 +95,45 @@ export async function createUserSession(request: Request, username: string, redi
   });
 }
 
-export async function logout(request: Request) {
+export async function logout(request: Request, redirectTo: string) {
   const session = await getSession(request);
-  return redirect("/", {
+  return redirect(redirectTo, {
     headers: {
       "Set-Cookie": await sessionStorage.destroySession(session)
     }
   });
+}
+
+/**
+ * Validate the given username.
+ * @param username Anything that could be a username
+ */
+export function validateUsername(username: unknown): username is string {
+  return typeof username === "string" && /^[\u4e00-\u9fa5_a-zA-Z0-9]{3,16}$/.test(username);
+}
+
+/**
+ * Validate the given password.
+ * @param password Anything that could be a password
+ */
+export function validatePassword(password: unknown): password is string {
+  return typeof password === "string" && password.length >= 6;
+}
+
+/**
+ * Hash the given password.
+ * @param password The given password
+ * @returns Hash value of the password
+ */
+export function hashPassword(password: string) {
+  return bcrypt.hash(password, 10);
+}
+
+/**
+ * Check if the password matches the hash value.
+ * @param input The given password
+ * @param hash The given hash value to compare against
+ */
+export function comparePassword(input: string, hash: string) {
+  return bcrypt.compare(input, hash);
 }

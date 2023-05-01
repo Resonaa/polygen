@@ -7,6 +7,7 @@ import { Grid, Header, Table, Form, Button } from "semantic-ui-react";
 
 import { UserLink } from "~/components/community";
 import Layout from "~/components/layout";
+import { MapMode } from "~/core/server/game/map";
 import { Room, roomData } from "~/core/server/room";
 import { requireAuthenticatedOptionalUser } from "~/session.server";
 import { Access } from "~/utils";
@@ -40,12 +41,13 @@ function PlayerListString({ players }: { players: string[] }) {
 
 export default function Index() {
   const { rooms, user } = useLoaderData<typeof loader>();
+  void MapMode;
 
   const [id, setId] = useState("");
 
   return (
     <Layout columns={2}>
-      <Grid.Column width={12}>
+      <Grid.Column width={13}>
         <Header as="h3">加入房间</Header>
 
         <Table celled selectable unstackable>
@@ -70,7 +72,7 @@ export default function Index() {
         </Table>
       </Grid.Column>
 
-      <Grid.Column width={4}>
+      <Grid.Column width={3}>
         <Header as="h3">创建房间</Header>
 
         {user ? (
@@ -83,7 +85,7 @@ export default function Index() {
           </Form>
         ) : (
           <>
-            请<Link to="/login" prefetch="intent">登录</Link>后加入或创建房间
+            请<Link to="/login?redirectTo=/game" prefetch="intent">登录</Link>后加入或创建房间
           </>
         )}
       </Grid.Column>

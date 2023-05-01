@@ -1,7 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 import fs from "fs-extra";
 
-import { hashPassword } from "~/utils";
+
+import { hashPassword } from "~/session.server";
 
 const prisma = new PrismaClient();
 
@@ -62,18 +63,18 @@ async function seed() {
   await prisma.announcement.create({
     data: {
       title: "欢迎来到 polygen",
-      content: "# Markdown\n$$\\ce{Zn^2+  <=>[+ 2OH-][+ 2H+]  $\\underset{\\text{amphoteres Hydroxid}}{\\ce{Zn(OH)2 v}}$  <=>[+ 2OH-][+ 2H+]  $\\underset{\\text{Hydroxozikat}}{\\ce{[Zn(OH)4]^2-}}$}$$\n```cpp\n#include <bits/stdc++.h>\n```"
+      content: "# Markdown\n提示：本站还在建设中，您可以加入页面下方的官方 QQ 群以获取最新开发进度"
     }
   });
 
   await prisma.announcement.create({
     data: {
-      title: "第 32 次内测已开始",
-      content: "测试内容：房内投票"
+      title: "第 33 次内测已开始",
+      content: "测试内容：用户主页\n\n提示：Markdown 及 KaTeX 渲染机制已更新，可能出现**渲染问题**"
     }
   });
 
-  console.log(`Database has been seeded. 🌱`);
+  console.log("Database has been seeded. 🌱");
 }
 
 seed()

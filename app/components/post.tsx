@@ -33,7 +33,7 @@ export default function Post({
       <Feed.Label>
         <Avatar username={username} />
       </Feed.Label>
-      <Feed.Content>
+      <Feed.Content className="overflow-x-auto">
         <Feed.Summary>
           <UserLink username={username} />
           <Feed.Date title={formatDate(createdAt)}>
@@ -42,7 +42,7 @@ export default function Post({
         </Feed.Summary>
 
         {link ? (
-          <Feed.Extra text className="max-h-96 overflow-auto !max-w-none" style={{ overflowWrap: "anywhere" }}>
+          <Feed.Extra text className="max-h-72 overflow-auto !max-w-none" style={{ overflowWrap: "anywhere" }}>
             <Link to={postUrl} style={{ color: "unset" }}>
               <object>
                 <RenderedText content={content} mode="light" />

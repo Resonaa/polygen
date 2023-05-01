@@ -19,7 +19,8 @@ import Comment from "~/components/comment";
 import { Avatar, formatDate, UserLink } from "~/components/community";
 import Layout from "~/components/layout";
 import Post from "~/components/post";
-import { createComment } from "~/models/comment.server";
+import { VditorSkeleton } from "~/components/vditorSkeleton";
+import { createComment, getComments } from "~/models/comment.server";
 import { getPost } from "~/models/post.server";
 import { requireAuthenticatedOptionalUser, requireAuthenticatedUser } from "~/session.server";
 import { Access, ajax, vditorConfig } from "~/utils";
@@ -37,7 +38,9 @@ export async function loader({ request, params }: LoaderArgs) {
     throw new Response("说说不存在", { status: 404, statusText: "Not Found" });
   }
 
-  return json({ post, user });
+  const comments = await getComments({ parentId: id, page: 1 });
+
+  return json({ post, user, originalComments: comments });
 }
 
 export const meta: V2_MetaFunction<typeof loader> = ({ data }) => [{ title: data ? `${data.post.username}的说说 - polygen` : "错误 - polygen" }];
@@ -61,12 +64,12 @@ export async function action({ request }: ActionArgs) {
 }
 
 export default function PostId() {
-  const { user, post } = useLoaderData<typeof loader>();
-  const [comments, setComments] = useState([]);
+  const { user, post, originalComments } = useLoaderData<typeof loader>();
+  const [comments, setComments] = useState(originalComments);
+  const [page, setPage] = useState(1);
+  const [canScroll, setCanScroll] = useState(false);
 
   const [vd, setVd] = useState<Vditor>();
-
-  const [page, setPage] = useState(1);
 
   const anchor = useRef<HTMLDivElement>(null);
 
@@ -91,66 +94,29 @@ export default function PostId() {
   };
 
   useEffect(() => {
-    if (actionData && navigation.state !== "submitting") {
+    if (actionData && navigation.state === "loading") {
       vd?.setValue("");
-      setPage(page => {
-        if (page === 1) {
-          ajax("post", "/post/comment", {
-            page: 1,
-            parentId: post.id
-          }).then(data => setComments(data));
-        }
-
-        return 1;
+      ajax("post", "/post/comment", {
+        page: 1,
+        parentId: post.id
+      }).then(data => {
+        setComments(data);
+        setPage(1);
       });
     }
   }, [actionData, vd, navigation.state, post.id]);
-
-  useEffect(() => {
-    ajax("post", "/post/comment", {
-      page,
-      parentId: post.id
-    }).then(data => setComments(data));
-  }, [page, post.id]);
 
   const handleReplyClick = () => {
     anchor.current?.scrollIntoView({ behavior: "smooth", block: "center" });
   };
 
-  return (
-    <Layout columns={2}>
-      <Grid.Column width={12}>
-        <Feed size="large">
-          <Post id={post.id} createdAt={post.createdAt} commentAmount={post._count.comments} content={post.content}
-                viewCount={post.viewCount} username={post.username} favouredBy={post.favouredBy} />
-        </Feed>
+  useEffect(() => {
+    canScroll && handleReplyClick();
+  }, [comments, canScroll]);
 
-        <SemanticComment.Group size="large" minimal className="!max-w-none">
-          {user &&
-            (
-              <SemanticComment>
-                <Avatar username={user.username} />
-                <SemanticComment.Content>
-                  <UserLink username={user.username} />
-                  <SemanticComment.Text>
-                    <div id="vditor" className="h-32" />
-                    <Button icon primary labelPosition="left" onClick={sendRequest}
-                            loading={navigation.state === "submitting"}
-                            disabled={navigation.state === "submitting"} className="!mt-4">
-                      <Icon name="send" />
-                      评论
-                    </Button>
-                  </SemanticComment.Text>
-                </SemanticComment.Content>
-              </SemanticComment>)}
-
-          <div ref={anchor} />
-
-          {comments.map(({ id, content, username, createdAt }) => (
-            <Comment key={id} content={content} username={username} createdAt={createdAt} />
-          ))}
-        </SemanticComment.Group>
-
+  function Navigation() {
+    return (
+      <>
         {post._count.comments > 10 && (
           <Pagination
             secondary
@@ -170,10 +136,55 @@ export default function PostId() {
             siblingRange={2}
             totalPages={Math.ceil(post._count.comments / 10)}
             onPageChange={(_, { activePage }) => {
-              setPage(activePage as number);
-              handleReplyClick();
+              ajax("post", "/post/comment", {
+                page: activePage,
+                parentId: post.id
+              }).then(data => {
+                setCanScroll(true);
+                setComments(data);
+                setPage(activePage as number);
+              });
             }}
           />)}
+      </>
+    );
+  }
+
+  return (
+    <Layout columns={2}>
+      <Grid.Column width={12}>
+        <Feed size="large">
+          <Post id={post.id} createdAt={post.createdAt} commentAmount={post._count.comments} content={post.content}
+                viewCount={post.viewCount} username={post.username} favouredBy={post.favouredBy} />
+        </Feed>
+
+        <SemanticComment.Group size="large" minimal className="!max-w-none">
+          {user &&
+            (
+              <SemanticComment>
+                <Avatar username={user.username} />
+                <SemanticComment.Content>
+                  <UserLink username={user.username} />
+                  <SemanticComment.Text>
+                    <VditorSkeleton />
+                    <Button icon primary labelPosition="left" onClick={sendRequest}
+                            loading={navigation.state === "submitting"}
+                            disabled={navigation.state === "submitting"} className="!mt-4">
+                      <Icon name="send" />
+                      评论
+                    </Button>
+                  </SemanticComment.Text>
+                </SemanticComment.Content>
+              </SemanticComment>)}
+
+
+          <Navigation />
+          <div ref={anchor} />
+          {comments.map(({ id, content, username, createdAt }) => (
+            <Comment key={id} content={content} username={username} createdAt={createdAt} />
+          ))}
+        </SemanticComment.Group>
+        <Navigation />
       </Grid.Column>
 
       <Grid.Column width={4}>

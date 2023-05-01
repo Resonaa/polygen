@@ -1,7 +1,7 @@
 import { Form as ReactForm, Link, useActionData, useSearchParams, useNavigation } from "@remix-run/react";
 import clsx from "clsx";
 import { useRef, useEffect } from "react";
-import { Button, Form, Icon, Grid } from "semantic-ui-react";
+import { Button, Form, Icon, Grid, Divider } from "semantic-ui-react";
 
 import type { action } from "~/routes/register";
 
@@ -105,17 +105,17 @@ export default function AuthBox({ type }: { type: "login" | "register" }) {
           </Button>
 
           <div className="text-center">
-            <hr className="my-3.5" />
+            <Divider />
             <Form.Field className="text-base">
               {type === "login" ?
                 <>
                   没有账号？
-                  <Link to="/register" prefetch="intent">注册</Link>
+                  <Link to={`/register?redirectTo=${redirectTo}`} prefetch="intent">注册</Link>
                 </>
                 :
                 <>
                   已有账号？
-                  <Link to="/login" prefetch="intent">登录</Link>
+                  <Link to={`/login?redirectTo=${redirectTo}`} prefetch="intent">登录</Link>
                 </>
               }
             </Form.Field>

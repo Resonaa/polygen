@@ -2,6 +2,8 @@ import type { Post } from "@prisma/client";
 
 import { prisma } from "~/db.server";
 
+import type { User } from "./user.server";
+
 export type { Post } from "@prisma/client";
 
 export async function getPost({ id }: Pick<Post, "id">) {
@@ -30,6 +32,24 @@ export async function getPosts(page: number) {
   });
 
   return prisma.post.findMany({
+    orderBy: { id: "desc" },
+    skip: (page - 1) * 10,
+    take: 10,
+    include: { _count: { select: { comments: true } }, favouredBy: { select: { username: true } } }
+  });
+}
+
+export async function getPostsByUsername({ username, page }: { username: User["username"], page: number }) {
+  const firstPost = await prisma.post.findFirst({ where: { username }, orderBy: { id: "desc" } });
+  const maxId = firstPost ? firstPost.id : 0;
+
+  await prisma.post.updateMany({
+    where: { id: { gt: maxId - page * 10 }, username },
+    data: { viewCount: { increment: 1 } }
+  });
+
+  return prisma.post.findMany({
+    where: { username },
     orderBy: { id: "desc" },
     skip: (page - 1) * 10,
     take: 10,

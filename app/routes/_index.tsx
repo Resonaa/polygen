@@ -11,6 +11,7 @@ import { Avatar, UserLink } from "~/components/community";
 import CountDown from "~/components/countdown";
 import Post from "~/components/post";
 import { RecentComments } from "~/components/recentComments";
+import { VditorSkeleton } from "~/components/vditorSkeleton";
 import { getAnnouncements } from "~/models/announcement.server";
 import { getComments } from "~/models/comment.server";
 import { createPost, getPosts } from "~/models/post.server";
@@ -118,7 +119,7 @@ export default function Index() {
                 </Feed.Summary>
 
                 <Feed.Extra text className="!max-w-none">
-                  <div id="vditor" className="h-32" />
+                  <VditorSkeleton />
                   <Button icon primary labelPosition="left" onClick={sendRequest}
                           loading={navigation.state === "submitting"}
                           disabled={navigation.state === "submitting"} className="!mt-4">
@@ -157,7 +158,7 @@ export default function Index() {
           <Icon name="calendar alternate" className="!text-base !align-baseline" />
           倒计时
         </Header>
-        <Segment attached="bottom">
+        <Segment attached="bottom" textAlign="center">
           <CountDown />
         </Segment>
 

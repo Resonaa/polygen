@@ -1,4 +1,4 @@
-import { Form, Link, NavLink } from "@remix-run/react";
+import { Form, Link, NavLink, useLocation, useSearchParams } from "@remix-run/react";
 import type { ReactNode } from "react";
 import { useState, useRef } from "react";
 import type { SemanticICONS, SemanticWIDTHS } from "semantic-ui-react";
@@ -24,8 +24,13 @@ function NavItem({
 export default function Layout({ columns, children }: { columns: SemanticWIDTHS, children: ReactNode }) {
   const [visible, setVisible] = useState(false);
   const refButton = useRef<HTMLButtonElement>(null);
-
+  let location = useLocation().pathname;
+  const [searchParams] = useSearchParams();
   const user = useOptionalUser();
+
+  if (location === "/login" || location === "/register") {
+    location = searchParams.get("redirectTo") || "/";
+  }
 
   return (
     <>
@@ -47,7 +52,7 @@ export default function Layout({ columns, children }: { columns: SemanticWIDTHS,
             {user ?
               <Dropdown item simple text={user.username}>
                 <Dropdown.Menu>
-                  <Dropdown.Item as={"a"}>
+                  <Dropdown.Item as={Link} to={`/user/${user.username}`}>
                     <Icon name="user" />主页
                   </Dropdown.Item>
                   <Dropdown.Item as={Link} to="/settings">
@@ -58,6 +63,7 @@ export default function Layout({ columns, children }: { columns: SemanticWIDTHS,
 
                   <Form action="/logout" method="post">
                     <button ref={refButton} type="submit" className="hidden" />
+                    <input type="hidden" name="redirectTo" value={location} />
 
                     <Dropdown.Item as="a" onClick={() => refButton.current?.click()}>
                       <Icon name="sign out alternate" />登出
@@ -66,8 +72,9 @@ export default function Layout({ columns, children }: { columns: SemanticWIDTHS,
                 </Dropdown.Menu>
               </Dropdown>
               : <>
-                <Button as={Link} to="/login" prefetch="intent">登录</Button>
-                <Button as={Link} primary to="/register" className="!ml-7" prefetch="intent">注册</Button>
+                <Button as={Link} to={`/login?redirectTo=${location}`} prefetch="intent">登录</Button>
+                <Button as={Link} primary to={`/register?redirectTo=${location}`} className="!ml-7"
+                        prefetch="intent">注册</Button>
               </>
             }
           </Menu.Item>

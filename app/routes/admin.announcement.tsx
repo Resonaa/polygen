@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { Button, Icon } from "semantic-ui-react";
 import Vditor from "vditor";
 
+import { VditorSkeleton } from "~/components/vditorSkeleton";
 import { createAnnouncement } from "~/models/announcement.server";
 import { requireAuthenticatedUser } from "~/session.server";
 import { Access, vditorConfig } from "~/utils";
@@ -65,7 +66,7 @@ export default function Announcement() {
     <div>
       <div className="ui input"><input placeholder="这里是标题" ref={titleRef} /></div>
 
-      <div id="vditor" />
+      <VditorSkeleton />
       <br />
       <Button icon primary labelPosition="left" onClick={sendRequest}>
         <Icon name="send" />
