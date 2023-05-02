@@ -31,6 +31,8 @@ fs.ensureDirSync(path.join(USERCONTENT_DIR, "avatar"));
 
 const app = express();
 
+app.disable("x-powered-by");
+
 let io;
 
 const httpServer = http.createServer(app).listen(80, "0.0.0.0", () => {

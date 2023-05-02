@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 import { Divider, Grid, Icon, Statistic, Feed, Pagination, Button, Form } from "semantic-ui-react";
 
-import { relativeDate } from "~/components/community";
+import { formatDate, relativeDate } from "~/components/community";
 import Layout from "~/components/layout";
 import Post from "~/components/post";
 import { getPostsByUsername } from "~/models/post.server";
@@ -106,8 +106,8 @@ export default function User() {
         <div className="max-md:flex max-md:items-center">
           <img alt="avatar" src={`/usercontent/avatar/${user.username}.webp`}
                className="md:w-full max-md:w-[80px] max-md:inline-block" />
-          <div className="inline-block">
-            <div className="text-2xl text-gray-500" title={`权限等级：${user.access}`}>{user.username}</div>
+          <div className="inline-block max-md:ml-6 md:mt-2">
+            <div className="text-2xl" title={`权限等级：${user.access}`}>{user.username}</div>
             {user.bio.length > 0 && <div className="mt-2 break-all">{user.bio}</div>}
           </div>
         </div>
@@ -136,7 +136,7 @@ export default function User() {
             ) : <Divider />}
             <div>
               <Icon name="time" />
-              加入于 {relativeDate(user.createdAt)}
+              加入于 <span title={formatDate(user.createdAt)}>{relativeDate(user.createdAt)}</span>
             </div>
           </>
         )}
