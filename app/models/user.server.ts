@@ -76,7 +76,7 @@ export async function verifyLogin(
 }
 
 export async function updateAvatarByUsername(username: User["username"], avatar: NodeOnDiskFile) {
-  let img = await sharp(await avatar.arrayBuffer()).jpeg();
+  let img = await sharp(await avatar.arrayBuffer()).webp();
   const meta = await img.metadata();
 
   const size = Math.min(500, Math.max(100, meta.height as number, meta.width as number));
@@ -85,5 +85,5 @@ export async function updateAvatarByUsername(username: User["username"], avatar:
     img = img.resize(size, size, { fit: "fill" });
   }
 
-  return fs.writeFile(path.join(process.cwd(), `usercontent/avatar/${username}.jpg`), await img.toBuffer());
+  return fs.writeFile(path.join(process.cwd(), `usercontent/avatar/${username}.webp`), await img.toBuffer());
 }

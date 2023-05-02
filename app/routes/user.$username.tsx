@@ -100,7 +100,7 @@ export default function User() {
     <Layout columns={2}>
       <Grid.Column width={4}>
         <div className="max-md:flex max-md:items-center">
-          <img alt="avatar" src={`/usercontent/avatar/${user.username}.jpg`}
+          <img alt="avatar" src={`/usercontent/avatar/${user.username}.webp`}
                className="md:w-full max-md:w-[80px] max-md:inline-block" />
           <div className="inline-block">
             <div className="text-2xl text-gray-500" title={`权限等级：${user.access}`}>{user.username}</div>

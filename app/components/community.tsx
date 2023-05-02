@@ -3,7 +3,7 @@ import { Link } from "@remix-run/react";
 export function Avatar({ username }: { username: string }) {
   return (
     <Link to={`/user/${username}`} className="avatar">
-      <img alt="avatar" className="rounded" src={`/usercontent/avatar/${username}.jpg`} />
+      <img alt="avatar" className="rounded" src={`/usercontent/avatar/${username}.webp`} />
     </Link>
   );
 }

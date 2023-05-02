@@ -1,7 +1,7 @@
 import type { LoaderArgs } from "@remix-run/node";
 import fs from "fs-extra";
 
-const defaultAvatar = fs.readFileSync("./public/images/defaultAvatar.jpg");
+const defaultAvatar = fs.readFileSync("./public/images/defaultAvatar.webp");
 
 export async function loader({ params }: LoaderArgs) {
   try {
