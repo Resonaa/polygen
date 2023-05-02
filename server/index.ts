@@ -1,6 +1,7 @@
 import http from "http";
 import https from "https";
 import path from "path";
+import * as process from "process";
 
 import { createRequestHandler } from "@remix-run/express";
 import compression from "compression";
@@ -17,6 +18,7 @@ dotenv.config();
 
 const MODE = process.env.NODE_ENV;
 const BUILD_DIR = path.join(process.cwd(), "server/build");
+const USERCONTENT_DIR = path.join(process.cwd(), "usercontent");
 
 if (!fs.existsSync(BUILD_DIR)) {
   console.warn(
@@ -24,6 +26,8 @@ if (!fs.existsSync(BUILD_DIR)) {
   );
   process.exit(1);
 }
+
+fs.ensureDirSync(path.join(USERCONTENT_DIR, "avatar"));
 
 const app = express();
 

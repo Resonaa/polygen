@@ -1,4 +1,10 @@
+import path from "path";
+import * as process from "process";
+
 import type { User } from "@prisma/client";
+import type { NodeOnDiskFile } from "@remix-run/node";
+import fs from "fs-extra";
+import sharp from "sharp";
 
 import { prisma } from "~/db.server";
 import { comparePassword, hashPassword } from "~/session.server";
@@ -43,6 +49,13 @@ export async function updatePasswordByUsername(username: User["username"], passw
   return prisma.user.update({ data: { password: await hashPassword(password) }, where: { username } });
 }
 
+export function updateBioByUsername(username: User["username"], bio: string) {
+  return prisma.user.update({
+    data: { bio },
+    where: { username }
+  });
+}
+
 export async function verifyLogin(
   username: User["username"],
   password: User["password"]
@@ -60,4 +73,17 @@ export async function verifyLogin(
   const { password: _password, ...userWithoutPassword } = user;
 
   return userWithoutPassword;
+}
+
+export async function updateAvatarByUsername(username: User["username"], avatar: NodeOnDiskFile) {
+  let img = await sharp(await avatar.arrayBuffer()).jpeg();
+  const meta = await img.metadata();
+
+  const size = Math.min(500, Math.max(100, meta.height as number, meta.width as number));
+
+  if (size !== meta.height || size !== meta.width) {
+    img = img.resize(size, size, { fit: "fill" });
+  }
+
+  return fs.writeFile(path.join(process.cwd(), `usercontent/avatar/${username}.jpg`), await img.toBuffer());
 }

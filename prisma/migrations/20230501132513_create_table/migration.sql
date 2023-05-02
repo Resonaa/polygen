@@ -4,7 +4,8 @@ CREATE TABLE "User" (
     "username" TEXT NOT NULL,
     "password" TEXT NOT NULL,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "access" INTEGER NOT NULL DEFAULT 1
+    "access" INTEGER NOT NULL DEFAULT 1,
+    "bio" TEXT NOT NULL DEFAULT ''
 );
 
 -- CreateTable

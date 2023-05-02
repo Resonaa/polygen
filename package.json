@@ -44,7 +44,9 @@
     "tiny-invariant": "latest",
     "ts-node": "latest",
     "typescript": "latest",
-    "vditor": "latest"
+    "vditor": "latest",
+    "react-textarea-autosize": "latest",
+    "sharp": "latest"
   },
   "devDependencies": {
     "@remix-run/dev": "latest",

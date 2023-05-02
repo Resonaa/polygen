@@ -5,7 +5,7 @@ const defaultAvatar = fs.readFileSync("./public/images/defaultAvatar.jpg");
 
 export async function loader({ params }: LoaderArgs) {
   try {
-    return new Response(await fs.readFile("./public/usercontent/avatar/" + params?.username));
+    return new Response(await fs.readFile("./usercontent/avatar/" + params?.username));
   } catch (_) {
     return new Response(defaultAvatar);
   }

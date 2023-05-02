@@ -17,6 +17,8 @@ model User {
   comments  Comment[]
   access    Int @default(1)
 
+  bio       String @default("")
+
   favouredPosts Post[] @relation("favour")
 }
 

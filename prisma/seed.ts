@@ -23,7 +23,8 @@ async function seed() {
   await prisma.user.create({
     data: {
       username: "user",
-      password: await hashPassword("123456")
+      password: await hashPassword("123456"),
+      bio: "Test"
     }
   });
 
@@ -69,8 +70,8 @@ async function seed() {
 
   await prisma.announcement.create({
     data: {
-      title: "第 33 次内测已开始",
-      content: "测试内容：用户主页\n\n提示：Markdown 及 KaTeX 渲染机制已更新，可能出现**渲染问题**"
+      title: "第 34 次内测已开始",
+      content: "测试内容：编辑资料\n\n提示：用户头像不会在每次内测时清除"
     }
   });
 

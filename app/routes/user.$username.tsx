@@ -1,8 +1,9 @@
 import type { LoaderArgs, V2_MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData, Form as ReactForm, useActionData } from "@remix-run/react";
 import { useEffect, useRef, useState } from "react";
-import { Divider, Grid, Icon, Statistic, Feed, Pagination } from "semantic-ui-react";
+import TextareaAutosize from "react-textarea-autosize";
+import { Divider, Grid, Icon, Statistic, Feed, Pagination, Button, Form } from "semantic-ui-react";
 
 import { relativeDate } from "~/components/community";
 import Layout from "~/components/layout";
@@ -10,7 +11,9 @@ import Post from "~/components/post";
 import { getPostsByUsername } from "~/models/post.server";
 import { getStatsByUsername, getUserWithoutPasswordByUsername } from "~/models/user.server";
 import { requireAuthenticatedOptionalUser } from "~/session.server";
-import { Access, ajax } from "~/utils";
+import { Access, ajax, useOptionalUser } from "~/utils";
+
+import type { action } from "./profile";
 
 export async function loader({ request, params }: LoaderArgs) {
   await requireAuthenticatedOptionalUser(request, Access.Basic);
@@ -40,6 +43,9 @@ export default function User() {
   const [page, setPage] = useState(1);
   const [canScroll, setCanScroll] = useState(false);
   const anchor = useRef<HTMLDivElement>(null);
+  const currentUser = useOptionalUser();
+  const [edit, setEdit] = useState(false);
+  const actionData = useActionData<typeof action>();
 
   useEffect(() => {
     canScroll && anchor.current?.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -48,6 +54,12 @@ export default function User() {
   useEffect(() => {
     setPosts(originalPosts);
   }, [originalPosts]);
+
+  useEffect(() => {
+    if (actionData && actionData === "编辑成功") {
+      window.location.reload();
+    }
+  }, [actionData]);
 
   function Navigation() {
     return (
@@ -89,16 +101,41 @@ export default function User() {
       <Grid.Column width={4}>
         <div className="max-md:flex max-md:items-center">
           <img alt="avatar" src={`/usercontent/avatar/${user.username}.jpg`}
-               className="md:max-w-full max-md:w-[80px] max-md:inline-block" />
+               className="md:w-full max-md:w-[80px] max-md:inline-block" />
           <div className="inline-block">
-            <span className="text-2xl text-gray-500" title={`权限等级：${user.access}`}>{user.username}</span>
+            <div className="text-2xl text-gray-500" title={`权限等级：${user.access}`}>{user.username}</div>
+            {user.bio.length > 0 && <div className="mt-2 break-all">{user.bio}</div>}
           </div>
         </div>
-        <Divider />
-        <div>
-          <Icon name="time" />
-          加入于 {relativeDate(user.createdAt)}
-        </div>
+        {edit ? (
+          <Form as={ReactForm} method="post" encType="multipart/form-data" action="/profile" className="mt-4">
+            <Form.Field>
+              <label>头像</label>
+              <input type="file" name="avatar" accept=".jpeg,.jpg,.png,.webp,.avif,.tiff,.gif,.svg" />
+            </Form.Field>
+            <Form.Field>
+              <label>个性签名</label>
+              <TextareaAutosize maxLength={161} defaultValue={user.bio} name="bio" rows={2} />
+            </Form.Field>
+            <Button positive type="submit">保存</Button>
+            <Button onClick={() => setEdit(false)}>取消</Button>
+            {actionData && actionData !== "编辑成功" && (
+              <div className="error-message">
+                {actionData}
+              </div>
+            )}
+          </Form>
+        ) : (
+          <>
+            {currentUser && currentUser.username === user.username ? (
+              <Button fluid className="!my-4" onClick={() => setEdit(true)}>编辑资料</Button>
+            ) : <Divider />}
+            <div>
+              <Icon name="time" />
+              加入于 {relativeDate(user.createdAt)}
+            </div>
+          </>
+        )}
       </Grid.Column>
       <Grid.Column width={12}>
         <div ref={anchor} />
