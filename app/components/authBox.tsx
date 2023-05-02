@@ -1,6 +1,6 @@
 import { Form as ReactForm, Link, useActionData, useSearchParams, useNavigation } from "@remix-run/react";
 import clsx from "clsx";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { Button, Form, Icon, Grid, Divider } from "semantic-ui-react";
 
 import type { action } from "~/routes/register";
@@ -16,23 +16,34 @@ export default function AuthBox({ type }: { type: "login" | "register" }) {
   const usernameRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const repeatPasswordRef = useRef<HTMLInputElement>(null);
+  const captchaRef = useRef<HTMLInputElement>(null);
 
   const navigation = useNavigation();
+
+  const [captcha, setCaptcha] = useState(0);
+
+  const changeCaptcha = () => setCaptcha(x => x + 1);
 
   useEffect(() => {
     if (actionData?.username) {
       usernameRef.current?.focus();
+      changeCaptcha();
     } else if (actionData?.password) {
       passwordRef.current?.focus();
+      changeCaptcha();
     } else if (actionData?.repeatPassword) {
       repeatPasswordRef.current?.focus();
+      changeCaptcha();
+    } else if (actionData?.captcha) {
+      captchaRef.current?.focus();
+      changeCaptcha();
     }
   }, [actionData]);
 
   return (
     <Layout columns={1}>
       <Grid.Column className="my-auto !flex justify-center">
-        <Form as={ReactForm} size="large" className="max-sm:w-full bg-white p-8 m-auto" method="post"
+        <Form as={ReactForm} size="large" className="max-sm:w-full p-8" method="post"
               action={`/${type}`}>
           <Form.Field className="text-center">
             <img src="/images/polygen.png" alt="logo" />
@@ -48,6 +59,8 @@ export default function AuthBox({ type }: { type: "login" | "register" }) {
                 type="username"
                 autoComplete="nickname"
                 placeholder="用户名"
+                minLength={3}
+                maxLength={16}
               />
               <Icon name="user" />
             </div>
@@ -67,6 +80,8 @@ export default function AuthBox({ type }: { type: "login" | "register" }) {
                 type="password"
                 autoComplete={type === "login" ? "current-password" : "new-password"}
                 placeholder="密码"
+                minLength={6}
+                maxLength={161}
               />
               <Icon name="lock" />
             </div>
@@ -77,25 +92,52 @@ export default function AuthBox({ type }: { type: "login" | "register" }) {
             )}
           </Form.Field>
 
-          {type === "register" &&
-            <Form.Field className={clsx(actionData?.repeatPassword && "error")}>
-              <div className={clsx("ui left icon input", actionData?.repeatPassword && "error")}>
-                <input
-                  ref={repeatPasswordRef}
-                  required
-                  name="repeatPassword"
-                  type="password"
-                  autoComplete="new-password"
-                  placeholder="再次输入密码"
-                />
-                <Icon name="lock" />
-              </div>
-              {actionData?.repeatPassword && (
-                <div className="error-message">
-                  {actionData.repeatPassword}
+          {type === "register" && (
+            <>
+              <Form.Field className={clsx(actionData?.repeatPassword && "error")}>
+                <div className={clsx("ui left icon input", actionData?.repeatPassword && "error")}>
+                  <input
+                    ref={repeatPasswordRef}
+                    required
+                    name="repeatPassword"
+                    type="password"
+                    autoComplete="new-password"
+                    placeholder="再次输入密码"
+                    minLength={6}
+                    maxLength={161}
+                  />
+                  <Icon name="lock" />
                 </div>
-              )}
-            </Form.Field>
+                {actionData?.repeatPassword && (
+                  <div className="error-message">
+                    {actionData.repeatPassword}
+                  </div>
+                )}
+              </Form.Field>
+
+              <Form.Field className={clsx(actionData?.captcha && "error")}>
+                <div className={clsx("ui left icon input items-center", actionData?.captcha && "error")}>
+                  <input
+                    ref={captchaRef}
+                    required
+                    name="captcha"
+                    type="text"
+                    placeholder="验证码"
+                    minLength={4}
+                    maxLength={4}
+                    style={{ width: "calc(100% - 150px)" }}
+                  />
+                  <Icon name="checkmark" />
+                  <img src={"/captcha?" + captcha} alt="captcha" className="cursor-pointer" onClick={changeCaptcha} />
+                </div>
+                {actionData?.captcha && (
+                  <div className="error-message">
+                    {actionData.captcha}
+                  </div>
+                )}
+              </Form.Field>
+            </>
+          )
           }
 
           <input type="hidden" name="redirectTo" value={redirectTo} />

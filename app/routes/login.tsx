@@ -27,7 +27,7 @@ export async function action({ request }: ActionArgs) {
   const redirectTo = safeRedirect(formData.get("redirectTo"), "/");
 
   if (!validateUsername(username))
-    return json({ username: "用户名为3~16位，仅包含中英文、数字和_" }, { status: 400 });
+    return json({ username: "用户名只能包含中英文、数字和_" }, { status: 400 });
 
   if (!validatePassword(password))
     return json({ password: "密码长度应不小于6位" }, { status: 400 });

@@ -3,8 +3,9 @@ import { json, redirect } from "@remix-run/node";
 
 import { createUser, getUserWithoutPasswordByUsername } from "~/models/user.server";
 import {
+  verifyCaptcha,
   createUserSession,
-  requireAuthenticatedOptionalUser,
+  requireAuthenticatedOptionalUser, validateCaptcha,
   validatePassword,
   validateUsername
 } from "~/session.server";
@@ -25,31 +26,50 @@ export async function action({ request }: ActionArgs) {
   const username = formData.get("username");
   const password = formData.get("password");
   const repeatPassword = formData.get("repeatPassword");
+  const captcha = formData.get("captcha");
   const redirectTo = safeRedirect(formData.get("redirectTo"), "/");
 
-  if (!validateUsername(username))
+  if (!validateCaptcha(captcha)) {
     return json(
-      { username: "用户名为3~16位，仅包含中英文、数字和_", password: null, repeatPassword: null },
+      { username: null, password: null, repeatPassword: null, captcha: "验证码错误" },
       { status: 400 }
     );
+  }
 
-  if (!validatePassword(password))
+  if (!validateUsername(username)) {
     return json(
-      { username: null, password: "密码长度应不小于6位", repeatPassword: null },
+      { username: "用户名只能包含中英文、数字和_", password: null, repeatPassword: null, captcha: null },
       { status: 400 }
     );
+  }
 
-  if (password !== repeatPassword)
+  if (!validatePassword(password)) {
     return json(
-      { username: null, password: null, repeatPassword: "两次输入的密码不一致" },
+      { username: null, password: "密码长度应不小于6位", repeatPassword: null, captcha: null },
       { status: 400 }
     );
+  }
 
-  if (await getUserWithoutPasswordByUsername(username))
+  if (password !== repeatPassword) {
     return json(
-      { username: "用户名已存在", password: null, repeatPassword: null },
+      { username: null, password: null, repeatPassword: "两次输入的密码不一致", captcha: null },
       { status: 400 }
     );
+  }
+
+  if (!await verifyCaptcha(request, captcha)) {
+    return json(
+      { username: null, password: null, repeatPassword: null, captcha: "验证码错误" },
+      { status: 400 }
+    );
+  }
+
+  if (await getUserWithoutPasswordByUsername(username)) {
+    return json(
+      { username: "用户名已存在", password: null, repeatPassword: null, captcha: null },
+      { status: 400 }
+    );
+  }
 
   await createUser(username, password);
 

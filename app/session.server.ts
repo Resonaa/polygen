@@ -19,6 +19,7 @@ export const sessionStorage = createCookieSessionStorage({
 });
 
 export const USER_SESSION_KEY = "username";
+export const CAPTCHA_SESSION_KEY = "captcha";
 
 export async function getSession(request: Request) {
   const cookie = request.headers.get("Cookie");
@@ -30,6 +31,13 @@ export async function getUsername(
 ): Promise<User["username"] | undefined> {
   const session = await getSession(request);
   return session.get(USER_SESSION_KEY);
+}
+
+export async function getCaptcha(
+  request: Request
+): Promise<string | undefined> {
+  const session = await getSession(request);
+  return session.get(CAPTCHA_SESSION_KEY);
 }
 
 export async function getUser(request: Request) {
@@ -95,6 +103,22 @@ export async function createUserSession(request: Request, username: string, redi
   });
 }
 
+export async function createCaptchaSession(request: Request, captcha: string, data: string) {
+  const session = await getSession(request);
+  session.set(CAPTCHA_SESSION_KEY, captcha);
+  return new Response(data, {
+    headers: {
+      "Set-Cookie": await sessionStorage.commitSession(session),
+      "Content-Type": "image/svg+xml"
+    }
+  });
+}
+
+export async function verifyCaptcha(request: Request, captcha: string) {
+  const realCaptcha = await getCaptcha(request);
+  return realCaptcha && realCaptcha.toUpperCase() === captcha.toUpperCase();
+}
+
 export async function logout(request: Request, redirectTo: string) {
   const session = await getSession(request);
   return redirect(redirectTo, {
@@ -118,6 +142,10 @@ export function validateUsername(username: unknown): username is string {
  */
 export function validatePassword(password: unknown): password is string {
   return typeof password === "string" && password.length >= 6;
+}
+
+export function validateCaptcha(captcha: unknown): captcha is string {
+  return typeof captcha === "string" && captcha.length === 4;
 }
 
 /**

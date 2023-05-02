@@ -48,7 +48,8 @@
     "react-textarea-autosize": "latest",
     "sharp": "latest",
     "highlight.js": "latest",
-    "katex": "latest"
+    "katex": "latest",
+    "svg-captcha": "latest"
   },
   "devDependencies": {
     "@remix-run/dev": "latest",

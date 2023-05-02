@@ -65,12 +65,14 @@ export default function Index() {
   const [vd, setVd] = useState<Vditor>();
 
   useEffect(() => {
-    const vditor = new Vditor("vditor", {
-      ...vditorConfig, after: () => {
-        setVd(vditor);
-      }
-    });
-  }, []);
+    if (user) {
+      const vditor = new Vditor("vditor", {
+        ...vditorConfig, after: () => {
+          setVd(vditor);
+        }
+      });
+    }
+  }, [user]);
 
   const navigation = useNavigation();
   const actionData = useActionData<typeof action>();
