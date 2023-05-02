@@ -14,6 +14,10 @@ import {
 } from "@remix-run/react";
 import semantic from "semantic-ui-css/semantic.min.css";
 import { Grid } from "semantic-ui-react";
+import light from "vditor/dist/css/content-theme/light.css";
+import vditor from "vditor/dist/index.css";
+import hljs from "vditor/dist/js/highlight.js/styles/github.css";
+import katex from "vditor/dist/js/katex/katex.min.css";
 
 import Layout from "~/components/layout";
 import { Access } from "~/utils";
@@ -24,10 +28,10 @@ import tailwind from "./styles/tailwind.css";
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: tailwind },
   { rel: "stylesheet", href: semantic },
-  { rel: "stylesheet", href: "/dist/index.css" },
-  { rel: "stylesheet", href: "/dist/js/katex/katex.min.css" },
-  { rel: "stylesheet", href: "/dist/js/highlight.js/styles/github.css" },
-  { rel: "stylesheet", href: "/dist/css/content-theme/light.css" }];
+  { rel: "stylesheet", href: vditor },
+  { rel: "stylesheet", href: katex },
+  { rel: "stylesheet", href: hljs },
+  { rel: "stylesheet", href: light }];
 
 function GlobalMeta() {
   return (

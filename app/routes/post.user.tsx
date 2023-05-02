@@ -4,6 +4,7 @@ import { json } from "@remix-run/node";
 import { getPostsByUsername } from "~/models/post.server";
 import { requireAuthenticatedOptionalUser } from "~/session.server";
 import { Access } from "~/utils";
+import { renderText } from "~/utils.server";
 
 export async function loader({ request }: ActionArgs) {
   return await requireAuthenticatedOptionalUser(request, Access.Basic);
@@ -25,5 +26,10 @@ export async function action({ request }: ActionArgs) {
   }
 
   const posts = await getPostsByUsername({ username, page });
+
+  for (let post of posts) {
+    post.content = renderText(post.content);
+  }
+
   return json(posts);
 }

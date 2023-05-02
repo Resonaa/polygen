@@ -17,6 +17,7 @@ import { getComments } from "~/models/comment.server";
 import { createPost, getPosts } from "~/models/post.server";
 import { requireAuthenticatedOptionalUser, requireAuthenticatedUser } from "~/session.server";
 import { Access, ajax, vditorConfig } from "~/utils";
+import { renderText } from "~/utils.server";
 
 import Layout from "../components/layout";
 
@@ -28,9 +29,20 @@ export async function loader({ request }: LoaderArgs) {
   const posts = await getPosts(1);
   const recentComments = await getComments({ page: 1 });
 
+  for (let announcement of announcements) {
+    announcement.content = renderText(announcement.content);
+  }
+
+  for (let post of posts) {
+    post.content = renderText(post.content);
+  }
+
+  for (let comment of recentComments) {
+    comment.content = renderText(comment.content);
+  }
+
   return json({ announcements, user, originalPosts: posts, recentComments });
 }
-
 
 export async function action({ request }: ActionArgs) {
   const formData = await request.formData();

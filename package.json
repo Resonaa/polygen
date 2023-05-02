@@ -46,7 +46,9 @@
     "typescript": "latest",
     "vditor": "latest",
     "react-textarea-autosize": "latest",
-    "sharp": "latest"
+    "sharp": "latest",
+    "highlight.js": "latest",
+    "katex": "latest"
   },
   "devDependencies": {
     "@remix-run/dev": "latest",
@@ -60,6 +62,7 @@
     "@types/node": "latest",
     "@types/react": "latest",
     "@types/react-dom": "latest",
+    "@types/katex": "latest",
     "eslint": "latest",
     "npm-run-all": "latest",
     "prisma": "latest",

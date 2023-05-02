@@ -19,7 +19,7 @@ function GameMessage({ type, content, sender }: Pick<Message, "type" | "content"
   return (
     <div>
       <a href={`/user/${sender}`} style={{ color: "light" + getColorByMessageType(type) }}>{sender}</a>
-      <RenderedText content={content} mode="dark" className="inline-block !ml-2" />
+      <RenderedText html={content} mode="dark" className="inline-block !ml-2" />
     </div>
   );
 }

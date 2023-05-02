@@ -45,14 +45,14 @@ export default function Post({
           <Feed.Extra text className="max-h-72 overflow-auto !max-w-none break-all">
             <Link to={postUrl} style={{ color: "unset" }}>
               <object>
-                <RenderedText content={content} mode="light" />
+                <RenderedText html={content} mode="light" />
               </object>
             </Link>
           </Feed.Extra>
         ) : (
           <Feed.Extra text className="overflow-auto !max-w-none break-all">
             <object>
-              <RenderedText content={content} mode="light" />
+              <RenderedText html={content} mode="light" />
             </object>
           </Feed.Extra>
         )}

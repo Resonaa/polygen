@@ -24,6 +24,7 @@ import { createComment, getComments } from "~/models/comment.server";
 import { getPost } from "~/models/post.server";
 import { requireAuthenticatedOptionalUser, requireAuthenticatedUser } from "~/session.server";
 import { Access, ajax, vditorConfig } from "~/utils";
+import { renderText } from "~/utils.server";
 
 export async function loader({ request, params }: LoaderArgs) {
   const user = await requireAuthenticatedOptionalUser(request, Access.Basic);
@@ -38,7 +39,13 @@ export async function loader({ request, params }: LoaderArgs) {
     throw new Response("说说不存在", { status: 404, statusText: "Not Found" });
   }
 
+  post.content = renderText(post.content);
+
   const comments = await getComments({ parentId: id, page: 1 });
+
+  for (let comment of comments) {
+    comment.content = renderText(comment.content);
+  }
 
   return json({ post, user, originalComments: comments });
 }

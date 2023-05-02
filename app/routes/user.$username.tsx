@@ -12,6 +12,7 @@ import { getPostsByUsername } from "~/models/post.server";
 import { getStatsByUsername, getUserWithoutPasswordByUsername } from "~/models/user.server";
 import { requireAuthenticatedOptionalUser } from "~/session.server";
 import { Access, ajax, useOptionalUser } from "~/utils";
+import { renderText } from "~/utils.server";
 
 import type { action } from "./profile";
 
@@ -31,6 +32,9 @@ export async function loader({ request, params }: LoaderArgs) {
   const stats = await getStatsByUsername(username);
 
   const posts = await getPostsByUsername({ username, page: 1 });
+  for (let post of posts) {
+    post.content = renderText(post.content);
+  }
 
   return json({ user, stats, originalPosts: posts });
 }

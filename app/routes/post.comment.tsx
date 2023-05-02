@@ -4,6 +4,7 @@ import { json } from "@remix-run/node";
 import { getComments } from "~/models/comment.server";
 import { requireAuthenticatedOptionalUser } from "~/session.server";
 import { Access } from "~/utils";
+import { renderText } from "~/utils.server";
 
 export async function loader({ request }: ActionArgs) {
   return await requireAuthenticatedOptionalUser(request, Access.Basic);
@@ -25,6 +26,10 @@ export async function action({ request }: ActionArgs) {
   }
 
   const comments = await getComments({ page, parentId });
+
+  for (let comment of comments) {
+    comment.content = renderText(comment.content);
+  }
 
   return json(comments);
 }

@@ -197,15 +197,13 @@ export const vditorConfig = {
   resize: { enable: true },
   tab: "    ",
   preview: {
-    math: { inlineDigit: true }, hljs: { style: "github" }, theme: {
+    math: { inlineDigit: true }, theme: {
       current: "light",
       list: {
         "light": "Light"
-      },
-      path: `/dist/css/content-theme`,
+      }
     }
   },
-  cdn: "",
   hint: {
     emoji: {}
   }

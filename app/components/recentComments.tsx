@@ -28,7 +28,7 @@ export function RecentComments({ comments }: { comments: ExportedComments[] }) {
             <SemanticComment.Text className="max-h-40 overflow-auto !max-w-none">
               <Link to={"/post/" + parentId} style={{ color: "unset" }}>
                 <object>
-                  <RenderedText content={content} mode="light" />
+                  <RenderedText html={content} mode="light" />
                 </object>
               </Link>
             </SemanticComment.Text>

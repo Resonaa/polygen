@@ -67,11 +67,7 @@ setServer(io);
 
 app.use(compression());
 
-app.use(express.static("public", { maxAge: "10m" }));
-
-app.use(express.static("public/build", { immutable: true, maxAge: "1y" }));
-
-app.use(express.static("node_modules/vditor", { immutable: true, maxAge: "1y" }));
+app.use(express.static("public", { immutable: true, maxAge: "1y" }));
 
 app.use(morgan(":method :url :status - :response-time ms"));
 

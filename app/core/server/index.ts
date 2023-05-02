@@ -2,6 +2,7 @@ import { identify } from "~/core/server/identification";
 import { MessageType } from "~/core/server/message";
 import { RoomManager, SocketRoom } from "~/core/server/room";
 import type { Server } from "~/core/types";
+import { renderText } from "~/utils.server";
 
 export function setServer(server: Server) {
   server.on("connection", async socket => {
@@ -28,6 +29,8 @@ export function setServer(server: Server) {
     }).on("message", ({ type, content }) => {
       if (content.trim().length <= 0 || content.length > 616)
         return;
+
+      content = renderText(content);
 
       if (type === MessageType.World) {
         server.emit("message", { type, content, sender: username });

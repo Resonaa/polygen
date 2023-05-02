@@ -22,7 +22,7 @@ export default function Comment({
           </span>
         </SemanticComment.Metadata>
         <SemanticComment.Text className="max-h-60 overflow-auto !max-w-none">
-          <RenderedText content={content} mode="light" />
+          <RenderedText html={content} mode="light" />
         </SemanticComment.Text>
       </SemanticComment.Content>
     </SemanticComment>
