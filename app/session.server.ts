@@ -1,4 +1,4 @@
-import { createCookieSessionStorage, redirect } from "@remix-run/node";
+import { createCookieSessionStorage, json, redirect } from "@remix-run/node";
 import bcrypt from "bcryptjs";
 import invariant from "tiny-invariant";
 
@@ -94,6 +94,8 @@ export async function requireAuthenticatedOptionalUser(request: Request, access:
 export async function createUserSession(request: Request, username: string, redirectTo: string) {
   const session = await getSession(request);
   session.set(USER_SESSION_KEY, username);
+  session.unset(CAPTCHA_SESSION_KEY);
+
   return redirect(redirectTo, {
     headers: {
       "Set-Cookie": await sessionStorage.commitSession(session, {
@@ -117,6 +119,17 @@ export async function createCaptchaSession(request: Request, captcha: string, da
 export async function verifyCaptcha(request: Request, captcha: string) {
   const realCaptcha = await getCaptcha(request);
   return realCaptcha && realCaptcha.toUpperCase() === captcha.toUpperCase();
+}
+
+export async function removeCaptchaSession<T>(request: Request, data: T) {
+  const session = await getSession(request);
+  session.unset(CAPTCHA_SESSION_KEY);
+  return json(data, {
+    headers: {
+      "Set-Cookie": await sessionStorage.commitSession(session)
+    },
+    status: 400
+  });
 }
 
 export async function logout(request: Request, redirectTo: string) {

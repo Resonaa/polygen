@@ -1,5 +1,5 @@
 import type { ActionArgs, LoaderArgs, V2_MetaFunction } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 
 import { createUser, getUserWithoutPasswordByUsername } from "~/models/user.server";
 import {
@@ -7,7 +7,7 @@ import {
   createUserSession,
   requireAuthenticatedOptionalUser, validateCaptcha,
   validatePassword,
-  validateUsername
+  validateUsername, removeCaptchaSession
 } from "~/session.server";
 import { Access, safeRedirect } from "~/utils";
 
@@ -30,45 +30,57 @@ export async function action({ request }: ActionArgs) {
   const redirectTo = safeRedirect(formData.get("redirectTo"), "/");
 
   if (!validateCaptcha(captcha)) {
-    return json(
-      { username: null, password: null, repeatPassword: null, captcha: "验证码错误" },
-      { status: 400 }
-    );
+    return removeCaptchaSession(request, {
+      username: null,
+      password: null,
+      repeatPassword: null,
+      captcha: "验证码错误"
+    });
   }
 
   if (!validateUsername(username)) {
-    return json(
-      { username: "用户名只能包含中英文、数字和_", password: null, repeatPassword: null, captcha: null },
-      { status: 400 }
-    );
+    return removeCaptchaSession(request, {
+      username: "用户名只能包含中英文、数字和_",
+      password: null,
+      repeatPassword: null,
+      captcha: null
+    });
   }
 
   if (!validatePassword(password)) {
-    return json(
-      { username: null, password: "密码长度应不小于6位", repeatPassword: null, captcha: null },
-      { status: 400 }
-    );
+    return removeCaptchaSession(request, {
+      username: null,
+      password: "密码长度应不小于6位",
+      repeatPassword: null,
+      captcha: null
+    });
   }
 
   if (password !== repeatPassword) {
-    return json(
-      { username: null, password: null, repeatPassword: "两次输入的密码不一致", captcha: null },
-      { status: 400 }
-    );
+    return removeCaptchaSession(request, {
+      username: null,
+      password: null,
+      repeatPassword: "两次输入的密码不一致",
+      captcha: null
+    });
   }
 
   if (!await verifyCaptcha(request, captcha)) {
-    return json(
-      { username: null, password: null, repeatPassword: null, captcha: "验证码错误" },
-      { status: 400 }
-    );
+    return removeCaptchaSession(request, {
+      username: null,
+      password: null,
+      repeatPassword: null,
+      captcha: "验证码错误"
+    });
   }
 
   if (await getUserWithoutPasswordByUsername(username)) {
-    return json(
-      { username: "用户名已存在", password: null, repeatPassword: null, captcha: null },
-      { status: 400 }
-    );
+    return removeCaptchaSession(request, {
+      username: "用户名已存在",
+      password: null,
+      repeatPassword: null,
+      captcha: null
+    });
   }
 
   await createUser(username, password);

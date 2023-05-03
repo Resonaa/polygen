@@ -125,7 +125,7 @@ export default function AuthBox({ type }: { type: "login" | "register" }) {
                     placeholder="验证码"
                     minLength={4}
                     maxLength={4}
-                    style={{ width: "calc(100% - 150px)" }}
+                    style={{ width: "calc(100% - 100px)" }}
                   />
                   <Icon name="checkmark" />
                   <img src={"/captcha?" + captcha} alt="captcha" className="cursor-pointer" onClick={changeCaptcha} />
