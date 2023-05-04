@@ -27,7 +27,7 @@ export async function loader({ request }: LoaderArgs) {
   const user = await requireAuthenticatedOptionalUser(request, Access.Basic);
   const announcements = await getAnnouncements();
   const posts = await getPosts(1);
-  const recentComments = await getComments({ page: 1 });
+  const recentComments = await getComments(1);
 
   for (let announcement of announcements) {
     announcement.content = renderText(announcement.content);
@@ -53,7 +53,7 @@ export async function action({ request }: ActionArgs) {
   if (typeof content !== "string" || content.length <= 0 || content.length >= 100000)
     return json(false, { status: 400 });
 
-  await createPost({ username, content });
+  await createPost(username, content);
 
   return json(true);
 }

@@ -34,14 +34,14 @@ export async function loader({ request, params }: LoaderArgs) {
     throw new Response("请求无效", { status: 400, statusText: "Bad Request" });
   }
 
-  const post = await getPost({ id });
+  const post = await getPost(id);
   if (!post) {
     throw new Response("说说不存在", { status: 404, statusText: "Not Found" });
   }
 
   post.content = renderText(post.content);
 
-  const comments = await getComments({ parentId: id, page: 1 });
+  const comments = await getComments(1, id);
 
   for (let comment of comments) {
     comment.content = renderText(comment.content);
@@ -65,7 +65,7 @@ export async function action({ request }: ActionArgs) {
   if (typeof content !== "string" || content.length <= 0 || content.length >= 10000)
     return json(false, { status: 400 });
 
-  await createComment({ username, content, parentId });
+  await createComment(username, content, parentId);
 
   return json(true);
 }
@@ -190,7 +190,7 @@ export default function PostId() {
           <Navigation />
           <div ref={anchor} />
           {comments.map(({ id, content, username, createdAt }) => (
-            <Comment key={id} content={content} username={username} createdAt={createdAt} />
+            <Comment key={id} content={content} username={username} createdAt={createdAt} id={id} />
           ))}
         </SemanticComment.Group>
         <Navigation />

@@ -31,7 +31,7 @@ export async function loader({ request, params }: LoaderArgs) {
 
   const stats = await getStatsByUsername(username);
 
-  const posts = await getPostsByUsername({ username, page: 1 });
+  const posts = await getPostsByUsername(username, 1);
   for (let post of posts) {
     post.content = renderText(post.content);
   }

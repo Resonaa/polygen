@@ -32,7 +32,7 @@ export async function action({ request }: ActionArgs) {
     );
   }
 
-  await createAnnouncement({ title, content });
+  await createAnnouncement(title, content);
 
   return redirect("/");
 }

@@ -4,16 +4,16 @@ import { prisma } from "~/db.server";
 
 export type { Comment } from "@prisma/client";
 
-export function getComments({ parentId, page }: { parentId?: Comment["parentId"], page: number }) {
+export function getComments(page: number, parentId?: Comment["parentId"]) {
   return prisma.comment.findMany({
-    where: parentId ? { parentId } : undefined,
+    where: { parentId },
     orderBy: { id: "desc" },
     skip: (page - 1) * 10,
     take: 10
   });
 }
 
-export function createComment({ content, username, parentId }: Pick<Comment, "content" | "username" | "parentId">) {
+export function createComment(username: Comment["username"], content: Comment["content"], parentId: Comment["parentId"]) {
   return prisma.comment.create({
     data: {
       content,
@@ -21,4 +21,8 @@ export function createComment({ content, username, parentId }: Pick<Comment, "co
       parent: { connect: { id: parentId } }
     }
   });
+}
+
+export function deleteComment(username: Comment["username"], id: Comment["id"]) {
+  return prisma.comment.deleteMany({ where: { username, id } });
 }

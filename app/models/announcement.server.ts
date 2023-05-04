@@ -5,16 +5,9 @@ import { prisma } from "~/db.server";
 export type { Announcement } from "@prisma/client";
 
 export function getAnnouncements() {
-  return prisma.announcement.findMany({
-    orderBy: { id: "desc" }
-  });
+  return prisma.announcement.findMany({ orderBy: { id: "desc" } });
 }
 
-export function createAnnouncement({ title, content }: Pick<Announcement, "title"> & Pick<Announcement, "content">) {
-  return prisma.announcement.create({
-    data: {
-      title,
-      content
-    }
-  });
+export function createAnnouncement(title: Announcement["title"], content: Announcement["content"]) {
+  return prisma.announcement.create({ data: { title, content } });
 }

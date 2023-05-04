@@ -18,7 +18,7 @@ export async function action({ request }: ActionArgs) {
   if (typeof id !== "number" || id <= 0)
     return json("说说ID不合法", { status: 400 });
 
-  await sendFavour({ username, id });
+  await sendFavour(username, id);
 
   return json("点赞成功");
 }

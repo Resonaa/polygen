@@ -25,7 +25,7 @@ export async function action({ request }: ActionArgs) {
     return json("页数不合法", { status: 400 });
   }
 
-  const comments = await getComments({ page, parentId });
+  const comments = await getComments(page, parentId);
 
   for (let comment of comments) {
     comment.content = renderText(comment.content);

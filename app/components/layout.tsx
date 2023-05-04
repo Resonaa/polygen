@@ -34,7 +34,7 @@ export default function Layout({ columns, children }: { columns: SemanticWIDTHS,
 
   return (
     <>
-      <Menu fixed="top" borderless className="h-14">
+      <Menu fixed="top" borderless className="h-[48px]">
         <Container>
           <Header as={Menu.Item} className="max-sm:!hidden">
             <span className="font-semibold text-2xl">polygen</span>

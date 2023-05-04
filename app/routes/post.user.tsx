@@ -25,7 +25,7 @@ export async function action({ request }: ActionArgs) {
     return json("页数不合法", { status: 400 });
   }
 
-  const posts = await getPostsByUsername({ username, page });
+  const posts = await getPostsByUsername(username, page);
 
   for (let post of posts) {
     post.content = renderText(post.content);
