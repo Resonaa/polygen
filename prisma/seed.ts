@@ -1,8 +1,13 @@
-import { PrismaClient } from "@prisma/client";
-import fs from "fs-extra";
+import * as process from "process";
 
+import { PrismaClient } from "@prisma/client";
+import dotenv from "dotenv";
+import fs from "fs-extra";
+import invariant from "tiny-invariant";
 
 import { hashPassword } from "~/session.server";
+
+dotenv.config();
 
 const prisma = new PrismaClient();
 
@@ -12,10 +17,14 @@ async function seed() {
   await prisma.announcement.deleteMany({});
   await prisma.comment.deleteMany({});
 
+  const password = process.env.SESSION_SECRET;
+
+  invariant(password);
+
   await prisma.user.create({
     data: {
       username: "admin",
-      password: await hashPassword("123456"),
+      password: await hashPassword(password),
       access: 9
     }
   });
@@ -23,16 +32,16 @@ async function seed() {
   await prisma.user.create({
     data: {
       username: "user",
-      password: await hashPassword("123456"),
+      password: await hashPassword(password),
       bio: "Test"
     }
   });
 
   await prisma.user.create({
     data: {
-      username: "banned",
-      password: await hashPassword("123456"),
-      access: -1
+      username: "Bot",
+      password: await hashPassword(password),
+      bio: "https://github.com/jwcub/polygen_bot"
     }
   });
 

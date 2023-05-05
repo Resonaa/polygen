@@ -228,7 +228,8 @@ export class Room {
     }
 
     const fromLand = this.gm.get(from);
-    return !(fromLand.color !== color || fromLand.amount < 2);
+    return !(fromLand.color !== color || fromLand.amount < 2) && this.gm.neighbours(from).some(neighbour =>
+      neighbour.join() === to.join());
   }
 
   handleMove([from, to, halfTag]: [Pos, Pos, boolean]) {

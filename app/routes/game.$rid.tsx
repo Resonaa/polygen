@@ -4,7 +4,6 @@ import { useLoaderData } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import { Grid, Segment } from "semantic-ui-react";
 import { io } from "socket.io-client";
-import parser from "socket.io-msgpack-parser";
 
 import { Chat } from "~/core/client/chat";
 import { GamePanel } from "~/core/client/gamePanel";
@@ -28,7 +27,7 @@ export default function Rid() {
   const rid = useLoaderData<typeof loader>();
 
   useEffect(() => {
-    const client = io({ parser });
+    const client = io();
     setClient(client);
     return () => {
       client.close();

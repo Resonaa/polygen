@@ -40,7 +40,6 @@
     "semantic-ui-react": "latest",
     "socket.io": "latest",
     "socket.io-client": "latest",
-    "socket.io-msgpack-parser": "latest",
     "tiny-invariant": "latest",
     "ts-node": "latest",
     "typescript": "latest",

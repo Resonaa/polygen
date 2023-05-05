@@ -15,11 +15,15 @@ export function UserLink({ username }: { username: string }) {
 }
 
 export function formatDate(date: string) {
-  return new Date(date).toLocaleString().replace(/\//g, "-");
+  const d = new Date(date);
+  const year = padZero(d.getFullYear(), 4), month = padZero(d.getMonth(), 2),
+    day = padZero(d.getDate(), 2), hour = padZero(d.getHours(), 2),
+    minute = padZero(d.getMinutes(), 2), second = padZero(d.getSeconds(), 2);
+  return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
 }
 
-export function padZero(num: string, zeroes: number) {
-  return "0".repeat(Math.max(0, zeroes - num.length)) + num;
+export function padZero(num: number | string, zeroes: number) {
+  return "0".repeat(Math.max(0, zeroes - String(num).length)) + num;
 }
 
 export function relativeDate(date: string) {

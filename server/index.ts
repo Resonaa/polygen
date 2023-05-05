@@ -10,7 +10,6 @@ import express from "express";
 import fs from "fs-extra";
 import morgan from "morgan";
 import { Server } from "socket.io";
-import parser from "socket.io-msgpack-parser";
 
 import { setServer } from "~/core/server";
 
@@ -60,9 +59,9 @@ if (MODE === "production" && process.env.SSL_CERT && process.env.SSL_KEY) {
     next();
   });
 
-  io = new Server(httpsServer, { parser });
+  io = new Server(httpsServer);
 } else {
-  io = new Server(httpServer, { parser });
+  io = new Server(httpServer);
 }
 
 setServer(io);
