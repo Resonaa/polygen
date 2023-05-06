@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button, Modal } from "semantic-ui-react";
 
+import AnimatedModal from "~/components/animatedModal";
 import RenderedText from "~/components/renderedText";
 import type { Announcement as ann } from "~/models/announcement.server";
 
@@ -9,11 +10,12 @@ export default function Announcement({ id, title, content }: ann) {
 
   /* eslint-disable jsx-a11y/anchor-is-valid */
   return (
-    <Modal
+    <AnimatedModal
       open={open}
       onClose={() => setOpen(false)}
       onOpen={() => setOpen(true)}
-      trigger={<a className="cursor-pointer block p-1">{title}</a>}
+      trigger={<a className="cursor-pointer block p-1" onClick={() => setOpen(true)}>{title}</a>}
+      duration={400}
     >
       <Modal.Header>
         {title}
@@ -29,6 +31,6 @@ export default function Announcement({ id, title, content }: ann) {
           关闭
         </Button>
       </Modal.Actions>
-    </Modal>
+    </AnimatedModal>
   );
 }

@@ -1,5 +1,6 @@
 import { Modal, List, Header, Divider } from "semantic-ui-react";
 
+import AnimatedModal from "~/components/animatedModal";
 import type { MaxVotedItems, VoteData, VoteItem, VoteValue } from "~/core/server/vote";
 import { translations, voteItems } from "~/core/server/vote";
 import type { ClientSocket } from "~/core/types";
@@ -28,11 +29,12 @@ export function Vote({ client, voteData, type, setType }: {
   }
 
   return (
-    <Modal
+    <AnimatedModal
       open={type !== undefined}
       onClose={() => setType()}
       basic
       size="mini"
+      duration={400}
     >
       <Modal.Header>投票选择{type ? translations[type] : undefined}</Modal.Header>
       <Modal.Content scrolling>
@@ -61,6 +63,6 @@ export function Vote({ client, voteData, type, setType }: {
         </Modal.Description>
       </Modal.Content>
       <Modal.Actions />
-    </Modal>
+    </AnimatedModal>
   );
 }

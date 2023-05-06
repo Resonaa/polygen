@@ -515,6 +515,11 @@ export class RoomManager {
           room.gameEnd();
         }
       }
+
+      const winner = room.winCheck();
+      if (winner) {
+        this.endGame(winner);
+      }
     }
 
     this.checkStart();
@@ -690,6 +695,7 @@ export class RoomManager {
 
     const winners = room.teamsInGame.get(winner) as string[];
     this.server.to(SocketRoom.rid(this.rid)).emit("win", winners.join(", "));
+    this.server.to(SocketRoom.rid(this.rid)).emit("rank", []);
     this.server.to(SocketRoom.rid(this.rid)).emit("updateReadyPlayers", room.exportReadyPlayers());
   }
 
