@@ -13,7 +13,7 @@ export enum RoomMap {
 export const voteItems = {
   mode: [MapMode.Hexagon, MapMode.Square],
   map: [RoomMap.Random, RoomMap.Empty, RoomMap.Maze],
-  speed: [1, 0.5, 0.75, 1.25, 1.5]
+  speed: [1, 0.5, 0.75, 1.25, 1.5, 1.75, 2]
 };
 
 export type VoteItem = keyof typeof voteItems;

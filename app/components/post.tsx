@@ -33,7 +33,7 @@ export default function Post({
       <Feed.Label>
         <Avatar username={username} />
       </Feed.Label>
-      <Feed.Content className="overflow-x-auto">
+      <Feed.Content className="overflow-x-clip">
         <Feed.Summary>
           <UserLink username={username} />
           <Feed.Date title={formatDate(createdAt)}>

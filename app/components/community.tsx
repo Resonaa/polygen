@@ -16,7 +16,7 @@ export function UserLink({ username }: { username: string }) {
 
 export function formatDate(date: string) {
   const d = new Date(date);
-  const year = padZero(d.getFullYear(), 4), month = padZero(d.getMonth(), 2),
+  const year = padZero(d.getFullYear(), 4), month = padZero(d.getMonth() + 1, 2),
     day = padZero(d.getDate(), 2), hour = padZero(d.getHours(), 2),
     minute = padZero(d.getMinutes(), 2), second = padZero(d.getSeconds(), 2);
   return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
