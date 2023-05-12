@@ -104,8 +104,8 @@ export function GamePanel({ client, rid }: { client?: ClientSocket, rid: string 
           </Card.Group>
 
           <div className="text-center mt-7">
-            <Button inverted color="green" disabled={teamData.slice(-1)[0][1].includes(user.username)}
-                    active={readyPlayers.includes(user.username)} size="large"
+            <Button inverted disabled={teamData.slice(-1)[0][1].includes(user.username)}
+                    active={readyPlayers.includes(user.username)} size="large" toggle id="ready"
                     onClick={event => {
                       client?.emit("ready");
                       (event.target as HTMLButtonElement).blur();

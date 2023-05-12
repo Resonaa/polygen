@@ -62,3 +62,7 @@ canvas {
 .ui.inverted.table {
   background: unset !important;
 }
+
+#ready:focus {
+  box-shadow: unset !important;
+}

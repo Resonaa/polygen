@@ -15,7 +15,7 @@ export default function Announcement({ id, title, content }: ann) {
       onClose={() => setOpen(false)}
       onOpen={() => setOpen(true)}
       trigger={<a className="cursor-pointer block p-1" onClick={() => setOpen(true)}>{title}</a>}
-      duration={400}
+      duration={300}
     >
       <Modal.Header>
         {title}

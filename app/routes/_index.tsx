@@ -17,7 +17,7 @@ import { getComments } from "~/models/comment.server";
 import { createPost, getPosts } from "~/models/post.server";
 import { requireAuthenticatedOptionalUser, requireAuthenticatedUser } from "~/session.server";
 import { Access, ajax, vditorConfig } from "~/utils";
-import { renderText } from "~/utils.server";
+import { renderText, validatePostContent } from "~/utils.server";
 
 import Layout from "../components/layout";
 
@@ -50,8 +50,9 @@ export async function action({ request }: ActionArgs) {
   const { username } = await requireAuthenticatedUser(request, Access.Community);
   const content = formData.get("content");
 
-  if (typeof content !== "string" || content.length <= 0 || content.length >= 100000)
+  if (!validatePostContent(content)) {
     return json(false, { status: 400 });
+  }
 
   await createPost(username, content);
 

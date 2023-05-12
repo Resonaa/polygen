@@ -34,7 +34,7 @@ export function Vote({ client, voteData, type, setType }: {
       onClose={() => setType()}
       basic
       size="mini"
-      duration={400}
+      duration={300}
     >
       <Modal.Header>投票选择{type ? translations[type] : undefined}</Modal.Header>
       <Modal.Content scrolling>

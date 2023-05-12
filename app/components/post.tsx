@@ -1,13 +1,16 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { Link } from "@remix-run/react";
-import { useState } from "react";
+import clsx from "clsx";
+import { useEffect, useState } from "react";
 import { Feed, Icon } from "semantic-ui-react";
+import Vditor from "vditor";
 
 import { Avatar, relativeDate, UserLink } from "~/components/community";
 import { formatDate, formatLargeNumber } from "~/components/community";
 import RenderedText from "~/components/renderedText";
+import { VditorSkeleton } from "~/components/vditorSkeleton";
 import type { Post as PostType } from "~/models/post.server";
-import { useOptionalUser, ajax } from "~/utils";
+import { useOptionalUser, ajax, vditorConfig } from "~/utils";
 
 export default function Post({
                                id,
@@ -17,9 +20,15 @@ export default function Post({
                                viewCount,
                                commentAmount,
                                link,
-                               favouredBy
+                               favouredBy,
+                               setContent,
+                               editing,
+                               originalContent
                              }: Pick<PostType, "id" | "username" | "content" | "viewCount"> &
-  { createdAt: string, commentAmount: number, link?: boolean, favouredBy: { username: string }[] }) {
+  {
+    createdAt: string, commentAmount: number, link?: boolean, favouredBy: { username: string }[],
+    setContent?: (content: string) => void, editing?: boolean, originalContent?: string
+  }) {
   const postUrl = `/post/${id}`;
   const user = useOptionalUser();
 
@@ -27,6 +36,16 @@ export default function Post({
   const [likes, setLikes] = useState(favouredBy.length);
 
   const views = formatLargeNumber(viewCount);
+
+  useEffect(() => {
+    if (editing) {
+      const vd = new Vditor("vditor", {
+        ...vditorConfig, value: originalContent, input: setContent, after() {
+          vd.setValue(originalContent as string);
+        }
+      });
+    }
+  }, [editing, originalContent, setContent]);
 
   return (
     <Feed.Event>
@@ -50,10 +69,13 @@ export default function Post({
             </Link>
           </Feed.Extra>
         ) : (
-          <Feed.Extra text className="overflow-auto !max-w-none break-all">
-            <object>
-              <RenderedText html={content} mode="light" />
-            </object>
+          <Feed.Extra text className={clsx("!max-w-none", !editing && "overflow-auto break-all")}>
+            {editing ? <VditorSkeleton /> :
+              (
+                <object>
+                  <RenderedText html={content} mode="light" />
+                </object>
+              )}
           </Feed.Extra>
         )}
 

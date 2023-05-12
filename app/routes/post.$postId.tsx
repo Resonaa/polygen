@@ -39,6 +39,8 @@ export async function loader({ request, params }: LoaderArgs) {
     throw new Response("说说不存在", { status: 404, statusText: "Not Found" });
   }
 
+
+  let originalContent = post.content;
   post.content = renderText(post.content);
 
   const comments = await getComments(1, id);
@@ -47,7 +49,7 @@ export async function loader({ request, params }: LoaderArgs) {
     comment.content = renderText(comment.content);
   }
 
-  return json({ post, user, originalComments: comments });
+  return json({ post, user, originalComments: comments, originalContent });
 }
 
 export const meta: V2_MetaFunction<typeof loader> = ({ data }) => [{ title: data ? `${data.post.username}的说说 - polygen` : "错误 - polygen" }];
@@ -71,7 +73,7 @@ export async function action({ request }: ActionArgs) {
 }
 
 export default function PostId() {
-  const { user, post, originalComments } = useLoaderData<typeof loader>();
+  const { user, post, originalComments, originalContent } = useLoaderData<typeof loader>();
   const [comments, setComments] = useState(originalComments);
   const [page, setPage] = useState(1);
   const [canScroll, setCanScroll] = useState(false);
@@ -159,12 +161,35 @@ export default function PostId() {
     );
   }
 
+  const [deleting, setDeleting] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [content, setContent] = useState(originalContent);
+
+  const onDeleteClick = () => {
+    setDeleting(true);
+    ajax("post", "/post/delete", { id: post.id }).then(() => window.location.href = "/");
+  };
+
+  const onEditClick = () => {
+    setEditing(editing => {
+      if (editing && content.trim()) {
+        setSubmitting(true);
+        ajax("post", "/post/edit", { id: post.id, content }).then(() => window.location.reload());
+        return true;
+      }
+
+      return !editing;
+    });
+  };
+
   return (
     <Layout columns={2}>
       <Grid.Column width={12}>
         <Feed size="large">
           <Post id={post.id} createdAt={post.createdAt} commentAmount={post._count.comments} content={post.content}
-                viewCount={post.viewCount} username={post.username} favouredBy={post.favouredBy} />
+                viewCount={post.viewCount} username={post.username} favouredBy={post.favouredBy}
+                editing={editing} setContent={setContent} originalContent={originalContent} />
         </Feed>
 
         <SemanticComment.Group size="large" minimal className="!max-w-none">
@@ -198,6 +223,7 @@ export default function PostId() {
 
       <Grid.Column width={4}>
         <Header as="h4" attached="top" block>
+          <Icon name="info" className="!text-base !align-baseline" />
           说说信息
         </Header>
         <Segment attached="bottom">
@@ -217,7 +243,16 @@ export default function PostId() {
           </List>
 
           {user && (
-            <Button primary size="small" onClick={handleReplyClick}>回复</Button>
+            <>
+              <Button primary onClick={handleReplyClick}>回复</Button>
+              {user.username === post.username && (
+                <>
+                  <Button secondary={!editing} positive={editing} disabled={submitting}
+                          loading={submitting} onClick={onEditClick}>{editing ? "保存" : "修改"}</Button>
+                  <Button negative disabled={deleting} loading={deleting} onClick={onDeleteClick}>删除</Button>
+                </>
+              )}
+            </>
           )}
         </Segment>
       </Grid.Column>

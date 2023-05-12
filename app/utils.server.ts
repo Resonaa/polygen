@@ -53,3 +53,7 @@ function highlightRender(html: string) {
 export function renderText(content: string) {
   return highlightRender(mathRender(md2html(content)));
 }
+
+export function validatePostContent(content: unknown): content is string {
+  return !(typeof content !== "string" || content.length <= 0 || content.length >= 100000);
+}
