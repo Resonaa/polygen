@@ -5,19 +5,13 @@ import * as process from "process";
 
 import { createRequestHandler } from "@remix-run/express";
 import compression from "compression";
-import dotenv from "dotenv";
 import express from "express";
 import fs from "fs-extra";
 import morgan from "morgan";
 import { Server } from "socket.io";
 
+import { BUILD_DIR, MODE, SSL_CERT, SSL_KEY, USERCONTENT_DIR } from "~/const";
 import { setServer } from "~/core/server";
-
-dotenv.config();
-
-const MODE = process.env.NODE_ENV;
-const BUILD_DIR = path.join(process.cwd(), "server/build");
-const USERCONTENT_DIR = path.join(process.cwd(), "usercontent");
 
 if (!fs.existsSync(BUILD_DIR)) {
   console.warn(
@@ -38,9 +32,9 @@ const httpServer = http.createServer(app).listen(80, "0.0.0.0", () => {
   console.log("HTTP server listening on 0.0.0.0:80");
 });
 
-if (MODE === "production" && process.env.SSL_CERT && process.env.SSL_KEY) {
-  const cert = fs.readFileSync(process.env.SSL_CERT);
-  const key = fs.readFileSync(process.env.SSL_KEY);
+if (MODE === "production" && SSL_CERT && SSL_KEY) {
+  const cert = fs.readFileSync(SSL_CERT);
+  const key = fs.readFileSync(SSL_KEY);
 
   const httpsServer = https.createServer({ key, cert }, app).listen(443, "0.0.0.0", () => {
     console.log("HTTPS server listening on 0.0.0.0:443");

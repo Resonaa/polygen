@@ -1,7 +1,11 @@
+import path from "path";
+
 import type { LoaderArgs } from "@remix-run/node";
 import fs from "fs-extra";
 
-const defaultAvatar = fs.readFileSync("./public/images/defaultAvatar.webp");
+import { USERCONTENT_DIR } from "~/const";
+
+const defaultAvatar = fs.readFileSync("./static/defaultAvatar.webp");
 
 export async function loader({ params }: LoaderArgs) {
   const headers = {
@@ -9,7 +13,7 @@ export async function loader({ params }: LoaderArgs) {
   };
 
   try {
-    return new Response(await fs.readFile("./usercontent/avatar/" + params?.username), { headers });
+    return new Response(await fs.readFile(path.join(USERCONTENT_DIR, "avatar", params.username ? params.username : "")), { headers });
   } catch (_) {
     return new Response(defaultAvatar, { headers });
   }

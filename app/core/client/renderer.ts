@@ -1,5 +1,9 @@
 import * as PIXI from "pixi.js";
 
+import city from "static/city.png";
+import general from "static/general.png";
+import mountain from "static/mountain.png";
+import obstacle from "static/obstacle.png";
 import { colors, SpecialColor } from "~/core/client/colors";
 import { getSettings } from "~/core/client/settings";
 import { formatLargeNumber, getPileSizeByScale, getScaleByPileSize } from "~/core/client/utils";
@@ -8,16 +12,17 @@ import type { Pos } from "~/core/server/game/utils";
 
 import { Map, MapMode } from "../server/game/map";
 
+
 export class Renderer {
   gm: Map = new Map();
 
   private app: PIXI.Application;
   private readonly graphics: PIXI.Graphics = new PIXI.Graphics();
 
-  private readonly textures = [PIXI.Texture.EMPTY, PIXI.Texture.from("/images/general.png"),
-    PIXI.Texture.from("/images/city.png"),
-    PIXI.Texture.from("/images/mountain.png"),
-    PIXI.Texture.from("/images/obstacle.png"), PIXI.Texture.EMPTY];
+  private readonly textures = [PIXI.Texture.EMPTY, PIXI.Texture.from(general),
+    PIXI.Texture.from(city),
+    PIXI.Texture.from(mountain),
+    PIXI.Texture.from(obstacle), PIXI.Texture.EMPTY];
 
   selected: Pos | null = null;
 

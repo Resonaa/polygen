@@ -2,13 +2,12 @@ import path from "path";
 import * as process from "process";
 
 import { PrismaClient } from "@prisma/client";
-import dotenv from "dotenv";
 import fs from "fs-extra";
 import invariant from "tiny-invariant";
 
+import { ARTICLES_DIR, SESSION_SECRET } from "~/const";
 import { hashPassword } from "~/session.server";
 
-dotenv.config();
 
 const prisma = new PrismaClient();
 
@@ -19,7 +18,7 @@ async function seed() {
   await prisma.comment.deleteMany({});
   await prisma.score.deleteMany({});
 
-  const password = process.env.SESSION_SECRET;
+  const password = SESSION_SECRET;
 
   invariant(password);
 
@@ -71,11 +70,11 @@ async function seed() {
     }
   });
 
-  for (let entry of await fs.readdir(path.join(process.cwd(), "/articles"))) {
+  for (let entry of await fs.readdir(ARTICLES_DIR)) {
     await prisma.announcement.create({
       data: {
         title: entry.substring(0, entry.length - 3),
-        content: (await fs.readFile(path.join(process.cwd(), "/articles", entry))).toString()
+        content: (await fs.readFile(path.join(ARTICLES_DIR, entry))).toString()
       }
     });
   }

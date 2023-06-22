@@ -19,6 +19,7 @@ import light from "vditor/dist/css/content-theme/light.css";
 import vditor from "vditor/dist/index.css";
 import hljs from "vditor/dist/js/highlight.js/styles/github.css";
 
+import favicon from "static/favicon.ico";
 import Layout from "~/components/layout";
 import { Access } from "~/utils";
 
@@ -26,6 +27,7 @@ import { requireAuthenticatedOptionalUser } from "./session.server";
 import tailwind from "./styles/tailwind.css";
 
 export const links: LinksFunction = () => [
+  { rel: "icon", href: favicon },
   { rel: "stylesheet", href: tailwind },
   { rel: "stylesheet", href: semantic },
   { rel: "stylesheet", href: vditor },

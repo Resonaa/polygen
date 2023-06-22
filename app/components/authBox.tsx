@@ -3,6 +3,7 @@ import clsx from "clsx";
 import { useRef, useEffect, useState } from "react";
 import { Button, Form, Icon, Grid, Divider } from "semantic-ui-react";
 
+import logo from "static/logo.png";
 import type { action } from "~/routes/register";
 
 import Layout from "./layout";
@@ -46,7 +47,7 @@ export default function AuthBox({ type }: { type: "login" | "register" }) {
         <Form as={ReactForm} size="large" className="max-sm:w-full p-8" method="post"
               action={`/${type}`}>
           <Form.Field className="text-center">
-            <img src="/images/polygen.png" alt="logo" />
+            <img src={logo} alt="logo" width="144px" />
           </Form.Field>
 
           <Form.Field className={clsx(actionData?.username && "error")}>

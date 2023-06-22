@@ -3,7 +3,7 @@ import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { Header, Table, Grid } from "semantic-ui-react";
 
-import { relativeDate, UserLink } from "~/components/community";
+import { formatDate, relativeDate, UserLink } from "~/components/community";
 import Layout from "~/components/layout";
 import { rankList } from "~/models/score.server";
 import { requireAuthenticatedOptionalUser } from "~/session.server";
@@ -44,7 +44,9 @@ export default function Leaderboard() {
                 <Table.Cell>{turns}</Table.Cell>
                 <Table.Cell>{speed}</Table.Cell>
                 <Table.Cell>{score}</Table.Cell>
-                <Table.Cell>{relativeDate(updatedAt)}</Table.Cell>
+                <Table.Cell>
+                  <span title={formatDate(updatedAt)}>{relativeDate(updatedAt)}</span>
+                </Table.Cell>
               </Table.Row>
             ))}
           </Table.Body>
