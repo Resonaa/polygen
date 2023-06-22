@@ -3,13 +3,14 @@ import { generateMap } from "~/core/server/game/generator";
 import type { LandColor, MaybeLand } from "~/core/server/game/land";
 import { LandType } from "~/core/server/game/land";
 import type { MaybeMap } from "~/core/server/game/map";
-import { Map as GameMap } from "~/core/server/game/map";
+import { Map as GameMap, MapMode } from "~/core/server/game/map";
 import type { Pos } from "~/core/server/game/utils";
 import { getMinReadyPlayerCount } from "~/core/server/game/utils";
 import { MessageType } from "~/core/server/message";
 import type { MaxVotedItems, VoteData, VoteItem, VoteValue } from "~/core/server/vote";
-import { clearAllVotesOfPlayer, getMaxVotedItem, vote } from "~/core/server/vote";
+import { clearAllVotesOfPlayer, getMaxVotedItem, RoomMap, vote } from "~/core/server/vote";
 import type { Server } from "~/core/types";
+import { tryToUpdateScore } from "~/models/score.server";
 
 export const SocketRoom = {
   rid: (rid: string) => `#${rid}`,
@@ -37,8 +38,11 @@ export class Room {
   gamingPlayers: Set<string> = new Set();
   gameInterval: NodeJS.Timer | undefined;
   movements: Map<string, [Pos, Pos, boolean][]> = new Map();
-  turn: number = 0;
+  turns: number = 0;
   surrenders: Set<string> = new Set();
+
+  challenge: boolean = false;
+  botLand: number = 0;
 
   constructor(id: string) {
     this.id = id;
@@ -156,7 +160,10 @@ export class Room {
 
     this.ongoing = true;
 
-    this.gm = generateMap(this.gamingPlayers.size, this.voteAns.mode, this.voteAns.map);
+    this.challenge = this.id === "161" && this.gamingPlayers.has("Bot") && this.gamingPlayers.size === 2 &&
+      this.voteAns.mode === MapMode.Hexagon && this.voteAns.map === RoomMap.Random;
+
+    this.gm = generateMap(this.gamingPlayers.size, this.voteAns.mode, this.voteAns.map, this.challenge);
 
     shuffle(players);
 
@@ -213,7 +220,9 @@ export class Room {
     this.gameTeams.clear();
     this.movements.clear();
     this.surrenders.clear();
-    this.turn = 0;
+    this.turns = 0;
+    this.challenge = false;
+    this.botLand = 0;
 
     if (this.gameInterval) {
       clearInterval(this.gameInterval);
@@ -316,7 +325,7 @@ export class Room {
 
         if (land.type === LandType.City || land.type === LandType.General) {
           land.amount++;
-        } else if (land.type === LandType.Land && this.turn % 15 === 0) {
+        } else if (land.type === LandType.Land && this.turns % 15 === 0) {
           land.amount++;
         }
       }
@@ -383,6 +392,10 @@ export class Room {
     let teamData: Map<TeamId, [number, number]> = new Map();
 
     for (let [color, [land, army]] of data) {
+      if (this.challenge && color === this.playerToColor("Bot") && land > 0) {
+        this.botLand = land;
+      }
+
       ans.push([color, this.colors.get(color) as string, land, army]);
 
       const team = this.gameTeams.get(color) as number;
@@ -610,6 +623,10 @@ export class RoomManager {
         }
       }
 
+      if (room.challenge) {
+        this.server.to(SocketRoom.rid(room.id)).emit("info", "挑战开始");
+      }
+
       room.gameInterval = setInterval(() => this.game(), 250 / room.voteAns.speed);
     }
   }
@@ -645,7 +662,7 @@ export class RoomManager {
       }
     }
 
-    room.turn++;
+    room.turns++;
 
     const preMap = room.gm.export(),
       preColors: Room["colors"] = new Map(JSON.parse(JSON.stringify(Array.from(room.colors.entries()))));
@@ -691,12 +708,33 @@ export class RoomManager {
     }
 
     clearInterval(room.gameInterval);
-    room.gameEnd();
 
     const winners = room.teamsInGame.get(winner) as string[];
     this.server.to(SocketRoom.rid(this.rid)).emit("win", winners.join(", "));
     this.server.to(SocketRoom.rid(this.rid)).emit("rank", []);
     this.server.to(SocketRoom.rid(this.rid)).emit("updateReadyPlayers", room.exportReadyPlayers());
+
+    if (room.challenge) {
+      const winner = winners[0];
+      if (winner === "Bot") {
+        this.server.to(SocketRoom.rid(this.rid)).emit("info", "挑战失败");
+      } else {
+        const turns = room.turns, speed = room.voteAns.speed;
+        const score = room.botLand === 1 ? Math.round(turns / speed * 10) / 10 : Math.round((999999 - turns * speed) * 10) / 10;
+
+        tryToUpdateScore(winner, turns, speed, score)
+          .then(() => {
+            this.server.to(SocketRoom.rid(this.rid)).emit("info",
+              room.botLand === 1 ? `挑战成功: ${turns}回合 / ${speed} = ${score}分` :
+                `挑战成功: 999999 - ${turns}回合 * ${speed} = ${score}分`);
+          })
+          .catch(() => {
+            this.server.to(SocketRoom.rid(this.rid)).emit("info", "挑战成功：成绩上传失败");
+          });
+      }
+    }
+
+    room.gameEnd();
   }
 
   clearMovements(player: string) {

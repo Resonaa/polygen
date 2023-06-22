@@ -1,4 +1,5 @@
 import hljs from "highlight.js";
+import type { KatexOptions } from "katex";
 import katex from "katex";
 import "vditor/dist/js/lute/lute.min";
 
@@ -18,10 +19,15 @@ function md2html(content: string) {
 }
 
 function mathRender(html: string) {
-  return html.replace(/<div class="language-math">(.*?)<\/div>/g, (_, inner) =>
-    `<div class="language-math">${katex.renderToString(inner, { displayMode: true, throwOnError: false })}</div>`
+  const options: KatexOptions = {
+    output: "html",
+    throwOnError: false
+  };
+
+  return html.replace(/<div class="language-math">([\s\S]*?)<\/div>/g, (_, inner) =>
+    `<div class="language-math">${katex.renderToString(decodeHTML(inner), { displayMode: true, ...options })}</div>`
   ).replace(/<span class="language-math">(.*?)<\/span>/g, (_, inner) =>
-    `<span class="language-math">${katex.renderToString(inner, { throwOnError: false })}</span>`
+    `<span class="language-math">${katex.renderToString(decodeHTML(inner), options)}</span>`
   );
 }
 

@@ -23,7 +23,7 @@ function generateRandomPos(width: number, height: number) {
   return ans;
 }
 
-function generateRandomMap(playerCount: number, mode: MapMode): Map {
+function generateRandomMap(playerCount: number, mode: MapMode, challenge: boolean): Map {
   const [width, height] = playerCountToSize(playerCount, mode);
   let map = new Map(width, height, mode);
   const gm = map.gm;
@@ -36,7 +36,7 @@ function generateRandomMap(playerCount: number, mode: MapMode): Map {
     if (pos) {
       gm[pos[0]][pos[1]].type = LandType.Mountain;
     } else {
-      return generateRandomMap(playerCount, mode);
+      return generateRandomMap(playerCount, mode, challenge);
     }
   }
 
@@ -47,7 +47,7 @@ function generateRandomMap(playerCount: number, mode: MapMode): Map {
       gm[pos[0]][pos[1]].type = LandType.City;
       gm[pos[0]][pos[1]].amount = randInt(41, 50);
     } else {
-      return generateRandomMap(playerCount, mode);
+      return generateRandomMap(playerCount, mode, challenge);
     }
   }
 
@@ -57,7 +57,7 @@ function generateRandomMap(playerCount: number, mode: MapMode): Map {
     const ans = randPos.shift();
 
     if (!ans) {
-      return generateRandomMap(playerCount, mode);
+      return generateRandomMap(playerCount, mode, challenge);
     }
 
     if (i === 1) {
@@ -68,8 +68,14 @@ function generateRandomMap(playerCount: number, mode: MapMode): Map {
       let tooClose = false;
 
       for (let last of generals) {
-        if (astar(map, ans, last) > 7) {
-          continue;
+        if (challenge) {
+          if (astar(map, ans, last) > 10 && astar(map, ans, last, true) !== -1) {
+            continue;
+          }
+        } else {
+          if (astar(map, ans, last) > 7) {
+            continue;
+          }
         }
 
         tooClose = true;
@@ -205,7 +211,7 @@ function generateMazeMap(playerCount: number, mode: MapMode): Map {
 
   edges.sort((x, y) => x.w - y.w);
 
-  for (let {a, b, pos} of edges) {
+  for (let { a, b, pos } of edges) {
     if (find(a) !== find(b)) {
       id[find(a)] = id[b];
       map.get(pos).type = LandType.City;
@@ -269,10 +275,10 @@ function generateMazeMap(playerCount: number, mode: MapMode): Map {
   return map;
 }
 
-export function generateMap(playerCount: number, mode: MapMode, map: RoomMap) {
+export function generateMap(playerCount: number, mode: MapMode, map: RoomMap, challenge: boolean) {
   switch (map) {
     case RoomMap.Random: {
-      return generateRandomMap(playerCount, mode);
+      return generateRandomMap(playerCount, mode, challenge);
     }
     case RoomMap.Empty: {
       return generateEmptyMap(playerCount, mode);

@@ -12,12 +12,12 @@ import {
   ScrollRestoration,
   useRouteError
 } from "@remix-run/react";
+import katex from "katex/dist/katex.min.css";
 import semantic from "semantic-ui-css/semantic.min.css";
 import { Grid } from "semantic-ui-react";
 import light from "vditor/dist/css/content-theme/light.css";
 import vditor from "vditor/dist/index.css";
 import hljs from "vditor/dist/js/highlight.js/styles/github.css";
-import katex from "vditor/dist/js/katex/katex.min.css";
 
 import Layout from "~/components/layout";
 import { Access } from "~/utils";

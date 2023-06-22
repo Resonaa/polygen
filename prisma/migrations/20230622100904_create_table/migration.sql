@@ -37,6 +37,17 @@ CREATE TABLE "Comment" (
 );
 
 -- CreateTable
+CREATE TABLE "Score" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "username" TEXT NOT NULL,
+    "turns" INTEGER NOT NULL,
+    "speed" REAL NOT NULL,
+    "score" REAL NOT NULL,
+    "updatedAt" DATETIME NOT NULL,
+    CONSTRAINT "Score_username_fkey" FOREIGN KEY ("username") REFERENCES "User" ("username") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- CreateTable
 CREATE TABLE "_favour" (
     "A" INTEGER NOT NULL,
     "B" INTEGER NOT NULL,
@@ -46,6 +57,9 @@ CREATE TABLE "_favour" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Score_username_key" ON "Score"("username");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "_favour_AB_unique" ON "_favour"("A", "B");

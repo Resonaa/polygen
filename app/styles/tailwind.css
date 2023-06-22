@@ -1,10 +1,5 @@
 @tailwind utilities;
 
-body {
-  /*noinspection CssInvalidPropertyValue*/
-  overflow-y: overlay;
-}
-
 .error-message {
   @apply pt-1 text-red-500;
 }

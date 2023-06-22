@@ -1,3 +1,4 @@
+import { LandType } from "~/core/server/game/land";
 import type { Map } from "~/core/server/game/map";
 import { MapMode } from "~/core/server/game/map";
 
@@ -28,7 +29,7 @@ export function playerCountToSize(playerCount: number, mode: MapMode) {
   return [Math.floor(Math.sqrt(piles / r) * r), Math.floor(Math.sqrt(piles / r))];
 }
 
-export function astar(map: Map, from: Pos, to: Pos) {
+export function astar(map: Map, from: Pos, to: Pos, cannotPassCity?: boolean) {
   let vis: boolean[][] = [];
   for (let i = 0; i <= map.height; i++) {
     vis.push([]);
@@ -52,7 +53,7 @@ export function astar(map: Map, from: Pos, to: Pos) {
     const [cur, len] = front;
 
     for (let nxt of map.neighbours(cur)) {
-      if (vis[nxt[0]][nxt[1]] || !map.accessible(nxt)) {
+      if (vis[nxt[0]][nxt[1]] || !map.accessible(nxt) || (cannotPassCity && map.get(nxt).type === LandType.City)) {
         continue;
       }
 
