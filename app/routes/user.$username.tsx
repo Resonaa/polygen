@@ -1,5 +1,11 @@
-import type { LoaderArgs, V2_MetaFunction } from "@remix-run/node";
-import { json } from "@remix-run/node";
+import type { LoaderArgs, V2_MetaFunction ,
+  ActionArgs, NodeOnDiskFile} from "@remix-run/node";
+import {
+  json,
+  unstable_composeUploadHandlers,
+  unstable_createFileUploadHandler,
+  unstable_createMemoryUploadHandler, unstable_parseMultipartFormData
+} from "@remix-run/node";
 import { useLoaderData, Form as ReactForm, useActionData } from "@remix-run/react";
 import { useEffect, useRef, useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
@@ -9,12 +15,15 @@ import { formatDate, relativeDate } from "~/components/community";
 import Layout from "~/components/layout";
 import Post from "~/components/post";
 import { getPostsByUsername } from "~/models/post.server";
-import { getStatsByUsername, getUserWithoutPasswordByUsername } from "~/models/user.server";
-import { requireAuthenticatedOptionalUser } from "~/session.server";
+import {
+  getStatsByUsername,
+  getUserWithoutPasswordByUsername,
+  updateAvatarByUsername,
+  updateBioByUsername
+} from "~/models/user.server";
+import { requireAuthenticatedOptionalUser, requireAuthenticatedUser } from "~/session.server";
 import { Access, ajax, useOptionalUser } from "~/utils";
 import { renderText } from "~/utils.server";
-
-import type { action } from "./profile";
 
 export async function loader({ request, params }: LoaderArgs) {
   await requireAuthenticatedOptionalUser(request, Access.Basic);
@@ -37,6 +46,45 @@ export async function loader({ request, params }: LoaderArgs) {
   }
 
   return json({ user, stats, originalPosts: posts });
+}
+
+export async function action({ request }: ActionArgs) {
+  const user = await requireAuthenticatedUser(request, Access.Settings);
+
+  const uploadHandler = unstable_composeUploadHandlers(
+    unstable_createFileUploadHandler({
+      maxPartSize: 5_000_000,
+      file: ({ filename }) => filename,
+    }),
+    unstable_createMemoryUploadHandler()
+  );
+
+  try {
+    const formData = await unstable_parseMultipartFormData(
+      request,
+      uploadHandler
+    );
+
+    const avatar = formData.get("avatar");
+    const bio = formData.get("bio");
+
+    if (typeof bio !== "string" || bio.length > 161) {
+      return json("个性签名不合法", { status: 400 });
+    }
+
+    await updateBioByUsername(user.username, bio);
+
+    if (!avatar) {
+      return json("编辑成功");
+    }
+
+    const data = avatar as unknown as NodeOnDiskFile;
+    await updateAvatarByUsername(user.username, data);
+    await data.remove();
+  } catch (_) {
+  }
+
+  return json("编辑成功");
 }
 
 export const meta: V2_MetaFunction<typeof loader> = ({ data }) => [{ title: data ? `${data.user.username} - polygen` : "错误 - polygen" }];
@@ -112,7 +160,7 @@ export default function User() {
           </div>
         </div>
         {edit ? (
-          <Form as={ReactForm} method="post" encType="multipart/form-data" action="/profile" className="mt-4">
+          <Form as={ReactForm} method="post" action="." encType="multipart/form-data" className="mt-4">
             <Form.Field>
               <label>头像</label>
               <input type="file" name="avatar" accept=".jpeg,.jpg,.png,.webp,.avif,.tiff,.gif,.svg" />

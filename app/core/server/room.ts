@@ -720,12 +720,13 @@ export class RoomManager {
         this.server.to(SocketRoom.rid(this.rid)).emit("info", "挑战失败");
       } else {
         const turns = room.turns, speed = room.voteAns.speed;
-        const score = room.botLand === 1 ? Math.round(turns / speed * 10) / 10 : Math.round((999999 - turns * speed) * 10) / 10;
+        const success = room.botLand === 1;
+        const score = success ? Math.round(turns / speed * 10) / 10 : Math.round((999999 - turns * speed) * 10) / 10;
 
         tryToUpdateScore(winner, turns, speed, score)
           .then(() => {
             this.server.to(SocketRoom.rid(this.rid)).emit("info",
-              room.botLand === 1 ? `挑战成功: ${turns}回合 / ${speed} = ${score}分` :
+              success ? `挑战成功: ${turns}回合 / ${speed} = ${score}分` :
                 `挑战成功: 999999 - ${turns}回合 * ${speed} = ${score}分`);
           })
           .catch(() => {

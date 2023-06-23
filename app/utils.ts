@@ -1,6 +1,7 @@
 import { useMatches } from "@remix-run/react";
 import { useMemo } from "react";
 
+import { padZero } from "~/components/community";
 import type { User } from "~/models/user.server";
 
 const DEFAULT_REDIRECT = "/";
@@ -208,3 +209,11 @@ export const vditorConfig = {
     emoji: {}
   }
 };
+
+export function numberColorToString(color: number) {
+  return `#${padZero(color.toString(16), 6)}`;
+}
+
+export function stringColorToNumber(color: string) {
+  return Number(color.replace("#", "0x"));
+}

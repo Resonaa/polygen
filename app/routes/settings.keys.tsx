@@ -8,7 +8,7 @@ import { LandType } from "~/core/server/game/land";
 import { Map, MapMode } from "~/core/server/game/map";
 import type { Pos } from "~/core/server/game/utils";
 import { requireAuthenticatedUser } from "~/session.server";
-import { Access } from "~/utils";
+import { Access, numberColorToString } from "~/utils";
 
 export async function loader({ request }: LoaderArgs) {
   return await requireAuthenticatedUser(request, Access.Settings);
@@ -16,9 +16,11 @@ export async function loader({ request }: LoaderArgs) {
 
 export default function Keys() {
   const [mode, setMode] = useState(MapMode.Hexagon);
+  const [userColors, setUserColors] = useState(Settings.defaultSettings.game.colors.standard);
 
   useEffect(() => {
     const settings = getSettings();
+    setUserColors(settings.game.colors.standard);
 
     const canvas = document.createElement("canvas");
     document.querySelector(".equal > .column")?.appendChild(canvas);
@@ -114,23 +116,21 @@ export default function Keys() {
     };
   }, [mode]);
 
-  const headerRow = ["颜色", "描述", "默认值"];
-
   const defaultSettings = Settings.defaultSettings;
-
-  const tableData = [["红色", "选家", defaultSettings.game.keys[mode].selectHome],
-    ["蓝色", "移动", defaultSettings.game.keys[mode].move.toString()],
-    ["绿色", "选择左上角领地", defaultSettings.game.keys[mode].selectTopLeft],
-    ["青色", "半兵", defaultSettings.game.keys[mode].splitArmy],
-    ["橙色", "清除全部移动", defaultSettings.game.keys[mode].clearMovements],
-    ["粉色", "投降", defaultSettings.game.keys[mode].surrender]];
 
   const resetToDefault = () => {
     let settings = getSettings();
-    settings.game.keys[mode] = Settings.defaultSettings.game.keys[mode];
+    settings.game.keys[mode] = defaultSettings.game.keys[mode];
     saveSettings(settings);
     window.location.reload();
   };
+
+  const tableData = [["选家", defaultSettings.game.keys[mode].selectHome],
+    ["移动", defaultSettings.game.keys[mode].move.toString()],
+    ["选择左上角领地", defaultSettings.game.keys[mode].selectTopLeft],
+    ["半兵", defaultSettings.game.keys[mode].splitArmy],
+    ["清除全部移动", defaultSettings.game.keys[mode].clearMovements],
+    ["投降", defaultSettings.game.keys[mode].surrender]];
 
   return (
     <div>
@@ -144,11 +144,27 @@ export default function Keys() {
       </Menu>
 
       <Grid stackable columns="equal">
-        <Grid.Column height="300px" className="sm:mr-4" />
+        <Grid.Column className="sm:mr-4" />
 
         <Grid.Column>
-          <Table unstackable celled headerRow={headerRow} tableData={tableData}
-                 renderBodyRow={(cells, key) => ({ cells, key })} />
+          <Table unstackable celled>
+            <Table.Header>
+              <Table.Row>
+                <Table.HeaderCell>颜色</Table.HeaderCell>
+                <Table.HeaderCell>描述</Table.HeaderCell>
+                <Table.HeaderCell>默认值</Table.HeaderCell>
+              </Table.Row>
+            </Table.Header>
+            <Table.Body>
+              {tableData.map(([description, defaultValue], id) => (
+                <Table.Row key={id}>
+                  <Table.Cell style={{ backgroundColor: numberColorToString(userColors[id + 1]) }} />
+                  <Table.Cell>{description}</Table.Cell>
+                  <Table.Cell>{defaultValue}</Table.Cell>
+                </Table.Row>
+              ))}
+            </Table.Body>
+          </Table>
 
           <Button negative onClick={resetToDefault}>恢复默认</Button>
         </Grid.Column>

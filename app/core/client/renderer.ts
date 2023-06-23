@@ -4,14 +4,13 @@ import city from "static/city.png";
 import general from "static/general.png";
 import mountain from "static/mountain.png";
 import obstacle from "static/obstacle.png";
-import { colors, SpecialColor } from "~/core/client/colors";
+import type { ISettings } from "~/core/client/settings";
 import { getSettings } from "~/core/client/settings";
 import { formatLargeNumber, getPileSizeByScale, getScaleByPileSize } from "~/core/client/utils";
 import { LandType } from "~/core/server/game/land";
 import type { Pos } from "~/core/server/game/utils";
 
 import { Map, MapMode } from "../server/game/map";
-
 
 export class Renderer {
   gm: Map = new Map();
@@ -43,7 +42,11 @@ export class Renderer {
   handleClearMovements: () => any = () => false;
   handleSurrender: () => any = () => false;
 
+  handleSelect: () => any = () => false;
+
   private myColor: number = 0;
+
+  settings: ISettings;
 
   constructor(canvas: HTMLCanvasElement) {
     this.app = new PIXI.Application({
@@ -95,6 +98,7 @@ export class Renderer {
     };
 
     const settings = getSettings();
+    this.settings = settings;
 
     document.onkeydown = event => {
       if (document.activeElement !== document.body) {
@@ -299,7 +303,7 @@ export class Renderer {
 
     const style = new PIXI.TextStyle({
       fontSize: 16,
-      fill: SpecialColor.SelectedBorder,
+      fill: this.settings.game.colors.selectedBorder,
       fontWeight: "bold"
     });
 
@@ -364,19 +368,19 @@ export class Renderer {
 
     const land = this.gm.get(pos);
 
-    let fillColor = colors[land.color];
+    let fillColor = this.settings.game.colors.standard[land.color];
 
     if (land.color === 0 && land.type === LandType.Land) {
-      fillColor = SpecialColor.Empty;
+      fillColor = this.settings.game.colors.empty;
     } else if (land.type === LandType.Mountain) {
-      fillColor = SpecialColor.Mountain;
+      fillColor = this.settings.game.colors.mountain;
     } else if (land.type >= LandType.UnknownCity) {
-      fillColor = SpecialColor.Unknown;
+      fillColor = this.settings.game.colors.unknown;
     }
 
     const lineWidth = selected ? (this.pileSize <= 25 ? 3 : 4) : 1;
     const alignment = selected ? 0 : 0.5;
-    const lineColor = selected ? SpecialColor.SelectedBorder : undefined;
+    const lineColor = selected ? this.settings.game.colors.selectedBorder : undefined;
 
     this.graphics.lineStyle(lineWidth, lineColor, 1, alignment)
       .beginFill(fillColor)
@@ -443,7 +447,10 @@ export class Renderer {
     if (hittable && hit.cursor !== "pointer") {
       hit.cursor = "pointer";
       hit.eventMode = "static";
-      hit.on("pointerup", () => this.select(pos));
+      hit.on("pointerup", () => {
+        this.select(pos);
+        this.handleSelect();
+      });
     } else if (!hittable && hit.cursor === "pointer") {
       hit.cursor = "default";
       hit.eventMode = "none";

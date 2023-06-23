@@ -13,10 +13,19 @@ export interface IKeys {
   surrender: IKey
 }
 
+export type IColor = number;
+
 export interface ISettings {
   game: {
     keys: {
       [mode in MapMode]: IKeys
+    },
+    colors: {
+      standard: IColor[],
+      selectedBorder: IColor,
+      empty: IColor,
+      mountain: IColor,
+      unknown: IColor
     }
   };
 }
@@ -60,6 +69,14 @@ export class Settings {
           selectTopLeft: "Space",
           surrender: "ESCAPE"
         }
+      },
+      colors: {
+        standard: [0x808080, 0xff0000, 0x4363d8, 0x008000, 0x008080, 0xf58231, 0xf032e6,
+          0x800080, 0x800000, 0xb09f30, 0x9a6324, 0x0000ff, 0x483d8b, 0x9acd32, 0xff1493, 0x191970, 0xff6347],
+        selectedBorder: 0xffffff,
+        empty: 0xdcdcdc,
+        mountain: 0xbbbbbb,
+        unknown: 0x424242
       }
     }
   };

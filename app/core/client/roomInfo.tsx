@@ -2,14 +2,14 @@ import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { Header, List, Table } from "semantic-ui-react";
 
-import { padZero } from "~/components/community";
-import { colors } from "~/core/client/colors";
 import { Vote } from "~/core/client/vote";
 import type { LandColor } from "~/core/server/game/land";
 import type { MaxVotedItems, VoteData, VoteItem } from "~/core/server/vote";
 import { translations } from "~/core/server/vote";
 import type { ClientSocket } from "~/core/types";
-import { useUser } from "~/utils";
+import { numberColorToString, useUser } from "~/utils";
+
+import { getSettings, Settings } from "../client/settings";
 
 export function RoomInfo({ client, rid }: { client?: ClientSocket, rid: string }) {
   const copyLink = () => window.navigator.clipboard.writeText(window.location.href);
@@ -20,6 +20,8 @@ export function RoomInfo({ client, rid }: { client?: ClientSocket, rid: string }
 
   const user = useUser();
 
+  const [colors, setColors] = useState(Settings.defaultSettings.game.colors.standard.map(number => numberColorToString(number)));
+
   useEffect(() => {
     if (!client) {
       return;
@@ -28,6 +30,9 @@ export function RoomInfo({ client, rid }: { client?: ClientSocket, rid: string }
     client.on("rank", rank => setRank(rank))
       .on("updateVotes", voteData => setVoteData(voteData))
       .on("updateTeams", teamData => setTeamData(teamData));
+
+    const settings = getSettings();
+    setColors(settings.game.colors.standard.map(number => numberColorToString(number)));
   }, [client]);
 
   const canVote = !(teamData && teamData.some(([id, players]) => id === 0 && players.includes(user.username)));
@@ -93,7 +98,7 @@ export function RoomInfo({ client, rid }: { client?: ClientSocket, rid: string }
             {rank.map(([color, player, land, army]) => (
               <Table.Row key={player}>
                 <td className={clsx(player === user.username && "font-bold")}
-                    style={color === -1 ? undefined : { color: `#${padZero(colors[color].toString(16), 6)}` }}>{player}</td>
+                    style={color === -1 ? undefined : { color: colors[color] }}>{player}</td>
                 <Table.Cell>{land}</Table.Cell>
                 <Table.Cell>{army}</Table.Cell>
               </Table.Row>
