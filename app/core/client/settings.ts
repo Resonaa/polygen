@@ -10,7 +10,8 @@ export interface IKeys {
   selectTopLeft: IKey,
   splitArmy: IKey,
   clearMovements: IKey,
-  surrender: IKey
+  surrender: IKey,
+  undoMovement: IKey
 }
 
 export type IColor = number;
@@ -59,7 +60,8 @@ export class Settings {
           splitArmy: "R",
           selectHome: "G",
           selectTopLeft: "Space",
-          surrender: "ESCAPE"
+          surrender: "ESCAPE",
+          undoMovement: "C"
         },
         [MapMode.Square]: {
           move: ["W", "A", "S", "D"],
@@ -67,7 +69,8 @@ export class Settings {
           splitArmy: "R",
           selectHome: "G",
           selectTopLeft: "Space",
-          surrender: "ESCAPE"
+          surrender: "ESCAPE",
+          undoMovement: "C"
         }
       },
       colors: {

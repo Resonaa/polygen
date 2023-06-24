@@ -68,8 +68,10 @@ export default function Colors() {
     renderer.settings.game.colors.standard = Settings.defaultSettings.game.colors.standard;
     renderer.updateAll();
     saveSettings(renderer.settings);
-    setCurId(undefined);
-    setCurColor(undefined);
+
+    if (curId) {
+      setCurColor(renderer.settings.game.colors.standard[curId]);
+    }
   };
 
   const setCurColorAndSave = (color: number) => {

@@ -34,6 +34,7 @@ export default function Keys() {
     const selectTopLeft: Pos = [1, 1];
     const splitArmy: Pos = [2, 2];
     const clearMovements: Pos = [2, 6];
+    const undoMovement: Pos = [6, 6];
     const surrender: Pos = [6, 2];
 
     gm.get(selectHome).type = LandType.General;
@@ -46,7 +47,8 @@ export default function Keys() {
     gm.get(selectTopLeft).color = 3;
     gm.get(splitArmy).color = 4;
     gm.get(clearMovements).color = 5;
-    gm.get(surrender).color = 6;
+    gm.get(undoMovement).color = 6;
+    gm.get(surrender).color = 7;
 
 
     renderer.bind(gm, 0);
@@ -57,6 +59,7 @@ export default function Keys() {
     renderer.extraText(splitArmy, keys.splitArmy);
     renderer.extraText(selectTopLeft, keys.selectTopLeft);
     renderer.extraText(clearMovements, keys.clearMovements);
+    renderer.extraText(undoMovement, keys.undoMovement);
     renderer.extraText(surrender, keys.surrender);
 
     for (let [index, neighbour] of gm.neighbours(selectHome).entries()) {
@@ -94,6 +97,9 @@ export default function Keys() {
       } else if (pos.join() === surrender.join()) {
         keys.surrender = key;
         save = true;
+      } else if (pos.join() === undoMovement.join()) {
+        keys.undoMovement = key;
+        save = true;
       } else {
         for (let [index, neighbour] of gm.neighbours(selectHome).entries()) {
           if (neighbour.join() === pos.join()) {
@@ -130,6 +136,7 @@ export default function Keys() {
     ["选择左上角领地", defaultSettings.game.keys[mode].selectTopLeft],
     ["半兵", defaultSettings.game.keys[mode].splitArmy],
     ["清除全部移动", defaultSettings.game.keys[mode].clearMovements],
+    ["撤销一步移动", defaultSettings.game.keys[mode].undoMovement],
     ["投降", defaultSettings.game.keys[mode].surrender]];
 
   return (

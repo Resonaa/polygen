@@ -44,6 +44,7 @@ export function setServer(server: Server) {
       .on("ready", () => rm.ready(username))
       .on("move", movement => rm.addMovement(username, movement))
       .on("clearMovements", () => rm.clearMovements(username))
+      .on("undoMovement", () => rm.undoMovement(username))
       .on("surrender", () => rm.surrender(username))
       .on("vote", ({ item, value }) => rm.vote(item, value, username));
   });

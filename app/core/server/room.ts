@@ -721,13 +721,13 @@ export class RoomManager {
       } else {
         const turns = room.turns, speed = room.voteAns.speed;
         const success = room.botLand === 1;
-        const score = success ? Math.round(turns / speed * 10) / 10 : Math.round((999999 - turns * speed) * 10) / 10;
+        const score = success ? Math.round(turns / speed * 10) / 10 : Math.round((9999999 - turns * speed) * 10) / 10;
 
         tryToUpdateScore(winner, turns, speed, score)
           .then(() => {
             this.server.to(SocketRoom.rid(this.rid)).emit("info",
               success ? `挑战成功: ${turns}回合 / ${speed} = ${score}分` :
-                `挑战成功: 999999 - ${turns}回合 * ${speed} = ${score}分`);
+                `挑战成功: 9999999 - ${turns}回合 * ${speed} = ${score}分`);
           })
           .catch(() => {
             this.server.to(SocketRoom.rid(this.rid)).emit("info", "挑战成功：成绩上传失败");
@@ -746,6 +746,16 @@ export class RoomManager {
     }
 
     room.movements.delete(player);
+  }
+
+  undoMovement(player: string) {
+    const room = roomData.get(this.rid);
+
+    if (!room || !room.ongoing || !room.gamingPlayers.has(player)) {
+      return;
+    }
+
+    room.movements.get(player)?.pop();
   }
 
   surrender(player: string) {

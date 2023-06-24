@@ -40,13 +40,15 @@ export class Renderer {
   handleMove: (from: Pos, to: Pos) => any = () => false;
   handleSplitArmy: () => any = () => false;
   handleClearMovements: () => any = () => false;
+  handleUndoMovement: () => any = () => false;
   handleSurrender: () => any = () => false;
-
   handleSelect: () => any = () => false;
 
   private myColor: number = 0;
 
   settings: ISettings;
+
+  private lastSelected: Pos[] = [];
 
   constructor(canvas: HTMLCanvasElement) {
     this.app = new PIXI.Application({
@@ -121,6 +123,7 @@ export class Renderer {
               return;
             }
 
+            this.lastSelected.push(from);
             this.select(to);
           }
 
@@ -134,6 +137,11 @@ export class Renderer {
       } else if (eventKey === keys.clearMovements) {
         event.preventDefault();
         this.handleClearMovements();
+      } else if (eventKey === keys.undoMovement) {
+        event.preventDefault();
+        const lastSelected = this.lastSelected.pop();
+        lastSelected && this.select(lastSelected);
+        this.handleUndoMovement();
       } else if (eventKey === keys.selectHome) {
         event.preventDefault();
         for (let i = 1; i <= this.gm.height; i++) {
@@ -449,6 +457,7 @@ export class Renderer {
       hit.eventMode = "static";
       hit.on("pointerup", () => {
         this.select(pos);
+        this.lastSelected = [];
         this.handleSelect();
       });
     } else if (!hittable && hit.cursor === "pointer") {

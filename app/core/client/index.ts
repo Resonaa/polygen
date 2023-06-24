@@ -25,6 +25,8 @@ export function registerClientSocket(client: ClientSocket, rid: string, setShowC
 
   renderer.handleClearMovements = () => client?.emit("clearMovements");
 
+  renderer.handleUndoMovement = () => client?.emit("undoMovement");
+
   renderer.handleSurrender = () => client?.emit("surrender");
 
   let gm: Map;
