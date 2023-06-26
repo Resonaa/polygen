@@ -26,6 +26,7 @@ function SettingsMenu() {
       <Menu.Item>
         游戏
         <Menu.Menu>
+          <Setting id="controls" name="移动控制" />
           <Setting id="keys" name="键位设置" />
           <Setting id="colors" name="配色方案" />
         </Menu.Menu>

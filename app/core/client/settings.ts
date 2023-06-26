@@ -16,6 +16,12 @@ export interface IKeys {
 
 export type IColor = number;
 
+export enum Controls {
+  Keyboard = "键盘",
+  Touch = "触控",
+  Auto = "自动适配"
+}
+
 export interface ISettings {
   game: {
     keys: {
@@ -27,7 +33,8 @@ export interface ISettings {
       empty: IColor,
       mountain: IColor,
       unknown: IColor
-    }
+    },
+    controls: Controls
   };
 }
 
@@ -80,7 +87,8 @@ export class Settings {
         empty: 0xdcdcdc,
         mountain: 0xbbbbbb,
         unknown: 0x424242
-      }
+      },
+      controls: Controls.Auto
     }
   };
 
