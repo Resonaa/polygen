@@ -14,7 +14,7 @@ export async function loader({ request }: LoaderArgs) {
 export async function action({ request }: ActionArgs) {
   const { username } = await requireAuthenticatedUser(request, Access.Settings);
   await deleteScore(username);
-  return redirect("/leaderboard");
+  return redirect("/settings/events");
 }
 
 export default function Events() {

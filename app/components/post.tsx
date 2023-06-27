@@ -5,8 +5,7 @@ import { useEffect, useState } from "react";
 import { Feed, Icon } from "semantic-ui-react";
 import Vditor from "vditor";
 
-import { Avatar, relativeDate, UserLink } from "~/components/community";
-import { formatDate, formatLargeNumber } from "~/components/community";
+import { Avatar, relativeDate, UserLink, formatDate, formatLargeNumber } from "~/components/community";
 import RenderedText from "~/components/renderedText";
 import { VditorSkeleton } from "~/components/vditorSkeleton";
 import type { Post as PostType } from "~/models/post.server";
@@ -83,14 +82,14 @@ export default function Post({
           {link ? (
             <>
               <Link to={postUrl}><Icon name="eye" />{views}</Link>
-              <Link to={postUrl} className="!ml-6"><Icon name="comment" />{commentAmount}</Link>
+              <Link to={postUrl} className="!ml-10"><Icon name="comment" />{commentAmount}</Link>
             </>) : (
             <>
               <Icon name="eye" />{views}
-              <Icon name="comment" className="!ml-6" />{commentAmount}
+              <Icon name="comment" className="!ml-10" />{commentAmount}
             </>)}
 
-          <Feed.Like className={`!ml-6 ${favour ? "active" : ""}`} onClick={async () => {
+          <Feed.Like className={`!ml-10 ${favour ? "active" : ""}`} onClick={async () => {
             if (favour || !user)
               return;
 

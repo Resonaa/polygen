@@ -8,14 +8,18 @@ import type { Message } from "~/core/server/message";
 import type { TeamId } from "~/core/server/room";
 import type { MaxVotedItems, VoteData, VoteItem, VoteValue } from "~/core/server/vote";
 
+interface Patch {
+  updates: [Pos, Partial<MaybeLand>][],
+  rank: [LandColor, string, number, number][]
+}
+
 interface ServerToClientEvents {
   message: (message: Message) => void;
   info: (info: string) => void;
   updateTeams: (teams: [TeamId, string[]][]) => void;
   updateReadyPlayers: (readyPlayers: string[]) => void;
   gameStart: ({ maybeMap, myColor }: { maybeMap: MaybeMap, myColor: LandColor }) => void;
-  patch: (updates: [Pos, Partial<MaybeLand>][]) => void;
-  rank: (rank: [LandColor, string, number, number][]) => void;
+  patch: (patch: string) => void;
   die: () => void;
   win: (winnerStr: string) => void;
   updateVotes: ({ data, ans }: { data: VoteData, ans: MaxVotedItems }) => void;
@@ -33,14 +37,11 @@ interface ClientToServerEvents {
   vote: <T extends VoteItem>({ item, value }: { item: T, value: VoteValue<T> }) => void;
 }
 
-interface InterServerEvents {
-}
-
 interface SocketData {
   username: string;
   rid: string;
 }
 
-type Server = ServerType<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>;
-type ServerSocket = SocketType<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>;
+type Server = ServerType<ClientToServerEvents, ServerToClientEvents, {}, SocketData>;
+type ServerSocket = SocketType<ClientToServerEvents, ServerToClientEvents, {}, SocketData>;
 type ClientSocket = ClientSocketType<ServerToClientEvents, ClientToServerEvents>;

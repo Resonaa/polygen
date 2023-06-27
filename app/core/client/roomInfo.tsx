@@ -1,4 +1,5 @@
 import clsx from "clsx";
+import LZString from "lz-string";
 import { useEffect, useState } from "react";
 import { Header, List, Table } from "semantic-ui-react";
 
@@ -6,7 +7,7 @@ import { Vote } from "~/core/client/vote";
 import type { LandColor } from "~/core/server/game/land";
 import type { MaxVotedItems, VoteData, VoteItem } from "~/core/server/vote";
 import { translations } from "~/core/server/vote";
-import type { ClientSocket } from "~/core/types";
+import type { ClientSocket, Patch } from "~/core/types";
 import { numberColorToString, useUser } from "~/utils";
 
 import { getSettings, Settings } from "../client/settings";
@@ -27,7 +28,7 @@ export function RoomInfo({ client, rid }: { client?: ClientSocket, rid: string }
       return;
     }
 
-    client.on("rank", rank => setRank(rank))
+    client.on("patch", data => setRank((JSON.parse(LZString.decompressFromUTF16(data)) as Patch).rank))
       .on("updateVotes", voteData => setVoteData(voteData))
       .on("updateTeams", teamData => setTeamData(teamData));
 
@@ -41,7 +42,7 @@ export function RoomInfo({ client, rid }: { client?: ClientSocket, rid: string }
     return (
       <List.Content>
         <strong>{translations[item]}</strong>
-        <div title={canVote ? "进入投票" : "旁观玩家无法投票"}
+        <div title={canVote ? "进人投票" : "旁观玩家无法投票"}
              className={clsx(canVote && "cursor-pointer hover:underline", "float-right")}
              onClick={canVote ? () => setType(item) : undefined}>
           {voteData?.ans[item]}

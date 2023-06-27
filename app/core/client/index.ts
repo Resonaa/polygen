@@ -1,8 +1,10 @@
+import LZString from "lz-string";
+
 import { Renderer } from "~/core/client/renderer";
 import { LandType } from "~/core/server/game/land";
 import { Map } from "~/core/server/game/map";
 
-import type { ClientSocket } from "../types";
+import type { ClientSocket, Patch } from "../types";
 
 export function registerClientSocket(client: ClientSocket, rid: string, setShowCanvas: (show: boolean) => void) {
   client.on("connect", () => {
@@ -37,8 +39,9 @@ export function registerClientSocket(client: ClientSocket, rid: string, setShowC
     renderer.bind(gm, myColor);
   }).on("win", () => {
     setShowCanvas(false);
-  }).on("patch", updates => {
-    for (let [pos, maybeLand] of updates) {
+  }).on("patch", data => {
+    const patch: Patch = JSON.parse(LZString.decompressFromUTF16(data));
+    for (let [pos, maybeLand] of patch.updates) {
       let land = gm.get(pos);
 
       if (maybeLand.t !== undefined) {

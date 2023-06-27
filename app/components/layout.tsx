@@ -66,7 +66,7 @@ export default function Layout({ columns, children }: { columns: SemanticWIDTHS,
                     <input type="hidden" name="redirectTo" value={location} />
 
                     <Dropdown.Item as="a" onClick={() => refButton.current?.click()}>
-                      <Icon name="sign out alternate" />登出
+                      <Icon name="sign in alternate" />登出
                     </Dropdown.Item>
                   </Form>
                 </Dropdown.Menu>
@@ -84,7 +84,7 @@ export default function Layout({ columns, children }: { columns: SemanticWIDTHS,
       <Sidebar as={Menu} animation="overlay" vertical onHide={() => setVisible(false)} visible={visible}>
         <NavItem to="/" text="首页" icon="home" />
         <NavItem to="/game" text="游戏" icon="chess queen" />
-        <NavItem to="/leaderboard" text="排行榜" icon="signal" />
+        <NavItem to="/leaderboard" text="排彳亍榜" icon="signal" />
         <NavItem to="/admin" text="管理后台" icon="tachometer alternate" />
       </Sidebar>
 

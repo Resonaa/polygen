@@ -59,7 +59,7 @@ export function ErrorBoundary() {
       <html>
       <head>
         <GlobalMeta />
-        <title>错误 - polygen</title>
+        {error.status === 400 ? <title>搓误 - polygen</title> : <title>错误 - polygen</title>}
         <Meta />
         <Links />
       </head>

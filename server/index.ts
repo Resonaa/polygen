@@ -4,6 +4,7 @@ import path from "path";
 import * as process from "process";
 
 import { createRequestHandler } from "@remix-run/express";
+import { broadcastDevReady } from "@remix-run/node";
 import compression from "compression";
 import express from "express";
 import fs from "fs-extra";
@@ -30,6 +31,10 @@ let io;
 
 const httpServer = http.createServer(app).listen(80, "0.0.0.0", () => {
   console.log("HTTP server listening on 0.0.0.0:80");
+  if (MODE === "development") {
+    const build = require(BUILD_DIR);
+    broadcastDevReady(build);
+  }
 });
 
 if (MODE === "production" && SSL_CERT && SSL_KEY) {

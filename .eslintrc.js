@@ -1,3 +1,4 @@
+const OFF = 0;
 const ERROR = 2;
 
 /** @type {import("eslint").Linter.Config} */
@@ -15,6 +16,7 @@ module.exports = {
         groups: ["builtin", "external", "internal", "parent", "sibling"],
         "newlines-between": "always"
       }
-    ]
+    ],
+    "@typescript-eslint/no-var-requires": OFF
   }
 };

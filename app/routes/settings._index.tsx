@@ -26,7 +26,7 @@ export default function Index() {
       </p>
 
       <Form>
-        <TextArea rows={3} placeholder="导入/导出数据" value={settings}
+        <TextArea rows={3} value={settings}
                   onChange={(_, { value }) => setSettings(value as string)} />
       </Form>
 

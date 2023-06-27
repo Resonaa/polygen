@@ -23,7 +23,7 @@ export default function Leaderboard() {
   return (
     <Layout columns={1}>
       <Grid.Column>
-        <Header as="h3">囚禁竞速挑战赛（模拟赛） - 排行榜</Header>
+        <Header as="h3">囚禁竞速挑战赛 - 排行榜</Header>
         <Table basic unstackable>
           <Table.Header>
             <Table.Row>

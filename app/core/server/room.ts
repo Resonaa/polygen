@@ -1,3 +1,5 @@
+import LZString from "lz-string";
+
 import { shuffle } from "~/core/client/utils";
 import { generateMap } from "~/core/server/game/generator";
 import type { LandColor, MaybeLand } from "~/core/server/game/land";
@@ -144,6 +146,7 @@ export class Room {
   gameStart() {
     this.gameTeams.clear();
     this.gamingPlayers.clear();
+    this.readyPlayers.clear();
 
     let players: string[] = [];
     for (let [teamId, playersInTeam] of this.teams) {
@@ -679,11 +682,12 @@ export class RoomManager {
     const rank = room.rankAll();
 
     const patches = room.patchAll(preMap, preColors);
-    for (let [player, patch] of patches) {
-      this.server.to(SocketRoom.usernameRid(player, this.rid)).emit("patch", patch);
+    for (let [player, updates] of patches) {
+      this.server.to(SocketRoom.usernameRid(player, this.rid)).emit("patch", LZString.compressToUTF16(JSON.stringify({
+        updates,
+        rank
+      })));
     }
-
-    this.server.to(SocketRoom.rid(this.rid)).emit("rank", rank);
   }
 
   addMovement(player: string, movement: [Pos, Pos, boolean]) {
@@ -711,7 +715,10 @@ export class RoomManager {
 
     const winners = room.teamsInGame.get(winner) as string[];
     this.server.to(SocketRoom.rid(this.rid)).emit("win", winners.join(", "));
-    this.server.to(SocketRoom.rid(this.rid)).emit("rank", []);
+    this.server.to(SocketRoom.rid(this.rid)).emit("patch", LZString.compressToUTF16(JSON.stringify({
+      updates: [],
+      rank: []
+    })));
     this.server.to(SocketRoom.rid(this.rid)).emit("updateReadyPlayers", room.exportReadyPlayers());
 
     if (room.challenge) {
@@ -726,8 +733,8 @@ export class RoomManager {
         tryToUpdateScore(winner, turns, speed, score)
           .then(() => {
             this.server.to(SocketRoom.rid(this.rid)).emit("info",
-              success ? `挑战成功: ${turns}回合 / ${speed} = ${score}分` :
-                `挑战成功: 9999999 - ${turns}回合 * ${speed} = ${score}分`);
+              success ? `挑战成功：${turns}回合 / ${speed} = ${score}分` :
+                `挑战成功：9999999 - ${turns}回合 * ${speed} = ${score}分`);
           })
           .catch(() => {
             this.server.to(SocketRoom.rid(this.rid)).emit("info", "挑战成功：成绩上传失败");
