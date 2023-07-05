@@ -2,7 +2,7 @@ import { Fragment } from "react";
 
 export default function CountDown() {
   const countDowns = [
-    { date: "2023-6-28", description: "周年庆活动" }
+    { date: "2024-2-10", description: "polygen 公测" }
   ];
 
   const curTime = new Date();

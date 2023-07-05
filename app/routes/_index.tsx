@@ -29,15 +29,15 @@ export async function loader({ request }: LoaderArgs) {
   const posts = await getPosts(1);
   const recentComments = await getComments(1);
 
-  for (const announcement of announcements) {
+  for (let announcement of announcements) {
     announcement.content = renderText(announcement.content);
   }
 
-  for (const post of posts) {
+  for (let post of posts) {
     post.content = renderText(post.content);
   }
 
-  for (const comment of recentComments) {
+  for (let comment of recentComments) {
     comment.content = renderText(comment.content);
   }
 
@@ -151,8 +151,8 @@ export default function Index() {
           ))}
 
           {page !== -1 &&
-            (<Segment textAlign="center" loading={loading} basic onClick={loadMore} style={{ color: "#0006" }}
-                      className={clsx(!loading && "cursor-pointer")}>
+            (<Segment textAlign="center" loading={loading} basic onClick={loadMore}
+                      className={clsx(!loading && "cursor-pointer text-gray-400")}>
               点击查看更多...
             </Segment>)}
         </Feed>

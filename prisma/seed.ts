@@ -16,7 +16,6 @@ async function seed() {
   await prisma.post.deleteMany({});
   await prisma.announcement.deleteMany({});
   await prisma.comment.deleteMany({});
-  await prisma.score.deleteMany({});
 
   const password = SESSION_SECRET;
 

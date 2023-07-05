@@ -62,7 +62,6 @@
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "eslint": "latest",
-    "npm-run-all": "latest",
     "prisma": "latest",
     "tailwindcss": "latest",
     "tsconfig-paths": "latest"

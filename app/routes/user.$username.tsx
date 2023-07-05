@@ -70,7 +70,7 @@ export async function action({ request }: ActionArgs) {
     const avatar = formData.get("avatar");
     const bio = formData.get("bio");
 
-    if (typeof bio !== "string" || bio.length > 162) {
+    if (typeof bio !== "string" || bio.length > 161) {
       return json("个性签名不合法", { status: 400 });
     }
 
@@ -157,7 +157,7 @@ export default function User() {
           <img alt="avatar" src={`/usercontent/avatar/${user.username}.webp`}
                className="md:w-full max-md:w-[80px] max-md:inline-block" />
           <div className="inline-block max-md:ml-6 md:mt-2">
-            <div className="text-2xl">{user.username}</div>
+            <div className="text-2xl" title={`权限等级：${user.access}`}>{user.username}</div>
             {user.bio.length > 0 && <div className="mt-2 break-all">{user.bio}</div>}
           </div>
         </div>
@@ -169,7 +169,7 @@ export default function User() {
             </Form.Field>
             <Form.Field>
               <label>个性签名</label>
-              <TextareaAutosize maxLength={162} defaultValue={user.bio} name="bio" rows={2} />
+              <TextareaAutosize maxLength={161} defaultValue={user.bio} name="bio" rows={2} />
             </Form.Field>
             <Button positive type="submit">保存</Button>
             <Button onClick={() => setEdit(false)}>取消</Button>

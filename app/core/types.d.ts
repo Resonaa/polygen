@@ -2,14 +2,13 @@ import type { Server as ServerType, Socket as SocketType } from "socket.io";
 import type { Socket as ClientSocketType } from "socket.io-client";
 
 import type { LandColor, MaybeLand } from "~/core/server/game/land";
-import type { MaybeMap } from "~/core/server/game/map";
 import type { Pos } from "~/core/server/game/utils";
 import type { Message } from "~/core/server/message";
 import type { TeamId } from "~/core/server/room";
 import type { MaxVotedItems, VoteData, VoteItem, VoteValue } from "~/core/server/vote";
 
 interface Patch {
-  updates: [Pos, Partial<MaybeLand>][],
+  updates: [number, Partial<MaybeLand>][],
   rank: [LandColor, string, number, number][]
 }
 
@@ -18,9 +17,8 @@ interface ServerToClientEvents {
   info: (info: string) => void;
   updateTeams: (teams: [TeamId, string[]][]) => void;
   updateReadyPlayers: (readyPlayers: string[]) => void;
-  gameStart: ({ maybeMap, myColor }: { maybeMap: MaybeMap, myColor: LandColor }) => void;
+  gameStart: ({ maybeMap, myColor, turns }: { maybeMap: MaybeMap, myColor: LandColor, turns: number }) => void;
   patch: (patch: string) => void;
-  die: () => void;
   win: (winnerStr: string) => void;
   updateVotes: ({ data, ans }: { data: VoteData, ans: MaxVotedItems }) => void;
 }

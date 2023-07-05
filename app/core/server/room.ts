@@ -5,14 +5,13 @@ import { generateMap } from "~/core/server/game/generator";
 import type { LandColor, MaybeLand } from "~/core/server/game/land";
 import { LandType } from "~/core/server/game/land";
 import type { MaybeMap } from "~/core/server/game/map";
-import { Map as GameMap, MapMode } from "~/core/server/game/map";
+import { Map as GameMap } from "~/core/server/game/map";
 import type { Pos } from "~/core/server/game/utils";
 import { getMinReadyPlayerCount } from "~/core/server/game/utils";
 import { MessageType } from "~/core/server/message";
 import type { MaxVotedItems, VoteData, VoteItem, VoteValue } from "~/core/server/vote";
-import { clearAllVotesOfPlayer, getMaxVotedItem, RoomMap, vote } from "~/core/server/vote";
+import { clearAllVotesOfPlayer, getMaxVotedItem, vote } from "~/core/server/vote";
 import type { Server } from "~/core/types";
-import { tryToUpdateScore } from "~/models/score.server";
 
 export const SocketRoom = {
   rid: (rid: string) => `#${rid}`,
@@ -43,8 +42,7 @@ export class Room {
   turns: number = 0;
   surrenders: Set<string> = new Set();
 
-  challenge: boolean = false;
-  botLand: number = 0;
+  playerMaps: Map<string, MaybeMap> = new Map();
 
   constructor(id: string) {
     this.id = id;
@@ -94,6 +92,7 @@ export class Room {
 
   removePlayer(player: string) {
     this.gamingPlayers.delete(player);
+    this.playerMaps.delete(player);
 
     for (let [team, players] of this.teams) {
       const index = players.indexOf(player);
@@ -147,6 +146,8 @@ export class Room {
     this.gameTeams.clear();
     this.gamingPlayers.clear();
     this.readyPlayers.clear();
+    this.playerMaps.clear();
+    this.turns = 0;
 
     let players: string[] = [];
     for (let [teamId, playersInTeam] of this.teams) {
@@ -163,10 +164,7 @@ export class Room {
 
     this.ongoing = true;
 
-    this.challenge = this.id === "161" && this.gamingPlayers.has("Bot") && this.gamingPlayers.size === 2 &&
-      this.voteAns.mode === MapMode.Hexagon && this.voteAns.map === RoomMap.Random;
-
-    this.gm = generateMap(this.gamingPlayers.size, this.voteAns.mode, this.voteAns.map, this.challenge);
+    this.gm = generateMap(this.gamingPlayers.size, this.voteAns.mode, this.voteAns.map);
 
     shuffle(players);
 
@@ -223,9 +221,6 @@ export class Room {
     this.gameTeams.clear();
     this.movements.clear();
     this.surrenders.clear();
-    this.turns = 0;
-    this.challenge = false;
-    this.botLand = 0;
 
     if (this.gameInterval) {
       clearInterval(this.gameInterval);
@@ -328,21 +323,24 @@ export class Room {
 
         if (land.type === LandType.City || land.type === LandType.General) {
           land.amount++;
-        } else if (land.type === LandType.Land && this.turns % 15 === 0) {
+        } else if (land.type === LandType.Land && this.turns % 25 === 0) {
           land.amount++;
         }
       }
     }
   }
 
-  patchAll(preMap: MaybeMap, preColors: Room["colors"]) {
-    let res: Map<string, [Pos, Partial<MaybeLand>][]> = new Map(), preGm = GameMap.from(preMap);
+  patchAll() {
+    let res: Map<string, [number, Partial<MaybeLand>][]> = new Map();
     for (let player of this.exportPlayers()) {
-      const preColor = this.playerToColor(player, preColors), nowColor = this.playerToColor(player);
-      const pre = preGm.mask(preColor, this.gameTeams);
-      const now = this.gm.mask(nowColor, this.gameTeams);
+      const now = this.gm.mask(this.playerToColor(player), this.gameTeams);
 
-      let patch: [Pos, Partial<MaybeLand>][] = [];
+      let pre = this.playerMaps.get(player);
+      if (!pre) {
+        pre = new GameMap(this.gm.width, this.gm.height, this.gm.mode).export();
+      }
+
+      let patch: [number, Partial<MaybeLand>][] = [];
 
       for (let i = 1; i <= this.gm.height; i++) {
         for (let j = 1; j <= this.gm.width; j++) {
@@ -358,16 +356,18 @@ export class Room {
           }
 
           if (preLand.a !== nowLand.a) {
-            partial.a = nowLand.a;
+            partial.a = nowLand.a - preLand.a;
           }
 
           if (partial.a !== undefined || partial.c !== undefined || partial.t !== undefined) {
-            patch.push([[i, j] as Pos, partial]);
+            patch.push([(i - 1) * this.gm.width + j, partial]);
           }
         }
       }
 
       res.set(player, patch);
+
+      this.playerMaps.set(player, now);
     }
 
     return res;
@@ -395,10 +395,6 @@ export class Room {
     let teamData: Map<TeamId, [number, number]> = new Map();
 
     for (let [color, [land, army]] of data) {
-      if (this.challenge && color === this.playerToColor("Bot") && land > 0) {
-        this.botLand = land;
-      }
-
       ans.push([color, this.colors.get(color) as string, land, army]);
 
       const team = this.gameTeams.get(color) as number;
@@ -489,16 +485,21 @@ export class RoomManager {
 
     if (room.ongoing) {
       if (room.gamingPlayers.has(player)) {
-        const color = room.playerToColor(player);
+        const myColor = room.playerToColor(player);
+        const maybeMap = room.gm.mask(myColor, room.gameTeams);
         this.server.to(SocketRoom.usernameRid(player, this.rid)).emit("gameStart", {
-          maybeMap: room.gm.mask(color, room.gameTeams),
-          myColor: color
+          maybeMap, myColor,
+          turns: room.turns
         });
+        room.playerMaps.set(player, maybeMap);
       } else {
+        const maybeMap = room.gm.export();
         this.server.to(SocketRoom.usernameRid(player, this.rid)).emit("gameStart", {
-          maybeMap: room.gm.export(),
-          myColor: -1
+          maybeMap,
+          myColor: -1,
+          turns: room.turns
         });
+        room.playerMaps.set(player, maybeMap);
       }
     }
 
@@ -613,21 +614,23 @@ export class RoomManager {
       for (let [color, player] of room.colors) {
         this.server.to(SocketRoom.usernameRid(player, this.rid)).emit("gameStart", {
           maybeMap: masks[color - 1],
-          myColor: color
+          myColor: color,
+          turns: 0
         });
+        room.playerMaps.set(player, masks[color - 1]);
       }
+
+      const exportedMap = room.gm.export();
 
       for (let player of room.exportPlayers()) {
         if (!room.gamingPlayers.has(player)) {
           this.server.to(SocketRoom.usernameRid(player, this.rid)).emit("gameStart", {
-            maybeMap: room.gm.export(),
-            myColor: -1
+            maybeMap: exportedMap,
+            myColor: -1,
+            turns: 0
           });
+          room.playerMaps.set(player, exportedMap);
         }
-      }
-
-      if (room.challenge) {
-        this.server.to(SocketRoom.rid(room.id)).emit("info", "挑战开始");
       }
 
       room.gameInterval = setInterval(() => this.game(), 250 / room.voteAns.speed);
@@ -646,15 +649,20 @@ export class RoomManager {
       this.endGame(winner);
     }
 
+    const exportedMap = room.gm.export();
+
     for (let player of room.surrenders) {
       room.gamingPlayers.delete(player);
       room.colors.delete(room.playerToColor(player));
 
-      this.server.to(SocketRoom.usernameRid(player, this.rid)).emit("die");
+      this.server.to(SocketRoom.usernameRid(player, this.rid)).emit("info", "您死了");
       this.server.to(SocketRoom.usernameRid(player, this.rid)).emit("gameStart", {
-        maybeMap: room.gm.export(),
-        myColor: -1
+        maybeMap: exportedMap,
+        myColor: -1,
+        turns: room.turns
       });
+
+      room.playerMaps.set(player, exportedMap);
 
       room.surrenders.delete(player);
 
@@ -667,21 +675,18 @@ export class RoomManager {
 
     room.turns++;
 
-    const preMap = room.gm.export(),
-      preColors: Room["colors"] = new Map(JSON.parse(JSON.stringify(Array.from(room.colors.entries()))));
-
     const deaths = room.moveAll();
     for (let deadPlayer of deaths) {
       room.gamingPlayers.delete(deadPlayer);
       room.colors.delete(room.playerToColor(deadPlayer));
-      this.server.to(SocketRoom.usernameRid(deadPlayer, this.rid)).emit("die");
+      this.server.to(SocketRoom.usernameRid(deadPlayer, this.rid)).emit("info", "您死了");
     }
 
     room.addArmy();
 
     const rank = room.rankAll();
 
-    const patches = room.patchAll(preMap, preColors);
+    const patches = room.patchAll();
     for (let [player, updates] of patches) {
       this.server.to(SocketRoom.usernameRid(player, this.rid)).emit("patch", LZString.compressToUTF16(JSON.stringify({
         updates,
@@ -720,27 +725,6 @@ export class RoomManager {
       rank: []
     })));
     this.server.to(SocketRoom.rid(this.rid)).emit("updateReadyPlayers", room.exportReadyPlayers());
-
-    if (room.challenge) {
-      const winner = winners[0];
-      if (winner === "Bot") {
-        this.server.to(SocketRoom.rid(this.rid)).emit("info", "挑战失败");
-      } else {
-        const turns = room.turns, speed = room.voteAns.speed;
-        const success = room.botLand === 1;
-        const score = success ? Math.round(turns / speed * 10) / 10 : Math.round((9999999 - turns * speed) * 10) / 10;
-
-        tryToUpdateScore(winner, turns, speed, score)
-          .then(() => {
-            this.server.to(SocketRoom.rid(this.rid)).emit("info",
-              success ? `挑战成功：${turns}回合 / ${speed} = ${score}分` :
-                `挑战成功：9999999 - ${turns}回合 * ${speed} = ${score}分`);
-          })
-          .catch(() => {
-            this.server.to(SocketRoom.rid(this.rid)).emit("info", "挑战成功：成绩上传失败");
-          });
-      }
-    }
 
     room.gameEnd();
   }

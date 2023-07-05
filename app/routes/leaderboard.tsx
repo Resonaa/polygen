@@ -5,7 +5,7 @@ import { Header, Table, Grid } from "semantic-ui-react";
 
 import { formatDate, relativeDate, UserLink } from "~/components/community";
 import Layout from "~/components/layout";
-import { rankList } from "~/models/score.server";
+import { rankList } from "~/models/user.server";
 import { requireAuthenticatedOptionalUser } from "~/session.server";
 import { Access, useOptionalUser } from "~/utils";
 
@@ -23,29 +23,23 @@ export default function Leaderboard() {
   return (
     <Layout columns={1}>
       <Grid.Column>
-        <Header as="h3">囚禁竞速挑战赛 - 排行榜</Header>
+        <Header as="h3">注册时间 - 排行榜</Header>
         <Table basic unstackable>
           <Table.Header>
             <Table.Row>
               <Table.HeaderCell>#</Table.HeaderCell>
               <Table.HeaderCell>用户名</Table.HeaderCell>
-              <Table.HeaderCell>回合</Table.HeaderCell>
-              <Table.HeaderCell>速度</Table.HeaderCell>
-              <Table.HeaderCell>成绩</Table.HeaderCell>
-              <Table.HeaderCell>达成时间</Table.HeaderCell>
+              <Table.HeaderCell>注册时间</Table.HeaderCell>
             </Table.Row>
           </Table.Header>
 
           <Table.Body>
-            {rankList.map(({ id, username, turns, speed, score, updatedAt }, rank) => (
-              <Table.Row key={id} active={user?.username === username}>
+            {rankList.map(({ username, createdAt }, rank) => (
+              <Table.Row key={rank} active={user?.username === username}>
                 <Table.Cell>{rank + 1}</Table.Cell>
                 <Table.Cell><UserLink username={username} /></Table.Cell>
-                <Table.Cell>{turns}</Table.Cell>
-                <Table.Cell>{speed}</Table.Cell>
-                <Table.Cell>{score}</Table.Cell>
                 <Table.Cell>
-                  <span title={formatDate(updatedAt)}>{relativeDate(updatedAt)}</span>
+                  <span title={formatDate(createdAt)}>{relativeDate(createdAt)}</span>
                 </Table.Cell>
               </Table.Row>
             ))}

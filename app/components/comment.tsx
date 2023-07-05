@@ -2,8 +2,7 @@ import { Link } from "@remix-run/react";
 import clsx from "clsx";
 import { Comment as SemanticComment } from "semantic-ui-react";
 
-import { formatDate } from "~/components/community";
-import { Avatar, relativeDate, UserLink } from "~/components/community";
+import { formatDate , Avatar, relativeDate, UserLink } from "~/components/community";
 import RenderedText from "~/components/renderedText";
 import type { Comment as CommentType } from "~/models/comment.server";
 import { ajax, useOptionalUser } from "~/utils";

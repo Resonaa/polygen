@@ -31,13 +31,6 @@ function SettingsMenu() {
           <Setting id="colors" name="配色方案" />
         </Menu.Menu>
       </Menu.Item>
-
-      <Menu.Item>
-        活动
-        <Menu.Menu>
-          <Setting id="events" name="囚禁竞速挑战赛" />
-        </Menu.Menu>
-      </Menu.Item>
     </Menu>
   );
 }

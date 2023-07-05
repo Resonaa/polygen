@@ -3,6 +3,7 @@ import LZString from "lz-string";
 import { Renderer } from "~/core/client/renderer";
 import { LandType } from "~/core/server/game/land";
 import { Map } from "~/core/server/game/map";
+import type { Pos } from "~/core/server/game/utils";
 
 import type { ClientSocket, Patch } from "../types";
 
@@ -41,7 +42,9 @@ export function registerClientSocket(client: ClientSocket, rid: string, setShowC
     setShowCanvas(false);
   }).on("patch", data => {
     const patch: Patch = JSON.parse(LZString.decompressFromUTF16(data));
-    for (let [pos, maybeLand] of patch.updates) {
+    for (let [id, maybeLand] of patch.updates) {
+      const y = (id - 1) % gm.width + 1, x = (id - y) / gm.width + 1;
+      const pos: Pos = [x, y];
       let land = gm.get(pos);
 
       if (maybeLand.t !== undefined) {
@@ -60,7 +63,7 @@ export function registerClientSocket(client: ClientSocket, rid: string, setShowC
       }
 
       if (maybeLand.a !== undefined) {
-        land.amount = maybeLand.a;
+        land.amount += maybeLand.a;
         renderer.updateAmount(pos);
       }
     }

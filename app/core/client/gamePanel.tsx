@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { Fragment, useEffect, useState } from "react";
-import { Header, Card, Icon, Button, Grid, Segment } from "semantic-ui-react";
+import { Header, Card, Icon, Button, Segment } from "semantic-ui-react";
 
 import { registerClientSocket } from "~/core/client/index";
 import { getMinReadyPlayerCount } from "~/core/server/game/utils";
@@ -60,7 +60,7 @@ export function GamePanel({ client, rid }: { client?: ClientSocket, rid: string 
     <>
       <canvas className={clsx("w-full h-full absolute !px-0", !showCanvas && "hidden")} />
 
-      <Grid.Column width={12} className="h-full !p-0 !flex flex-col justify-center items-center">
+      <div className="h-full !p-0 !flex flex-col justify-center items-center">
         <Segment inverted style={{ background: "unset !important" }} className={clsx(showCanvas && "hidden")}>
           <Header textAlign="center" as="h3" className="!pb-2">选择队伍</Header>
           <Card.Group centered>
@@ -114,7 +114,7 @@ export function GamePanel({ client, rid }: { client?: ClientSocket, rid: string 
             </Button>
           </div>
         </Segment>
-      </Grid.Column>
+      </div>
     </>
   );
 }

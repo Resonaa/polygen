@@ -23,7 +23,7 @@ function generateRandomPos(width: number, height: number) {
   return ans;
 }
 
-function generateRandomMap(playerCount: number, mode: MapMode, challenge: boolean): Map {
+function generateRandomMap(playerCount: number, mode: MapMode): Map {
   const [width, height] = playerCountToSize(playerCount, mode);
   let map = new Map(width, height, mode);
   const gm = map.gm;
@@ -36,7 +36,7 @@ function generateRandomMap(playerCount: number, mode: MapMode, challenge: boolea
     if (pos) {
       gm[pos[0]][pos[1]].type = LandType.Mountain;
     } else {
-      return generateRandomMap(playerCount, mode, challenge);
+      return generateRandomMap(playerCount, mode);
     }
   }
 
@@ -47,7 +47,7 @@ function generateRandomMap(playerCount: number, mode: MapMode, challenge: boolea
       gm[pos[0]][pos[1]].type = LandType.City;
       gm[pos[0]][pos[1]].amount = randInt(41, 50);
     } else {
-      return generateRandomMap(playerCount, mode, challenge);
+      return generateRandomMap(playerCount, mode);
     }
   }
 
@@ -57,7 +57,7 @@ function generateRandomMap(playerCount: number, mode: MapMode, challenge: boolea
     const ans = randPos.shift();
 
     if (!ans) {
-      return generateRandomMap(playerCount, mode, challenge);
+      return generateRandomMap(playerCount, mode);
     }
 
     if (i === 1) {
@@ -68,14 +68,8 @@ function generateRandomMap(playerCount: number, mode: MapMode, challenge: boolea
       let tooClose = false;
 
       for (let last of generals) {
-        if (challenge) {
-          if (astar(map, ans, last) > 10 && astar(map, ans, last, true) !== -1) {
-            continue;
-          }
-        } else {
-          if (astar(map, ans, last) > 7) {
-            continue;
-          }
+        if (astar(map, ans, last) > 7 && astar(map, ans, last, true) !== -1) {
+          continue;
         }
 
         tooClose = true;
@@ -275,16 +269,60 @@ function generateMazeMap(playerCount: number, mode: MapMode): Map {
   return map;
 }
 
-export function generateMap(playerCount: number, mode: MapMode, map: RoomMap, challenge: boolean) {
+function generatePlotMap(playerCount: number, mode: MapMode): Map {
+  const plotSize = 5, plotsPerPlayer = 4, cityAmount = 161;
+  const plotCount = Math.ceil(Math.sqrt(playerCount * plotsPerPlayer));
+  const size = plotSize + (plotSize - 1) * (plotCount - 1);
+
+  let map = new Map(size, size, mode);
+
+  let homes = [];
+
+  for (let i = 1; i <= size; i++) {
+    for (let j = 1; j <= size; j++) {
+      const m1 = i % (plotSize - 1), m2 = j % (plotSize - 1);
+      let land = map.get([i, j]);
+      if (m1 === 1 || m2 === 1) {
+        if (i !== 1 && i !== size && j !== 1 && j !== size && (m1 === (plotSize + 1) / 2 || m2 === (plotSize + 1) / 2)) {
+          land.type = LandType.City;
+          land.amount = cityAmount;
+        } else {
+          land.type = LandType.Mountain;
+        }
+      } else if ((m1 === 2 && m2 === 2) || (m1 === 0 && m2 === 0)) {
+        land.type = LandType.City;
+        land.amount = 1;
+      } else if (m1 === (plotSize + 1) / 2 && m2 === (plotSize + 1) / 2) {
+        homes.push([i, j] as Pos);
+      }
+    }
+  }
+
+  shuffle(homes);
+
+  for (let i = 1; i <= playerCount; i++) {
+    let pos = homes.shift() as Pos;
+    map.get(pos).color = i;
+    map.get(pos).type = LandType.General;
+    map.get(pos).amount = 1;
+  }
+
+  return map;
+}
+
+export function generateMap(playerCount: number, mode: MapMode, map: RoomMap) {
   switch (map) {
     case RoomMap.Random: {
-      return generateRandomMap(playerCount, mode, challenge);
+      return generateRandomMap(playerCount, mode);
     }
     case RoomMap.Empty: {
       return generateEmptyMap(playerCount, mode);
     }
     case RoomMap.Maze: {
       return generateMazeMap(playerCount, mode);
+    }
+    case RoomMap.Plot: {
+      return generatePlotMap(playerCount, mode);
     }
   }
 }

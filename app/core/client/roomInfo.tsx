@@ -42,7 +42,7 @@ export function RoomInfo({ client, rid }: { client?: ClientSocket, rid: string }
     return (
       <List.Content>
         <strong>{translations[item]}</strong>
-        <div title={canVote ? "进人投票" : "旁观玩家无法投票"}
+        <div title={canVote ? "进入投票" : "旁观玩家无法投票"}
              className={clsx(canVote && "cursor-pointer hover:underline", "float-right")}
              onClick={canVote ? () => setType(item) : undefined}>
           {voteData?.ans[item]}
@@ -86,12 +86,12 @@ export function RoomInfo({ client, rid }: { client?: ClientSocket, rid: string }
           </List>
         </>
       ) : (
-        <Table inverted compact singleLine size="large">
+        <Table inverted compact singleLine size="large" unstackable textAlign="center" className="select-none">
           <Table.Header>
             <Table.Row>
               <Table.HeaderCell>玩家</Table.HeaderCell>
-              <Table.HeaderCell>领地</Table.HeaderCell>
               <Table.HeaderCell>兵力</Table.HeaderCell>
+              <Table.HeaderCell>领地</Table.HeaderCell>
             </Table.Row>
           </Table.Header>
 
@@ -99,9 +99,9 @@ export function RoomInfo({ client, rid }: { client?: ClientSocket, rid: string }
             {rank.map(([color, player, land, army]) => (
               <Table.Row key={player}>
                 <td className={clsx(player === user.username && "font-bold")}
-                    style={color === -1 ? undefined : { color: colors[color] }}>{player}</td>
-                <Table.Cell>{land}</Table.Cell>
+                    style={color === -1 ? undefined : { background: colors[color] }}>{player}</td>
                 <Table.Cell>{army}</Table.Cell>
+                <Table.Cell>{land}</Table.Cell>
               </Table.Row>
             ))}
           </Table.Body>

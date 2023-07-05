@@ -5,12 +5,14 @@ import general from "static/general.png";
 import mountain from "static/mountain.png";
 import obstacle from "static/obstacle.png";
 import type { ISettings } from "~/core/client/settings";
-import { getSettings } from "~/core/client/settings";
+import { Controls, getSettings } from "~/core/client/settings";
 import { formatLargeNumber, getPileSizeByScale, getScaleByPileSize } from "~/core/client/utils";
 import { LandType } from "~/core/server/game/land";
 import type { Pos } from "~/core/server/game/utils";
 
 import { Map, MapMode } from "../server/game/map";
+
+const MIN_PILE_SIZE = 50;
 
 export class Renderer {
   gm: Map = new Map();
@@ -50,6 +52,8 @@ export class Renderer {
 
   private lastSelected: Pos[] = [];
 
+  isTouch: boolean = false;
+
   constructor(canvas: HTMLCanvasElement) {
     this.app = new PIXI.Application({
       antialias: true,
@@ -61,26 +65,33 @@ export class Renderer {
 
     this.app.stage.addChild(this.graphics);
 
-    canvas.onwheel = event => {
-      event.preventDefault();
+    const settings = getSettings();
+    this.settings = settings;
+    this.isTouch = settings.game.controls === Controls.Touch || (settings.game.controls === Controls.Auto && document.body.clientWidth < 640);
 
-      const newScale = this.scale + (event.deltaY > 0 ? -1 : 1);
-      if (newScale >= 1 && newScale <= 15) {
-        this.scale = newScale;
-        this.redraw();
-      }
-    };
+    if (!this.isTouch) {
+      canvas.onwheel = event => {
+        event.preventDefault();
+
+        const newScale = this.scale + (event.deltaY > 0 ? -1 : 1);
+        if (newScale >= 1 && newScale <= 15) {
+          this.scale = newScale;
+          this.redraw();
+        }
+      };
+    }
 
     canvas.onpointerdown = event => {
       const startX = event.pageX, startY = event.pageY;
       const initialStartX = this.startX, initialStartY = this.startY;
       let flag = false;
 
-      canvas.onpointermove = event => {
+      document.onpointermove = event => {
         const deltaX = event.pageX - startX, deltaY = event.pageY - startY;
 
-        if (Math.abs(deltaX) > 20 || Math.abs(deltaY) > 20) {
+        if (!flag && (Math.abs(deltaX) > 20 || Math.abs(deltaY) > 20)) {
           flag = true;
+          document.body.setAttribute("style", "user-select: none");
         }
 
         if (!flag) {
@@ -93,84 +104,84 @@ export class Renderer {
         this.redraw();
       };
 
-      canvas.onpointerup = event => {
+      document.onpointerup = event => {
         event.preventDefault();
-        canvas.onpointermove = canvas.onpointerup = null;
+        document.body.removeAttribute("style");
+        document.onpointermove = document.onpointerup = null;
       };
     };
 
-    const settings = getSettings();
-    this.settings = settings;
-
-    document.onkeydown = event => {
-      if (document.activeElement !== document.body) {
-        return;
-      }
-
-      const eventKey = event.key === " " ? "Space" : event.key.toUpperCase();
-
-      const keys = settings.game.keys[this.gm.mode];
-      for (let [index, key] of keys.move.entries()) {
-        if (key === eventKey && this.selected) {
-          event.preventDefault();
-
-          const from = this.selected;
-          const dir = this.gm.dir(from)[index];
-          const to = [from[0] + dir[0], from[1] + dir[1]] as Pos;
-
-          if (this.gm.check(to) && this.gm.accessible(to)) {
-            if (this.handleMove(from, to) === false) {
-              return;
-            }
-
-            this.lastSelected.push(from);
-            this.select(to);
-          }
-
+    if (!this.isTouch) {
+      document.onkeydown = event => {
+        if (document.activeElement !== document.body) {
           return;
         }
-      }
 
-      if (eventKey === keys.splitArmy) {
-        event.preventDefault();
-        this.handleSplitArmy();
-      } else if (eventKey === keys.clearMovements) {
-        event.preventDefault();
-        this.handleClearMovements();
-      } else if (eventKey === keys.undoMovement) {
-        event.preventDefault();
-        const lastSelected = this.lastSelected.pop();
-        lastSelected && this.select(lastSelected);
-        this.handleUndoMovement();
-      } else if (eventKey === keys.selectHome) {
-        event.preventDefault();
-        for (let i = 1; i <= this.gm.height; i++) {
-          for (let j = 1; j <= this.gm.width; j++) {
-            const land = this.gm.get([i, j]);
-            if (land.color === this.myColor && land.type === LandType.General) {
-              this.select([i, j]);
-              return;
+        const eventKey = event.key === " " ? "Space" : event.key.toUpperCase();
+
+        const keys = settings.game.keys[this.gm.mode];
+        for (let [index, key] of keys.move.entries()) {
+          if (key === eventKey && this.selected) {
+            event.preventDefault();
+
+            const from = this.selected;
+            const dir = this.gm.dir(from)[index];
+            const to = [from[0] + dir[0], from[1] + dir[1]] as Pos;
+
+            if (this.gm.check(to) && this.gm.accessible(to)) {
+              if (this.handleMove(from, to) === false) {
+                return;
+              }
+
+              this.lastSelected.push(from);
+              this.select(to);
             }
+
+            return;
           }
         }
-      } else if (eventKey === keys.selectTopLeft) {
-        event.preventDefault();
-        for (let i = 1; i <= this.gm.height; i++) {
-          for (let j = 1; j <= this.gm.width; j++) {
-            if (this.gm.get([i, j]).color === this.myColor) {
-              this.select([i, j]);
-              return;
+
+        if (eventKey === keys.splitArmy) {
+          event.preventDefault();
+          this.handleSplitArmy();
+        } else if (eventKey === keys.clearMovements) {
+          event.preventDefault();
+          this.handleClearMovements();
+        } else if (eventKey === keys.undoMovement) {
+          event.preventDefault();
+          const lastSelected = this.lastSelected.pop();
+          lastSelected && this.select(lastSelected);
+          this.handleUndoMovement();
+        } else if (eventKey === keys.selectHome) {
+          event.preventDefault();
+          for (let i = 1; i <= this.gm.height; i++) {
+            for (let j = 1; j <= this.gm.width; j++) {
+              const land = this.gm.get([i, j]);
+              if (land.color === this.myColor && land.type === LandType.General) {
+                this.select([i, j]);
+                return;
+              }
             }
           }
+        } else if (eventKey === keys.selectTopLeft) {
+          event.preventDefault();
+          for (let i = 1; i <= this.gm.height; i++) {
+            for (let j = 1; j <= this.gm.width; j++) {
+              if (this.gm.get([i, j]).color === this.myColor) {
+                this.select([i, j]);
+                return;
+              }
+            }
+          }
+        } else if (eventKey === keys.surrender) {
+          event.preventDefault();
+          this.handleSurrender();
         }
-      } else if (eventKey === keys.surrender) {
-        event.preventDefault();
-        this.handleSurrender();
-      }
-    };
+      };
+    }
   }
 
-  private getStartPos() {
+  private setStartPos() {
     let realWidth, realHeight;
 
     switch (this.gm.mode) {
@@ -186,7 +197,21 @@ export class Renderer {
       }
     }
 
-    return [(this.app.view.width - realWidth) / 2, (this.app.view.height - realHeight) / 2];
+    [this.startX, this.startY] = [(this.app.view.width - realWidth) / 2, (this.app.view.height - realHeight) / 2];
+
+    if (this.pileSize <= MIN_PILE_SIZE + 0.1) {
+      for (let i = 1; i <= this.gm.height; i++) {
+        for (let j = 1; j <= this.gm.width; j++) {
+          if (this.gm.get([i, j]).color === this.myColor && this.gm.get([i, j]).type === LandType.General) {
+            const [gx, gy] = this.getPileCenterPos([i, j]);
+            this.startX += this.app.view.width / 2 - gx;
+            this.startY += this.app.view.height / 2 - gy;
+            i = this.gm.height;
+            break;
+          }
+        }
+      }
+    }
   }
 
   private setDefaultScale() {
@@ -206,11 +231,12 @@ export class Renderer {
       }
     }
 
-    this.pileSize = Math.min(maxXWidth, maxYWidth);
+    this.pileSize = Math.max(MIN_PILE_SIZE, Math.min(maxXWidth, maxYWidth));
+
     this.scale = getScaleByPileSize(this.pileSize);
     this.pileSize = getPileSizeByScale(this.scale);
 
-    [this.startX, this.startY] = this.getStartPos();
+    this.setStartPos();
   }
 
   private resize() {
@@ -234,6 +260,11 @@ export class Renderer {
         return [this.startX + (j - 1) * this.pileSize, this.startY + (i - 1) * this.pileSize];
       }
     }
+  }
+
+  private getPileCenterPos(pos: Pos) {
+    const [ux, uy] = this.getPileUpperLeftPos(pos);
+    return [ux + this.pileSize / 2, uy + this.pileSize / 2];
   }
 
   private getPilePath(pos: Pos) {
@@ -456,6 +487,10 @@ export class Renderer {
       hit.cursor = "pointer";
       hit.eventMode = "static";
       hit.on("pointerup", () => {
+        if (document.body.hasAttribute("style")) {
+          return;
+        }
+
         this.select(pos);
         this.lastSelected = [];
         this.handleSelect();
@@ -510,7 +545,7 @@ export class Renderer {
     this.addHitAreas();
     this.addExtraTexts();
 
-    this.selected = null;
+    this.unSelect();
 
     this.setDefaultScale();
     this.redraw();

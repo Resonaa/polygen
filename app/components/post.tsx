@@ -82,14 +82,14 @@ export default function Post({
           {link ? (
             <>
               <Link to={postUrl}><Icon name="eye" />{views}</Link>
-              <Link to={postUrl} className="!ml-10"><Icon name="comment" />{commentAmount}</Link>
+              <Link to={postUrl} className="!ml-8"><Icon name="comment" />{commentAmount}</Link>
             </>) : (
             <>
               <Icon name="eye" />{views}
-              <Icon name="comment" className="!ml-10" />{commentAmount}
+              <Icon name="comment" className="!ml-8" />{commentAmount}
             </>)}
 
-          <Feed.Like className={`!ml-10 ${favour ? "active" : ""}`} onClick={async () => {
+          <Feed.Like className={`!ml-8 ${favour ? "active" : ""}`} onClick={async () => {
             if (favour || !user)
               return;
 

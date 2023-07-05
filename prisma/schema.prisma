@@ -20,8 +20,6 @@ model User {
   bio       String @default("")
 
   favouredPosts Post[] @relation("favour")
-
-  score     Score?
 }
 
 model Announcement {
@@ -57,16 +55,4 @@ model Comment {
 
   parent   Post @relation(fields: [parentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   parentId Int
-}
-
-model Score {
-  id      Int @id @default(autoincrement())
-
-  user     User   @relation(fields: [username], references: [username], onDelete: Cascade, onUpdate: Cascade)
-  username String @unique
-
-  turns    Int
-  speed    Float
-  score    Float
-  updatedAt DateTime @updatedAt
 }

@@ -87,3 +87,11 @@ export async function updateAvatarByUsername(username: User["username"], avatar:
 
   return fs.writeFile(path.join(process.cwd(), `usercontent/avatar/${username}.webp`), await img.toBuffer());
 }
+
+export function rankList() {
+  return prisma.user.findMany({
+    orderBy: { createdAt: "desc" },
+    select: { username: true, createdAt: true },
+    take: 10
+  });
+}

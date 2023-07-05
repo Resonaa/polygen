@@ -66,3 +66,11 @@ canvas {
 #ready:focus {
   box-shadow: unset !important;
 }
+
+.ui.compact.table th {
+  padding: .5em .7em !important;
+}
+
+.progress .bar {
+  min-width: unset !important;
+}
