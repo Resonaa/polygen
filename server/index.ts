@@ -32,8 +32,7 @@ import { setServer } from "~/core/server";
     const cert = await fs.readFile(SSL_CERT);
     const key = await fs.readFile(SSL_KEY);
     app = fastify({
-      http2: true,
-      https: { key, cert, allowHTTP1: true },
+      https: { key, cert },
       ...logger
     });
 
@@ -48,7 +47,8 @@ import { setServer } from "~/core/server";
   await app.register(remixFastifyPlugin, {
     build,
     mode: MODE,
-    purgeRequireCacheInDevelopment: false
+    purgeRequireCacheInDevelopment: false,
+    unstable_earlyHints: true,
   });
   await app.register(fastifySocketIO);
 
