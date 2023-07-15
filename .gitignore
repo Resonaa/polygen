@@ -3,7 +3,7 @@ node_modules
 /.idea
 
 /build
-/public
+/public/build
 /server/build
 /server/index.js
 .env
