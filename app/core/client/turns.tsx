@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Segment, Progress } from "semantic-ui-react";
+import { Segment } from "semantic-ui-react";
 
 import type { ClientSocket } from "~/core/types";
 
@@ -18,11 +18,7 @@ export function Turns({ client }: { client?: ClientSocket }) {
 
   return (
     <Segment inverted size="large">
-      {turns > 0 &&
-        <>
-          回合 {turns}
-          <Progress percent={turns % 25 * 4} attached="bottom" active indicating />
-        </>}
+      {turns > 0 && <>回合 {turns}</>}
     </Segment>
   );
 }

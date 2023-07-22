@@ -13,9 +13,10 @@ import { useEffect, useRef, useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 import { Divider, Grid, Icon, Statistic, Feed, Pagination, Button, Form } from "semantic-ui-react";
 
-import { formatDate, relativeDate } from "~/components/community";
+import { formatDate, relativeDate, Star } from "~/components/community";
 import Layout from "~/components/layout";
 import Post from "~/components/post";
+import { formatStar } from "~/core/client/utils";
 import { getPostsByUsername } from "~/models/post.server";
 import {
   getStatsByUsername,
@@ -193,7 +194,17 @@ export default function User() {
       </Grid.Column>
       <Grid.Column width={12}>
         <div ref={anchor} />
-        <Statistic.Group className="justify-center">
+        <Statistic.Group className="justify-center" size="small">
+          {stats.star && stats.rank && (
+            <Statistic>
+              <Statistic.Value>
+                <span title={stats.star.toString()}>
+                  <Star />{formatStar(stats.star, 2)}
+                </span>
+              </Statistic.Value>
+              <Statistic.Label>#{stats.rank}</Statistic.Label>
+            </Statistic>
+          )}
           <Statistic>
             <Statistic.Value>{stats.posts}</Statistic.Value>
             <Statistic.Label>说说</Statistic.Label>

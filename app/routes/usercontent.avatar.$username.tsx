@@ -7,11 +7,10 @@ import { USERCONTENT_DIR } from "~/const";
 
 const defaultAvatar = fs.readFileSync("./static/defaultAvatar.webp");
 
-export async function loader({ params }: LoaderArgs) {
-  const headers = {
-    "Cache-Control": "public, max-age=3600"
-  };
+const headers = new Headers();
+headers.append("Cache-Control", "public, max-age=3600");
 
+export async function loader({ params }: LoaderArgs) {
   try {
     return new Response(await fs.readFile(path.join(USERCONTENT_DIR, "avatar", params.username ? params.username : "")), { headers });
   } catch (_) {

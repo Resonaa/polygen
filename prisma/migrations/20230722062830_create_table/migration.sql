@@ -37,6 +37,14 @@ CREATE TABLE "Comment" (
 );
 
 -- CreateTable
+CREATE TABLE "Star" (
+    "star" REAL NOT NULL DEFAULT 0,
+    "updatedAt" DATETIME NOT NULL,
+    "username" TEXT NOT NULL,
+    CONSTRAINT "Star_username_fkey" FOREIGN KEY ("username") REFERENCES "User" ("username") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- CreateTable
 CREATE TABLE "_favour" (
     "A" INTEGER NOT NULL,
     "B" INTEGER NOT NULL,
@@ -46,6 +54,9 @@ CREATE TABLE "_favour" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Star_username_key" ON "Star"("username");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "_favour_AB_unique" ON "_favour"("A", "B");

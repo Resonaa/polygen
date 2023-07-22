@@ -50,3 +50,7 @@ export function formatLargeNumber(x: number) {
     return `${(x / 1000000).toFixed(2)}m`;
   }
 }
+
+export function Star() {
+  return <span className="text-[#ffd700]">★</span>;
+}

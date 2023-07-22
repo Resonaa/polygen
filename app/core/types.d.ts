@@ -9,7 +9,7 @@ import type { MaxVotedItems, VoteData, VoteItem, VoteValue } from "~/core/server
 
 interface Patch {
   updates: [number, Partial<MaybeLand>][],
-  rank: [LandColor, string, number, number][]
+  rank: [number | null, LandColor, string, number, number][]
 }
 
 interface ServerToClientEvents {

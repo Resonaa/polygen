@@ -2,6 +2,7 @@ import path from "path";
 import * as process from "process";
 
 import compress from "@fastify/compress";
+import fastifyRateLimit from "@fastify/rate-limit";
 import { remixFastifyPlugin } from "@mcansh/remix-fastify";
 import { broadcastDevReady } from "@remix-run/node";
 import fastify from "fastify";
@@ -39,6 +40,12 @@ import { setServer } from "~/core/server";
     await app.register(httpsRedirect);
   } else {
     app = fastify(logger);
+    if (MODE === "production") {
+      await app.register(fastifyRateLimit, {
+        max: 150,
+        timeWindow: "1 minute"
+      });
+    }
   }
 
   const build = require(BUILD_DIR);
@@ -55,9 +62,8 @@ import { setServer } from "~/core/server";
   await app.listen({ port: MODE === "production" && SSL_KEY && SSL_CERT ? 443 : 80, host: "0.0.0.0" });
 
   if (MODE === "development") {
-    broadcastDevReady(build);
+    await broadcastDevReady(build);
   }
 
   setServer(app.io);
-})
-();
+})();

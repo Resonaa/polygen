@@ -1,3 +1,5 @@
+import _ from "lodash";
+
 export function randInt(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
@@ -50,4 +52,8 @@ export function formatLargeNumber(n: number): string {
   }
 
   return text;
+}
+
+export function formatStar(star: number, precision?: number) {
+  return _.round(star, precision).toFixed(precision);
 }

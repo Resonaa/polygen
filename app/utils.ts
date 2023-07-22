@@ -217,3 +217,71 @@ export function numberColorToString(color: number) {
 export function stringColorToNumber(color: string) {
   return Number(color.replace("#", "0x"));
 }
+
+export function calcStarDeltas(stars: number[]) {
+  const starRate = 30;
+
+  function starToRating(star: number) {
+    return star * starRate;
+  }
+
+  function ratingToStar(rating: number) {
+    return rating / starRate;
+  }
+
+  let ratings = stars.map(starToRating);
+
+  function p(ri: number, rj: number) {
+    return 1 / (1 + Math.pow(10, (rj - ri) / 400));
+  }
+
+  function seed(i: number, ri: number) {
+    let seed = 1;
+
+    for (let j = 0; j < ratings.length; j++) {
+      if (i != j) {
+        seed += p(ratings[j], ri);
+      }
+    }
+
+    return seed;
+  }
+
+  let deltas: number[] = [];
+
+  for (let i = 0; i < ratings.length; i++) {
+    let m = Math.sqrt(seed(i, ratings[i]) * (i + 1));
+
+    let l = -10000, r = 10000, ans = 0;
+    const eps = 1e-8;
+    while (r - l > eps) {
+      let mid = (l + r) / 2;
+      let d = seed(i, mid) - m;
+
+      if (d < -eps) {
+        r = mid;
+      } else if (d > eps) {
+        l = mid;
+      } else {
+        ans = mid;
+        break;
+      }
+    }
+
+    deltas.push((ans - ratings[i]) / 2);
+  }
+
+  let sum = deltas.reduce((a, b) => a + b);
+  let inc = (-1 - sum) / ratings.length;
+  deltas = deltas.map(delta => delta + inc);
+
+  const s = Math.min(Math.floor(Math.sqrt(ratings.length) * 4), ratings.length);
+  sum = deltas.slice(0, s).reduce((a, b) => a + b);
+
+  inc = Math.min(Math.max(-sum / s, -10), 0);
+  deltas = deltas.map(delta => delta + inc);
+
+  ratings = ratings.map((rating, index) => rating + deltas[index]);
+  const newStars = ratings.map(ratingToStar);
+  return newStars.map((newStar, index) => newStar - stars[index]);
+}

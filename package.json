@@ -4,19 +4,23 @@
   "scripts": {
     "build": "remix build",
     "dev": "remix dev -c \"ts-node -r tsconfig-paths/register server/index.ts --files\"",
-    "start": "cross-env NODE_ENV=production ts-node -r tsconfig-paths/register server/index.ts --files",
-    "typecheck": "tsc -b",
     "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint .",
+    "migrate": "npx prisma migrate dev",
     "setup": "prisma generate && prisma migrate deploy && prisma db seed",
-    "migrate": "npx prisma migrate dev"
+    "start": "cross-env NODE_ENV=production ts-node -r tsconfig-paths/register server/index.ts --files",
+    "typecheck": "tsc -b"
   },
   "eslintIgnore": [
-    "/node_modules",
     "/build",
+    "/node_modules",
     "/public/build",
     "/server/build"
   ],
   "dependencies": {
+    "@fastify/compress": "latest",
+    "@fastify/one-line-logger": "latest",
+    "@fastify/rate-limit": "latest",
+    "@mcansh/remix-fastify": "latest",
     "@prisma/client": "latest",
     "@remix-run/node": "latest",
     "@remix-run/react": "latest",
@@ -24,10 +28,14 @@
     "clsx": "latest",
     "cross-env": "latest",
     "dotenv": "latest",
+    "fastify": "latest",
+    "fastify-https-redirect": "latest",
+    "fastify-socket.io": "latest",
     "fs-extra": "latest",
     "highlight.js": "latest",
     "isbot": "latest",
     "katex": "latest",
+    "lodash": "latest",
     "lz-string": "latest",
     "pixi.js": "latest",
     "react": "latest",
@@ -42,13 +50,7 @@
     "tiny-invariant": "latest",
     "ts-node": "latest",
     "typescript": "latest",
-    "vditor": "latest",
-    "fastify": "latest",
-    "@mcansh/remix-fastify": "latest",
-    "@fastify/one-line-logger": "latest",
-    "fastify-socket.io": "latest",
-    "@fastify/compress": "latest",
-    "fastify-https-redirect": "latest"
+    "vditor": "latest"
   },
   "devDependencies": {
     "@remix-run/dev": "latest",
@@ -57,14 +59,15 @@
     "@types/eslint": "latest",
     "@types/fs-extra": "latest",
     "@types/katex": "latest",
+    "@types/lodash": "latest",
     "@types/node": "latest",
     "@types/react": "latest",
     "@types/react-dom": "latest",
-    "types-fastify-socket.io": "latest",
     "eslint": "latest",
     "prisma": "latest",
     "tailwindcss": "latest",
-    "tsconfig-paths": "latest"
+    "tsconfig-paths": "latest",
+    "types-fastify-socket.io": "latest"
   },
   "engines": {
     "node": ">=14"

@@ -3,19 +3,19 @@
 ## 使用方法
 
 - 将 `.env.example` 复制为 `.env`，并填写其中配置项
-  ```shell
+  ```sh
   cp ./.env.example ./.env
   ```
 - 安装依赖项
-  ```shell
+  ```sh
   npm i
   ```
 - 初始化数据库
-  ```shell
+  ```sh
   npm run setup
   ```
 - 构建并运行
-  ```shell
+  ```sh
   npm run build
   npm run start
   ```

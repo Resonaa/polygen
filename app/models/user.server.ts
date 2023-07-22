@@ -7,6 +7,7 @@ import fs from "fs-extra";
 import sharp from "sharp";
 
 import { prisma } from "~/db.server";
+import { getRank } from "~/models/star.server";
 import { comparePassword, hashPassword } from "~/session.server";
 
 export type { User } from "@prisma/client";
@@ -31,7 +32,11 @@ export async function getStatsByUsername(username: User["username"]) {
     where: { username },
     include: { _count: { select: { comments: true, posts: true } } }
   });
-  return { posts: data?._count.posts, comments: data?._count.comments };
+  const rank = await getRank(username);
+  return {
+    posts: data?._count.posts, comments: data?._count.comments,
+    rank: rank?.rank, star: rank?.star?.star
+  };
 }
 
 export async function createUser(username: User["username"], password: string) {
@@ -86,12 +91,4 @@ export async function updateAvatarByUsername(username: User["username"], avatar:
   }
 
   return fs.writeFile(path.join(process.cwd(), `usercontent/avatar/${username}.webp`), await img.toBuffer());
-}
-
-export function rankList() {
-  return prisma.user.findMany({
-    orderBy: { createdAt: "desc" },
-    select: { username: true, createdAt: true },
-    take: 10
-  });
 }

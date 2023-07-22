@@ -3,6 +3,8 @@ import LZString from "lz-string";
 import { useEffect, useState } from "react";
 import { Header, List, Table } from "semantic-ui-react";
 
+import { Star } from "~/components/community";
+import { formatStar } from "~/core/client/utils";
 import { Vote } from "~/core/client/vote";
 import type { LandColor } from "~/core/server/game/land";
 import type { MaxVotedItems, VoteData, VoteItem } from "~/core/server/vote";
@@ -14,7 +16,7 @@ import { getSettings, Settings } from "../client/settings";
 
 export function RoomInfo({ client, rid }: { client?: ClientSocket, rid: string }) {
   const copyLink = () => window.navigator.clipboard.writeText(window.location.href);
-  const [rank, setRank] = useState<[LandColor, string, number, number][]>([]);
+  const [rank, setRank] = useState<[number | null, LandColor, string, number, number][]>([]);
   const [voteData, setVoteData] = useState<{ data: VoteData, ans: MaxVotedItems }>();
   const [type, setType] = useState<VoteItem>();
   const [teamData, setTeamData] = useState<[number, string[]][]>([[0, []]]);
@@ -89,6 +91,7 @@ export function RoomInfo({ client, rid }: { client?: ClientSocket, rid: string }
         <Table inverted compact singleLine size="large" unstackable textAlign="center" className="select-none">
           <Table.Header>
             <Table.Row>
+              <Table.HeaderCell><Star /></Table.HeaderCell>
               <Table.HeaderCell>玩家</Table.HeaderCell>
               <Table.HeaderCell>兵力</Table.HeaderCell>
               <Table.HeaderCell>领地</Table.HeaderCell>
@@ -96,9 +99,10 @@ export function RoomInfo({ client, rid }: { client?: ClientSocket, rid: string }
           </Table.Header>
 
           <Table.Body>
-            {rank.map(([color, player, land, army]) => (
+            {rank.map(([star, color, player, land, army]) => (
               <Table.Row key={player}>
-                <td className={clsx(player === user.username && "font-bold")}
+                {star && <Table.Cell>{formatStar(star)}</Table.Cell>}
+                <td className={clsx(player === user.username && "font-bold")} colSpan={star ? 1 : 2}
                     style={color === -1 ? undefined : { background: colors[color] }}>{player}</td>
                 <Table.Cell>{army}</Table.Cell>
                 <Table.Cell>{land}</Table.Cell>

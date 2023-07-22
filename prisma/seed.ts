@@ -12,6 +12,7 @@ import { hashPassword } from "~/session.server";
 const prisma = new PrismaClient();
 
 async function seed() {
+  await prisma.star.deleteMany({});
   await prisma.user.deleteMany({});
   await prisma.post.deleteMany({});
   await prisma.announcement.deleteMany({});
