@@ -186,11 +186,11 @@ export class Room {
       this.gameTeams.set(color, this.playerToTeam(player));
     }
 
-    this.teamsInGame = new Map(JSON.parse(JSON.stringify(Array.from(this.teams.entries()))));
+    this.teamsInGame = _.cloneDeep(this.teams);
   }
 
-  playerToColor(player: string, colors: Room["colors"] = this.colors) {
-    for (let [color, username] of colors) {
+  playerToColor(player: string) {
+    for (let [color, username] of this.colors) {
       if (username === player) {
         return color;
       }
@@ -676,6 +676,11 @@ export class RoomManager {
     }
 
     const deadColor = room.playerToColor(deadPlayer);
+
+    if (deadColor === 0) {
+      return;
+    }
+
     const team = room.gameTeams.get(deadColor) as TeamId;
     let teamDied = true;
     for (let [color,] of room.colors) {
