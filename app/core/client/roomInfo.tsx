@@ -101,8 +101,8 @@ export function RoomInfo({ client, rid }: { client?: ClientSocket, rid: string }
           <Table.Body>
             {rank.map(([star, color, player, land, army]) => (
               <Table.Row key={player}>
-                {star && <Table.Cell>{formatStar(star)}</Table.Cell>}
-                <td className={clsx(player === user.username && "font-bold")} colSpan={star ? 1 : 2}
+                {star !== null && <Table.Cell>{formatStar(star)}</Table.Cell>}
+                <td className={clsx(player === user.username && "font-bold")} colSpan={star !== null ? 1 : 2}
                     style={color === -1 ? undefined : { background: colors[color] }}>{player}</td>
                 <Table.Cell>{army}</Table.Cell>
                 <Table.Cell>{land}</Table.Cell>

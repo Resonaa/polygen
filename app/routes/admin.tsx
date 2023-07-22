@@ -22,7 +22,7 @@ function AdminMenu() {
   }
 
   return (
-    <Menu vertical fluid tabular size="large">
+    <Menu vertical fluid tabular size="huge">
       <Menu.Item>
         用户
         <Menu.Menu>
@@ -31,7 +31,7 @@ function AdminMenu() {
         </Menu.Menu>
       </Menu.Item>
 
-      <Menu.Item>
+      <Menu.Item className="!pt-0">
         社区
         <Menu.Menu>
           <AdminItem id="post" name="说说管理" />
@@ -39,14 +39,14 @@ function AdminMenu() {
         </Menu.Menu>
       </Menu.Item>
 
-      <Menu.Item>
+      <Menu.Item className="!pt-0">
         游戏
         <Menu.Menu>
           <AdminItem id="room" name="房间管理" />
         </Menu.Menu>
       </Menu.Item>
 
-      <Menu.Item>
+      <Menu.Item className="!pt-0">
         高级
         <Menu.Menu>
           <AdminItem id="server" name="服务器管理" />

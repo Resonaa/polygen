@@ -22,7 +22,7 @@ function SettingsMenu() {
   }
 
   return (
-    <Menu vertical fluid tabular size="large">
+    <Menu vertical fluid tabular size="huge">
       <Menu.Item>
         游戏
         <Menu.Menu>

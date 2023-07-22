@@ -1,13 +1,5 @@
 import _ from "lodash";
 
-export function randInt(min: number, max: number) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-export function shuffle(array: Array<any>) {
-  array.sort(() => Math.random() - 0.5);
-}
-
 export function getPileSizeByScale(scale: number) {
   return 0.1058 * scale * scale * scale - 0.9028 * scale * scale + 6.7619 * scale + 4.5391;
 }

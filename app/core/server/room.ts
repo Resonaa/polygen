@@ -1,6 +1,6 @@
+import _ from "lodash";
 import LZString from "lz-string";
 
-import { shuffle } from "~/core/client/utils";
 import { generateMap } from "~/core/server/game/generator";
 import type { LandColor, MaybeLand } from "~/core/server/game/land";
 import { LandType } from "~/core/server/game/land";
@@ -178,7 +178,7 @@ export class Room {
 
     this.gm = generateMap(this.gamingPlayers.size, this.voteAns.mode, this.voteAns.map);
 
-    shuffle(players);
+    players = _.shuffle(players);
 
     this.colors = new Map(Array.from(players.entries()).map(([color, player]) => [color + 1, player]));
     this.gameTeams.clear();
@@ -784,13 +784,13 @@ export class RoomManager {
             sum += room.stars.get(username) as number;
             cnt++;
           }
-          stars.push(sum);
+          stars.push(sum * Math.sqrt(cnt));
           playerCounts.push(cnt);
         }
         const deltas = calcStarDeltas(stars).map((delta, index) => delta / playerCounts[index]);
         for (const [index, teamId] of room.ranks.entries()) {
           for (const username of (room.teamsInGame.get(teamId) as string[])) {
-            await updateStar(username, deltas[index]);
+            await updateStar(username, Math.max(deltas[index], -stars[index]));
           }
         }
       }

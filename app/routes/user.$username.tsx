@@ -194,8 +194,8 @@ export default function User() {
       </Grid.Column>
       <Grid.Column width={12}>
         <div ref={anchor} />
-        <Statistic.Group className="justify-center" size="small">
-          {stats.star && stats.rank && (
+        {stats.star && stats.rank && (
+          <Statistic.Group className="justify-center" size="small">
             <Statistic>
               <Statistic.Value>
                 <span title={stats.star.toString()}>
@@ -204,7 +204,10 @@ export default function User() {
               </Statistic.Value>
               <Statistic.Label>#{stats.rank}</Statistic.Label>
             </Statistic>
-          )}
+          </Statistic.Group>
+        )}
+
+        <Statistic.Group className="justify-center" size="small">
           <Statistic>
             <Statistic.Value>{stats.posts}</Statistic.Value>
             <Statistic.Label>说说</Statistic.Label>

@@ -222,11 +222,11 @@ export default function PostId() {
       </Grid.Column>
 
       <Grid.Column width={4}>
-        <Header as="h4" attached="top" block>
+        <Header as="h4" attached="top" block size="large">
           <Icon name="info" className="!text-base !align-baseline" />
           说说信息
         </Header>
-        <Segment attached="bottom">
+        <Segment attached="bottom" size="large">
           <List relaxed>
             <List.Item>
               <strong>楼主</strong>

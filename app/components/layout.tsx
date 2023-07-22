@@ -61,13 +61,13 @@ export default function Layout({ columns, children }: { columns: SemanticWIDTHS,
 
                   <Dropdown.Divider />
 
+                  <Dropdown.Item as="a" onClick={() => refButton.current?.click()}>
+                    <Icon name="sign out alternate" />登出
+                  </Dropdown.Item>
+
                   <Form action="/logout" method="post">
                     <button ref={refButton} type="submit" className="hidden" />
                     <input type="hidden" name="redirectTo" value={location} />
-
-                    <Dropdown.Item as="a" onClick={() => refButton.current?.click()}>
-                      <Icon name="sign out alternate" />登出
-                    </Dropdown.Item>
                   </Form>
                 </Dropdown.Menu>
               </Dropdown>

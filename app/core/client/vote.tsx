@@ -39,15 +39,15 @@ export function Vote({ client, voteData, type, setType }: {
       <Modal.Header>投票选择{type ? translations[type] : undefined}</Modal.Header>
       <Modal.Content scrolling>
         <Modal.Description>
-          <Header as="h4" inverted textAlign="center">当前投票</Header>
-          <List divided inverted relaxed selection animated>
+          <Header as="h3" inverted textAlign="center">当前投票</Header>
+          <List divided inverted relaxed selection animated size="large">
             {voteData && type && voteData.data[type]?.map(([value, players]) => (
               <Item key={value} value={value} players={players} />
             ))}
           </List>
           <Divider inverted />
-          <Header as="h4" inverted textAlign="center">所有{type ? translations[type] : undefined}</Header>
-          <List divided inverted relaxed selection animated>
+          <Header as="h3" inverted textAlign="center">所有{type ? translations[type] : undefined}</Header>
+          <List divided inverted relaxed selection animated size="large">
             {(() => {
               if (!voteData || !type) {
                 return <></>;

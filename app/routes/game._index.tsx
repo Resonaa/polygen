@@ -50,7 +50,7 @@ export default function Index() {
       <Grid.Column width={13}>
         <Header as="h3">加入房间</Header>
 
-        <Table celled selectable unstackable>
+        <Table celled selectable unstackable size="large">
           <Table.Header>
             <Table.Row>
               {["名称", "模式", "地图", "玩家"].map(s => <Table.HeaderCell content={s} key={s} />)}
@@ -62,13 +62,13 @@ export default function Index() {
               <Table.Row key={room.id} title={user ? "点击加入" : "登录后加入"} onClick={() =>
                 user && window.open("/game/" + encodeURIComponent(room.id))
               } className={clsx(user && "cursor-pointer", "room-" + (room.ongoing ? "ongoing" : "ready"))}>
-                <Table.Cell width={3}>
+                <Table.Cell>
                   {room.rated && <Label color="orange" horizontal size="tiny" content="Rated" />}
                   {room.id}
                 </Table.Cell>
-                <Table.Cell width={2}>{room.mode}</Table.Cell>
-                <Table.Cell width={2}>{room.map}</Table.Cell>
-                <Table.Cell width={9}><PlayerListString players={room.players} /></Table.Cell>
+                <Table.Cell>{room.mode}</Table.Cell>
+                <Table.Cell>{room.map}</Table.Cell>
+                <Table.Cell><PlayerListString players={room.players} /></Table.Cell>
               </Table.Row>
             ))}
           </Table.Body>
@@ -79,7 +79,7 @@ export default function Index() {
         <Header as="h3">创建房间</Header>
 
         {user ? (
-          <Form>
+          <Form size="large">
             <Form.Input label="名称" placeholder="名称" type="text" onChange={(_, { value }) => setId(value)} />
 
             <Button primary onClick={() =>

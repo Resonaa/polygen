@@ -1,4 +1,5 @@
-import { randInt, shuffle } from "~/core/client/utils";
+import _ from "lodash";
+
 import { LandType } from "~/core/server/game/land";
 import type { MapMode } from "~/core/server/game/map";
 import { Map } from "~/core/server/game/map";
@@ -18,9 +19,7 @@ function generateRandomPos(width: number, height: number) {
     }
   }
 
-  shuffle(ans);
-
-  return ans;
+  return _.shuffle(ans);
 }
 
 function generateRandomMap(playerCount: number, mode: MapMode): Map {
@@ -45,7 +44,7 @@ function generateRandomMap(playerCount: number, mode: MapMode): Map {
 
     if (pos) {
       gm[pos[0]][pos[1]].type = LandType.City;
-      gm[pos[0]][pos[1]].amount = randInt(41, 50);
+      gm[pos[0]][pos[1]].amount = _.random(41, 50);
     } else {
       return generateRandomMap(playerCount, mode);
     }
@@ -180,11 +179,11 @@ function generateMazeMap(playerCount: number, mode: MapMode): Map {
 
       if (i % 2 === 0 && j % 2 === 1 && map.check([tmp1, j]) && map.check([tmp2, j])) {
         vNum[i][j] = edges.length;
-        edges.push({ a: vNum[tmp1][j], b: vNum[tmp2][j], w: 10 + randInt(0, 9), pos: [i, j] as Pos });
+        edges.push({ a: vNum[tmp1][j], b: vNum[tmp2][j], w: 10 + _.random(0, 9), pos: [i, j] as Pos });
       }
       if (i % 2 === 1 && j % 2 === 0 && map.check([i, tmp3]) && map.check([i, tmp4])) {
         vNum[i][j] = edges.length;
-        edges.push({ a: vNum[i][tmp3], b: vNum[i][tmp4], w: 10 + randInt(0, 9), pos: [i, j] as Pos });
+        edges.push({ a: vNum[i][tmp3], b: vNum[i][tmp4], w: 10 + _.random(0, 9), pos: [i, j] as Pos });
       }
     }
   }
@@ -298,7 +297,7 @@ function generatePlotMap(playerCount: number, mode: MapMode): Map {
     }
   }
 
-  shuffle(homes);
+  homes = _.shuffle(homes);
 
   for (let i = 1; i <= playerCount; i++) {
     let pos = homes.shift() as Pos;

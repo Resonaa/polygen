@@ -68,9 +68,5 @@ canvas {
 }
 
 .ui.compact.table th {
-  padding: .5em .7em !important;
-}
-
-.progress .bar {
-  min-width: unset !important;
+  padding: .4em .7em !important;
 }

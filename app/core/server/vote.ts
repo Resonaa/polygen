@@ -1,4 +1,5 @@
-import { shuffle } from "~/core/client/utils";
+import _ from "lodash";
+
 import { MapMode } from "~/core/server/game/map";
 
 type ArrElement<ArrType extends readonly unknown[]> =
@@ -106,7 +107,7 @@ export function getMaxVotedItem(data: VoteData) {
     if (data[item] && data[item]?.length) {
       const items = data[item] as Array<ArrElement<NonNullable<VoteData[typeof item]>>>;
       let choices = items.filter(([, players]) => players.length === items[0][1].length);
-      shuffle(choices);
+      choices = _.shuffle(choices);
       ans[item] = choices[0][0] as any;
     } else {
       ans[item] = voteItems[item][0] as any;

@@ -159,25 +159,25 @@ export default function Index() {
       </Grid.Column>
 
       <Grid.Column width={4}>
-        <Header as="h4" attached="top" block>
+        <Header as="h4" attached="top" block size="large">
           <Icon name="bullhorn" className="!text-base !align-baseline" />
           公告
         </Header>
-        <Segment attached="bottom">
+        <Segment attached="bottom" size="large" textAlign="center">
           {announcements.map(({ id, title, content }) => (
             <Announcement id={id} title={title} content={content} key={id} />
           ))}
         </Segment>
 
-        <Header as="h4" attached="top" block>
+        <Header as="h4" attached="top" block size="large">
           <Icon name="calendar alternate" className="!text-base !align-baseline" />
           倒计时
         </Header>
-        <Segment attached="bottom" textAlign="center">
+        <Segment attached="bottom" textAlign="center" size="large">
           <CountDown />
         </Segment>
 
-        <Header as="h4" attached="top" block>
+        <Header as="h4" attached="top" block size="large">
           <Icon name="comments" className="!text-base !align-baseline" />
           最新评论
         </Header>

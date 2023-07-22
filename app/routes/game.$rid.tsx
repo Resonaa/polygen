@@ -48,7 +48,7 @@ export default function Rid() {
 
       <div
         className="absolute right-0 top-0 sm:max-w-[320px]">
-        <Segment inverted className="!pr-0 !pt-1 !pb-0 !pl-0">
+        <Segment inverted className="!p-0" size="large">
           <RoomInfo client={client} rid={rid} />
         </Segment>
       </div>
