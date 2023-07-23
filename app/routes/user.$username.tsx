@@ -194,7 +194,7 @@ export default function User() {
       </Grid.Column>
       <Grid.Column width={12}>
         <div ref={anchor} />
-        {stats.star && stats.rank && (
+        {stats.star !== undefined && stats.rank !== undefined && (
           <Statistic.Group className="justify-center" size="small">
             <Statistic>
               <Statistic.Value>

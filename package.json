@@ -37,6 +37,7 @@
     "katex": "latest",
     "lodash": "latest",
     "lz-string": "latest",
+    "openskill": "latest",
     "pixi.js": "latest",
     "react": "latest",
     "react-dom": "latest",

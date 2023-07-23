@@ -20,6 +20,7 @@ export function RoomInfo({ client, rid }: { client?: ClientSocket, rid: string }
   const [voteData, setVoteData] = useState<{ data: VoteData, ans: MaxVotedItems }>();
   const [type, setType] = useState<VoteItem>();
   const [teamData, setTeamData] = useState<[number, string[]][]>([[0, []]]);
+  const [smallTable, setSmallTable] = useState(false);
 
   const user = useUser();
 
@@ -88,23 +89,31 @@ export function RoomInfo({ client, rid }: { client?: ClientSocket, rid: string }
           </List>
         </>
       ) : (
-        <Table inverted compact singleLine size="large" unstackable textAlign="center" className="select-none">
+        <Table inverted compact singleLine size="large" unstackable textAlign="center"
+               className="select-none cursor-pointer" onClick={() => setSmallTable(smallTable => !smallTable)}>
           <Table.Header>
             <Table.Row>
-              <Table.HeaderCell><Star /></Table.HeaderCell>
-              <Table.HeaderCell>玩家</Table.HeaderCell>
-              <Table.HeaderCell>兵力</Table.HeaderCell>
-              <Table.HeaderCell>领地</Table.HeaderCell>
+              {!smallTable && (<>
+                <Table.HeaderCell className="!cursor-pointer"><Star /></Table.HeaderCell>
+                <Table.HeaderCell className="!cursor-pointer">玩家</Table.HeaderCell>
+              </>)}
+              <Table.HeaderCell className="!cursor-pointer">兵力</Table.HeaderCell>
+              <Table.HeaderCell className="!cursor-pointer">领地</Table.HeaderCell>
             </Table.Row>
           </Table.Header>
 
           <Table.Body>
             {rank.map(([star, color, player, land, army]) => (
               <Table.Row key={player}>
-                {star !== null && <Table.Cell>{formatStar(star)}</Table.Cell>}
-                <td className={clsx(player === user.username && "font-bold")} colSpan={star !== null ? 1 : 2}
-                    style={color === -1 ? undefined : { background: colors[color] }}>{player}</td>
-                <Table.Cell>{army}</Table.Cell>
+                {!smallTable && (<>
+                  {star !== null && <Table.Cell>{formatStar(star)}</Table.Cell>}
+                  <td className={clsx(player === user.username && "font-bold")}
+                      colSpan={star !== null ? 1 : 2}
+                      style={color === -1 ? undefined : { background: colors[color] }}>{player}</td>
+                </>)}
+
+                <Table.Cell
+                  style={smallTable && color !== -1 ? { boxShadow: `.3em 0 0 0 ${colors[color]} inset` } : undefined}>{army}</Table.Cell>
                 <Table.Cell>{land}</Table.Cell>
               </Table.Row>
             ))}

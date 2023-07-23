@@ -60,7 +60,9 @@ model Comment {
 }
 
 model Star {
-  star       Float @default(0)
+  mu         Float
+  sigma      Float
+  star       Float
   updatedAt  DateTime @updatedAt
 
   user       User @relation(fields: [username], references: [username])

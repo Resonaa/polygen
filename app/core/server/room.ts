@@ -1,5 +1,6 @@
 import _ from "lodash";
 import LZString from "lz-string";
+import { rating, rate } from "openskill";
 
 import { generateMap } from "~/core/server/game/generator";
 import type { LandColor, MaybeLand } from "~/core/server/game/land";
@@ -13,7 +14,7 @@ import type { MaxVotedItems, VoteData, VoteItem, VoteValue } from "~/core/server
 import { clearAllVotesOfPlayer, getMaxVotedItem, vote } from "~/core/server/vote";
 import type { Server } from "~/core/types";
 import { getStarOrCreate, updateStar } from "~/models/star.server";
-import { calcStarDeltas } from "~/utils";
+import type { Star } from "~/models/star.server";
 
 export const SocketRoom = {
   rid: (rid: string) => `#${rid}`,
@@ -50,7 +51,7 @@ export class Room {
 
   rated: boolean = false;
   ranks: TeamId[] = [];
-  stars: Map<string, number> = new Map();
+  stars: Map<string, Star> = new Map();
 
   constructor(id: string) {
     this.id = id;
@@ -410,7 +411,7 @@ export class Room {
 
     for (let [color, [land, army]] of data) {
       const username = this.colors.get(color) as string;
-      const star = this.stars.get(username) as number;
+      const star = this.stars.get(username)?.star as number;
       ans.push([star, color, username, land, army]);
 
       const team = this.gameTeams.get(color) as number;
@@ -426,10 +427,10 @@ export class Room {
       const teamA = this.gameTeams.get(a[1]) as TeamId, teamB = this.gameTeams.get(b[1]) as TeamId;
       if (teamA !== teamB) {
         const dataA = teamData.get(teamA) as [number, number], dataB = teamData.get(teamB) as [number, number];
-        return dataA[1] !== dataB[1] ? dataB[1] - dataA[1] : dataB[0] - dataA[0];
+        return dataA[1] !== dataB[1] ? dataB[1] - dataA[1] : dataB[0] !== dataA[0] ? dataB[0] - dataA[0] : teamA - teamB;
       } else {
         const dataA = data.get(a[1]) as [number, number], dataB = data.get(b[1]) as [number, number];
-        return dataA[1] !== dataB[1] ? dataB[1] - dataA[1] : dataB[0] - dataA[0];
+        return dataA[1] !== dataB[1] ? dataB[1] - dataA[1] : dataB[0] !== dataA[0] ? dataB[0] - dataA[0] : a[1] - b[1];
       }
     });
 
@@ -554,11 +555,13 @@ export class RoomManager {
         }
       }
 
-      this.checkTeamDeath(player);
+      if (room.ongoing) {
+        this.checkTeamDeath(player);
 
-      const winner = room.winCheck();
-      if (winner) {
-        this.endGame(winner);
+        const winner = room.winCheck();
+        if (winner) {
+          this.endGame(winner);
+        }
       }
     }
 
@@ -635,7 +638,7 @@ export class RoomManager {
       (async () => {
         if (room.rated) {
           for (const player of room.gamingPlayers) {
-            room.stars.set(player, (await getStarOrCreate(player)).star);
+            room.stars.set(player, await getStarOrCreate(player));
           }
         }
       })().then(() => {
@@ -778,24 +781,23 @@ export class RoomManager {
 
     clearInterval(room.gameInterval);
 
+    room.ongoing = false;
+
     (async () => {
       if (room.rated) {
         room.ranks.push(winner);
         room.ranks.reverse();
-        let stars = [], playerCounts: number[] = [];
-        for (const teamId of room.ranks) {
-          let sum = 0, cnt = 0;
-          for (const username of (room.teamsInGame.get(teamId) as string[])) {
-            sum += room.stars.get(username) as number;
-            cnt++;
-          }
-          stars.push(sum * Math.sqrt(cnt));
-          playerCounts.push(cnt);
-        }
-        const deltas = calcStarDeltas(stars).map((delta, index) => delta / playerCounts[index]);
-        for (const [index, teamId] of room.ranks.entries()) {
-          for (const username of (room.teamsInGame.get(teamId) as string[])) {
-            await updateStar(username, Math.max(deltas[index], -stars[index]));
+
+        const data = room.ranks.map(teamId =>
+          (room.teamsInGame.get(teamId) as string[]).map(username =>
+            rating(room.stars.get(username) as Star))
+        );
+
+        const res = rate(data);
+
+        for (const [index, team] of res.entries()) {
+          for (const [userIndex, username] of (room.teamsInGame.get(room.ranks[index]) as string[]).entries()) {
+            await updateStar(username, team[userIndex].mu, team[userIndex].sigma);
           }
         }
       }

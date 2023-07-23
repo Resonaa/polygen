@@ -1,4 +1,5 @@
 import type { Star } from "@prisma/client";
+import { rating, ordinal } from "openskill";
 
 import { prisma } from "~/db.server";
 
@@ -7,13 +8,14 @@ export type { Star };
 export async function getStarOrCreate(username: Star["username"]) {
   let res = await prisma.star.findUnique({ where: { username } });
   if (!res) {
-    res = await prisma.star.create({ data: { user: { connect: { username } } } });
+    const data = rating();
+    res = await prisma.star.create({ data: { user: { connect: { username } }, ...data, star: ordinal(data) } });
   }
   return res;
 }
 
-export function updateStar(username: Star["username"], increment: Star["star"]) {
-  return prisma.star.updateMany({ data: { star: { increment } }, where: { username } });
+export function updateStar(username: Star["username"], mu: Star["mu"], sigma: Star["sigma"]) {
+  return prisma.star.update({ data: { mu, sigma, star: ordinal({ mu, sigma }) }, where: { username } });
 }
 
 export function rankList() {

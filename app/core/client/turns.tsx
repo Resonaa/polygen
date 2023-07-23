@@ -17,7 +17,7 @@ export function Turns({ client }: { client?: ClientSocket }) {
   }, [client]);
 
   return (
-    <Segment inverted size="large">
+    <Segment inverted size="large" className="!px-[14px] !py-[10px]">
       {turns > 0 && <>回合 {turns}</>}
     </Segment>
   );

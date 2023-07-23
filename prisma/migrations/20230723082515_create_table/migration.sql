@@ -38,7 +38,9 @@ CREATE TABLE "Comment" (
 
 -- CreateTable
 CREATE TABLE "Star" (
-    "star" REAL NOT NULL DEFAULT 0,
+    "mu" REAL NOT NULL,
+    "sigma" REAL NOT NULL,
+    "star" REAL NOT NULL,
     "updatedAt" DATETIME NOT NULL,
     "username" TEXT NOT NULL,
     CONSTRAINT "Star_username_fkey" FOREIGN KEY ("username") REFERENCES "User" ("username") ON DELETE RESTRICT ON UPDATE CASCADE
