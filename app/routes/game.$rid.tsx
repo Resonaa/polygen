@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Segment } from "semantic-ui-react";
 import { io } from "socket.io-client";
 
+import Access from "~/access";
 import { Chat } from "~/core/client/chat";
 import { GamePanel } from "~/core/client/gamePanel";
 import { RoomInfo } from "~/core/client/roomInfo";
@@ -12,7 +13,7 @@ import { Turns } from "~/core/client/turns";
 import type { ClientSocket } from "~/core/types";
 import { requireAuthenticatedUser } from "~/session.server";
 import game from "~/styles/game.css";
-import { Access } from "~/utils";
+
 
 export const links: LinksFunction = () => [{ rel: "stylesheet", href: game }];
 

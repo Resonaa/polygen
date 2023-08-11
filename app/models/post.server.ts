@@ -14,7 +14,7 @@ export async function getPost(id: Post["id"]) {
 
   return prisma.post.findUnique({
     where: { id },
-    include: { _count: { select: { comments: true } }, favouredBy: { select: { username: true } } }
+    include: { _count: { select: { comments: true } } }
   });
 }
 
@@ -31,7 +31,7 @@ export async function getPosts(page: number) {
     orderBy: { id: "desc" },
     skip: (page - 1) * 10,
     take: 10,
-    include: { _count: { select: { comments: true } }, favouredBy: { select: { username: true } } }
+    include: { _count: { select: { comments: true } } }
   });
 }
 
@@ -49,7 +49,7 @@ export async function getPostsByUsername(username: User["username"], page: numbe
     orderBy: { id: "desc" },
     skip: (page - 1) * 10,
     take: 10,
-    include: { _count: { select: { comments: true } }, favouredBy: { select: { username: true } } }
+    include: { _count: { select: { comments: true } } }
   });
 }
 
@@ -57,14 +57,10 @@ export function createPost(username: Post["username"], content: Post["content"])
   return prisma.post.create({ data: { content, user: { connect: { username } } } });
 }
 
-export function updatePost(username: User["username"], content: Post["content"], id: Post["id"]) {
-  return prisma.post.updateMany({ data: { content }, where: { id, username } });
+export function updatePost(content: Post["content"], id: Post["id"]) {
+  return prisma.post.update({ data: { content }, where: { id } });
 }
 
-export function deletePost(username: User["username"], id: Post["id"]) {
-  return prisma.post.deleteMany({ where: { id, username } });
-}
-
-export function sendFavour(username: User["username"], id: Post["id"]) {
-  return prisma.post.update({ where: { id }, data: { favouredBy: { connect: { username } } } });
+export function deletePost(id: Post["id"]) {
+  return prisma.post.delete({ where: { id } });
 }

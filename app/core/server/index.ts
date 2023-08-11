@@ -2,7 +2,6 @@ import { identify } from "~/core/server/identification";
 import { MessageType } from "~/core/server/message";
 import { RoomManager, SocketRoom } from "~/core/server/room";
 import type { Server } from "~/core/types";
-import { renderText } from "~/utils.server";
 
 export function setServer(server: Server) {
   server.on("connection", async socket => {
@@ -27,10 +26,9 @@ export function setServer(server: Server) {
       socket.join(SocketRoom.usernameRid(username, rid));
       rm.join(username);
     }).on("message", ({ type, content }) => {
-      if (content.trim().length <= 0 || content.length > 616)
+      if (content.trim().length <= 0 || content.length > 616) {
         return;
-
-      content = renderText(content);
+      }
 
       if (type === MessageType.World) {
         server.emit("message", { type, content, sender: username });
@@ -40,12 +38,12 @@ export function setServer(server: Server) {
         rm.teamMessage(username, content);
       }
     }).on("disconnect", () => rm.leave(username))
-      .on("joinTeam", team => rm.team(username, team))
-      .on("ready", () => rm.ready(username))
-      .on("move", movement => rm.addMovement(username, movement))
-      .on("clearMovements", () => rm.clearMovements(username))
-      .on("undoMovement", () => rm.undoMovement(username))
-      .on("surrender", () => rm.surrender(username))
-      .on("vote", ({ item, value }) => rm.vote(item, value, username));
+          .on("joinTeam", team => rm.team(username, team))
+          .on("ready", () => rm.ready(username))
+          .on("move", movement => rm.addMovement(username, movement))
+          .on("clearMovements", () => rm.clearMovements(username))
+          .on("undoMovement", () => rm.undoMovement(username))
+          .on("surrender", () => rm.surrender(username))
+          .on("vote", ({ item, value }) => rm.vote(item, value, username));
   });
 }

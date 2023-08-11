@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useRef, useState } from "react";
 import { Label } from "semantic-ui-react";
 
-import RenderedText from "~/components/renderedText";
+import RenderedText from "~/components/community/renderedText";
 import type { Message } from "~/core/server/message";
 import { MessageType } from "~/core/server/message";
 import type { ClientSocket } from "~/core/types";
@@ -19,7 +19,7 @@ function GameMessage({ type, content, sender }: Pick<Message, "type" | "content"
   return (
     <div>
       <a href={`/user/${sender}`} style={{ color: "light" + getColorByMessageType(type) }}>{sender}</a>
-      <RenderedText html={content} mode="dark" className="inline-block !ml-2" />
+      <RenderedText content={content} mode="dark" className="inline-block !ml-2" />
     </div>
   );
 }
@@ -65,7 +65,7 @@ export function Messages({ client }: { client?: ClientSocket }) {
       setDelta(messages.scrollHeight - messages.scrollTop - messages.clientHeight);
 
     setPreviousTime(previousTime => {
-      const curTime = new Date().getTime(), deltaTime = curTime - previousTime;
+      const curTime = Date.now(), deltaTime = curTime - previousTime;
 
       if (deltaTime >= 1000 * 60 * 5) { // 5 min
         setMessages(messages => messages.concat([<Time key={messages.length} time={curTime} />,

@@ -2,9 +2,10 @@ import { createCookieSessionStorage, json, redirect } from "@remix-run/node";
 import bcrypt from "bcryptjs";
 import invariant from "tiny-invariant";
 
+import type Access from "~/access";
+import { access } from "~/access";
 import type { User } from "~/models/user.server";
 import { getUserWithoutPasswordByUsername } from "~/models/user.server";
-import type { Access } from "~/utils";
 
 invariant(process.env.SESSION_SECRET, "SESSION_SECRET must be set");
 
@@ -21,7 +22,7 @@ export const sessionStorage = createCookieSessionStorage({
 export const USER_SESSION_KEY = "username";
 export const CAPTCHA_SESSION_KEY = "captcha";
 
-export async function getSession(request: Request) {
+export function getSession(request: Request) {
   const cookie = request.headers.get("Cookie");
   return sessionStorage.getSession(cookie);
 }
@@ -42,51 +43,41 @@ export async function getCaptcha(
 
 export async function getUser(request: Request) {
   const username = await getUsername(request);
-  if (username === undefined) return null;
-
-  const user = await getUserWithoutPasswordByUsername(username);
-  if (user) return user;
-
-  throw await logout(request, request.url);
-}
-
-async function requireUsername(
-  request: Request,
-  redirectTo: string = new URL(request.url).pathname
-) {
-  const username = await getUsername(request);
-  if (!username) {
-    const searchParams = new URLSearchParams([["redirectTo", redirectTo]]);
-    throw redirect(`/login?${searchParams}`);
+  if (username === undefined) {
+    return null;
   }
-  return username;
-}
-
-async function requireUser(request: Request) {
-  const username = await requireUsername(request);
 
   const user = await getUserWithoutPasswordByUsername(username);
-  if (user) return user;
+  if (user) {
+    return user;
+  }
 
   throw await logout(request, request.url);
 }
 
-export async function requireAuthenticatedUser(request: Request, access: Access) {
-  const user = await requireUser(request);
+export async function requireAuthenticatedUser(request: Request, required: Access) {
+  const user = await getUser(request);
 
-  if (user.access < access)
+  if (!user) {
+    throw new Response("用户未登录", { status: 403, statusText: "Forbidden" });
+  }
+
+  if (!access(user, required)) {
     throw new Response(`权限不足 (expected ${access}+, got ${user.access})`, { status: 403, statusText: "Forbidden" });
+  }
 
   return user;
 }
 
-export async function requireAuthenticatedOptionalUser(request: Request, access: Access) {
+export async function requireAuthenticatedOptionalUser(request: Request, required: Access) {
   const user = await getUser(request);
 
-  const userAccess = user ? user.access : 0;
-
-  if (userAccess < access)
-    throw new Response(`权限不足 (expected ${access}+, got ${userAccess})`, { status: 403, statusText: "Forbidden" });
+  if (!access(user, required)) {
+    throw new Response(`权限不足 (expected ${access}+, got ${user?.access ?? 0})`, {
+      status: 403,
+      statusText: "Forbidden"
+    });
+  }
 
   return user;
 }
@@ -141,40 +132,10 @@ export async function logout(request: Request, redirectTo: string) {
   });
 }
 
-/**
- * Validate the given username.
- * @param username Anything that could be a username
- */
-export function validateUsername(username: unknown): username is string {
-  return typeof username === "string" && /^[\u4e00-\u9fa5_a-zA-Z0-9]{3,16}$/.test(username);
-}
-
-/**
- * Validate the given password.
- * @param password Anything that could be a password
- */
-export function validatePassword(password: unknown): password is string {
-  return typeof password === "string" && password.length >= 6;
-}
-
-export function validateCaptcha(captcha: unknown): captcha is string {
-  return typeof captcha === "string" && captcha.length === 4;
-}
-
-/**
- * Hash the given password.
- * @param password The given password
- * @returns Hash value of the password
- */
 export function hashPassword(password: string) {
   return bcrypt.hash(password, 10);
 }
 
-/**
- * Check if the password matches the hash value.
- * @param input The given password
- * @param hash The given hash value to compare against
- */
 export function comparePassword(input: string, hash: string) {
   return bcrypt.compare(input, hash);
 }

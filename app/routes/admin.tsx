@@ -1,10 +1,11 @@
 import type { LoaderArgs, V2_MetaFunction } from "@remix-run/node";
 import { NavLink, Outlet } from "@remix-run/react";
-import { Grid, Menu } from "semantic-ui-react";
+import { Grid, Menu, Segment } from "semantic-ui-react";
 
+import Access from "~/access";
 import Layout from "~/components/layout";
 import { requireAuthenticatedOptionalUser } from "~/session.server";
-import { Access } from "~/utils";
+
 
 export const meta: V2_MetaFunction = () => [{ title: "管理后台 - polygen" }];
 
@@ -65,7 +66,9 @@ export default function Admin() {
       </Grid.Column>
 
       <Grid.Column width={13}>
-        <Outlet />
+        <Segment size="large" basic>
+          <Outlet />
+        </Segment>
       </Grid.Column>
     </Layout>
   );

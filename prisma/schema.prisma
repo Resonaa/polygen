@@ -8,7 +8,6 @@ generator client {
 }
 
 model User {
-  id        Int @id @default(autoincrement())
   username  String @unique
   password  String
   createdAt DateTime @default(now())
@@ -20,8 +19,6 @@ model User {
   bio       String @default("")
 
   star      Star?
-
-  favouredPosts Post[] @relation("favour")
 }
 
 model Announcement {
@@ -42,8 +39,6 @@ model Post {
   comments Comment[]
 
   viewCount Int @default(0)
-
-  favouredBy User[] @relation("favour")
 }
 
 model Comment {

@@ -43,11 +43,9 @@ export function GamePanel({ client, rid }: { client?: ClientSocket, rid: string 
     return (
       <>
         {players.map((player, index) => {
-          const isCurrent = player === user.username, isReady = readyPlayers.includes(player);
-          const Player = <>{isReady ? <u>{player}</u> : player}</>;
           return (
             <Fragment key={index}>
-              {isCurrent ? <strong>{Player}</strong> : Player}
+              {readyPlayers.includes(player) ? <u>{player}</u> : player}
               {index !== players.length - 1 && ", "}
             </Fragment>
           );

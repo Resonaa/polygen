@@ -1,190 +1,66 @@
-import type { LoaderArgs, ActionArgs, V2_MetaFunction } from "@remix-run/node";
+import { VStack } from "@chakra-ui/react";
+import type { ActionArgs, V2_MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { useActionData, useLoaderData, useSubmit, useNavigation } from "@remix-run/react";
-import clsx from "clsx";
-import { useEffect, useState } from "react";
-import { Button, Feed, Grid, Header, Icon, Segment } from "semantic-ui-react";
-import Vditor from "vditor";
+import { useLoaderData } from "@remix-run/react";
 
-import Announcement from "~/components/announcement";
-import { Avatar, UserLink } from "~/components/community";
-import CountDown from "~/components/countdown";
-import Post from "~/components/post";
-import { RecentComments } from "~/components/recentComments";
-import { VditorSkeleton } from "~/components/vditorSkeleton";
+import Access from "~/access";
+import AddPost from "~/components/community/addPost";
+import Announcements from "~/components/community/announcements";
+import Countdowns from "~/components/community/countdowns";
+import Posts from "~/components/community/posts";
+import RecentComments from "~/components/community/recentComments";
 import { getAnnouncements } from "~/models/announcement.server";
 import { getComments } from "~/models/comment.server";
 import { createPost, getPosts } from "~/models/post.server";
-import { requireAuthenticatedOptionalUser, requireAuthenticatedUser } from "~/session.server";
-import { Access, ajax, vditorConfig } from "~/utils";
-import { renderText, validatePostContent } from "~/utils.server";
+import { requireAuthenticatedUser } from "~/session.server";
+import { useOptionalUser } from "~/utils";
+import { validatePostContent } from "~/validator.server";
 
-import Layout from "../components/layout";
+import Layout from "../components/layout/layout";
 
 export const meta: V2_MetaFunction = () => [{ title: "首页 - polygen" }];
 
-export async function loader({ request }: LoaderArgs) {
-  const user = await requireAuthenticatedOptionalUser(request, Access.Basic);
+export async function loader() {
   const announcements = await getAnnouncements();
   const posts = await getPosts(1);
   const recentComments = await getComments(1);
 
-  for (let announcement of announcements) {
-    announcement.content = renderText(announcement.content);
-  }
-
-  for (let post of posts) {
-    post.content = renderText(post.content);
-  }
-
-  for (let comment of recentComments) {
-    comment.content = renderText(comment.content);
-  }
-
-  return json({ announcements, user, originalPosts: posts, recentComments });
+  return json({ announcements, posts, recentComments });
 }
 
 export async function action({ request }: ActionArgs) {
-  const formData = await request.formData();
-
   const { username } = await requireAuthenticatedUser(request, Access.Community);
+
+  const formData = await request.formData();
   const content = formData.get("content");
 
-  if (!validatePostContent(content)) {
-    return json(false, { status: 400 });
+  if (validatePostContent(content)) {
+    await createPost(username, content);
   }
 
-  await createPost(username, content);
-
-  return json(true);
+  return null;
 }
 
 export default function Index() {
-  const { announcements, user, originalPosts, recentComments } = useLoaderData<typeof loader>();
-  const [posts, setPosts] = useState(originalPosts);
+  const { announcements, posts, recentComments } = useLoaderData<typeof loader>();
 
-  const [vd, setVd] = useState<Vditor>();
-
-  useEffect(() => {
-    if (user) {
-      const vditor = new Vditor("vditor", {
-        ...vditorConfig, after: () => {
-          setVd(vditor);
-        }
-      });
-    }
-  }, [user]);
-
-  const navigation = useNavigation();
-  const actionData = useActionData<typeof action>();
-  const submit = useSubmit();
-
-  const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(false);
-
-  const sendRequest = () => {
-    const content = vd?.getValue();
-
-    if (content?.trim()) {
-      submit({ content }, { method: "post" });
-    }
-  };
-
-  useEffect(() => {
-    (async () => {
-      if (actionData && navigation.state !== "submitting") {
-        vd?.setValue("");
-        const data = await ajax("post", "/post/page", { page: 1 });
-
-        setPosts(posts => {
-          const maxId = posts[0].id, newMaxId = data[0].id;
-          const page = Math.ceil(posts.length / 10);
-
-          return data.slice(0, newMaxId - maxId).concat(posts).slice(0, page * 10);
-        });
-      }
-    })();
-  }, [actionData, vd, navigation.state]);
-
-  const loadMore = () => {
-    if (page === -1 || loading)
-      return;
-
-    setLoading(true);
-
-    ajax("post", "/post/page", { page: page + 1 }).then(data => {
-      setLoading(false);
-      setPage(data.length < 10 ? -1 : page + 1);
-      setPosts(posts => posts.concat(data));
-    });
-  };
+  const user = useOptionalUser();
 
   return (
-    <Layout columns={2}>
-      <Grid.Column width={12}>
-        <Feed size="large">
-          {user &&
-            (<Feed.Event>
-              <Feed.Label>
-                <Avatar username={user.username} />
-              </Feed.Label>
-              <Feed.Content>
-                <Feed.Summary>
-                  <UserLink username={user.username} />
-                </Feed.Summary>
+    <Layout>
+      <VStack w={{ base: "100%", md: "75% " }}>
+        {user && <AddPost />}
 
-                <Feed.Extra text className="!max-w-none">
-                  <VditorSkeleton />
-                  <Button icon primary labelPosition="left" onClick={sendRequest}
-                          loading={navigation.state === "submitting"}
-                          disabled={navigation.state === "submitting"} className="!mt-4">
-                    <Icon name="send" />
-                    发布
-                  </Button>
-                </Feed.Extra>
-              </Feed.Content>
-            </Feed.Event>)}
+        <Posts posts={posts} />
+      </VStack>
 
-          {posts.map(({ id, content, username, createdAt, viewCount, _count: { comments }, favouredBy }) => (
-            <Post key={id} id={id} content={content} username={username} createdAt={createdAt}
-                  viewCount={viewCount} commentAmount={comments} favouredBy={favouredBy} link />
-          ))}
+      <VStack w={{ base: "100%", md: "25% " }} spacing={4}>
+        <Announcements announcements={announcements} />
 
-          {page !== -1 &&
-            (<Segment textAlign="center" loading={loading} basic onClick={loadMore}
-                      className={clsx(!loading && "cursor-pointer text-gray-400")}>
-              点击查看更多...
-            </Segment>)}
-        </Feed>
-      </Grid.Column>
-
-      <Grid.Column width={4}>
-        <Header as="h4" attached="top" block size="large">
-          <Icon name="bullhorn" className="!text-base !align-baseline" />
-          公告
-        </Header>
-        <Segment attached="bottom" size="large" textAlign="center">
-          {announcements.map(({ id, title, content }) => (
-            <Announcement id={id} title={title} content={content} key={id} />
-          ))}
-        </Segment>
-
-        <Header as="h4" attached="top" block size="large">
-          <Icon name="calendar alternate" className="!text-base !align-baseline" />
-          倒计时
-        </Header>
-        <Segment attached="bottom" textAlign="center" size="large">
-          <CountDown />
-        </Segment>
-
-        <Header as="h4" attached="top" block size="large">
-          <Icon name="comments" className="!text-base !align-baseline" />
-          最新评论
-        </Header>
-        <Segment attached="bottom">
-          <RecentComments comments={recentComments} />
-        </Segment>
-      </Grid.Column>
+        <Countdowns />
+        
+        <RecentComments comments={recentComments} />
+      </VStack>
     </Layout>
   );
 }

@@ -5,12 +5,13 @@ import clsx from "clsx";
 import { useState, Fragment } from "react";
 import { Grid, Header, Table, Form, Button, Label } from "semantic-ui-react";
 
+import Access from "~/access";
 import { UserLink } from "~/components/community";
 import Layout from "~/components/layout";
 import { MapMode } from "~/core/server/game/map";
 import { Room, roomData } from "~/core/server/room";
 import { requireAuthenticatedOptionalUser } from "~/session.server";
-import { Access } from "~/utils";
+
 
 export const meta: V2_MetaFunction = () => [{ title: "大厅 - polygen" }];
 

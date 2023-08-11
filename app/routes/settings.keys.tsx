@@ -2,13 +2,14 @@ import type { LoaderArgs } from "@remix-run/node";
 import { useEffect, useState } from "react";
 import { Menu, Table, Grid, Button } from "semantic-ui-react";
 
+import Access from "~/access";
 import { Renderer } from "~/core/client/renderer";
 import { getSettings, saveSettings, Settings } from "~/core/client/settings";
 import { LandType } from "~/core/server/game/land";
 import { Map, MapMode } from "~/core/server/game/map";
 import type { Pos } from "~/core/server/game/utils";
 import { requireAuthenticatedUser } from "~/session.server";
-import { Access, numberColorToString } from "~/utils";
+import { numberColorToString } from "~/utils";
 
 export async function loader({ request }: LoaderArgs) {
   return await requireAuthenticatedUser(request, Access.Settings);

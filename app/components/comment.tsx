@@ -2,8 +2,8 @@ import { Link } from "@remix-run/react";
 import clsx from "clsx";
 import { Comment as SemanticComment } from "semantic-ui-react";
 
-import { formatDate , Avatar, relativeDate, UserLink } from "~/components/community";
-import RenderedText from "~/components/renderedText";
+import { formatDate, Avatar, relativeDate, UserLink } from "~/components/community";
+import RenderedText from "~/components/community/renderedText";
 import type { Comment as CommentType } from "~/models/comment.server";
 import { ajax, useOptionalUser } from "~/utils";
 
@@ -34,10 +34,10 @@ export default function Comment({
             parentId ? (
               <Link to={"/post/" + parentId} style={{ color: "unset" }}>
                 <object>
-                  <RenderedText html={content} mode="light" />
+                  <RenderedText content={content} />
                 </object>
               </Link>
-            ) : (<RenderedText html={content} mode="light" />)}
+            ) : (<RenderedText content={content} />)}
         </SemanticComment.Text>
         {user?.username === username && (
           <SemanticComment.Actions>

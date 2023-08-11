@@ -1,27 +1,32 @@
-import path from "path";
-import * as process from "process";
+import { join } from "path";
+import { exit } from "process";
 
 import compress from "@fastify/compress";
 import fastifyRateLimit from "@fastify/rate-limit";
 import { remixFastifyPlugin } from "@mcansh/remix-fastify";
-import { broadcastDevReady } from "@remix-run/node";
+import { broadcastDevReady, installGlobals } from "@remix-run/node";
 import fastify from "fastify";
 import httpsRedirect from "fastify-https-redirect";
 import fastifySocketIO from "fastify-socket.io";
-import fs from "fs-extra";
+import { ensureDir, exists, readFile } from "fs-extra";
+import sourceMapSupport from "source-map-support";
 
-import { BUILD_DIR, MODE, SSL_CERT, SSL_KEY, USERCONTENT_DIR } from "~/const";
+import { BUILD_DIR, MODE, SSL_CERT, SSL_KEY, USERCONTENT_DIR } from "~/constants.server";
 import { setServer } from "~/core/server";
 
 (async () => {
-  if (!(await fs.exists(BUILD_DIR))) {
+  sourceMapSupport.install();
+
+  installGlobals();
+
+  if (!(await exists(BUILD_DIR))) {
     console.warn(
       "Build directory doesn't exist, please run `npm run build` before starting the server."
     );
-    process.exit(1);
+    exit(1);
   }
 
-  await fs.ensureDir(path.join(USERCONTENT_DIR, "avatar"));
+  await ensureDir(join(USERCONTENT_DIR, "avatar"));
 
   let app: any;
 
@@ -30,8 +35,8 @@ import { setServer } from "~/core/server";
   };
 
   if (MODE === "production" && SSL_KEY && SSL_CERT) {
-    const cert = await fs.readFile(SSL_CERT);
-    const key = await fs.readFile(SSL_KEY);
+    const cert = await readFile(SSL_CERT);
+    const key = await readFile(SSL_KEY);
     app = fastify({
       https: { key, cert },
       ...logger
@@ -42,7 +47,7 @@ import { setServer } from "~/core/server";
     app = fastify(logger);
     if (MODE === "production") {
       await app.register(fastifyRateLimit, {
-        max: 150,
+        max: 161,
         timeWindow: "1 minute"
       });
     }
@@ -55,7 +60,7 @@ import { setServer } from "~/core/server";
     build,
     mode: MODE,
     purgeRequireCacheInDevelopment: false,
-    unstable_earlyHints: true,
+    unstable_earlyHints: true
   });
   await app.register(fastifySocketIO);
 

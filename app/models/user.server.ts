@@ -1,11 +1,11 @@
-import path from "path";
-import * as process from "process";
+import { join } from "path";
 
 import type { User } from "@prisma/client";
 import type { NodeOnDiskFile } from "@remix-run/node";
-import fs from "fs-extra";
+import { writeFile } from "fs-extra";
 import sharp from "sharp";
 
+import { CWD } from "~/constants.server";
 import { prisma } from "~/db.server";
 import { getRank } from "~/models/star.server";
 import { comparePassword, hashPassword } from "~/session.server";
@@ -67,13 +67,15 @@ export async function verifyLogin(
 ) {
   const user = await getUserByUsername(username);
 
-  if (!user || !("password" in user))
+  if (!user || !("password" in user)) {
     return null;
+  }
 
   const isValid = await comparePassword(password, user.password);
 
-  if (!isValid)
+  if (!isValid) {
     return null;
+  }
 
   const { password: _password, ...userWithoutPassword } = user;
 
@@ -81,14 +83,14 @@ export async function verifyLogin(
 }
 
 export async function updateAvatarByUsername(username: User["username"], avatar: NodeOnDiskFile) {
-  let img = await sharp(await avatar.arrayBuffer()).webp();
+  let img = sharp(await avatar.arrayBuffer()).webp();
   const meta = await img.metadata();
 
-  const size = Math.min(500, Math.max(100, meta.height as number, meta.width as number));
+  const size = Math.min(500, Math.max(100, meta.height ?? 0, meta.width ?? 0));
 
   if (size !== meta.height || size !== meta.width) {
     img = img.resize(size, size, { fit: "fill" });
   }
 
-  return fs.writeFile(path.join(process.cwd(), `usercontent/avatar/${username}.webp`), await img.toBuffer());
+  return writeFile(join(CWD, `usercontent/avatar/${username}.webp`), await img.toBuffer());
 }

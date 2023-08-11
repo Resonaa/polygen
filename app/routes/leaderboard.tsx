@@ -3,12 +3,13 @@ import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { Header, Table, Grid } from "semantic-ui-react";
 
+import Access from "~/access";
 import { formatDate, relativeDate, Star, UserLink } from "~/components/community";
 import Layout from "~/components/layout";
 import { formatStar } from "~/core/client/utils";
 import { rankList } from "~/models/star.server";
 import { requireAuthenticatedOptionalUser } from "~/session.server";
-import { Access, useOptionalUser } from "~/utils";
+import { useOptionalUser } from "~/utils";
 
 export const meta: V2_MetaFunction = () => [{ title: "排行榜 - polygen" }];
 

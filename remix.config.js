@@ -13,6 +13,33 @@ module.exports = {
     v2_headers: true,
     v2_dev: true
   },
-  tailwind: true,
-  serverModuleFormat: "esm"
+  serverModuleFormat: "esm",
+  serverDependenciesToBundle: [
+    /^rehype.*/,
+    /^remark.*/,
+    /^unified.*/,
+    /^hast-util.*/,
+    /^mdast-util.*/,
+    /^micromark.*/,
+    /^unist-util.*/,
+    /^vfile.*/,
+    "react-markdown",
+    "longest-streak",
+    "property-information",
+    "space-separated-tokens",
+    "bail",
+    "comma-separated-tokens",
+    "is-plain-obj",
+    "trough",
+    "hastscript",
+    "web-namespaces",
+    "decode-named-character-reference",
+    "trim-lines",
+    "character-entities",
+    "ccount",
+    "markdown-table",
+    "escape-string-regexp",
+    "lowlight",
+    "fault"
+  ]
 };

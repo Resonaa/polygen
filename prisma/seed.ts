@@ -1,13 +1,12 @@
-import path from "path";
-import * as process from "process";
+import { join } from "path";
+import { exit } from "process";
 
 import { PrismaClient } from "@prisma/client";
-import fs from "fs-extra";
+import { readdir, readFile } from "fs-extra";
 import invariant from "tiny-invariant";
 
-import { ARTICLES_DIR, SESSION_SECRET } from "~/const";
+import { ARTICLES_DIR, CWD, SESSION_SECRET } from "~/constants.server";
 import { hashPassword } from "~/session.server";
-
 
 const prisma = new PrismaClient();
 
@@ -48,16 +47,16 @@ async function seed() {
 
   await prisma.post.create({
     data: {
-      content: "# Test\n$$\\KaTeX$$",
+      content: "### Test\n$$\n\\KaTeX\n$$",
       user: { connect: { username: "user" } }
     }
   });
 
-  const longPost = await fs.readFile(path.join(process.cwd(), "/app/entry.client.tsx"));
+  const longPost = await readFile(join(CWD, "/app/entry.client.tsx"));
 
   const post = await prisma.post.create({
     data: {
-      content: `\`\`\`typescript\n${longPost}\n\`\`\``,
+      content: `\`\`\`tsx\n${longPost}\n\`\`\``,
       user: { connect: { username: "user" } }
     }
   });
@@ -70,11 +69,11 @@ async function seed() {
     }
   });
 
-  for (let entry of await fs.readdir(ARTICLES_DIR)) {
+  for (let entry of await readdir(ARTICLES_DIR)) {
     await prisma.announcement.create({
       data: {
         title: entry.substring(0, entry.length - 3),
-        content: (await fs.readFile(path.join(ARTICLES_DIR, entry))).toString()
+        content: (await readFile(join(ARTICLES_DIR, entry))).toString()
       }
     });
   }
@@ -85,7 +84,7 @@ async function seed() {
 seed()
   .catch(error => {
     console.error(error);
-    process.exit(1);
+    exit(1);
   })
   .finally(async () => {
     await prisma.$disconnect();

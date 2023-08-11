@@ -1,52 +1,106 @@
-// noinspection HtmlRequiredTitleElement
-
-import type { LoaderArgs, LinksFunction } from "@remix-run/node";
+import {
+  AbsoluteCenter,
+  chakra,
+  ChakraProvider,
+  cookieStorageManagerSSR,
+  Heading,
+  useColorModePreference
+} from "@chakra-ui/react";
+import type { LinksFunction, LoaderArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import {
   isRouteErrorResponse,
   Links,
   LiveReload,
+  Meta,
   Outlet,
   Scripts,
-  Meta,
   ScrollRestoration,
+  useLoaderData,
   useRouteError
 } from "@remix-run/react";
+import githubDark from "highlight.js/styles/github-dark.css";
+import github from "highlight.js/styles/github.css";
 import katex from "katex/dist/katex.min.css";
-import semantic from "semantic-ui-css/semantic.min.css";
-import { Grid } from "semantic-ui-react";
-import light from "vditor/dist/css/content-theme/light.css";
-import vditor from "vditor/dist/index.css";
-import hljs from "vditor/dist/js/highlight.js/styles/github.css";
+import type { ReactNode } from "react";
+import { useMemo } from "react";
 
-import Layout from "~/components/layout";
-import { Access } from "~/utils";
+import Access from "~/access";
+import Layout from "~/components/layout/layout";
+import theme from "~/theme";
 
 import { requireAuthenticatedOptionalUser } from "./session.server";
-import tailwind from "./styles/tailwind.css";
 
 export const links: LinksFunction = () => [
-  { rel: "stylesheet", href: tailwind },
-  { rel: "stylesheet", href: semantic },
-  { rel: "stylesheet", href: vditor },
-  { rel: "stylesheet", href: katex },
-  { rel: "stylesheet", href: hljs },
-  { rel: "stylesheet", href: light }];
-
-function GlobalMeta() {
-  return (
-    <>
-      <meta charSet="utf-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-      <meta title="polygen" />
-    </>
-  );
-}
+  { rel: "stylesheet", href: katex }
+];
 
 export async function loader({ request }: LoaderArgs) {
   return json({
-    user: await requireAuthenticatedOptionalUser(request, Access.Basic)
+    user: await requireAuthenticatedOptionalUser(request, Access.Basic),
+    time: Date.now(),
+    cookies: request.headers.get("Cookie") ?? ""
   });
+}
+
+const COLOR_MODE_KEY = "chakra-ui-color-mode";
+
+function getColorModeFromCookies(cookies: string) {
+  return cookies
+    .match(new RegExp(`(^| )${COLOR_MODE_KEY}=([^;]+)`))
+    ?.at(2);
+}
+
+function Document({ children, title }: {
+  children: ReactNode;
+  title?: string;
+}) {
+  const loaderData = useLoaderData<typeof loader>();
+  const defaultColorMode = useColorModePreference() ?? "light";
+
+  let cookies = loaderData?.cookies;
+
+  if (typeof document !== "undefined" || !cookies) {
+    cookies = document.cookie;
+  }
+
+  let colorMode = useMemo(() => {
+    let color = getColorModeFromCookies(cookies);
+
+    if (!color) {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      cookies += ` ${COLOR_MODE_KEY}=${defaultColorMode}`;
+      color = defaultColorMode;
+    }
+
+    return color;
+  }, [cookies]);
+
+  return (
+    <chakra.html lang="zh" h="100%"
+                 {...colorMode
+                 && { "data-theme": colorMode, style: { colorScheme: colorMode } }
+                 }>
+      <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        {title && <title>{title}</title>}
+        <Meta />
+        <Links />
+        <link rel="stylesheet" href={colorMode === "light" ? github : githubDark} />
+      </head>
+      <chakra.body
+        h="100%"
+        {...colorMode && { className: `chakra-ui-${colorMode}` }}>
+        <ChakraProvider theme={theme} colorModeManager={cookieStorageManagerSSR(cookies)}>
+          {children}
+        </ChakraProvider>
+        <ScrollRestoration />
+        <Scripts />
+        <LiveReload />
+      </chakra.body>
+    </chakra.html>
+  );
 }
 
 export function ErrorBoundary() {
@@ -54,64 +108,34 @@ export function ErrorBoundary() {
 
   if (isRouteErrorResponse(error)) {
     return (
-      <html>
-      <head>
-        <GlobalMeta />
-        <title>错误 - polygen</title>
-        <Meta />
-        <Links />
-      </head>
-
-      <body>
-      <Layout columns={1}>
-        <Grid.Column>
-          <h1>{error.status} {error.statusText}</h1>
-          {error.data}
-        </Grid.Column>
-      </Layout>
-      <Scripts />
-      </body>
-      </html>
+      <Document title="错误 - polygen">
+        <Layout>
+          <AbsoluteCenter>
+            <Heading>{error.status} {error.statusText}</Heading>
+            {error.data}
+          </AbsoluteCenter>
+        </Layout>
+      </Document>
     );
   }
 
   const errorMessage = error.message ? error.message : "Unknown Error";
 
   return (
-    <html>
-    <head>
-      <GlobalMeta />
-      <title>错误 - polygen</title>
-      <Meta />
-      <Links />
-    </head>
-
-    <body>
-    <Layout columns={1}>
-      <Grid.Column>
-        <h1>{errorMessage}</h1>
-      </Grid.Column>
-    </Layout>
-    <Scripts />
-    </body>
-    </html>
+    <Document title="错误 - polygen">
+      <Layout>
+        <AbsoluteCenter>
+          <Heading>{errorMessage}</Heading>
+        </AbsoluteCenter>
+      </Layout>
+    </Document>
   );
 }
 
 export default function App() {
   return (
-    <html lang="zh">
-    <head>
-      <GlobalMeta />
-      <Meta />
-      <Links />
-    </head>
-    <body>
-    <Outlet />
-    <ScrollRestoration />
-    <Scripts />
-    <LiveReload />
-    </body>
-    </html>
+    <Document>
+      <Outlet />
+    </Document>
   );
 }

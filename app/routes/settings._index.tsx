@@ -16,7 +16,7 @@ export default function Index() {
 
   return (
     <>
-      <Header as="h4">个人设置</Header>
+      <Header as="h3">个人设置</Header>
 
       <p>
         <strong>所有设置数据保存在本地，清空浏览器缓存会导致数据丢失。</strong>
@@ -26,7 +26,7 @@ export default function Index() {
       </p>
 
       <Form>
-        <TextArea rows={3} value={settings} placeholder="导入/导出数据"
+        <TextArea rows={4} value={settings} placeholder="导入/导出数据"
                   onChange={(_, { value }) => setSettings(value as string)} />
       </Form>
 

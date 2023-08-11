@@ -1,18 +1,17 @@
-import type {
-  LoaderArgs, V2_MetaFunction,
-  ActionArgs, NodeOnDiskFile
-} from "@remix-run/node";
+import type { ActionArgs, LoaderArgs, NodeOnDiskFile, V2_MetaFunction } from "@remix-run/node";
 import {
   json,
   unstable_composeUploadHandlers,
   unstable_createFileUploadHandler,
-  unstable_createMemoryUploadHandler, unstable_parseMultipartFormData
+  unstable_createMemoryUploadHandler,
+  unstable_parseMultipartFormData
 } from "@remix-run/node";
-import { useLoaderData, Form as ReactForm, useActionData } from "@remix-run/react";
+import { Form as ReactForm, useActionData, useLoaderData } from "@remix-run/react";
 import { useEffect, useRef, useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
-import { Divider, Grid, Icon, Statistic, Feed, Pagination, Button, Form } from "semantic-ui-react";
+import { Button, Divider, Feed, Form, Grid, Icon, Pagination, Statistic } from "semantic-ui-react";
 
+import Access from "~/access";
 import { formatDate, relativeDate, Star } from "~/components/community";
 import Layout from "~/components/layout";
 import Post from "~/components/post";
@@ -24,13 +23,10 @@ import {
   updateAvatarByUsername,
   updateBioByUsername
 } from "~/models/user.server";
-import { requireAuthenticatedOptionalUser, requireAuthenticatedUser } from "~/session.server";
-import { Access, ajax, useOptionalUser } from "~/utils";
-import { renderText } from "~/utils.server";
+import { requireAuthenticatedUser } from "~/session.server";
+import { ajax, useOptionalUser } from "~/utils";
 
-export async function loader({ request, params }: LoaderArgs) {
-  await requireAuthenticatedOptionalUser(request, Access.Basic);
-
+export async function loader({ params }: LoaderArgs) {
   const username = String(params.username);
   if (!username) {
     throw new Response("请求无效", { status: 400, statusText: "Bad Request" });
@@ -44,9 +40,6 @@ export async function loader({ request, params }: LoaderArgs) {
   const stats = await getStatsByUsername(username);
 
   const posts = await getPostsByUsername(username, 1);
-  for (let post of posts) {
-    post.content = renderText(post.content);
-  }
 
   return json({ user, stats, originalPosts: posts });
 }
@@ -57,7 +50,7 @@ export async function action({ request }: ActionArgs) {
   const uploadHandler = unstable_composeUploadHandlers(
     unstable_createFileUploadHandler({
       maxPartSize: 5_000_000,
-      file: ({ filename }) => filename,
+      file: ({ filename }) => filename
     }),
     unstable_createMemoryUploadHandler()
   );

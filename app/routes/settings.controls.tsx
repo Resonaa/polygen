@@ -3,9 +3,10 @@ import { Link } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import { Dropdown } from "semantic-ui-react";
 
+import Access from "~/access";
 import { Controls, getSettings, saveSettings, Settings } from "~/core/client/settings";
 import { requireAuthenticatedUser } from "~/session.server";
-import { Access } from "~/utils";
+
 
 export async function loader({ request }: LoaderArgs) {
   return await requireAuthenticatedUser(request, Access.Settings);
@@ -30,7 +31,7 @@ export default function SettingsControls() {
                     saveSettings(settings);
                   }} />
       </div>
-      <div>
+      <div className="mt-4">
         提示：
         {controls === Controls.Keyboard ?
           (

@@ -107,8 +107,7 @@ export function RoomInfo({ client, rid }: { client?: ClientSocket, rid: string }
               <Table.Row key={player}>
                 {!smallTable && (<>
                   {star !== null && <Table.Cell>{formatStar(star)}</Table.Cell>}
-                  <td className={clsx(player === user.username && "font-bold")}
-                      colSpan={star !== null ? 1 : 2}
+                  <td colSpan={star !== null ? 1 : 2}
                       style={color === -1 ? undefined : { background: colors[color] }}>{player}</td>
                 </>)}
 

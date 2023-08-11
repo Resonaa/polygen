@@ -4,6 +4,10 @@ import { prisma } from "~/db.server";
 
 export type { Comment } from "@prisma/client";
 
+export function getComment(id: Comment["id"]) {
+  return prisma.comment.findUnique({ where: { id } });
+}
+
 export function getComments(page: number, parentId?: Comment["parentId"]) {
   return prisma.comment.findMany({
     where: { parentId },
@@ -23,6 +27,6 @@ export function createComment(username: Comment["username"], content: Comment["c
   });
 }
 
-export function deleteComment(username: Comment["username"], id: Comment["id"]) {
-  return prisma.comment.deleteMany({ where: { username, id } });
+export function deleteComment(id: Comment["id"]) {
+  return prisma.comment.delete({ where: { id } });
 }

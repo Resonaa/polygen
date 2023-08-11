@@ -32,7 +32,7 @@ export class Renderer {
   private startY: number = 0;
 
   private images: PIXI.Sprite[][] = [[]];
-  private texts: PIXI.Text[][] = [[]];
+  private texts: PIXI.BitmapText[][] = [[]];
   private hitAreas: PIXI.Sprite[][] = [[]];
 
   private scale = 1;
@@ -67,6 +67,15 @@ export class Renderer {
 
     const settings = getSettings();
     this.settings = settings;
+
+
+    PIXI.BitmapFont.from("LandAmount", {
+      fontSize: 16,
+      fill: this.settings.game.colors.selectedBorder,
+      fontWeight: "bold"
+    });
+
+
     this.isTouch = settings.game.controls === Controls.Touch || (settings.game.controls === Controls.Auto && document.body.clientWidth < 640);
 
     if (!this.isTouch) {
@@ -340,17 +349,11 @@ export class Renderer {
 
     this.texts = [[]];
 
-    const style = new PIXI.TextStyle({
-      fontSize: 16,
-      fill: this.settings.game.colors.selectedBorder,
-      fontWeight: "bold"
-    });
-
     for (let i = 1; i <= this.gm.height; i++) {
-      this.texts.push([new PIXI.Text()]);
+      this.texts.push([new PIXI.BitmapText("", { fontName: "LandAmount" })]);
 
       for (let j = 1; j <= this.gm.width; j++) {
-        const text = new PIXI.Text(undefined, style);
+        const text = new PIXI.BitmapText("", { fontName: "LandAmount" });
         this.texts[i].push(text);
         this.app.stage.addChild(text);
       }
@@ -379,7 +382,7 @@ export class Renderer {
     if (extraText) {
       text.text = extraText;
     } else if (amount !== 0) {
-      text.text = amount;
+      text.text = amount.toString();
 
       if (text.width > maxWidth) {
         text.text = formatLargeNumber(amount);
@@ -473,6 +476,7 @@ export class Renderer {
 
       for (let j = 1; j <= this.gm.width; j++) {
         const hit = new PIXI.Sprite();
+        hit.interactiveChildren = false;
         this.app.stage.addChild(hit);
         this.hitAreas[i].push(hit);
       }

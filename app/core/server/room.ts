@@ -77,6 +77,10 @@ export class Room {
     let teamCnt = 1;
 
     for (let [team, players] of this.teams) {
+      if (players.length === 0) {
+        continue;
+      }
+
       if (team === 0) {
         newTeams.set(team, players);
       } else {
