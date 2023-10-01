@@ -24,7 +24,7 @@ jobs:
         run: npm install
 
       - name: 🔬 Lint
-        run: npm run lint
+        run: npm run lint:repo
 
   typecheck:
     name: ʦ TypeScript
