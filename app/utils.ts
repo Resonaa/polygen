@@ -1,8 +1,11 @@
-import { useMatches } from "@remix-run/react";
-import { useMemo } from "react";
+import { useFetchers, useMatches, useNavigation } from "@remix-run/react";
+import nProgress from "nprogress";
+import { useEffect, useMemo } from "react";
 
 import { padZero } from "~/components/community";
 import type { User } from "~/models/user.server";
+
+nProgress.configure({ showSpinner: false, trickleSpeed: 161 });
 
 export function useMatchesData(id: string) {
   const matchingRoutes = useMatches();
@@ -13,6 +16,10 @@ export function useMatchesData(id: string) {
   );
 
   return route?.data;
+}
+
+function isLoaderData(data: any): data is object {
+  return data && typeof data === "object";
 }
 
 function isUser(user: any): user is User {
@@ -26,11 +33,9 @@ function isServerTime(time: any): time is number {
 export function useOptionalUser() {
   const data = useMatchesData("root");
 
-  if (!data || !isUser(data.user)) {
-    return undefined;
+  if (isLoaderData(data) && "user" in data && isUser(data.user)) {
+    return data.user as User;
   }
-
-  return data.user as User;
 }
 
 export function useUser() {
@@ -46,18 +51,18 @@ export function useUser() {
 export function useServerTime() {
   const data = useMatchesData("root");
 
-  if (!data || !isServerTime(data.time)) {
-    throw new Error("获取服务器时间失败");
+  if (isLoaderData(data) && "time" in data && isServerTime(data.time)) {
+    return new Date(data.time);
   }
 
-  return new Date(data.time);
+  throw new Error("获取服务器时间失败");
 }
 
-export async function ajax(method: string, url: string, data: Record<string, number | string | boolean> = {}) {
+export async function ajax(method: string, url: string, data: Record<string, number | string | boolean | undefined | null> = {}) {
   const body = new FormData();
 
   for (const key in data) {
-    body.append(key, data[key].toString());
+    body.append(key, String(data[key]));
   }
 
   const options = { method: method, body };
@@ -71,4 +76,31 @@ export function numberColorToString(color: number) {
 
 export function stringColorToNumber(color: string) {
   return Number(color.replace("#", "0x"));
+}
+
+function useNavigationAndFetchersState() {
+  const navigation = useNavigation();
+  const fetchers = useFetchers();
+
+  const states = [navigation.state, ...fetchers.map(fetcher => fetcher.state)];
+
+  if (states.includes("submitting")) {
+    return "submitting";
+  } else if (states.includes("loading")) {
+    return "loading";
+  } else {
+    return "idle";
+  }
+}
+
+export function useNProgress() {
+  const state = useNavigationAndFetchersState();
+
+  useEffect(() => {
+    if (state === "idle") {
+      nProgress.done();
+    } else {
+      nProgress.start();
+    }
+  }, [state]);
 }

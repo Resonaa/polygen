@@ -215,6 +215,8 @@ function generateMazeMap(playerCount: number, mode: MapMode): Map {
   }
 
   let randPos = generateRandomPos(width, height);
+  let generals = [];
+
   for (let i = 1; i <= playerCount;) {
     const pos = randPos.shift();
     if (!pos) {
@@ -233,10 +235,26 @@ function generateMazeMap(playerCount: number, mode: MapMode): Map {
     }
 
     if (landCnt === 1) {
+      let tooClose = false;
+
+      for (let last of generals) {
+        if (astar(map, pos, last) >= 8) {
+          continue;
+        }
+
+        tooClose = true;
+        break;
+      }
+
+      if (tooClose) {
+        continue;
+      }
+
       map.get(pos).color = i;
       map.get(pos).amount = 1;
       map.get(pos).type = LandType.General;
       i++;
+      generals.push(pos);
     }
   }
 

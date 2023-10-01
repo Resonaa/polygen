@@ -4,10 +4,6 @@ import { prisma } from "~/db.server";
 
 export type { Announcement } from "@prisma/client";
 
-export function getAnnouncements() {
-  return prisma.announcement.findMany({ orderBy: { id: "desc" } });
-}
-
-export function createAnnouncement(title: Announcement["title"], content: Announcement["content"]) {
-  return prisma.announcement.create({ data: { title, content } });
+export function getAnnouncements(lang: Announcement["lang"]) {
+  return prisma.announcement.findMany({ where: { lang }, orderBy: { id: "desc" } });
 }

@@ -8,8 +8,8 @@ export default function Layout({ children }: { children: ReactNode }) {
   return (
     <Box pos="relative" minH="100%">
       <Navbar />
-      <Stack direction={{ base: "column", md: "row" }} spacing={7} maxW="calc(72rem + 28px)" px="14px"
-             mx="auto" pt="70px" pb={{ base: "calc(14px + 104px)", md: "calc(14px + 64px)" }}>
+      <Stack direction={{ base: "column", md: "row" }} maxW="calc(72rem + 28px)" mx="auto" px="14px"
+             pt="70px" pb={{ base: "calc(24px + 104px)", md: "calc(24px + 64px)" }} spacing={7}>
         {children}
       </Stack>
       <Footer />

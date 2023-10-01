@@ -1,4 +1,4 @@
-import type { LoaderArgs, V2_MetaFunction, LinksFunction } from "@remix-run/node";
+import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { useEffect, useState } from "react";
@@ -6,20 +6,16 @@ import { Segment } from "semantic-ui-react";
 import { io } from "socket.io-client";
 
 import Access from "~/access";
+import GamePanel from "~/components/game/gamePanel";
 import { Chat } from "~/core/client/chat";
-import { GamePanel } from "~/core/client/gamePanel";
 import { RoomInfo } from "~/core/client/roomInfo";
 import { Turns } from "~/core/client/turns";
 import type { ClientSocket } from "~/core/types";
 import { requireAuthenticatedUser } from "~/session.server";
-import game from "~/styles/game.css";
 
+export const meta: MetaFunction = () => [{ title: "游戏 - polygen" }];
 
-export const links: LinksFunction = () => [{ rel: "stylesheet", href: game }];
-
-export const meta: V2_MetaFunction = () => [{ title: "游戏 - polygen" }];
-
-export async function loader({ request, params }: LoaderArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
   await requireAuthenticatedUser(request, Access.Gaming);
   return json(params.rid);
 }
@@ -29,7 +25,7 @@ export default function Rid() {
   const rid = useLoaderData<typeof loader>();
 
   useEffect(() => {
-    const client = io();
+    const client = io({ transports: ["websocket"] });
     setClient(client);
     return () => {
       client.close();
@@ -38,9 +34,7 @@ export default function Rid() {
 
   return (
     <>
-      <div className="h-full w-full">
-        <GamePanel client={client} rid={rid} />
-      </div>
+      <GamePanel client={client} rid={rid} />
 
       <div
         className="absolute left-0 top-0 select-none">

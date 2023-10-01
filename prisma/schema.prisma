@@ -9,7 +9,9 @@ generator client {
 
 model User {
   username  String @unique
-  password  String
+
+  password  Password?
+
   createdAt DateTime @default(now())
 
   posts     Post[]
@@ -21,10 +23,20 @@ model User {
   star      Star?
 }
 
+model Password {
+  hash     String
+
+  user     User   @relation(fields: [username], references: [username], onDelete: Cascade, onUpdate: Cascade)
+  username String @unique
+}
+
 model Announcement {
   id        Int @id @default(autoincrement())
   title     String
   content   String
+
+  createdAt DateTime @default(now())
+  lang      String
 }
 
 model Post {

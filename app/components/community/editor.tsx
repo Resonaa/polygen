@@ -1,30 +1,35 @@
 import { Tab, TabList, TabPanel, TabPanels, Tabs, Textarea } from "@chakra-ui/react";
+import { useTranslation } from "react-i18next";
 import TextareaAutosize from "react-textarea-autosize";
 
 import RenderedText from "./renderedText";
 
-export default function Editor({ value, setValue, ...props }: {
+interface EditorProps {
   value: string,
   setValue: (value: string) => void
-} & any) {
+}
+
+export default function Editor<T extends EditorProps>({ value, setValue, ...props }: T) {
+  const { t } = useTranslation();
+
   return (
     <Tabs w="100%" {...props}>
       <TabList border="none">
-        <Tab>编辑</Tab>
-        <Tab>预览</Tab>
+        <Tab>{t("community.edit")}</Tab>
+        <Tab>{t("community.preview")}</Tab>
       </TabList>
 
       <TabPanels>
         <TabPanel px={0}>
           <Textarea
             as={TextareaAutosize}
-            rows={2}
-            resize="none"
             minH="4rem"
-            required
+            resize="none"
             name="content"
-            value={value}
             onChange={e => setValue(e.target.value)}
+            required
+            rows={2}
+            value={value}
           />
         </TabPanel>
         <TabPanel px={0}>

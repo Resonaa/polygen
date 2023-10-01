@@ -1,5 +1,5 @@
 import { VStack } from "@chakra-ui/react";
-import type { ActionArgs, V2_MetaFunction } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 
@@ -9,32 +9,40 @@ import Announcements from "~/components/community/announcements";
 import Countdowns from "~/components/community/countdowns";
 import Posts from "~/components/community/posts";
 import RecentComments from "~/components/community/recentComments";
+import { getLocale, getT } from "~/i18next.server";
 import { getAnnouncements } from "~/models/announcement.server";
 import { getComments } from "~/models/comment.server";
 import { createPost, getPosts } from "~/models/post.server";
 import { requireAuthenticatedUser } from "~/session.server";
 import { useOptionalUser } from "~/utils";
-import { validatePostContent } from "~/validator.server";
+import { validateAddPostFormData } from "~/validators/community.server";
 
 import Layout from "../components/layout/layout";
 
-export const meta: V2_MetaFunction = () => [{ title: "首页 - polygen" }];
+export async function loader({ request }: LoaderFunctionArgs) {
+  const lang = await getLocale(request);
+  const t = await getT(request);
 
-export async function loader() {
-  const announcements = await getAnnouncements();
+  const announcements = await getAnnouncements(lang);
   const posts = await getPosts(1);
   const recentComments = await getComments(1);
 
-  return json({ announcements, posts, recentComments });
+  const title = `${t("nav.home")} - polygen`;
+
+  return json({ announcements, posts, recentComments, title });
 }
 
-export async function action({ request }: ActionArgs) {
+export const meta: MetaFunction<typeof loader> = ({ data }) => [{ title: data?.title }];
+
+export async function action({ request }: ActionFunctionArgs) {
   const { username } = await requireAuthenticatedUser(request, Access.Community);
 
-  const formData = await request.formData();
-  const content = formData.get("content");
+  const data = await request.formData();
+  const res = validateAddPostFormData(data);
 
-  if (validatePostContent(content)) {
+  if (res.success) {
+    const { content } = res.data;
+
     await createPost(username, content);
   }
 
@@ -48,17 +56,17 @@ export default function Index() {
 
   return (
     <Layout>
-      <VStack w={{ base: "100%", md: "75% " }}>
+      <VStack w={{ base: "100%", md: "75%" }}>
         {user && <AddPost />}
 
         <Posts posts={posts} />
       </VStack>
 
-      <VStack w={{ base: "100%", md: "25% " }} spacing={4}>
+      <VStack w={{ base: "100%", md: "25%" }} spacing={5}>
         <Announcements announcements={announcements} />
 
         <Countdowns />
-        
+
         <RecentComments comments={recentComments} />
       </VStack>
     </Layout>

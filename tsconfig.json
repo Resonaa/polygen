@@ -8,7 +8,7 @@
     "lib": [
       "DOM",
       "DOM.Iterable",
-      "ES2022"
+      "ESNext"
     ],
     "isolatedModules": true,
     "esModuleInterop": true,
@@ -16,7 +16,7 @@
     "module": "CommonJS",
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "target": "ES2022",
+    "target": "ESNext",
     "strict": true,
     "allowJs": true,
     "forceConsistentCasingInFileNames": true,
@@ -27,7 +27,13 @@
       ]
     },
     "skipLibCheck": true,
-    // Remix takes care of building everything in `remix build`.
     "noEmit": true
+  },
+  "ts-node": {
+    "require": [
+      "tsconfig-paths/register"
+    ],
+    "files": true,
+    "swc": true
   }
 }

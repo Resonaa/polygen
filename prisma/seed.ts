@@ -1,17 +1,18 @@
 import { join } from "path";
-import { exit } from "process";
+import { cwd, exit } from "process";
 
 import { PrismaClient } from "@prisma/client";
 import { readdir, readFile } from "fs-extra";
 import invariant from "tiny-invariant";
 
-import { ARTICLES_DIR, CWD, SESSION_SECRET } from "~/constants.server";
+import { SESSION_SECRET } from "~/constants.server";
 import { hashPassword } from "~/session.server";
 
 const prisma = new PrismaClient();
 
 async function seed() {
   await prisma.star.deleteMany({});
+  await prisma.password.deleteMany({});
   await prisma.user.deleteMany({});
   await prisma.post.deleteMany({});
   await prisma.announcement.deleteMany({});
@@ -24,7 +25,11 @@ async function seed() {
   await prisma.user.create({
     data: {
       username: "admin",
-      password: await hashPassword(password),
+      password: {
+        create: {
+          hash: await hashPassword(password)
+        }
+      },
       access: 9
     }
   });
@@ -32,7 +37,11 @@ async function seed() {
   await prisma.user.create({
     data: {
       username: "user",
-      password: await hashPassword(password),
+      password: {
+        create: {
+          hash: await hashPassword(password)
+        }
+      },
       bio: "Test"
     }
   });
@@ -40,7 +49,11 @@ async function seed() {
   await prisma.user.create({
     data: {
       username: "Bot",
-      password: await hashPassword(password),
+      password: {
+        create: {
+          hash: await hashPassword(password)
+        }
+      },
       bio: "https://github.com/jwcub/polygen_bot"
     }
   });
@@ -52,7 +65,7 @@ async function seed() {
     }
   });
 
-  const longPost = await readFile(join(CWD, "/app/entry.client.tsx"));
+  const longPost = await readFile(join(cwd(), "app/entry.client.tsx"));
 
   const post = await prisma.post.create({
     data: {
@@ -69,13 +82,18 @@ async function seed() {
     }
   });
 
-  for (let entry of await readdir(ARTICLES_DIR)) {
-    await prisma.announcement.create({
-      data: {
-        title: entry.substring(0, entry.length - 3),
-        content: (await readFile(join(ARTICLES_DIR, entry))).toString()
-      }
-    });
+  for (const lang of ["zh", "en"]) {
+    const dir = join(cwd(), "articles", lang);
+
+    for (const entry of await readdir(dir)) {
+      await prisma.announcement.create({
+        data: {
+          title: entry.substring(0, entry.length - 3),
+          content: (await readFile(join(dir, entry))).toString(),
+          lang
+        }
+      });
+    }
   }
 
   console.log("Database has been seeded. 🌱");

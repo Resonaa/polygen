@@ -108,7 +108,7 @@ export function getSettings() {
 
   try {
     return new Settings(JSON.parse(LZString.decompressFromUTF16(s))).merge();
-  } catch (_) {
+  } catch {
     return new Settings({}).merge();
   }
 }

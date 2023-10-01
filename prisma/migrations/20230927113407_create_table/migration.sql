@@ -1,17 +1,25 @@
 -- CreateTable
 CREATE TABLE "User" (
     "username" TEXT NOT NULL,
-    "password" TEXT NOT NULL,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "access" INTEGER NOT NULL DEFAULT 1,
     "bio" TEXT NOT NULL DEFAULT ''
 );
 
 -- CreateTable
+CREATE TABLE "Password" (
+    "hash" TEXT NOT NULL,
+    "username" TEXT NOT NULL,
+    CONSTRAINT "Password_username_fkey" FOREIGN KEY ("username") REFERENCES "User" ("username") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- CreateTable
 CREATE TABLE "Announcement" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "title" TEXT NOT NULL,
-    "content" TEXT NOT NULL
+    "content" TEXT NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "lang" TEXT NOT NULL
 );
 
 -- CreateTable
@@ -47,6 +55,9 @@ CREATE TABLE "Star" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Password_username_key" ON "Password"("username");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Star_username_key" ON "Star"("username");

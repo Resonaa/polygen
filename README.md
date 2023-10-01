@@ -1,21 +1,28 @@
 # polygen
 
-## 使用方法
+## Development
 
-- 将 `.env.example` 复制为 `.env`，并填写其中配置项
+- Copy .env file:
   ```sh
-  cp ./.env.example ./.env
+  cp .env.example .env
   ```
-- 安装依赖项
+
+- Install dependencies:
   ```sh
   npm i
   ```
-- 初始化数据库
+
+- Setup database:
   ```sh
   npm run setup
   ```
-- 构建并运行
+
+- Build the app:
   ```sh
   npm run build
-  npm run start
+  ```
+
+- Start dev server:
+  ```sh
+  npm run dev
   ```

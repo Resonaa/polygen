@@ -1,33 +1,26 @@
 import { join } from "path";
+import { cwd } from "process";
 
-import type { User } from "@prisma/client";
+import type { Password, User } from "@prisma/client";
 import type { NodeOnDiskFile } from "@remix-run/node";
 import { writeFile } from "fs-extra";
 import sharp from "sharp";
 
-import { CWD } from "~/constants.server";
 import { prisma } from "~/db.server";
 import { getRank } from "~/models/star.server";
 import { comparePassword, hashPassword } from "~/session.server";
 
 export type { User } from "@prisma/client";
 
-function getUserByUsername(username: User["username"]) {
+export function getUser(username: User["username"]) {
   return prisma.user.findUnique({ where: { username } });
 }
 
-export async function getUserWithoutPasswordByUsername(username: User["username"]) {
-  const user = await getUserByUsername(username);
-
-  if (!user) {
-    return null;
-  }
-
-  const { password: _password, ...userWithoutPassword } = user;
-  return userWithoutPassword;
+export function getPassword(username: User["username"]) {
+  return prisma.password.findUnique({ where: { username } });
 }
 
-export async function getStatsByUsername(username: User["username"]) {
+export async function getStats(username: User["username"]) {
   const data = await prisma.user.findUnique({
     where: { username },
     include: { _count: { select: { comments: true, posts: true } } }
@@ -40,21 +33,21 @@ export async function getStatsByUsername(username: User["username"]) {
 }
 
 export async function createUser(username: User["username"], password: string) {
-  const hashedPassword = await hashPassword(password);
+  const hash = await hashPassword(password);
 
-  return prisma.user.create({
+  return await prisma.user.create({
     data: {
       username,
-      password: hashedPassword
+      password: { create: { hash } }
     }
   });
 }
 
-export async function updatePasswordByUsername(username: User["username"], password: string) {
-  return prisma.user.update({ data: { password: await hashPassword(password) }, where: { username } });
+export async function updatePassword(username: User["username"], password: string) {
+  return await prisma.password.update({ data: { hash: await hashPassword(password) }, where: { username } });
 }
 
-export function updateBioByUsername(username: User["username"], bio: string) {
+export function updateBio(username: User["username"], bio: string) {
   return prisma.user.update({
     data: { bio },
     where: { username }
@@ -63,27 +56,19 @@ export function updateBioByUsername(username: User["username"], bio: string) {
 
 export async function verifyLogin(
   username: User["username"],
-  password: User["password"]
+  password: Password["hash"]
 ) {
-  const user = await getUserByUsername(username);
+  const userPassword = await getPassword(username);
 
-  if (!user || !("password" in user)) {
-    return null;
+  if (!userPassword || !("hash" in userPassword)) {
+    return false;
   }
 
-  const isValid = await comparePassword(password, user.password);
-
-  if (!isValid) {
-    return null;
-  }
-
-  const { password: _password, ...userWithoutPassword } = user;
-
-  return userWithoutPassword;
+  return await comparePassword(password, userPassword.hash);
 }
 
-export async function updateAvatarByUsername(username: User["username"], avatar: NodeOnDiskFile) {
-  let img = sharp(await avatar.arrayBuffer()).webp();
+export async function updateAvatar(username: User["username"], avatar: NodeOnDiskFile) {
+  let img = sharp(await avatar.arrayBuffer()).avif();
   const meta = await img.metadata();
 
   const size = Math.min(500, Math.max(100, meta.height ?? 0, meta.width ?? 0));
@@ -92,5 +77,5 @@ export async function updateAvatarByUsername(username: User["username"], avatar:
     img = img.resize(size, size, { fit: "fill" });
   }
 
-  return writeFile(join(CWD, `usercontent/avatar/${username}.webp`), await img.toBuffer());
+  return writeFile(join(cwd(), `usercontent/avatar/${username}.avif`), await img.toBuffer());
 }
