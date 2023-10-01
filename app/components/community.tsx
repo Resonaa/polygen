@@ -1,13 +1,5 @@
 import { Link } from "@remix-run/react";
 
-export function Avatar({ username }: { username: string }) {
-  return (
-    <Link to={`/user/${username}`} className="avatar">
-      <img alt="avatar" className="rounded" src={`/usercontent/avatar/${username}.webp`} />
-    </Link>
-  );
-}
-
 export function UserLink({ username }: { username: string }) {
   return (
     <Link to={`/user/${username}`} className="user">{username}</Link>
@@ -38,16 +30,6 @@ export function relativeDate(date: string) {
     return `${past.getMonth() + 1}/${past.getDate()} ${pastHours}:${pastMinutes}`;
   } else {
     return `${pastHours}:${pastMinutes}`;
-  }
-}
-
-export function formatLargeNumber(x: number) {
-  if (x < 1000) {
-    return x.toString();
-  } else if (x < 1000000) {
-    return `${(x / 1000).toFixed(2)}k`;
-  } else {
-    return `${(x / 1000000).toFixed(2)}m`;
   }
 }
 

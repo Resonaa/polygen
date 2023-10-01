@@ -54,13 +54,14 @@ export class Renderer {
 
   isTouch: boolean = false;
 
-  constructor(canvas: HTMLCanvasElement) {
+  constructor(canvas: HTMLCanvasElement, backgroundColor?: PIXI.ColorSource) {
     this.app = new PIXI.Application({
       antialias: true,
       powerPreference: "high-performance",
       view: canvas,
       height: canvas.parentElement?.clientHeight,
-      width: canvas.parentElement?.clientWidth
+      width: canvas.parentElement?.clientWidth,
+      backgroundColor
     });
 
     this.app.stage.addChild(this.graphics);
@@ -73,7 +74,7 @@ export class Renderer {
       fontSize: 16,
       fill: this.settings.game.colors.selectedBorder,
       fontWeight: "bold"
-    });
+    }, { chars: PIXI.BitmapFont.ASCII });
 
 
     this.isTouch = settings.game.controls === Controls.Touch || (settings.game.controls === Controls.Auto && document.body.clientWidth < 640);
@@ -195,7 +196,7 @@ export class Renderer {
 
     switch (this.gm.mode) {
       case MapMode.Hexagon: {
-        realWidth = this.pileSize * (1 + 0.75 * (this.gm.width - 1));
+        realWidth = this.pileSize * (1 + .75 * (this.gm.width - 1));
         realHeight = Math.sqrt(3) / 4 * this.pileSize * (1 + 2 * this.gm.height);
         break;
       }
@@ -208,7 +209,7 @@ export class Renderer {
 
     [this.startX, this.startY] = [(this.app.view.width - realWidth) / 2, (this.app.view.height - realHeight) / 2];
 
-    if (this.pileSize <= MIN_PILE_SIZE + 0.1) {
+    if (this.pileSize <= MIN_PILE_SIZE + .1) {
       for (let i = 1; i <= this.gm.height; i++) {
         for (let j = 1; j <= this.gm.width; j++) {
           if (this.gm.get([i, j]).color === this.myColor && this.gm.get([i, j]).type === LandType.General) {
@@ -229,7 +230,7 @@ export class Renderer {
 
     switch (this.gm.mode) {
       case MapMode.Hexagon: {
-        maxXWidth = width / (1 + 0.75 * (this.gm.width - 1));
+        maxXWidth = width / (1 + .75 * (this.gm.width - 1));
         maxYWidth = 4 * height / (Math.sqrt(3) * (1 + 2 * this.gm.height));
         break;
       }
@@ -262,7 +263,7 @@ export class Renderer {
   private getPileUpperLeftPos([i, j]: Pos) {
     switch (this.gm.mode) {
       case MapMode.Hexagon: {
-        return [this.startX + 0.75 * (j - 1) * this.pileSize,
+        return [this.startX + .75 * (j - 1) * this.pileSize,
           this.startY + Math.sqrt(3) / 4 * this.pileSize * (2 * (i - 1) + (j % 2 === 0 ? 1 : 0))];
       }
       case MapMode.Square: {
@@ -282,9 +283,9 @@ export class Renderer {
     switch (this.gm.mode) {
       case MapMode.Hexagon: {
         return [upperLeftX + pileWidth / 4, upperLeftY,
-          upperLeftX + 0.75 * pileWidth, upperLeftY,
+          upperLeftX + .75 * pileWidth, upperLeftY,
           upperLeftX + pileWidth, upperLeftY + Math.sqrt(3) / 4 * pileWidth,
-          upperLeftX + 0.75 * pileWidth, upperLeftY + Math.sqrt(3) / 2 * pileWidth,
+          upperLeftX + .75 * pileWidth, upperLeftY + Math.sqrt(3) / 2 * pileWidth,
           upperLeftX + pileWidth / 4, upperLeftY + Math.sqrt(3) / 2 * pileWidth,
           upperLeftX, upperLeftY + Math.sqrt(3) / 4 * pileWidth];
       }
@@ -331,7 +332,7 @@ export class Renderer {
             break;
           }
           case MapMode.Square: {
-            image.width = image.height = this.pileSize * 0.78125;
+            image.width = image.height = this.pileSize * .78125;
             image.x = x + (this.pileSize - image.width) / 2;
             image.y = y + (this.pileSize - image.height) / 2;
             break;
@@ -420,14 +421,12 @@ export class Renderer {
       fillColor = this.settings.game.colors.unknown;
     }
 
-    const lineWidth = selected ? (this.pileSize <= 25 ? 3 : 4) : 1;
-    const alignment = selected ? 0 : 0.5;
-    const lineColor = selected ? this.settings.game.colors.selectedBorder : undefined;
+    const lineWidth = selected ? (this.pileSize <= 25 ? 3 : 4) : 0;
 
-    this.graphics.lineStyle(lineWidth, lineColor, 1, alignment)
-      .beginFill(fillColor)
-      .drawPolygon(this.getPilePath(pos))
-      .endFill();
+    this.graphics.lineStyle(lineWidth, this.settings.game.colors.selectedBorder, 1, 0)
+        .beginFill(fillColor)
+        .drawPolygon(this.getPilePath(pos))
+        .endFill();
   }
 
   updateLand(pos: Pos) {

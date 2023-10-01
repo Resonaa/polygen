@@ -1,0 +1,74 @@
+{
+  "lang": {
+    "zh": "中文",
+    "en": "English"
+  },
+  "nav": {
+    "home": "Home",
+    "game": "Game",
+    "leaderboard": "Leaderboard",
+    "apps": "Apps",
+    "pastebin": "Pastebin",
+    "description-pastebin": "Create and share pastes",
+    "profile": "Profile",
+    "settings": "Settings",
+    "logout": "Logout"
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "username": "Username",
+    "password": "Password",
+    "retype-password": "Retype Password",
+    "captcha": "Verification Code",
+    "no-account": "New user? ",
+    "have-account": "Already have an account? ",
+    "username-placeholder": "3-18 characters",
+    "password-placeholder": "6 or more characters",
+    "retype-password-placeholder": "Retype password",
+    "captcha-placeholder": "Graphic verification code",
+    "username-starts-or-ends-with-space": "Username must not start or end with space",
+    "username-successive-spaces": "Username must not contain successive spaces",
+    "username-invalid-chars": "Username contains invalid characters",
+    "username-or-password-incorrect": "Username or password incorrect",
+    "captcha-incorrect": "Verification code incorrect",
+    "username-already-exists": "Username already exists",
+    "passwords-dont-match": "Passwords don't match"
+  },
+  "community": {
+    "edit": "Edit",
+    "preview": "Preview",
+    "add-post": "Post",
+    "add-comment": "Comment",
+    "announcements": "Announcements",
+    "close": "Close",
+    "confirm-title": "Confirm Deletion",
+    "confirm-body": "You can't undo this action afterwards",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "second": "second",
+    "minute": "minute",
+    "hour": "hour",
+    "day": "day",
+    "month": "month",
+    "years": "year",
+    "countdowns": "Countdowns",
+    "polygen-public-preview": "polygen Public Preview",
+    "recent-comments": "Recent Comments",
+    "ago": " ago",
+    "view_one": "view",
+    "view_other": "views",
+    "comment_one": "comment",
+    "comment_other": "comments",
+    "load-more": "Show More...",
+    "post-of": "{{username}}'s Post",
+    "published": "Published"
+  },
+  "utils": {
+    "plurals_one": "",
+    "plurals_other": "s"
+  },
+  "errors": {
+    "title": "Error - polygen"
+  }
+}

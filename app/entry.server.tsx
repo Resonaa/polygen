@@ -1,57 +1,66 @@
-import { PassThrough } from "node:stream";
+// noinspection ES6UnusedImports
 
+import { resolve } from "path";
+import { PassThrough } from "stream";
+
+import createCache from "@emotion/cache";
+import { CacheProvider } from "@emotion/react";
 import type { EntryContext } from "@remix-run/node";
-import { Response } from "@remix-run/node";
+import { createReadableStreamFromReadable } from "@remix-run/node";
 import { RemixServer } from "@remix-run/react";
+import { createInstance } from "i18next";
+import Backend from "i18next-fs-backend";
 import isbot from "isbot";
 import { renderToPipeableStream } from "react-dom/server";
+import { I18nextProvider, initReactI18next } from "react-i18next";
 
-const ABORT_DELAY = 7_000;
+import i18n from "./i18n";
+import { getLocale } from "./i18next.server";
 
-export default function handleRequest(
+const ABORT_DELAY = 6590;
+
+export default async function handleRequest(
   request: Request,
   responseStatusCode: number,
   responseHeaders: Headers,
   remixContext: EntryContext
 ) {
-  return isbot(request.headers.get("user-agent"))
-    ? handleBotRequest(
-      request,
-      responseStatusCode,
-      responseHeaders,
-      remixContext
-    )
-    : handleBrowserRequest(
-      request,
-      responseStatusCode,
-      responseHeaders,
-      remixContext
-    );
-}
+  const callbackName = isbot(request.headers.get("user-agent"))
+    ? "onAllReady"
+    : "onShellReady";
 
-function handleBotRequest(
-  request: Request,
-  responseStatusCode: number,
-  responseHeaders: Headers,
-  remixContext: EntryContext
-) {
+  const instance = createInstance();
+  const lng = await getLocale(request);
+
+  await instance
+    .use(initReactI18next)
+    .use(Backend)
+    .init({
+      ...i18n,
+      lng,
+      backend: { loadPath: resolve("./public/locales/{{lng}}/{{ns}}.json") }
+    });
+
   return new Promise((resolve, reject) => {
+    let didError = false;
+    const cache = createCache({ key: "-" });
+
     const { pipe, abort } = renderToPipeableStream(
-      <RemixServer
-        context={remixContext}
-        url={request.url}
-        abortDelay={ABORT_DELAY}
-      />,
+      <CacheProvider value={cache}>
+        <I18nextProvider i18n={instance}>
+          <RemixServer context={remixContext} url={request.url} />
+        </I18nextProvider>
+      </CacheProvider>,
       {
-        onAllReady() {
+        [callbackName]: () => {
           const body = new PassThrough();
 
           responseHeaders.set("Content-Type", "text/html");
 
           resolve(
-            new Response(body, {
+            new Response(createReadableStreamFromReadable(body), {
               headers: responseHeaders,
-              status: responseStatusCode,
+              status: didError ? 500 : responseStatusCode
             })
           );
 
@@ -61,51 +70,10 @@ function handleBotRequest(
           reject(error);
         },
         onError(error: unknown) {
-          responseStatusCode = 500;
+          didError = true;
+
           console.error(error);
-        },
-      }
-    );
-
-    setTimeout(abort, ABORT_DELAY);
-  });
-}
-
-function handleBrowserRequest(
-  request: Request,
-  responseStatusCode: number,
-  responseHeaders: Headers,
-  remixContext: EntryContext
-) {
-  return new Promise((resolve, reject) => {
-    const { pipe, abort } = renderToPipeableStream(
-      <RemixServer
-        context={remixContext}
-        url={request.url}
-        abortDelay={ABORT_DELAY}
-      />,
-      {
-        onShellReady() {
-          const body = new PassThrough();
-
-          responseHeaders.set("Content-Type", "text/html");
-
-          resolve(
-            new Response(body, {
-              headers: responseHeaders,
-              status: responseStatusCode,
-            })
-          );
-
-          pipe(body);
-        },
-        onShellError(error: unknown) {
-          reject(error);
-        },
-        onError(error: unknown) {
-          console.error(error);
-          responseStatusCode = 500;
-        },
+        }
       }
     );
 

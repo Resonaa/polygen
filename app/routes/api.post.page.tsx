@@ -1,24 +1,27 @@
-import type { ActionArgs } from "@remix-run/node";
+import type { ActionFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 
 import Access from "~/access";
 import { getPosts } from "~/models/post.server";
+import { badRequest } from "~/reponses.server";
 import { requireAuthenticatedOptionalUser } from "~/session.server";
-import { validatePage } from "~/validator.server";
+import { validateGetPostPageFormData } from "~/validators/community.server";
 
 export async function loader() {
   return redirect("/");
 }
 
-export async function action({ request }: ActionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
   await requireAuthenticatedOptionalUser(request, Access.Basic);
 
-  const formData = await request.formData();
-  const page = Number(formData.get("page"));
+  const data = await request.formData();
+  const res = validateGetPostPageFormData(data);
 
-  if (!validatePage(page)) {
-    return json("页数不合法", { status: 400 });
+  if (res.success) {
+    const { page } = res.data;
+
+    return json(await getPosts(page));
   }
 
-  return json(await getPosts(page));
+  return badRequest();
 }

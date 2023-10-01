@@ -1,46 +1,47 @@
-import { Box, Center, Heading, HStack, Link, Text, VStack } from "@chakra-ui/react";
-import { Link as ReactLink } from "@remix-run/react/dist/components";
+import { Box, Center, Heading, HStack, Text, VStack } from "@chakra-ui/react";
+import { Link } from "@remix-run/react";
+import { useTranslation } from "react-i18next";
 
 import type { Comment } from "~/models/comment.server";
-import { useServerTime } from "~/utils";
 
 import type { CommentProps } from "./comment";
 import RenderedText from "./renderedText";
-import { relativeDate } from "./utils";
+import UserLink from "./userLink";
+import { useRelativeDateFormatter } from "./utils";
 
 type RecentCommentProps = CommentProps & {
   parentId: Comment["parentId"]
 }
 
 function RecentComment({ username, createdAt, content, parentId }: RecentCommentProps) {
-  const now = useServerTime();
+  const relativeDate = useRelativeDateFormatter();
 
   return (
-    <VStack w="100%" spacing={1} align="normal">
+    <VStack align="normal" w="100%" spacing={1}>
       <HStack justifyContent="space-between">
-        <Link as={ReactLink} to={`/user/${username}`} fontWeight={600}>
-          {username}
-        </Link>
-        <Text fontSize="sm" color="gray.400">
-          {relativeDate(createdAt, now)}
+        <UserLink username={username} />
+        <Text color="gray.400" fontSize="sm">
+          {relativeDate(createdAt)}
         </Text>
       </HStack>
 
-      <Box maxH="100px" overflowY="auto">
-        <ReactLink to={`/post/${parentId}`}>
+      <Box overflowY="auto" maxH="100px">
+        <Link to={`/post/${parentId}`}>
           <object>
             <RenderedText content={content} />
           </object>
-        </ReactLink>
+        </Link>
       </Box>
     </VStack>
   );
 }
 
 export default function RecentComments({ comments }: { comments: RecentCommentProps[] }) {
+  const { t } = useTranslation();
+
   return (
     <Center flexDir="column" w="100%">
-      <Heading size="sm" mb={2}>最新评论</Heading>
+      <Heading mb={2} size="sm">{t("community.recent-comments")}</Heading>
       <VStack w="100%" spacing={0}>
         {comments.map(data => <RecentComment key={data.id} {...data} />)}
       </VStack>

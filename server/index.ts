@@ -1,74 +1,59 @@
 import { join } from "path";
-import { exit } from "process";
+import { cwd, exit } from "process";
 
-import compress from "@fastify/compress";
-import fastifyRateLimit from "@fastify/rate-limit";
-import { remixFastifyPlugin } from "@mcansh/remix-fastify";
-import { broadcastDevReady, installGlobals } from "@remix-run/node";
+import fastifyEarlyHints from "@fastify/early-hints";
+import { createRequestHandler, getEarlyHintLinks, staticFilePlugin } from "@mcansh/remix-fastify";
+import { broadcastDevReady } from "@remix-run/node";
 import fastify from "fastify";
-import httpsRedirect from "fastify-https-redirect";
+import type { FastifyContentTypeParser } from "fastify/types/content-type-parser";
 import fastifySocketIO from "fastify-socket.io";
-import { ensureDir, exists, readFile } from "fs-extra";
-import sourceMapSupport from "source-map-support";
+import { ensureDir, exists } from "fs-extra";
 
-import { BUILD_DIR, MODE, SSL_CERT, SSL_KEY, USERCONTENT_DIR } from "~/constants.server";
+import { MODE, PORT } from "~/constants.server";
 import { setServer } from "~/core/server";
 
+const BUILD_DIR = join(cwd(), "server/build");
+const USERCONTENT_DIR = join(cwd(), "usercontent");
+
 (async () => {
-  sourceMapSupport.install();
-
-  installGlobals();
-
-  if (!(await exists(BUILD_DIR))) {
+  if (!await exists(BUILD_DIR)) {
     console.warn(
       "Build directory doesn't exist, please run `npm run build` before starting the server."
     );
     exit(1);
   }
 
+  const build = await import(BUILD_DIR);
+
   await ensureDir(join(USERCONTENT_DIR, "avatar"));
 
-  let app: any;
+  const app = fastify({ logger: { transport: { target: "@fastify/one-line-logger" } } });
 
-  let logger = {
-    logger: { transport: { target: "@fastify/one-line-logger" } }
+  const noopContentParser: FastifyContentTypeParser = (_, payload, done) => {
+    done(null, payload);
   };
 
-  if (MODE === "production" && SSL_KEY && SSL_CERT) {
-    const cert = await readFile(SSL_CERT);
-    const key = await readFile(SSL_KEY);
-    app = fastify({
-      https: { key, cert },
-      ...logger
-    });
+  app.addContentTypeParser("application/json", noopContentParser);
+  app.addContentTypeParser("*", noopContentParser);
 
-    await app.register(httpsRedirect);
-  } else {
-    app = fastify(logger);
-    if (MODE === "production") {
-      await app.register(fastifyRateLimit, {
-        max: 161,
-        timeWindow: "1 minute"
-      });
-    }
-  }
-
-  const build = require(BUILD_DIR);
-
-  await app.register(compress);
-  await app.register(remixFastifyPlugin, {
-    build,
-    mode: MODE,
-    purgeRequireCacheInDevelopment: false,
-    unstable_earlyHints: true
-  });
-  await app.register(fastifySocketIO);
-
-  await app.listen({ port: MODE === "production" && SSL_KEY && SSL_CERT ? 443 : 80, host: "0.0.0.0" });
+  await app
+    .register(fastifySocketIO, { transports: ["websocket"] })
+    .register(fastifyEarlyHints, { warn: true })
+    .register(staticFilePlugin, {
+      assetsBuildDirectory: "public/build",
+      publicPath: "/build/"
+    })
+    .all("*", async (request, reply) => {
+      const links = getEarlyHintLinks(request, build);
+      await reply.writeEarlyHintsLinks(links);
+      return createRequestHandler({ build, mode: build.mode })(request, reply);
+    })
+    .listen({ port: PORT });
 
   if (MODE === "development") {
     await broadcastDevReady(build);
   }
 
+  // @ts-ignore
   setServer(app.io);
 })();

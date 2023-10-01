@@ -1,4 +1,4 @@
-import type { LoaderArgs, V2_MetaFunction } from "@remix-run/node";
+import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { Header, Table, Grid } from "semantic-ui-react";
@@ -11,9 +11,9 @@ import { rankList } from "~/models/star.server";
 import { requireAuthenticatedOptionalUser } from "~/session.server";
 import { useOptionalUser } from "~/utils";
 
-export const meta: V2_MetaFunction = () => [{ title: "排行榜 - polygen" }];
+export const meta: MetaFunction = () => [{ title: "排行榜 - polygen" }];
 
-export async function loader({ request }: LoaderArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
   await requireAuthenticatedOptionalUser(request, Access.Basic);
   return json(await rankList());
 }

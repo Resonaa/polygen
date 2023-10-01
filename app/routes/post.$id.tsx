@@ -1,5 +1,5 @@
 import { Divider, VStack } from "@chakra-ui/react";
-import type { ActionArgs, LoaderArgs, V2_MetaFunction } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 
@@ -8,38 +8,47 @@ import AddComment from "~/components/community/addComment";
 import Comments from "~/components/community/comments";
 import Post from "~/components/community/post";
 import Layout from "~/components/layout/layout";
+import { getT } from "~/i18next.server";
 import { createComment, getComments } from "~/models/comment.server";
 import { getPost } from "~/models/post.server";
+import { badRequest, notFound } from "~/reponses.server";
 import { requireAuthenticatedUser } from "~/session.server";
 import { useOptionalUser } from "~/utils";
-import { validateCommentContent, validatePage } from "~/validator.server";
+import { validateAddCommentFormData, validateGetPostParams } from "~/validators/community.server";
 
-export async function loader({ params }: LoaderArgs) {
-  const id = Number(params.postId);
-  if (!validatePage(id)) {
-    throw new Response("请求无效", { status: 400, statusText: "Bad Request" });
+export async function loader({ params, request }: LoaderFunctionArgs) {
+  const t = await getT(request);
+
+  const res = validateGetPostParams(params);
+
+  if (!res.success) {
+    throw badRequest();
   }
+
+  const { id } = res.data;
 
   const post = await getPost(id);
   if (!post) {
-    throw new Response("说说不存在", { status: 404, statusText: "Not Found" });
+    throw notFound();
   }
 
   const comments = await getComments(1, id);
 
-  return json({ post, comments });
+  const title = `${t("community.post-of", { username: post.username })} - polygen`;
+
+  return json({ post, comments, title });
 }
 
-export const meta: V2_MetaFunction<typeof loader> = ({ data }) => [{ title: data ? `${data.post.username}的说说 - polygen` : "错误 - polygen" }];
+export const meta: MetaFunction<typeof loader> = ({ data }) => [{ title: data?.title }];
 
-export async function action({ request }: ActionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
   const { username } = await requireAuthenticatedUser(request, Access.Community);
 
-  const formData = await request.formData();
-  const content = formData.get("content");
-  const parentId = Number(formData.get("parentId"));
+  const data = await request.formData();
+  const res = validateAddCommentFormData(data);
 
-  if (validatePage(parentId) && validateCommentContent(content)) {
+  if (res.success) {
+    const { content, parentId } = res.data;
     await createComment(username, content, parentId);
   }
 

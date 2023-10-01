@@ -11,35 +11,55 @@ import {
   MenuItem,
   MenuList
 } from "@chakra-ui/react";
-import { Form, Link, useLocation } from "@remix-run/react";
+import { Link, useFetcher } from "@remix-run/react";
+import { useTranslation } from "react-i18next";
 import { FaSignOutAlt } from "react-icons/fa";
 import { FaUser } from "react-icons/fa6";
 
 import { useUser } from "~/utils";
 
-const StyledForm = chakra(Form);
+export function DropdownRightIcon({ isOpen }: {
+  isOpen: boolean
+}) {
+  return (
+    <Icon as={ChevronDownIcon} transform={isOpen ? "rotate(180deg)" : undefined}
+          transition="all .25s ease-in-out" />
+  );
+}
 
 export default function UserDropdown() {
   const user = useUser();
-  const location = useLocation();
+  const { t } = useTranslation();
+
+  const fetcher = useFetcher();
 
   return (
-    <Menu>
-      <MenuButton as={Button} variant="ghost" rightIcon={<ChevronDownIcon />}>
-        <Flex h="100%" align="center">
-          <Avatar size="xs" mr="6px" src={`/usercontent/avatar/${user.username}.webp`} />
-          {user.username}
-        </Flex>
-      </MenuButton>
-      <MenuList>
-        <MenuItem icon={<Icon as={FaUser} />} as={Link} to={`/user/${user.username}`}>主页</MenuItem>
-        <MenuItem icon={<SettingsIcon />} as={Link} to="/settings">设置</MenuItem>
-        <MenuDivider />
-        <StyledForm action="/auth/logout" method="post" mb={0}>
-          <MenuItem icon={<Icon as={FaSignOutAlt} />} type="submit">登出</MenuItem>
-          <input type="hidden" name="redirectTo" value={location.pathname} />
-        </StyledForm>
-      </MenuList>
+    <Menu autoSelect={false}>
+      {({ isOpen }) => (
+        <>
+          <MenuButton as={Button} rightIcon={<DropdownRightIcon isOpen={isOpen} />}
+                      rounded="full" variant="ghost">
+            <Flex align="center" h="100%">
+              <Avatar mr="6px" size="xs" src={`/usercontent/avatar/${user.username}.avif`} />
+              {user.username}
+            </Flex>
+          </MenuButton>
+          <MenuList>
+            <MenuItem as={Link} icon={<FaUser />} to={`/user/${user.username}`}>
+              {t("nav.profile")}
+            </MenuItem>
+            <MenuItem as={Link} icon={<SettingsIcon />} to="/settings">
+              {t("nav.settings")}
+            </MenuItem>
+            <MenuDivider />
+            <chakra.form as={fetcher.Form} action="/auth/logout" method="post" mb={0}>
+              <MenuItem icon={<FaSignOutAlt />} type="submit">
+                {t("nav.logout")}
+              </MenuItem>
+            </chakra.form>
+          </MenuList>
+        </>
+      )}
     </Menu>
   );
 }

@@ -7,7 +7,7 @@ import type { Pos } from "~/core/server/game/utils";
 
 import type { ClientSocket, Patch } from "../types";
 
-export function registerClientSocket(client: ClientSocket, rid: string, setShowCanvas: (show: boolean) => void) {
+export function registerClientSocket(client: ClientSocket, rid: string, setShowCanvas: (show: boolean) => void, backgroundColor?: number) {
   client.on("connect", () => {
     client.emit("joinRoom", rid);
   });
@@ -15,7 +15,7 @@ export function registerClientSocket(client: ClientSocket, rid: string, setShowC
   const canvas = document.querySelector("canvas");
   if (!canvas) return;
 
-  const renderer = new Renderer(canvas);
+  const renderer = new Renderer(canvas, backgroundColor);
 
   let halfTag = false;
 

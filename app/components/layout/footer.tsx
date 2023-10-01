@@ -1,4 +1,4 @@
-import { Box, chakra, Container, Icon, Stack, Text, Tooltip, useColorModeValue } from "@chakra-ui/react";
+import { Box, chakra, Container, Stack, Text, Tooltip, useColorModeValue } from "@chakra-ui/react";
 import type { ReactNode } from "react";
 import { FaGithub, FaQq } from "react-icons/fa6";
 
@@ -37,30 +37,30 @@ function SocialButton({
 export default function Footer() {
   return (
     <Box
-      bg={useColorModeValue("gray.50", "gray.900")}
-      color={useColorModeValue("gray.700", "gray.200")}
       pos="absolute"
       bottom={0}
       w="100%"
+      color={useColorModeValue("gray.700", "gray.200")}
+      bg={useColorModeValue("gray.50", "gray.900")}
     >
       <Container
         as={Stack}
+        align={{ base: "center", md: "center" }}
+        justify={{ base: "center", md: "space-between" }}
+        direction={{ base: "column", md: "row" }}
         maxW="6xl"
         py={4}
-        direction={{ base: "column", md: "row" }}
-        spacing={4}
-        justify={{ base: "center", md: "space-between" }}
-        align={{ base: "center", md: "center" }}>
+        spacing={4}>
         <Text>
-          Copyleft <chakra.span transform="scale(-1,1)" display="inline-block">©</chakra.span> 2022-2023 polygen.
+          Copyleft <chakra.span transform="scale(-1,1)" display="inline-block">©</chakra.span> 2022-2023 polygen
         </Text>
         <Stack direction="row" spacing={6}>
-          <SocialButton label="GitHub 仓库" href="https://github.com/jwcub/polygen">
-            <Icon as={FaGithub} />
+          <SocialButton label="GitHub" href="https://github.com/jwcub/polygen">
+            <FaGithub />
           </SocialButton>
-          <SocialButton label="官方 QQ 群"
+          <SocialButton label="QQ"
                         href="https://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=xv13f9IlvpIEKb7Wm0hCO2SGTVrvclkd&authKey=%2FRq0HGhEmqbfUeXovz%2B1BZBNPh4XlQtC%2Bbpz8YjL%2BD3p%2FSZvjoYmy8KZk0G%2BhyzD&noverify=0&group_code=452808481">
-            <Icon as={FaQq} />
+            <FaQq />
           </SocialButton>
         </Stack>
       </Container>

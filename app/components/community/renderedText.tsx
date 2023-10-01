@@ -5,13 +5,15 @@ import rehypeKatex from "rehype-katex";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 
-export default function RenderedText({ content, ...props }: {
-  content: string
-}) {
+interface RenderedTextProps {
+  content: string;
+}
+
+export default function RenderedText<T extends RenderedTextProps>({ content, ...props }: T) {
   return (
     <ReactMarkdown
       components={ChakraUIRenderer()}
-      remarkPlugins={[remarkMath, remarkGfm]}
+      remarkPlugins={[remarkGfm, remarkMath]}
       rehypePlugins={[[rehypeKatex, { output: "html", throwOnError: false }],
         [rehypeHighlight, { ignoreMissing: true }]]}
       skipHtml

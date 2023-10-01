@@ -12,19 +12,22 @@ export function setServer(server: Server) {
       return;
     }
 
+    // @ts-ignore
+    // noinspection JSConstantReassignment
+    delete socket.conn.request;
+
     socket.leave(socket.id);
 
     const rm = new RoomManager(server);
 
     socket.on("joinRoom", rid => {
-      rm.rid = rid;
       server.in(SocketRoom.usernameRid(username, rid)).disconnectSockets();
 
       rm.leave(username);
 
       socket.join(SocketRoom.rid(rid));
       socket.join(SocketRoom.usernameRid(username, rid));
-      rm.join(username);
+      rm.join(username, rid);
     }).on("message", ({ type, content }) => {
       if (content.trim().length <= 0 || content.length > 616) {
         return;
@@ -32,8 +35,8 @@ export function setServer(server: Server) {
 
       if (type === MessageType.World) {
         server.emit("message", { type, content, sender: username });
-      } else if (type === MessageType.Room && rm.rid) {
-        server.to(SocketRoom.rid(rm.rid)).emit("message", { type, content, sender: username });
+      } else if (type === MessageType.Room) {
+        rm.roomMessage(username, content);
       } else if (type === MessageType.Team) {
         rm.teamMessage(username, content);
       }

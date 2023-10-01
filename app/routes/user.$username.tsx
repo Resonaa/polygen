@@ -1,4 +1,4 @@
-import type { ActionArgs, LoaderArgs, NodeOnDiskFile, V2_MetaFunction } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction, NodeOnDiskFile } from "@remix-run/node";
 import {
   json,
   unstable_composeUploadHandlers,
@@ -9,42 +9,37 @@ import {
 import { Form as ReactForm, useActionData, useLoaderData } from "@remix-run/react";
 import { useEffect, useRef, useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
-import { Button, Divider, Feed, Form, Grid, Icon, Pagination, Statistic } from "semantic-ui-react";
+import { Button, Divider, Form, Grid, Icon, Statistic } from "semantic-ui-react";
 
 import Access from "~/access";
 import { formatDate, relativeDate, Star } from "~/components/community";
 import Layout from "~/components/layout";
-import Post from "~/components/post";
 import { formatStar } from "~/core/client/utils";
 import { getPostsByUsername } from "~/models/post.server";
-import {
-  getStatsByUsername,
-  getUserWithoutPasswordByUsername,
-  updateAvatarByUsername,
-  updateBioByUsername
-} from "~/models/user.server";
+import { getStats, getUser, updateAvatar, updateBio } from "~/models/user.server";
+import { badRequest, notFound } from "~/reponses.server";
 import { requireAuthenticatedUser } from "~/session.server";
-import { ajax, useOptionalUser } from "~/utils";
+import { useOptionalUser } from "~/utils";
 
-export async function loader({ params }: LoaderArgs) {
+export async function loader({ params }: LoaderFunctionArgs) {
   const username = String(params.username);
   if (!username) {
-    throw new Response("请求无效", { status: 400, statusText: "Bad Request" });
+    throw badRequest("请求无效");
   }
 
-  const user = await getUserWithoutPasswordByUsername(username);
+  const user = await getUser(username);
   if (!user) {
-    throw new Response("用户不存在", { status: 404, statusText: "Not Found" });
+    throw notFound("用户不存在");
   }
 
-  const stats = await getStatsByUsername(username);
+  const stats = await getStats(username);
 
   const posts = await getPostsByUsername(username, 1);
 
   return json({ user, stats, originalPosts: posts });
 }
 
-export async function action({ request }: ActionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
   const user = await requireAuthenticatedUser(request, Access.Settings);
 
   const uploadHandler = unstable_composeUploadHandlers(
@@ -68,28 +63,28 @@ export async function action({ request }: ActionArgs) {
       return json("个性签名不合法", { status: 400 });
     }
 
-    await updateBioByUsername(user.username, bio);
+    await updateBio(user.username, bio);
 
     if (!avatar) {
       return json("编辑成功");
     }
 
     const data = avatar as unknown as NodeOnDiskFile;
-    await updateAvatarByUsername(user.username, data);
+    await updateAvatar(user.username, data);
     await data.remove();
-  } catch (_) {
+  } catch {
+    return json("编辑失败", { status: 400 });
   }
 
   return json("编辑成功");
 }
 
-export const meta: V2_MetaFunction<typeof loader> = ({ data }) => [{ title: data ? `${data.user.username} - polygen` : "错误 - polygen" }];
+export const meta: MetaFunction<typeof loader> = ({ data }) => [{ title: data ? `${data.user.username} - polygen` : "错误 - polygen" }];
 
 export default function User() {
   const { user, stats, originalPosts } = useLoaderData<typeof loader>();
   const [posts, setPosts] = useState(originalPosts);
-  const [page, setPage] = useState(1);
-  const [canScroll, setCanScroll] = useState(false);
+  const [canScroll] = useState(false);
   const anchor = useRef<HTMLDivElement>(null);
   const currentUser = useOptionalUser();
   const [edit, setEdit] = useState(false);
@@ -109,46 +104,11 @@ export default function User() {
     }
   }, [actionData]);
 
-  function Navigation() {
-    return (
-      <>
-        {stats.posts !== undefined && stats.posts > 10 && (<Pagination
-          secondary
-          ellipsisItem={null}
-          activePage={page}
-          firstItem={{ content: <Icon name="angle double left" />, icon: true, disabled: page === 1 }}
-          lastItem={{
-            content: <Icon name="angle double right" />, icon: true,
-            disabled: page === Math.ceil(stats.posts / 10)
-          }}
-          prevItem={{ content: <Icon name="angle left" />, icon: true, disabled: page === 1 }}
-          nextItem={{
-            content: <Icon name="angle right" />, icon: true,
-            disabled: page === Math.ceil(stats.posts / 10)
-          }}
-          boundaryRange={0}
-          siblingRange={2}
-          totalPages={Math.ceil(stats.posts / 10)}
-          onPageChange={(_, { activePage }) => {
-            ajax("post", "/post/user", {
-              page: activePage,
-              username: user.username
-            }).then(data => {
-              setCanScroll(true);
-              setPosts(data);
-              setPage(activePage as number);
-            });
-          }}
-        />)}
-      </>
-    );
-  }
-
   return (
     <Layout columns={2}>
       <Grid.Column width={4}>
         <div className="max-md:flex max-md:items-center">
-          <img alt="avatar" src={`/usercontent/avatar/${user.username}.webp`}
+          <img alt="avatar" src={`/usercontent/avatar/${user.username}.avif`}
                className="md:w-full max-md:w-[80px] max-md:inline-block" />
           <div className="inline-block max-md:ml-6 md:mt-2">
             <div className="text-2xl" title={`权限等级：${user.access}`}>{user.username}</div>
@@ -210,15 +170,6 @@ export default function User() {
             <Statistic.Label>评论</Statistic.Label>
           </Statistic>
         </Statistic.Group>
-
-        <Navigation />
-        <Feed size="large">
-          {posts.map(({ id, content, username, createdAt, viewCount, _count: { comments }, favouredBy }) => (
-            <Post key={id} id={id} content={content} username={username} createdAt={createdAt}
-                  viewCount={viewCount} commentAmount={comments} favouredBy={favouredBy} link />
-          ))}
-        </Feed>
-        <Navigation />
       </Grid.Column>
     </Layout>
   );

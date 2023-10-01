@@ -23,8 +23,9 @@ import {
   useColorModeValue,
   useDisclosure
 } from "@chakra-ui/react";
-import { Form, useActionData, useLocation, useNavigation } from "@remix-run/react";
+import { useFetcher } from "@remix-run/react";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { FaUser } from "react-icons/fa6";
 
 import type { action } from "~/routes/auth.register";
@@ -33,35 +34,26 @@ export default function Auth() {
   const [type, setType] = useState("login");
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const title = type === "login" ? "登录" : "注册";
+  const { t } = useTranslation();
 
-  const maybeActionData = useActionData<typeof action>();
-  const [actionData, setActionData] = useState<typeof maybeActionData>();
-  const navigation = useNavigation();
+  const title = t("auth." + type);
+
+  const fetcher = useFetcher<typeof action>();
 
   const [captcha, setCaptcha] = useState(0);
   const changeCaptcha = () => setCaptcha(x => x + 1);
 
-  const location = useLocation();
-
   useEffect(() => {
-    if (maybeActionData?.username || maybeActionData?.password || maybeActionData?.repeatPassword || maybeActionData?.captcha) {
-      setActionData(maybeActionData);
-      changeCaptcha();
-    }
-  }, [maybeActionData]);
-
-  useEffect(() => {
-    setActionData(undefined);
-  }, [type]);
+    changeCaptcha();
+  }, [fetcher.data]);
 
   return (
     <>
-      <Button variant="ghost" onClick={() => {
+      <Button onClick={() => {
         setType("login");
         onOpen();
-      }}>
-        登录
+      }} variant="ghost">
+        {t("auth.login")}
       </Button>
 
       <Button colorScheme="blue"
@@ -69,100 +61,104 @@ export default function Auth() {
                 setType("register");
                 onOpen();
               }}>
-        注册
+        {t("auth.register")}
       </Button>
 
-      <Modal isCentered isOpen={isOpen} onClose={onClose} size="lg" scrollBehavior="inside">
+      <Modal isCentered isOpen={isOpen} onClose={onClose} scrollBehavior="inside" size="lg">
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>{title}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Form method="post" action={`/auth/${type}`}>
+            <fetcher.Form method="post" action={`/auth/${type}`}>
               <Stack spacing={4}>
-                <FormControl isInvalid={Boolean(actionData?.username)}>
-                  <FormLabel>用户名</FormLabel>
+                <FormControl isInvalid={!!fetcher.data?.username}>
+                  <FormLabel>{t("auth.username")}</FormLabel>
                   <InputGroup>
                     <InputLeftElement pointerEvents="none">
                       <Icon as={FaUser} color="gray.300" />
                     </InputLeftElement>
-                    <Input type="username" autoComplete="nickname" placeholder="用户名"
-                           name="username" required minLength={3} maxLength={16} />
+                    <Input autoComplete="username" maxLength={18}
+                           minLength={3} name="username"
+                           placeholder={t("auth.username-placeholder")} required />
                   </InputGroup>
-                  {actionData?.username && (
-                    <FormErrorMessage>{actionData.username}</FormErrorMessage>
+                  {fetcher.data?.username && (
+                    <FormErrorMessage>{t(fetcher.data.username)}</FormErrorMessage>
                   )}
                 </FormControl>
 
-                <FormControl isInvalid={Boolean(actionData?.password)}>
-                  <FormLabel>密码</FormLabel>
+                <FormControl isInvalid={!!fetcher.data?.password}>
+                  <FormLabel>{t("auth.password")}</FormLabel>
                   <InputGroup>
                     <InputLeftElement pointerEvents="none">
                       <LockIcon color="gray.300" />
                     </InputLeftElement>
-                    <Input type="password" autoComplete={type === "login" ? "current-password" : "new-password"}
-                           placeholder="密码" name="password" required minLength={6} maxLength={161} />
+                    <Input autoComplete={type === "login" ? "current-password" : "new-password"}
+                           maxLength={161}
+                           minLength={6}
+                           name="password"
+                           placeholder={t("auth.password-placeholder")}
+                           required type="password" />
                   </InputGroup>
-                  {actionData?.password && (
-                    <FormErrorMessage>{actionData.password}</FormErrorMessage>
+                  {fetcher.data?.password && (
+                    <FormErrorMessage>{t(fetcher.data.password)}</FormErrorMessage>
                   )}
                 </FormControl>
 
                 {type === "register" && (
                   <>
-                    <FormControl isInvalid={Boolean(actionData?.repeatPassword)}>
-                      <FormLabel>再次输入密码</FormLabel>
+                    <FormControl isInvalid={!!fetcher.data?.retypePassword}>
+                      <FormLabel>{t("auth.retype-password")}</FormLabel>
                       <InputGroup>
                         <InputLeftElement pointerEvents="none">
                           <LockIcon color="gray.300" />
                         </InputLeftElement>
-                        <Input type="password" autoComplete="new-password" placeholder="再次输入密码"
-                               name="repeatPassword" required minLength={6} maxLength={161} />
+                        <Input autoComplete="new-password" maxLength={161} minLength={6}
+                               name="retypePassword" placeholder={t("auth.retype-password-placeholder")}
+                               required type="password" />
                       </InputGroup>
-                      {actionData?.repeatPassword && (
-                        <FormErrorMessage>{actionData.repeatPassword}</FormErrorMessage>
+                      {fetcher.data?.retypePassword && (
+                        <FormErrorMessage>{t(fetcher.data.retypePassword)}</FormErrorMessage>
                       )}
                     </FormControl>
 
-                    <FormControl isInvalid={Boolean(actionData?.captcha)}>
-                      <FormLabel>验证码</FormLabel>
+                    <FormControl isInvalid={!!fetcher.data?.captcha}>
+                      <FormLabel>{t("auth.captcha")}</FormLabel>
                       <HStack alignItems="flex-start">
                         <Box w="100%">
                           <InputGroup>
                             <InputLeftElement pointerEvents="none">
                               <CheckIcon color="gray.300" />
                             </InputLeftElement>
-                            <Input required name="captcha" type="text" placeholder="验证码"
-                                   minLength={4} maxLength={4} />
+                            <Input maxLength={4} minLength={4} name="captcha"
+                                   placeholder={t("auth.captcha-placeholder")} required />
                           </InputGroup>
-                          {actionData?.captcha && (
-                            <FormErrorMessage>{actionData.captcha}</FormErrorMessage>
+                          {fetcher.data?.captcha && (
+                            <FormErrorMessage>{t(fetcher.data.captcha)}</FormErrorMessage>
                           )}
                         </Box>
                         <Box>
-                          <Image src={"/captcha?" + captcha} alt="captcha" cursor="pointer" onClick={changeCaptcha} />
+                          <Image cursor="pointer" alt="captcha" onClick={changeCaptcha} src={"/captcha?" + captcha} />
                         </Box>
                       </HStack>
                     </FormControl>
                   </>
                 )}
 
-                <input type="hidden" name="redirectTo" value={location.pathname} />
-
-                <Button size="lg" colorScheme="blue" type="submit" mt={2}
-                        isLoading={navigation.state === "submitting"}>
+                <Button mt={1} colorScheme="blue" isLoading={fetcher.state === "submitting"} size="lg"
+                        type="submit">
                   {title}
                 </Button>
 
-                <Text align="center" pt={3}>
-                  {type === "login" ? "没有账号？" : "已有账号？"}
+                <Text align="center">
+                  {type === "login" ? t("auth.no-account") : t("auth.have-account")}
                   <Link color={useColorModeValue("blue.500", "blue.200")}
                         onClick={() => setType(type === "login" ? "register" : "login")}>
-                    {type === "login" ? "注册" : "登录"}
+                    {type === "login" ? t("auth.register") : t("auth.login")}
                   </Link>
                 </Text>
               </Stack>
-            </Form>
+            </fetcher.Form>
           </ModalBody>
         </ModalContent>
       </Modal>

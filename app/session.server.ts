@@ -1,11 +1,12 @@
-import { createCookieSessionStorage, json, redirect } from "@remix-run/node";
+import { createCookieSessionStorage } from "@remix-run/node";
 import bcrypt from "bcryptjs";
 import invariant from "tiny-invariant";
 
 import type Access from "~/access";
 import { access } from "~/access";
 import type { User } from "~/models/user.server";
-import { getUserWithoutPasswordByUsername } from "~/models/user.server";
+import { getUser as getUserFromDb } from "~/models/user.server";
+import { forbidden } from "~/reponses.server";
 
 invariant(process.env.SESSION_SECRET, "SESSION_SECRET must be set");
 
@@ -22,23 +23,19 @@ export const sessionStorage = createCookieSessionStorage({
 export const USER_SESSION_KEY = "username";
 export const CAPTCHA_SESSION_KEY = "captcha";
 
-export function getSession(request: Request) {
+export async function getSession(request: Request) {
   const cookie = request.headers.get("Cookie");
-  return sessionStorage.getSession(cookie);
+  return await sessionStorage.getSession(cookie);
 }
 
-export async function getUsername(
-  request: Request
-): Promise<User["username"] | undefined> {
+export async function getUsername(request: Request): Promise<User["username"] | undefined> {
   const session = await getSession(request);
-  return session.get(USER_SESSION_KEY);
+  return await session.get(USER_SESSION_KEY);
 }
 
-export async function getCaptcha(
-  request: Request
-): Promise<string | undefined> {
+export async function getCaptcha(request: Request): Promise<string | undefined> {
   const session = await getSession(request);
-  return session.get(CAPTCHA_SESSION_KEY);
+  return await session.get(CAPTCHA_SESSION_KEY);
 }
 
 export async function getUser(request: Request) {
@@ -47,47 +44,40 @@ export async function getUser(request: Request) {
     return null;
   }
 
-  const user = await getUserWithoutPasswordByUsername(username);
+  const user = await getUserFromDb(username);
   if (user) {
     return user;
   }
 
-  throw await logout(request, request.url);
+  throw await logout(request);
 }
 
 export async function requireAuthenticatedUser(request: Request, required: Access) {
   const user = await getUser(request);
 
-  if (!user) {
-    throw new Response("用户未登录", { status: 403, statusText: "Forbidden" });
+  if (user && access(user, required)) {
+    return user;
   }
 
-  if (!access(user, required)) {
-    throw new Response(`权限不足 (expected ${access}+, got ${user.access})`, { status: 403, statusText: "Forbidden" });
-  }
-
-  return user;
+  throw forbidden();
 }
 
 export async function requireAuthenticatedOptionalUser(request: Request, required: Access) {
   const user = await getUser(request);
 
-  if (!access(user, required)) {
-    throw new Response(`权限不足 (expected ${access}+, got ${user?.access ?? 0})`, {
-      status: 403,
-      statusText: "Forbidden"
-    });
+  if (access(user, required)) {
+    return user;
   }
 
-  return user;
+  throw forbidden();
 }
 
-export async function createUserSession(request: Request, username: string, redirectTo: string) {
+export async function createUserSession(request: Request, username: string) {
   const session = await getSession(request);
   session.set(USER_SESSION_KEY, username);
   session.unset(CAPTCHA_SESSION_KEY);
 
-  return redirect(redirectTo, {
+  return new Response(null, {
     headers: {
       "Set-Cookie": await sessionStorage.commitSession(session, {
         maxAge: 60 * 60 * 24 * 7 // 7 days
@@ -98,7 +88,7 @@ export async function createUserSession(request: Request, username: string, redi
 
 export async function createCaptchaSession(request: Request, captcha: string, data: string) {
   const session = await getSession(request);
-  session.set(CAPTCHA_SESSION_KEY, captcha);
+  session.flash(CAPTCHA_SESSION_KEY, captcha);
   return new Response(data, {
     headers: {
       "Set-Cookie": await sessionStorage.commitSession(session),
@@ -112,20 +102,9 @@ export async function verifyCaptcha(request: Request, captcha: string) {
   return realCaptcha && realCaptcha.toUpperCase() === captcha.toUpperCase();
 }
 
-export async function removeCaptchaSession<T>(request: Request, data: T) {
+export async function logout(request: Request) {
   const session = await getSession(request);
-  session.unset(CAPTCHA_SESSION_KEY);
-  return json(data, {
-    headers: {
-      "Set-Cookie": await sessionStorage.commitSession(session)
-    },
-    status: 400
-  });
-}
-
-export async function logout(request: Request, redirectTo: string) {
-  const session = await getSession(request);
-  return redirect(redirectTo, {
+  return new Response(null, {
     headers: {
       "Set-Cookie": await sessionStorage.destroySession(session)
     }

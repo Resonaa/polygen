@@ -14,7 +14,9 @@ export async function getPost(id: Post["id"]) {
 
   return prisma.post.findUnique({
     where: { id },
-    include: { _count: { select: { comments: true } } }
+    include: {
+      _count: { select: { comments: true } }
+    }
   });
 }
 
@@ -31,13 +33,15 @@ export async function getPosts(page: number) {
     orderBy: { id: "desc" },
     skip: (page - 1) * 10,
     take: 10,
-    include: { _count: { select: { comments: true } } }
+    include: {
+      _count: { select: { comments: true } }
+    }
   });
 }
 
 export async function getPostsByUsername(username: User["username"], page: number) {
   const firstPost = await prisma.post.findFirst({ where: { username }, orderBy: { id: "desc" } });
-  const maxId = firstPost ? firstPost.id : 0;
+  const maxId = firstPost?.id ?? 0;
 
   await prisma.post.updateMany({
     where: { id: { gt: maxId - page * 10 }, username },
@@ -49,7 +53,9 @@ export async function getPostsByUsername(username: User["username"], page: numbe
     orderBy: { id: "desc" },
     skip: (page - 1) * 10,
     take: 10,
-    include: { _count: { select: { comments: true } } }
+    include: {
+      _count: { select: { comments: true } }
+    }
   });
 }
 

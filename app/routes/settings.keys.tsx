@@ -1,4 +1,4 @@
-import type { LoaderArgs } from "@remix-run/node";
+import type { LoaderFunctionArgs } from "@remix-run/node";
 import { useEffect, useState } from "react";
 import { Menu, Table, Grid, Button } from "semantic-ui-react";
 
@@ -11,7 +11,7 @@ import type { Pos } from "~/core/server/game/utils";
 import { requireAuthenticatedUser } from "~/session.server";
 import { numberColorToString } from "~/utils";
 
-export async function loader({ request }: LoaderArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
   return await requireAuthenticatedUser(request, Access.Settings);
 }
 

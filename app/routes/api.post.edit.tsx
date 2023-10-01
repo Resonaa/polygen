@@ -1,40 +1,35 @@
-import type { ActionArgs } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import type { ActionFunctionArgs } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 
 import Access from "~/access";
 import { getPost, updatePost } from "~/models/post.server";
 import { requireAuthenticatedUser } from "~/session.server";
-import { validatePage, validatePostContent } from "~/validator.server";
+import { validateEditPostFormData } from "~/validators/community.server";
 
 export async function loader() {
   return redirect("/");
 }
 
-export async function action({ request }: ActionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
   const user = await requireAuthenticatedUser(request, Access.Community);
 
-  const formData = await request.formData();
-  const id = Number(formData.get("id"));
-  const content = formData.get("content");
+  const data = await request.formData();
+  const res = validateEditPostFormData(data);
 
-  if (!validatePage(id)) {
-    return json("说说ID不合法", { status: 400 });
+  if (res.success) {
+    const { id, content } = res.data;
+
+    const post = await getPost(id);
+    if (!post) {
+      return null;
+    }
+
+    if (user.username !== post.username) {
+      await requireAuthenticatedUser(request, Access.ManageCommunity);
+    }
+
+    await updatePost(content, id);
   }
 
-  if (!validatePostContent(content)) {
-    return json("说说内容不合法", { status: 400 });
-  }
-
-  const post = await getPost(id);
-  if (!post) {
-    return json("说说不存在", { status: 400 });
-  }
-
-  if (user.username !== post.username) {
-    await requireAuthenticatedUser(request, Access.ManageCommunity);
-  }
-
-  await updatePost(content, id);
-
-  return json("编辑成功");
+  return null;
 }
