@@ -28,28 +28,40 @@ import Editor from "./editor";
 import RenderedText from "./renderedText";
 import UserAvatar from "./userAvatar";
 import UserLink from "./userLink";
-import { formatDate, formatLargeNumber, useRelativeDateFormatter } from "./utils";
+import {
+  formatDate,
+  formatLargeNumber,
+  useRelativeDateFormatter
+} from "./utils";
 
-export type PostProps = Pick<PostType, "id" | "username" | "content" | "viewCount"> & {
+export type PostProps = Pick<
+  PostType,
+  "id" | "username" | "content" | "viewCount"
+> & {
   _count: {
-    comments: number
-  },
-  createdAt: string
+    comments: number;
+  };
+  createdAt: string;
 };
 
 export default function Post({
-                               id, username, createdAt, content,
-                               viewCount, _count: { comments }, linked
-                             }: PostProps &
-  {
-    linked: boolean
-  }) {
+  id,
+  username,
+  createdAt,
+  content,
+  viewCount,
+  _count: { comments },
+  linked
+}: PostProps & {
+  linked: boolean;
+}) {
   const postUrl = `/post/${id}`;
 
   const relativeDate = useRelativeDateFormatter();
 
   const user = useOptionalUser();
-  const editable = user?.username === username || access(user, Access.ManageCommunity);
+  const editable =
+    user?.username === username || access(user, Access.ManageCommunity);
   const [editing, setEditing] = useState(false);
   const [value, setValue] = useState(content);
 
@@ -88,69 +100,117 @@ export default function Post({
               <Tooltip label={formatDate(createdAt)} openDelay={500}>
                 {relativeDate(createdAt)}
               </Tooltip>
-              <span> · {formatLargeNumber(viewCount)} {t("community.view", { count: viewCount })} · </span>
-              <span>{formatLargeNumber(comments)} {t("community.comment", { count: comments })}</span>
+              <span>
+                {" "}
+                · {formatLargeNumber(viewCount)}{" "}
+                {t("community.view", { count: viewCount })} ·{" "}
+              </span>
+              <span>
+                {formatLargeNumber(comments)}{" "}
+                {t("community.comment", { count: comments })}
+              </span>
             </Box>
           </Box>
         </Flex>
 
-        {
-          editable && (
-            <>
-              {editing ? (
-                <ButtonGroup as={editFetcher.Form} gap={1} m={0}
-                             action="/api/post/edit" method="post" variant="ghost">
-                  <IconButton aria-label="save" colorScheme="green" icon={<CheckIcon />}
-                              isRound type="submit" />
-                  <IconButton aria-label="cancel" colorScheme="red" icon={<CloseIcon />} isRound
-                              onClick={onCancelClick} />
-                  <input type="hidden" name="content" value={value} />
-                  <input type="hidden" name="id" value={id} />
-                </ButtonGroup>
-              ) : (
-                <ButtonGroup gap={1} variant="ghost">
-                  <IconButton aria-label="edit" icon={<EditIcon />} isRound onClick={onEditClick} />
-                  <IconButton aria-label="delete" icon={<DeleteIcon />} isRound onClick={onOpen} />
-                </ButtonGroup>)
-              }
+        {editable && (
+          <>
+            {editing ? (
+              <ButtonGroup
+                as={editFetcher.Form}
+                gap={1}
+                m={0}
+                action="/api/post/edit"
+                method="post"
+                variant="ghost"
+              >
+                <IconButton
+                  aria-label="save"
+                  colorScheme="green"
+                  icon={<CheckIcon />}
+                  isRound
+                  type="submit"
+                />
+                <IconButton
+                  aria-label="cancel"
+                  colorScheme="red"
+                  icon={<CloseIcon />}
+                  isRound
+                  onClick={onCancelClick}
+                />
+                <input type="hidden" name="content" value={value} />
+                <input type="hidden" name="id" value={id} />
+              </ButtonGroup>
+            ) : (
+              <ButtonGroup gap={1} variant="ghost">
+                <IconButton
+                  aria-label="edit"
+                  icon={<EditIcon />}
+                  isRound
+                  onClick={onEditClick}
+                />
+                <IconButton
+                  aria-label="delete"
+                  icon={<DeleteIcon />}
+                  isRound
+                  onClick={onOpen}
+                />
+              </ButtonGroup>
+            )}
 
-              <AlertDialog isCentered isOpen={isOpen} leastDestructiveRef={cancelRef}
-                           onClose={onClose}>
-                <AlertDialogOverlay>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>{t("community.confirm-title")}</AlertDialogHeader>
-                    <AlertDialogBody>{t("community.confirm-body")}</AlertDialogBody>
-                    <AlertDialogFooter as={Form} m={0} action="/api/post/delete" method="post">
-                      <Button ref={cancelRef} onClick={onClose}>{t("community.cancel")}</Button>
-                      <Button ml={3} colorScheme="red" onClick={onClose} type="submit">
-                        {t("community.delete")}
-                      </Button>
-                      <input type="hidden" name="id" value={id} />
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialogOverlay>
-              </AlertDialog>
-            </>
-          )
-        }
+            <AlertDialog
+              isCentered
+              isOpen={isOpen}
+              leastDestructiveRef={cancelRef}
+              onClose={onClose}
+            >
+              <AlertDialogOverlay>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    {t("community.confirm-title")}
+                  </AlertDialogHeader>
+                  <AlertDialogBody>
+                    {t("community.confirm-body")}
+                  </AlertDialogBody>
+                  <AlertDialogFooter
+                    as={Form}
+                    m={0}
+                    action="/api/post/delete"
+                    method="post"
+                  >
+                    <Button ref={cancelRef} onClick={onClose}>
+                      {t("community.cancel")}
+                    </Button>
+                    <Button
+                      ml={3}
+                      colorScheme="red"
+                      onClick={onClose}
+                      type="submit"
+                    >
+                      {t("community.delete")}
+                    </Button>
+                    <input type="hidden" name="id" value={id} />
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialogOverlay>
+            </AlertDialog>
+          </>
+        )}
       </Flex>
 
-      {
-        editable && editing ? (
-            <Editor value={value} setValue={setValue} />
-          ) :
-          linked ? (
-            <chakra.a as={Link} to={postUrl} maxH="200px" overflowY="auto">
-              <object>
-                <RenderedText content={content} />
-              </object>
-            </chakra.a>
-          ) : (
-            <object>
-              <RenderedText content={content} />
-            </object>
-          )
-      }
+      {editable && editing ? (
+        <Editor value={value} setValue={setValue} />
+      ) : linked ? (
+        <chakra.a as={Link} to={postUrl} maxH="200px" overflowY="auto">
+          <object>
+            <RenderedText content={content} />
+          </object>
+        </chakra.a>
+      ) : (
+        <object>
+          <RenderedText content={content} />
+        </object>
+      )}
     </VStack>
   );
 }

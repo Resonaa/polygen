@@ -9,13 +9,18 @@ interface RenderedTextProps {
   content: string;
 }
 
-export default function RenderedText<T extends RenderedTextProps>({ content, ...props }: T) {
+export default function RenderedText<T extends RenderedTextProps>({
+  content,
+  ...props
+}: T) {
   return (
     <ReactMarkdown
       components={ChakraUIRenderer()}
       remarkPlugins={[remarkGfm, remarkMath]}
-      rehypePlugins={[[rehypeKatex, { output: "html", throwOnError: false }],
-        [rehypeHighlight, { ignoreMissing: true }]]}
+      rehypePlugins={[
+        [rehypeKatex, { output: "html", throwOnError: false }],
+        [rehypeHighlight, { ignoreMissing: true }]
+      ]}
       skipHtml
       children={content}
       {...props}

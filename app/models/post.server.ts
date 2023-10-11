@@ -39,8 +39,14 @@ export async function getPosts(page: number) {
   });
 }
 
-export async function getPostsByUsername(username: User["username"], page: number) {
-  const firstPost = await prisma.post.findFirst({ where: { username }, orderBy: { id: "desc" } });
+export async function getPostsByUsername(
+  username: User["username"],
+  page: number
+) {
+  const firstPost = await prisma.post.findFirst({
+    where: { username },
+    orderBy: { id: "desc" }
+  });
   const maxId = firstPost?.id ?? 0;
 
   await prisma.post.updateMany({
@@ -59,8 +65,13 @@ export async function getPostsByUsername(username: User["username"], page: numbe
   });
 }
 
-export function createPost(username: Post["username"], content: Post["content"]) {
-  return prisma.post.create({ data: { content, user: { connect: { username } } } });
+export function createPost(
+  username: Post["username"],
+  content: Post["content"]
+) {
+  return prisma.post.create({
+    data: { content, user: { connect: { username } } }
+  });
 }
 
 export function updatePost(content: Post["content"], id: Post["id"]) {

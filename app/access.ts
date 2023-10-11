@@ -13,7 +13,7 @@ const enum Access {
   ManageGame = 3,
 
   ManageServer = 4,
-  ManageDb = 4,
+  ManageDb = 4
 }
 
 export default Access;

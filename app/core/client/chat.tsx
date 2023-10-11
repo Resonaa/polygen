@@ -11,8 +11,7 @@ export function Chat({ client }: { client?: ClientSocket }) {
     const [content, setContent] = useState("");
 
     const handleSubmit = () => {
-      if (content.length <= 0 || content.length > 616)
-        return;
+      if (content.length <= 0 || content.length > 616) return;
 
       client?.emit("message", { type, content });
 
@@ -22,13 +21,21 @@ export function Chat({ client }: { client?: ClientSocket }) {
     const handleEnter = (e: KeyboardEvent) => {
       const input = document.querySelector("input");
 
-      if (!input)
-        return;
+      if (!input) return;
 
-      if ((e.key === "ArrowUp" || e.key === "ArrowDown") && document.activeElement === input) {
+      if (
+        (e.key === "ArrowUp" || e.key === "ArrowDown") &&
+        document.activeElement === input
+      ) {
         e.preventDefault();
         const types = [MessageType.Room, MessageType.World, MessageType.Team];
-        setType(type => types[(types.indexOf(type) + (e.key === "ArrowDown" ? 1 : 2)) % types.length]);
+        setType(
+          type =>
+            types[
+              (types.indexOf(type) + (e.key === "ArrowDown" ? 1 : 2)) %
+                types.length
+            ]
+        );
         return;
       } else if (e.key === "Enter" && !e.ctrlKey) {
         e.preventDefault();
@@ -36,8 +43,7 @@ export function Chat({ client }: { client?: ClientSocket }) {
         if (document.activeElement === input) {
           setTimeout(() => input.blur(), 100);
           handleSubmit();
-        } else
-          input.focus();
+        } else input.focus();
       }
     };
 
@@ -52,7 +58,8 @@ export function Chat({ client }: { client?: ClientSocket }) {
       <Input
         placeholder={`发送至：${type}`}
         input={{
-          className: `!text-white !bg-black !transition-colors ${type} !p-[8px]`, autoComplete: "off",
+          className: `!text-white !bg-black !transition-colors ${type} !p-[8px]`,
+          autoComplete: "off",
           value: content
         }}
         fluid

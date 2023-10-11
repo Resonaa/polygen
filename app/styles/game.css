@@ -3,7 +3,7 @@ body {
 }
 
 .messages .info {
-  color: rgba(255, 255, 255, .5);
+  color: rgba(255, 255, 255, 0.5);
 }
 
 .messages > div > div {
@@ -56,7 +56,7 @@ canvas {
 }
 
 .ui.centered.cards > .card > .content > div {
-  color: rgba(255, 255, 255, .9);
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .ui.inverted.table {
@@ -68,5 +68,5 @@ canvas {
 }
 
 .ui.compact.table th {
-  padding: .4em .7em !important;
+  padding: 0.4em 0.7em !important;
 }

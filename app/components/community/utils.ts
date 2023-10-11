@@ -47,10 +47,15 @@ export function useRelativeDateFormatter() {
   const { t } = useTranslation();
   const now = useServerTime();
 
-  return useCallback((date: string) => {
-    const { count, unit } = relativeDate(date, now);
-    return `${count} ${t("community." + unit)}${t("utils.plurals", { count })}${t("community.ago")}`;
-  }, [now, t]);
+  return useCallback(
+    (date: string) => {
+      const { count, unit } = relativeDate(date, now);
+      return `${count} ${t("community." + unit)}${t("utils.plurals", {
+        count
+      })}${t("community.ago")}`;
+    },
+    [now, t]
+  );
 }
 
 export function formatLargeNumber(x: number) {

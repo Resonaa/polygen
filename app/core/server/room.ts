@@ -10,7 +10,11 @@ import { Map as GameMap } from "~/core/server/game/map";
 import type { Pos } from "~/core/server/game/utils";
 import { getMinReadyPlayerCount } from "~/core/server/game/utils";
 import { MessageType } from "~/core/server/message";
-import type { SampleMaxVotedItems, VoteItem, VoteValue } from "~/core/server/vote";
+import type {
+  SampleMaxVotedItems,
+  VoteItem,
+  VoteValue
+} from "~/core/server/vote";
 import { VoteManager } from "~/core/server/vote";
 import type { Server } from "~/core/types";
 import type { Star } from "~/models/star.server";
@@ -64,7 +68,13 @@ export class Room {
   export() {
     this.simplifyTeams();
     const players = this.exportPlayers();
-    return { id: this.id, ongoing: this.ongoing, players, rated: this.rated, votes: this.votes.ans };
+    return {
+      id: this.id,
+      ongoing: this.ongoing,
+      players,
+      rated: this.rated,
+      votes: this.votes.ans
+    };
   }
 
   simplifyTeams() {
@@ -127,7 +137,9 @@ export class Room {
     this.removePlayer(player);
 
     if (team === undefined) {
-      team = this.ongoing ? this.playerToTeam(player, this.teamsInGame) : this.getNewTeamId();
+      team = this.ongoing
+        ? this.playerToTeam(player, this.teamsInGame)
+        : this.getNewTeamId();
     }
 
     let item = this.teams.get(team);
@@ -181,11 +193,20 @@ export class Room {
     this.ongoing = true;
 
     this.voteAns = this.votes.sample();
-    this.gm = generateMap(this.gamingPlayers.size, this.voteAns.mode, this.voteAns.map);
+    this.gm = generateMap(
+      this.gamingPlayers.size,
+      this.voteAns.mode,
+      this.voteAns.map
+    );
 
     players = _.shuffle(players);
 
-    this.colors = new Map(Array.from(players.entries()).map(([color, player]) => [color + 1, player]));
+    this.colors = new Map(
+      Array.from(players.entries()).map(([color, player]) => [
+        color + 1,
+        player
+      ])
+    );
     this.gameTeams.clear();
     for (let [color, player] of this.colors) {
       this.gameTeams.set(color, this.playerToTeam(player));
@@ -205,7 +226,9 @@ export class Room {
   }
 
   maskAll() {
-    return Array.from(this.colors.keys()).map(color => this.gm.mask(color, this.gameTeams));
+    return Array.from(this.colors.keys()).map(color =>
+      this.gm.mask(color, this.gameTeams)
+    );
   }
 
   winCheck() {
@@ -226,7 +249,9 @@ export class Room {
   }
 
   playerToTeam(player: string, teams: Room["teams"] = this.teams) {
-    const res = Array.from(teams.entries()).find(([, players]) => players.includes(player));
+    const res = Array.from(teams.entries()).find(([, players]) =>
+      players.includes(player)
+    );
     return res ? res[0] : 0;
   }
 
@@ -253,15 +278,20 @@ export class Room {
     }
 
     const fromLand = this.gm.get(from);
-    return !(fromLand.color !== color || fromLand.amount < 1) && this.gm.neighbours(from).some(neighbour =>
-      neighbour.join() === to.join());
+    return (
+      !(fromLand.color !== color || fromLand.amount < 1) &&
+      this.gm.neighbours(from).some(neighbour => neighbour.join() === to.join())
+    );
   }
 
   handleMove([from, to, halfTag]: [Pos, Pos, boolean]) {
-    const fromLand = this.gm.get(from), toLand = this.gm.get(to);
+    const fromLand = this.gm.get(from),
+      toLand = this.gm.get(to);
     const moved = halfTag ? Math.floor(fromLand.amount / 2) : fromLand.amount;
 
-    if (this.gameTeams.get(fromLand.color) === this.gameTeams.get(toLand.color)) {
+    if (
+      this.gameTeams.get(fromLand.color) === this.gameTeams.get(toLand.color)
+    ) {
       fromLand.amount -= moved;
       toLand.amount += moved;
 
@@ -362,7 +392,8 @@ export class Room {
 
       for (let i = 1; i <= this.gm.height; i++) {
         for (let j = 1; j <= this.gm.width; j++) {
-          const preLand = pre.gm[i][j], nowLand = now.gm[i][j];
+          const preLand = pre.gm[i][j],
+            nowLand = now.gm[i][j];
           let partial: Partial<MaybeLand> = {};
 
           if (preLand.c !== nowLand.c) {
@@ -377,7 +408,11 @@ export class Room {
             partial.a = nowLand.a - preLand.a;
           }
 
-          if (partial.a !== undefined || partial.c !== undefined || partial.t !== undefined) {
+          if (
+            partial.a !== undefined ||
+            partial.c !== undefined ||
+            partial.t !== undefined
+          ) {
             patch.push([(i - 1) * this.gm.width + j, partial]);
           }
         }
@@ -398,7 +433,11 @@ export class Room {
     for (let i = 1; i <= this.gm.height; i++) {
       for (let j = 1; j <= this.gm.width; j++) {
         const land = this.gm.get([i, j]);
-        if (land.color === 0 || !this.colors.has(land.color) || !this.gamingPlayers.has(this.colors.get(land.color) as string)) {
+        if (
+          land.color === 0 ||
+          !this.colors.has(land.color) ||
+          !this.gamingPlayers.has(this.colors.get(land.color) as string)
+        ) {
           continue;
         }
 
@@ -428,17 +467,32 @@ export class Room {
     }
 
     ans.sort((a, b) => {
-      const teamA = this.gameTeams.get(a[1]) as TeamId, teamB = this.gameTeams.get(b[1]) as TeamId;
+      const teamA = this.gameTeams.get(a[1]) as TeamId,
+        teamB = this.gameTeams.get(b[1]) as TeamId;
       if (teamA !== teamB) {
-        const dataA = teamData.get(teamA) as [number, number], dataB = teamData.get(teamB) as [number, number];
-        return dataA[1] !== dataB[1] ? dataB[1] - dataA[1] : dataB[0] !== dataA[0] ? dataB[0] - dataA[0] : teamA - teamB;
+        const dataA = teamData.get(teamA) as [number, number],
+          dataB = teamData.get(teamB) as [number, number];
+        return dataA[1] !== dataB[1]
+          ? dataB[1] - dataA[1]
+          : dataB[0] !== dataA[0]
+          ? dataB[0] - dataA[0]
+          : teamA - teamB;
       } else {
-        const dataA = data.get(a[1]) as [number, number], dataB = data.get(b[1]) as [number, number];
-        return dataA[1] !== dataB[1] ? dataB[1] - dataA[1] : dataB[0] !== dataA[0] ? dataB[0] - dataA[0] : a[1] - b[1];
+        const dataA = data.get(a[1]) as [number, number],
+          dataB = data.get(b[1]) as [number, number];
+        return dataA[1] !== dataB[1]
+          ? dataB[1] - dataA[1]
+          : dataB[0] !== dataA[0]
+          ? dataB[0] - dataA[0]
+          : a[1] - b[1];
       }
     });
 
-    if (Array.from(this.teamsInGame.entries()).some(([teamId, players]) => teamId !== 0 && players.length > 1)) {
+    if (
+      Array.from(this.teamsInGame.entries()).some(
+        ([teamId, players]) => teamId !== 0 && players.length > 1
+      )
+    ) {
       let lastTeam = 0;
       for (let i = 0; i < ans.length; i++) {
         const color = ans[i][1];
@@ -493,13 +547,21 @@ export class RoomManager {
     }
 
     room.addPlayer(player);
-    if (room.ongoing && !room.gamingPlayers.has(player) && room.playerToColor(player) !== 0) {
+    if (
+      room.ongoing &&
+      !room.gamingPlayers.has(player) &&
+      room.playerToColor(player) !== 0
+    ) {
       room.gamingPlayers.add(player);
     }
 
     this.server.to(SocketRoom.rid(room.id)).emit("info", `${player}进入了房间`);
-    this.server.to(SocketRoom.rid(room.id)).emit("updateTeams", room.exportTeams());
-    this.server.to(SocketRoom.rid(room.id)).emit("updateReadyPlayers", room.exportReadyPlayers());
+    this.server
+      .to(SocketRoom.rid(room.id))
+      .emit("updateTeams", room.exportTeams());
+    this.server
+      .to(SocketRoom.rid(room.id))
+      .emit("updateReadyPlayers", room.exportReadyPlayers());
 
     this.updateVotes();
 
@@ -507,10 +569,13 @@ export class RoomManager {
       if (room.gamingPlayers.has(player)) {
         const myColor = room.playerToColor(player);
         const maybeMap = room.gm.mask(myColor, room.gameTeams);
-        this.server.to(SocketRoom.usernameRid(player, room.id)).emit("gameStart", {
-          maybeMap, myColor,
-          turns: room.turns
-        });
+        this.server
+          .to(SocketRoom.usernameRid(player, room.id))
+          .emit("gameStart", {
+            maybeMap,
+            myColor,
+            turns: room.turns
+          });
         room.playerMaps.set(player, maybeMap);
         const team = room.gameTeams.get(myColor) as TeamId;
         const index = room.ranks.indexOf(team);
@@ -519,11 +584,13 @@ export class RoomManager {
         }
       } else {
         const maybeMap = room.gm.export();
-        this.server.to(SocketRoom.usernameRid(player, room.id)).emit("gameStart", {
-          maybeMap,
-          myColor: -1,
-          turns: room.turns
-        });
+        this.server
+          .to(SocketRoom.usernameRid(player, room.id))
+          .emit("gameStart", {
+            maybeMap,
+            myColor: -1,
+            turns: room.turns
+          });
         room.playerMaps.set(player, maybeMap);
       }
     }
@@ -542,9 +609,15 @@ export class RoomManager {
       room.readyPlayers.delete(player);
       const shouldUpdateVotes = room.votes.remove(player);
 
-      this.server.to(SocketRoom.rid(room.id)).emit("info", `${player}离开了房间`);
-      this.server.to(SocketRoom.rid(room.id)).emit("updateTeams", room.exportTeams());
-      this.server.to(SocketRoom.rid(room.id)).emit("updateReadyPlayers", room.exportReadyPlayers());
+      this.server
+        .to(SocketRoom.rid(room.id))
+        .emit("info", `${player}离开了房间`);
+      this.server
+        .to(SocketRoom.rid(room.id))
+        .emit("updateTeams", room.exportTeams());
+      this.server
+        .to(SocketRoom.rid(room.id))
+        .emit("updateReadyPlayers", room.exportReadyPlayers());
       shouldUpdateVotes && this.updateVotes();
 
       if (room.teams.size === 0) {
@@ -579,10 +652,14 @@ export class RoomManager {
 
     const shouldUpdateReadyPlayers = room.addPlayer(player, team);
 
-    this.server.to(SocketRoom.rid(room.id)).emit("updateTeams", room.exportTeams());
+    this.server
+      .to(SocketRoom.rid(room.id))
+      .emit("updateTeams", room.exportTeams());
 
     if (shouldUpdateReadyPlayers) {
-      this.server.to(SocketRoom.rid(room.id)).emit("updateReadyPlayers", room.exportReadyPlayers());
+      this.server
+        .to(SocketRoom.rid(room.id))
+        .emit("updateReadyPlayers", room.exportReadyPlayers());
     }
 
     if (team === 0) {
@@ -602,7 +679,9 @@ export class RoomManager {
 
     room.toggleReady(player);
 
-    this.server.to(SocketRoom.rid(room.id)).emit("updateReadyPlayers", room.exportReadyPlayers());
+    this.server
+      .to(SocketRoom.rid(room.id))
+      .emit("updateReadyPlayers", room.exportReadyPlayers());
 
     await this.checkStart();
   }
@@ -615,14 +694,20 @@ export class RoomManager {
     }
 
     const allPlayers = Array.from(room.teams.entries())
-                            .filter(([teamId]) => teamId !== 0)
-                            .map(([, players]) => players)
-                            .flat(), readyPlayers = room.exportReadyPlayers();
+        .filter(([teamId]) => teamId !== 0)
+        .map(([, players]) => players)
+        .flat(),
+      readyPlayers = room.exportReadyPlayers();
 
-    if (allPlayers.length >= 2 && readyPlayers.length >= getMinReadyPlayerCount(allPlayers.length)) {
-      const teamCount = room.exportTeams()
-                            .filter(([teamId, players]) => teamId !== 0 && players.length > 0)
-        .length;
+    if (
+      allPlayers.length >= 2 &&
+      readyPlayers.length >= getMinReadyPlayerCount(allPlayers.length)
+    ) {
+      const teamCount = room
+        .exportTeams()
+        .filter(
+          ([teamId, players]) => teamId !== 0 && players.length > 0
+        ).length;
       if (teamCount < 2) {
         return;
       }
@@ -638,11 +723,13 @@ export class RoomManager {
       const masks = room.maskAll();
 
       for (let [color, player] of room.colors) {
-        this.server.to(SocketRoom.usernameRid(player, room.id)).emit("gameStart", {
-          maybeMap: masks[color - 1],
-          myColor: color,
-          turns: 0
-        });
+        this.server
+          .to(SocketRoom.usernameRid(player, room.id))
+          .emit("gameStart", {
+            maybeMap: masks[color - 1],
+            myColor: color,
+            turns: 0
+          });
         room.playerMaps.set(player, masks[color - 1]);
       }
 
@@ -650,16 +737,21 @@ export class RoomManager {
 
       for (let player of room.exportPlayers()) {
         if (!room.gamingPlayers.has(player)) {
-          this.server.to(SocketRoom.usernameRid(player, room.id)).emit("gameStart", {
-            maybeMap: exportedMap,
-            myColor: -1,
-            turns: 0
-          });
+          this.server
+            .to(SocketRoom.usernameRid(player, room.id))
+            .emit("gameStart", {
+              maybeMap: exportedMap,
+              myColor: -1,
+              turns: 0
+            });
           room.playerMaps.set(player, exportedMap);
         }
       }
 
-      room.gameInterval = setInterval(() => this.game(), 250 / room.voteAns.speed);
+      room.gameInterval = setInterval(
+        () => this.game(),
+        250 / room.voteAns.speed
+      );
     }
   }
 
@@ -678,7 +770,7 @@ export class RoomManager {
 
     const team = room.gameTeams.get(deadColor) as TeamId;
     let teamDied = true;
-    for (let [color,] of room.colors) {
+    for (let [color] of room.colors) {
       if (color !== deadColor && room.gameTeams.get(color) === team) {
         teamDied = false;
         break;
@@ -709,12 +801,16 @@ export class RoomManager {
       room.gamingPlayers.delete(player);
       room.colors.delete(room.playerToColor(player));
 
-      this.server.to(SocketRoom.usernameRid(player, room.id)).emit("info", "您死了");
-      this.server.to(SocketRoom.usernameRid(player, room.id)).emit("gameStart", {
-        maybeMap: exportedMap,
-        myColor: -1,
-        turns: room.turns
-      });
+      this.server
+        .to(SocketRoom.usernameRid(player, room.id))
+        .emit("info", "您死了");
+      this.server
+        .to(SocketRoom.usernameRid(player, room.id))
+        .emit("gameStart", {
+          maybeMap: exportedMap,
+          myColor: -1,
+          turns: room.turns
+        });
 
       room.playerMaps.set(player, exportedMap);
 
@@ -734,7 +830,9 @@ export class RoomManager {
       this.checkTeamDeath(deadPlayer);
       room.gamingPlayers.delete(deadPlayer);
       room.colors.delete(room.playerToColor(deadPlayer));
-      this.server.to(SocketRoom.usernameRid(deadPlayer, room.id)).emit("info", "您死了");
+      this.server
+        .to(SocketRoom.usernameRid(deadPlayer, room.id))
+        .emit("info", "您死了");
     }
 
     room.addArmy();
@@ -743,10 +841,15 @@ export class RoomManager {
 
     const patches = room.patchAll();
     for (let [player, updates] of patches) {
-      this.server.to(SocketRoom.usernameRid(player, room.id)).emit("patch", LZString.compressToUTF16(JSON.stringify({
-        updates,
-        rank
-      })));
+      this.server.to(SocketRoom.usernameRid(player, room.id)).emit(
+        "patch",
+        LZString.compressToUTF16(
+          JSON.stringify({
+            updates,
+            rank
+          })
+        )
+      );
     }
   }
 
@@ -781,13 +884,16 @@ export class RoomManager {
 
       const data = room.ranks.map(teamId =>
         (room.teamsInGame.get(teamId) as string[]).map(username =>
-          rating(room.stars.get(username) as Star))
+          rating(room.stars.get(username) as Star)
+        )
       );
 
       const res = rate(data);
 
       for (const [index, team] of res.entries()) {
-        for (const [userIndex, username] of (room.teamsInGame.get(room.ranks[index]) as string[]).entries()) {
+        for (const [userIndex, username] of (
+          room.teamsInGame.get(room.ranks[index]) as string[]
+        ).entries()) {
           await updateStar(username, team[userIndex].mu, team[userIndex].sigma);
         }
       }
@@ -796,11 +902,18 @@ export class RoomManager {
     const winners = room.teamsInGame.get(winner) as string[];
 
     this.server.to(SocketRoom.rid(room.id)).emit("win", winners.join(", "));
-    this.server.to(SocketRoom.rid(room.id)).emit("patch", LZString.compressToUTF16(JSON.stringify({
-      updates: [],
-      rank: []
-    })));
-    this.server.to(SocketRoom.rid(room.id)).emit("updateReadyPlayers", room.exportReadyPlayers());
+    this.server.to(SocketRoom.rid(room.id)).emit(
+      "patch",
+      LZString.compressToUTF16(
+        JSON.stringify({
+          updates: [],
+          rank: []
+        })
+      )
+    );
+    this.server
+      .to(SocketRoom.rid(room.id))
+      .emit("updateReadyPlayers", room.exportReadyPlayers());
 
     room.gameEnd();
   }
@@ -828,7 +941,13 @@ export class RoomManager {
   surrender(player: string) {
     const room = this.room;
 
-    if (!room || !room.ongoing || !room.gamingPlayers.has(player) || !room.playerToColor(player) || room.surrenders.has(player)) {
+    if (
+      !room ||
+      !room.ongoing ||
+      !room.gamingPlayers.has(player) ||
+      !room.playerToColor(player) ||
+      room.surrenders.has(player)
+    ) {
       return;
     }
 
@@ -842,7 +961,9 @@ export class RoomManager {
       return;
     }
 
-    this.server.to(SocketRoom.rid(room.id)).emit("message", { type: MessageType.Room, content, sender });
+    this.server
+      .to(SocketRoom.rid(room.id))
+      .emit("message", { type: MessageType.Room, content, sender });
   }
 
   teamMessage(sender: string, content: string) {
@@ -852,8 +973,14 @@ export class RoomManager {
       return;
     }
 
-    if (room.ongoing && !room.gamingPlayers.has(sender) && room.playerToTeam(sender) !== 0) {
-      this.server.to(SocketRoom.usernameRid(sender, room.id)).emit("info", "游戏中仅参战玩家可发送队伍消息");
+    if (
+      room.ongoing &&
+      !room.gamingPlayers.has(sender) &&
+      room.playerToTeam(sender) !== 0
+    ) {
+      this.server
+        .to(SocketRoom.usernameRid(sender, room.id))
+        .emit("info", "游戏中仅参战玩家可发送队伍消息");
       return;
     }
 
@@ -862,11 +989,13 @@ export class RoomManager {
     for (let [, players] of teams) {
       if (players.includes(sender)) {
         for (let receiver of players) {
-          this.server.to(SocketRoom.usernameRid(receiver, room.id)).emit("message", {
-            type: MessageType.Team,
-            content,
-            sender
-          });
+          this.server
+            .to(SocketRoom.usernameRid(receiver, room.id))
+            .emit("message", {
+              type: MessageType.Team,
+              content,
+              sender
+            });
         }
       }
     }

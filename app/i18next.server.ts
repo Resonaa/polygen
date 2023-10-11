@@ -24,7 +24,10 @@ export const i18next = new RemixI18Next({
 const I18NEXT_KEY = "i18next";
 
 export async function getLocale(request: Request) {
-  return getKeyFromCookies(request.headers.get("Cookie"), I18NEXT_KEY) ?? await i18next.getLocale(request);
+  return (
+    getKeyFromCookies(request.headers.get("Cookie"), I18NEXT_KEY) ??
+    (await i18next.getLocale(request))
+  );
 }
 
 export async function getT(request: Request) {

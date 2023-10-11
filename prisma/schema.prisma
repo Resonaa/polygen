@@ -8,39 +8,39 @@ generator client {
 }
 
 model User {
-  username  String @unique
+  username String @unique
 
-  password  Password?
+  password Password?
 
   createdAt DateTime @default(now())
 
-  posts     Post[]
-  comments  Comment[]
-  access    Int @default(1)
+  posts    Post[]
+  comments Comment[]
+  access   Int       @default(1)
 
-  bio       String @default("")
+  bio String @default("")
 
-  star      Star?
+  star Star?
 }
 
 model Password {
-  hash     String
+  hash String
 
   user     User   @relation(fields: [username], references: [username], onDelete: Cascade, onUpdate: Cascade)
   username String @unique
 }
 
 model Announcement {
-  id        Int @id @default(autoincrement())
-  title     String
-  content   String
+  id      Int    @id @default(autoincrement())
+  title   String
+  content String
 
   createdAt DateTime @default(now())
   lang      String
 }
 
 model Post {
-  id      Int @id @default(autoincrement())
+  id      Int    @id @default(autoincrement())
   content String
 
   createdAt DateTime @default(now())
@@ -54,7 +54,7 @@ model Post {
 }
 
 model Comment {
-  id      Int @id @default(autoincrement())
+  id      Int    @id @default(autoincrement())
   content String
 
   createdAt DateTime @default(now())
@@ -67,11 +67,11 @@ model Comment {
 }
 
 model Star {
-  mu         Float
-  sigma      Float
-  star       Float
-  updatedAt  DateTime @updatedAt
+  mu        Float
+  sigma     Float
+  star      Float
+  updatedAt DateTime @updatedAt
 
-  user       User @relation(fields: [username], references: [username])
-  username   String @unique
+  user     User   @relation(fields: [username], references: [username])
+  username String @unique
 }

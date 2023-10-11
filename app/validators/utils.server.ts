@@ -27,25 +27,34 @@ function mapError<Input>(error: z.typeToFlattenedError<Input>["fieldErrors"]) {
   return res;
 }
 
-function flattenError<Input, Output>(res: z.SafeParseReturnType<Input, Output>) {
+function flattenError<Input, Output>(
+  res: z.SafeParseReturnType<Input, Output>
+) {
   if (res.success) {
     return res;
   } else {
     const error = mapError(res.error.flatten().fieldErrors);
     return { success: false, error } as {
-      success: false,
-      error: typeof error
+      success: false;
+      error: typeof error;
     };
   }
 }
 
-export function safeParseAndFlatten<T>(schema: z.ZodType<T>, data: FormData | Params) {
+export function safeParseAndFlatten<T>(
+  schema: z.ZodType<T>,
+  data: FormData | Params
+) {
   return flattenError(schema.safeParse(toObject(data)));
 }
 
-export type ErrorType<F extends (...args: any) => any> = ReturnType<F> extends ({
-  success: true
-} | {
-  success: false,
-  error: infer ErrorType
-}) ? ErrorType : never;
+export type ErrorType<F extends (...args: any) => any> = ReturnType<F> extends
+  | {
+      success: true;
+    }
+  | {
+      success: false;
+      error: infer ErrorType;
+    }
+  ? ErrorType
+  : never;

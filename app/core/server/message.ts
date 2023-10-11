@@ -5,7 +5,7 @@ export const enum MessageType {
 }
 
 export interface Message {
-  type: MessageType,
-  sender: string,
-  content: string
+  type: MessageType;
+  sender: string;
+  content: string;
 }

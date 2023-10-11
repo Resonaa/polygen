@@ -1,5 +1,9 @@
 import { VStack } from "@chakra-ui/react";
-import type { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
+import type {
+  ActionFunctionArgs,
+  LoaderFunctionArgs,
+  MetaFunction
+} from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 
@@ -32,10 +36,15 @@ export async function loader({ request }: LoaderFunctionArgs) {
   return json({ announcements, posts, recentComments, title });
 }
 
-export const meta: MetaFunction<typeof loader> = ({ data }) => [{ title: data?.title }];
+export const meta: MetaFunction<typeof loader> = ({ data }) => [
+  { title: data?.title }
+];
 
 export async function action({ request }: ActionFunctionArgs) {
-  const { username } = await requireAuthenticatedUser(request, Access.Community);
+  const { username } = await requireAuthenticatedUser(
+    request,
+    Access.Community
+  );
 
   const data = await request.formData();
   const res = validateAddPostFormData(data);
@@ -50,7 +59,8 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function Index() {
-  const { announcements, posts, recentComments } = useLoaderData<typeof loader>();
+  const { announcements, posts, recentComments } =
+    useLoaderData<typeof loader>();
 
   const user = useOptionalUser();
 

@@ -36,20 +36,17 @@ export default function Rid() {
     <>
       <GamePanel client={client} rid={rid} />
 
-      <div
-        className="absolute left-0 top-0 select-none">
+      <div className="absolute left-0 top-0 select-none">
         <Turns client={client} />
       </div>
 
-      <div
-        className="absolute right-0 top-0 sm:max-w-[320px]">
+      <div className="absolute right-0 top-0 sm:max-w-[320px]">
         <Segment inverted className="!p-0" size="large">
           <RoomInfo client={client} rid={rid} />
         </Segment>
       </div>
 
-      <div
-        className="absolute right-0 bottom-0 sm:w-[320px] max-w-[320px] max-sm:w-full">
+      <div className="absolute right-0 bottom-0 sm:w-[320px] max-w-[320px] max-sm:w-full">
         <Segment inverted className="!pr-0 !pb-0 !pt-2 !pl-2.5">
           <Chat client={client} />
         </Segment>

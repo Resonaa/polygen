@@ -11,7 +11,7 @@ export function useMatchesData(id: string) {
   const matchingRoutes = useMatches();
 
   const route = useMemo(
-    () => matchingRoutes.find((route) => route.id === id),
+    () => matchingRoutes.find(route => route.id === id),
     [matchingRoutes, id]
   );
 
@@ -42,7 +42,7 @@ export function useUser() {
   const maybeUser = useOptionalUser();
 
   if (!maybeUser) {
-    throw new Error("用户不存在");
+    throw new Error();
   }
 
   return maybeUser;
@@ -55,10 +55,14 @@ export function useServerTime() {
     return new Date(data.time);
   }
 
-  throw new Error("获取服务器时间失败");
+  throw new Error();
 }
 
-export async function ajax(method: string, url: string, data: Record<string, number | string | boolean | undefined | null> = {}) {
+export async function ajax(
+  method: string,
+  url: string,
+  data: Record<string, number | string | boolean | undefined | null> = {}
+) {
   const body = new FormData();
 
   for (const key in data) {

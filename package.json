@@ -10,7 +10,8 @@
     "setup": "prisma generate && prisma migrate deploy && prisma db seed",
     "start": "cross-env NODE_ENV=production ts-node server/index.ts",
     "typecheck": "tsc -b",
-    "postinstall": "patch-package"
+    "postinstall": "patch-package",
+    "format": "prettier --write . && npm run lint -- --fix"
   },
   "eslintIgnore": [
     "/build",
@@ -19,6 +20,13 @@
     "/server/build",
     "**/*.js"
   ],
+  "prettier": {
+    "trailingComma": "none",
+    "arrowParens": "avoid",
+    "plugins": [
+      "prettier-plugin-prisma"
+    ]
+  },
   "dependencies": {
     "@chakra-ui/icons": "latest",
     "@chakra-ui/react": "latest",
@@ -92,8 +100,11 @@
     "@types/react-dom": "latest",
     "@typescript-eslint/parser": "latest",
     "eslint": "latest",
+    "eslint-config-prettier": "latest",
     "eslint-plugin-chakra-ui": "latest",
     "patch-package": "latest",
+    "prettier": "latest",
+    "prettier-plugin-prisma": "latest",
     "prisma": "latest",
     "tinybench": "latest",
     "tsconfig-paths": "latest",

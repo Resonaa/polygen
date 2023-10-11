@@ -5,11 +5,16 @@ import type { LandColor, MaybeLand } from "~/core/server/game/land";
 import type { Pos } from "~/core/server/game/utils";
 import type { Message } from "~/core/server/message";
 import type { TeamId } from "~/core/server/room";
-import type { MaxVotedItems, VoteData, VoteItem, VoteValue } from "~/core/server/vote";
+import type {
+  MaxVotedItems,
+  VoteData,
+  VoteItem,
+  VoteValue
+} from "~/core/server/vote";
 
 interface Patch {
-  updates: [number, Partial<MaybeLand>][],
-  rank: [number | null, LandColor, string, number, number][]
+  updates: [number, Partial<MaybeLand>][];
+  rank: [number | null, LandColor, string, number, number][];
 }
 
 interface ServerToClientEvents {
@@ -17,10 +22,18 @@ interface ServerToClientEvents {
   info: (info: string) => void;
   updateTeams: (teams: [TeamId, string[]][]) => void;
   updateReadyPlayers: (readyPlayers: string[]) => void;
-  gameStart: ({ maybeMap, myColor, turns }: { maybeMap: MaybeMap, myColor: LandColor, turns: number }) => void;
+  gameStart: ({
+    maybeMap,
+    myColor,
+    turns
+  }: {
+    maybeMap: MaybeMap;
+    myColor: LandColor;
+    turns: number;
+  }) => void;
   patch: (patch: string) => void;
   win: (winnerStr: string) => void;
-  updateVotes: ({ data, ans }: { data: VoteData, ans: MaxVotedItems }) => void;
+  updateVotes: ({ data, ans }: { data: VoteData; ans: MaxVotedItems }) => void;
 }
 
 interface ClientToServerEvents {
@@ -32,7 +45,13 @@ interface ClientToServerEvents {
   clearMovements: () => void;
   undoMovement: () => void;
   surrender: () => void;
-  vote: <T extends VoteItem>({ item, value }: { item: T, value: VoteValue<T> }) => void;
+  vote: <T extends VoteItem>({
+    item,
+    value
+  }: {
+    item: T;
+    value: VoteValue<T>;
+  }) => void;
 }
 
 interface SocketData {
@@ -40,6 +59,19 @@ interface SocketData {
   rid: string;
 }
 
-type Server = ServerType<ClientToServerEvents, ServerToClientEvents, {}, SocketData>;
-type ServerSocket = SocketType<ClientToServerEvents, ServerToClientEvents, {}, SocketData>;
-type ClientSocket = ClientSocketType<ServerToClientEvents, ClientToServerEvents>;
+type Server = ServerType<
+  ClientToServerEvents,
+  ServerToClientEvents,
+  {},
+  SocketData
+>;
+type ServerSocket = SocketType<
+  ClientToServerEvents,
+  ServerToClientEvents,
+  {},
+  SocketData
+>;
+type ClientSocket = ClientSocketType<
+  ServerToClientEvents,
+  ClientToServerEvents
+>;

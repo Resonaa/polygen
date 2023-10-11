@@ -4,7 +4,12 @@ import { useLoaderData } from "@remix-run/react";
 import { Header, Table, Grid } from "semantic-ui-react";
 
 import Access from "~/access";
-import { formatDate, relativeDate, Star, UserLink } from "~/components/community";
+import {
+  formatDate,
+  relativeDate,
+  Star,
+  UserLink
+} from "~/components/community";
 import Layout from "~/components/layout";
 import { formatStar } from "~/core/client/utils";
 import { rankList } from "~/models/star.server";
@@ -31,7 +36,9 @@ export default function Leaderboard() {
             <Table.Row>
               <Table.HeaderCell>#</Table.HeaderCell>
               <Table.HeaderCell>用户名</Table.HeaderCell>
-              <Table.HeaderCell><Star /></Table.HeaderCell>
+              <Table.HeaderCell>
+                <Star />
+              </Table.HeaderCell>
               <Table.HeaderCell>更新时间</Table.HeaderCell>
             </Table.Row>
           </Table.Header>
@@ -40,12 +47,16 @@ export default function Leaderboard() {
             {rankList.map(({ username, star, updatedAt }, rank) => (
               <Table.Row key={rank} active={user?.username === username}>
                 <Table.Cell>{rank + 1}</Table.Cell>
-                <Table.Cell><UserLink username={username} /></Table.Cell>
+                <Table.Cell>
+                  <UserLink username={username} />
+                </Table.Cell>
                 <Table.Cell>
                   <span title={star.toString()}>{formatStar(star, 2)}</span>
                 </Table.Cell>
                 <Table.Cell>
-                  <span title={formatDate(updatedAt)}>{relativeDate(updatedAt)}</span>
+                  <span title={formatDate(updatedAt)}>
+                    {relativeDate(updatedAt)}
+                  </span>
                 </Table.Cell>
               </Table.Row>
             ))}

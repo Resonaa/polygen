@@ -27,16 +27,23 @@ import { useOptionalUser } from "~/utils";
 import UserTag from "../community/userTag";
 
 interface RoomProps {
-  id: string,
-  ongoing: boolean,
-  players: string[],
-  rated: boolean,
-  votes: MaxVotedItems
+  id: string;
+  ongoing: boolean;
+  players: string[];
+  rated: boolean;
+  votes: MaxVotedItems;
 }
 
-function RoomProperty({ icon, color, label, description }: {
-  icon: ComponentWithAs<"svg", IconProps> | IconType,
-  color: string, label: string, description: string
+function RoomProperty({
+  icon,
+  color,
+  label,
+  description
+}: {
+  icon: ComponentWithAs<"svg", IconProps> | IconType;
+  color: string;
+  label: string;
+  description: string;
 }) {
   return (
     <Tooltip label={description}>
@@ -48,17 +55,27 @@ function RoomProperty({ icon, color, label, description }: {
   );
 }
 
-function VotedRoomProperty<T extends VoteItem>({ icon, color, data, item }: {
-  icon: ComponentWithAs<"svg", IconProps> | IconType,
-  data: MaxVotedItems[T]
-  color: string,
-  item: T
+function VotedRoomProperty<T extends VoteItem>({
+  icon,
+  color,
+  data,
+  item
+}: {
+  icon: ComponentWithAs<"svg", IconProps> | IconType;
+  data: MaxVotedItems[T];
+  color: string;
+  item: T;
 }) {
   const label = data.join("/");
   const description = `${translations[item]}：${label}`;
 
   return (
-    <RoomProperty icon={icon} color={color} label={label} description={description} />
+    <RoomProperty
+      icon={icon}
+      color={color}
+      label={label}
+      description={description}
+    />
   );
 }
 
@@ -66,22 +83,49 @@ function Room({ id, ongoing, players, rated, votes }: RoomProps) {
   const user = useOptionalUser();
 
   return (
-    <Button as={Tr} display="table-row" fontWeight="normal"
-            cursor={user ? "pointer" : undefined}
-            onClick={user && (() => window.open(`/game/${encodeURIComponent(id)}`))}
-            title={user ? undefined : "登录后加入"}
-            variant="ghost"
+    <Button
+      as={Tr}
+      display="table-row"
+      fontWeight="normal"
+      cursor={user ? "pointer" : undefined}
+      onClick={user && (() => window.open(`/game/${encodeURIComponent(id)}`))}
+      title={user ? undefined : "登录后加入"}
+      variant="ghost"
     >
       <Td>{id}</Td>
       <Td gap={2} display="inline-flex">
-        {rated && <RoomProperty icon={StarIcon} color="green" label="Rated" description="计入排名" />}
-        <VotedRoomProperty icon={FaCrown} color="orange" data={votes.mode} item="mode" />
-        <VotedRoomProperty icon={FaMap} color="cyan" data={votes.map} item="map" />
-        <VotedRoomProperty icon={FaTachometerAlt} color="yellow" data={votes.speed} item="speed" />
+        {rated && (
+          <RoomProperty
+            icon={StarIcon}
+            color="green"
+            label="Rated"
+            description="计入排名"
+          />
+        )}
+        <VotedRoomProperty
+          icon={FaCrown}
+          color="orange"
+          data={votes.mode}
+          item="mode"
+        />
+        <VotedRoomProperty
+          icon={FaMap}
+          color="cyan"
+          data={votes.map}
+          item="map"
+        />
+        <VotedRoomProperty
+          icon={FaTachometerAlt}
+          color="yellow"
+          data={votes.speed}
+          item="speed"
+        />
       </Td>
       <Td>
         <Box gap={2} display="inline-flex">
-          {players.map(username => <UserTag username={username} key={username} />)}
+          {players.map(username => (
+            <UserTag username={username} key={username} />
+          ))}
         </Box>
       </Td>
       <Td color={ongoing ? "blue.400" : "green.400"}>
@@ -104,7 +148,9 @@ export default function RoomList({ rooms }: { rooms: RoomProps[] }) {
           </Tr>
         </Thead>
         <Tbody>
-          {rooms.map(props => <Room key={props.id} {...props} />)}
+          {rooms.map(props => (
+            <Room key={props.id} {...props} />
+          ))}
         </Tbody>
       </Table>
     </TableContainer>

@@ -1,15 +1,23 @@
-import { Box, chakra, Container, Stack, Text, Tooltip, useColorModeValue } from "@chakra-ui/react";
+import {
+  Box,
+  chakra,
+  Container,
+  Stack,
+  Text,
+  Tooltip,
+  useColorModeValue
+} from "@chakra-ui/react";
 import type { ReactNode } from "react";
 import { FaGithub, FaQq } from "react-icons/fa6";
 
 function SocialButton({
-                        children,
-                        label,
-                        href
-                      }: {
-  children: ReactNode
-  label: string
-  href: string
+  children,
+  label,
+  href
+}: {
+  children: ReactNode;
+  label: string;
+  href: string;
 }) {
   return (
     <Tooltip label={label} placement="top">
@@ -27,7 +35,8 @@ function SocialButton({
         transition="background 0.3s ease"
         _hover={{
           bg: useColorModeValue("blackAlpha.200", "whiteAlpha.200")
-        }}>
+        }}
+      >
         {children}
       </chakra.button>
     </Tooltip>
@@ -50,16 +59,23 @@ export default function Footer() {
         direction={{ base: "column", md: "row" }}
         maxW="6xl"
         py={4}
-        spacing={4}>
+        spacing={4}
+      >
         <Text>
-          Copyleft <chakra.span transform="scale(-1,1)" display="inline-block">©</chakra.span> 2022-2023 polygen
+          Copyleft{" "}
+          <chakra.span transform="scale(-1,1)" display="inline-block">
+            ©
+          </chakra.span>{" "}
+          2022-2023 polygen
         </Text>
         <Stack direction="row" spacing={6}>
           <SocialButton label="GitHub" href="https://github.com/jwcub/polygen">
             <FaGithub />
           </SocialButton>
-          <SocialButton label="QQ"
-                        href="https://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=xv13f9IlvpIEKb7Wm0hCO2SGTVrvclkd&authKey=%2FRq0HGhEmqbfUeXovz%2B1BZBNPh4XlQtC%2Bbpz8YjL%2BD3p%2FSZvjoYmy8KZk0G%2BhyzD&noverify=0&group_code=452808481">
+          <SocialButton
+            label="QQ"
+            href="https://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=xv13f9IlvpIEKb7Wm0hCO2SGTVrvclkd&authKey=%2FRq0HGhEmqbfUeXovz%2B1BZBNPh4XlQtC%2Bbpz8YjL%2BD3p%2FSZvjoYmy8KZk0G%2BhyzD&noverify=0&group_code=452808481"
+          >
             <FaQq />
           </SocialButton>
         </Stack>

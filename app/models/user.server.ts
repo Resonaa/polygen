@@ -27,8 +27,10 @@ export async function getStats(username: User["username"]) {
   });
   const rank = await getRank(username);
   return {
-    posts: data?._count.posts, comments: data?._count.comments,
-    rank: rank?.rank, star: rank?.star?.star
+    posts: data?._count.posts,
+    comments: data?._count.comments,
+    rank: rank?.rank,
+    star: rank?.star?.star
   };
 }
 
@@ -43,8 +45,14 @@ export async function createUser(username: User["username"], password: string) {
   });
 }
 
-export async function updatePassword(username: User["username"], password: string) {
-  return await prisma.password.update({ data: { hash: await hashPassword(password) }, where: { username } });
+export async function updatePassword(
+  username: User["username"],
+  password: string
+) {
+  return await prisma.password.update({
+    data: { hash: await hashPassword(password) },
+    where: { username }
+  });
 }
 
 export function updateBio(username: User["username"], bio: string) {
@@ -67,7 +75,10 @@ export async function verifyLogin(
   return await comparePassword(password, userPassword.hash);
 }
 
-export async function updateAvatar(username: User["username"], avatar: NodeOnDiskFile) {
+export async function updateAvatar(
+  username: User["username"],
+  avatar: NodeOnDiskFile
+) {
   let img = sharp(await avatar.arrayBuffer()).avif();
   const meta = await img.metadata();
 
@@ -77,5 +88,8 @@ export async function updateAvatar(username: User["username"], avatar: NodeOnDis
     img = img.resize(size, size, { fit: "fill" });
   }
 
-  return writeFile(join(cwd(), `usercontent/avatar/${username}.avif`), await img.toBuffer());
+  return writeFile(
+    join(cwd(), `usercontent/avatar/${username}.avif`),
+    await img.toBuffer()
+  );
 }

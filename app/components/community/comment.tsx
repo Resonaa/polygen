@@ -29,14 +29,20 @@ import UserLink from "./userLink";
 import { formatDate, useRelativeDateFormatter } from "./utils";
 
 export type CommentProps = Pick<CommentType, "id" | "username" | "content"> & {
-  createdAt: string
+  createdAt: string;
 };
 
-export default function Comment({ id, username, createdAt, content }: CommentProps) {
+export default function Comment({
+  id,
+  username,
+  createdAt,
+  content
+}: CommentProps) {
   const relativeDate = useRelativeDateFormatter();
 
   const user = useOptionalUser();
-  const editable = user?.username === username || access(user, Access.ManageCommunity);
+  const editable =
+    user?.username === username || access(user, Access.ManageCommunity);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -62,37 +68,52 @@ export default function Comment({ id, username, createdAt, content }: CommentPro
           </Box>
         </Flex>
 
-        {
-          editable && (
-            <AlertDialog
-              isCentered
-              isOpen={isOpen}
-              leastDestructiveRef={cancelRef}
-              onClose={onClose}>
-              <AlertDialogOverlay>
-                <AlertDialogContent>
-                  <AlertDialogHeader>{t("community.confirm-title")}</AlertDialogHeader>
-                  <AlertDialogBody>{t("community.confirm-body")}</AlertDialogBody>
-                  <AlertDialogFooter as={fetcher.Form} m={0}
-                                     action="/api/comment/delete" method="post">
-                    <Button ref={cancelRef} onClick={onClose}>{t("community.cancel")}</Button>
-                    <Button ml={3} colorScheme="red" onClick={onClose} type="submit">
-                      {t("community.delete")}
-                    </Button>
-                    <input type="hidden" value={id} name="id" />
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialogOverlay>
-            </AlertDialog>
-          )
-        }
+        {editable && (
+          <AlertDialog
+            isCentered
+            isOpen={isOpen}
+            leastDestructiveRef={cancelRef}
+            onClose={onClose}
+          >
+            <AlertDialogOverlay>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  {t("community.confirm-title")}
+                </AlertDialogHeader>
+                <AlertDialogBody>{t("community.confirm-body")}</AlertDialogBody>
+                <AlertDialogFooter
+                  as={fetcher.Form}
+                  m={0}
+                  action="/api/comment/delete"
+                  method="post"
+                >
+                  <Button ref={cancelRef} onClick={onClose}>
+                    {t("community.cancel")}
+                  </Button>
+                  <Button
+                    ml={3}
+                    colorScheme="red"
+                    onClick={onClose}
+                    type="submit"
+                  >
+                    {t("community.delete")}
+                  </Button>
+                  <input type="hidden" value={id} name="id" />
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialogOverlay>
+          </AlertDialog>
+        )}
 
-        {
-          editable && (
-            <IconButton aria-label="delete" icon={<DeleteIcon />} isRound
-                        onClick={onOpen} variant="ghost" />
-          )
-        }
+        {editable && (
+          <IconButton
+            aria-label="delete"
+            icon={<DeleteIcon />}
+            isRound
+            onClick={onOpen}
+            variant="ghost"
+          />
+        )}
       </Flex>
 
       <Box overflowY="auto" maxH="200px">

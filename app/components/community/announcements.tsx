@@ -19,14 +19,26 @@ import {
 import { useTranslation } from "react-i18next";
 
 import RenderedText from "~/components/community/renderedText";
-import { formatDate, useRelativeDateFormatter } from "~/components/community/utils";
+import {
+  formatDate,
+  useRelativeDateFormatter
+} from "~/components/community/utils";
 import type { Announcement as AnnouncementType } from "~/models/announcement.server";
 
-type AnnouncementProps = Pick<AnnouncementType, "title" | "content" | "id" | "lang"> & {
-  createdAt: string
+type AnnouncementProps = Pick<
+  AnnouncementType,
+  "title" | "content" | "id" | "lang"
+> & {
+  createdAt: string;
 };
 
-function Announcement({ id, title, content, lang, createdAt }: AnnouncementProps) {
+function Announcement({
+  id,
+  title,
+  content,
+  lang,
+  createdAt
+}: AnnouncementProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { t } = useTranslation();
 
@@ -34,9 +46,17 @@ function Announcement({ id, title, content, lang, createdAt }: AnnouncementProps
 
   return (
     <>
-      <Button fontWeight="normal" onClick={onOpen} variant="ghost">{title}</Button>
+      <Button fontWeight="normal" onClick={onOpen} variant="ghost">
+        {title}
+      </Button>
 
-      <Modal isCentered isOpen={isOpen} onClose={onClose} scrollBehavior="inside" size="2xl">
+      <Modal
+        isCentered
+        isOpen={isOpen}
+        onClose={onClose}
+        scrollBehavior="inside"
+        size="2xl"
+      >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader pb={0}>
@@ -57,9 +77,7 @@ function Announcement({ id, title, content, lang, createdAt }: AnnouncementProps
             <RenderedText content={content} />
           </ModalBody>
           <ModalFooter>
-            <Button onClick={onClose}>
-              {t("community.close")}
-            </Button>
+            <Button onClick={onClose}>{t("community.close")}</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
@@ -67,12 +85,18 @@ function Announcement({ id, title, content, lang, createdAt }: AnnouncementProps
   );
 }
 
-export default function Announcements({ announcements }: { announcements: AnnouncementProps[] }) {
+export default function Announcements({
+  announcements
+}: {
+  announcements: AnnouncementProps[];
+}) {
   const { t } = useTranslation();
 
   return (
     <Center flexDir="column">
-      <Heading mb={1} size="sm">{t("community.announcements")}</Heading>
+      <Heading mb={1} size="sm">
+        {t("community.announcements")}
+      </Heading>
       <VStack spacing={0}>
         {announcements.map(data => (
           <Announcement key={data.id} {...data} />

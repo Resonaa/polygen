@@ -21,7 +21,7 @@ export async function action({ request }: ActionFunctionArgs) {
   if (res.success) {
     const { username, password, retypePassword, captcha } = res.data;
 
-    if (!await verifyCaptcha(request, captcha)) {
+    if (!(await verifyCaptcha(request, captcha))) {
       return registerError({ captcha: "auth.captcha-incorrect" });
     }
 

@@ -19,9 +19,11 @@ export async function identify(socket: ServerSocket) {
     return cookie.substring(secret.length);
   }
 
-  const username = (await sessionStorage.getSession(cookie)).get(USER_SESSION_KEY);
+  const username = (await sessionStorage.getSession(cookie)).get(
+    USER_SESSION_KEY
+  );
 
-  if (typeof username !== "string" || !await getUser(username)) {
+  if (typeof username !== "string" || !(await getUser(username))) {
     return null;
   }
 

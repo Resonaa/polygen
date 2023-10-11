@@ -22,11 +22,14 @@ i18next
     ...i18n,
     backend: {
       backends: [LocalStorageBackend, HttpBackend],
-      backendOptions: [{
-        expirationTime: 60 * 1000
-      }, {
-        loadPath: "/locales/{{lng}}/{{ns}}.json"
-      }]
+      backendOptions: [
+        {
+          expirationTime: 1000 * 60 * 60 * 24
+        },
+        {
+          loadPath: "/locales/{{lng}}/{{ns}}.json"
+        }
+      ]
     },
     detection: {
       order: ["cookie", "htmlTag"],

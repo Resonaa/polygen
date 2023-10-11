@@ -16,4 +16,3 @@ import { RoomMap } from "~/core/server/vote";
 
   console.table(bench.table());
 })();
-

@@ -5,7 +5,7 @@ export const enum LandType {
   Mountain,
   UnknownCity,
   Unknown,
-  UnknownMountain,
+  UnknownMountain
 }
 
 export type LandColor = number;
@@ -21,7 +21,11 @@ export class Land {
   type: LandType;
   amount: number;
 
-  constructor(color: LandColor = 0, type: LandType = LandType.Land, amount: number = 0) {
+  constructor(
+    color: LandColor = 0,
+    type: LandType = LandType.Land,
+    amount: number = 0
+  ) {
     this.color = color;
     this.type = type;
     this.amount = amount;

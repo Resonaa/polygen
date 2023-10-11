@@ -49,22 +49,33 @@ export default function Auth() {
 
   return (
     <>
-      <Button onClick={() => {
-        setType("login");
-        onOpen();
-      }} variant="ghost">
+      <Button
+        onClick={() => {
+          setType("login");
+          onOpen();
+        }}
+        variant="ghost"
+      >
         {t("auth.login")}
       </Button>
 
-      <Button colorScheme="blue"
-              onClick={() => {
-                setType("register");
-                onOpen();
-              }}>
+      <Button
+        colorScheme="blue"
+        onClick={() => {
+          setType("register");
+          onOpen();
+        }}
+      >
         {t("auth.register")}
       </Button>
 
-      <Modal isCentered isOpen={isOpen} onClose={onClose} scrollBehavior="inside" size="lg">
+      <Modal
+        isCentered
+        isOpen={isOpen}
+        onClose={onClose}
+        scrollBehavior="inside"
+        size="lg"
+      >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>{title}</ModalHeader>
@@ -78,12 +89,19 @@ export default function Auth() {
                     <InputLeftElement pointerEvents="none">
                       <Icon as={FaUser} color="gray.300" />
                     </InputLeftElement>
-                    <Input autoComplete="username" maxLength={18}
-                           minLength={3} name="username"
-                           placeholder={t("auth.username-placeholder")} required />
+                    <Input
+                      autoComplete="username"
+                      maxLength={18}
+                      minLength={3}
+                      name="username"
+                      placeholder={t("auth.username-placeholder")}
+                      required
+                    />
                   </InputGroup>
                   {fetcher.data?.username && (
-                    <FormErrorMessage>{t(fetcher.data.username)}</FormErrorMessage>
+                    <FormErrorMessage>
+                      {t(fetcher.data.username)}
+                    </FormErrorMessage>
                   )}
                 </FormControl>
 
@@ -93,15 +111,22 @@ export default function Auth() {
                     <InputLeftElement pointerEvents="none">
                       <LockIcon color="gray.300" />
                     </InputLeftElement>
-                    <Input autoComplete={type === "login" ? "current-password" : "new-password"}
-                           maxLength={161}
-                           minLength={6}
-                           name="password"
-                           placeholder={t("auth.password-placeholder")}
-                           required type="password" />
+                    <Input
+                      autoComplete={
+                        type === "login" ? "current-password" : "new-password"
+                      }
+                      maxLength={161}
+                      minLength={6}
+                      name="password"
+                      placeholder={t("auth.password-placeholder")}
+                      required
+                      type="password"
+                    />
                   </InputGroup>
                   {fetcher.data?.password && (
-                    <FormErrorMessage>{t(fetcher.data.password)}</FormErrorMessage>
+                    <FormErrorMessage>
+                      {t(fetcher.data.password)}
+                    </FormErrorMessage>
                   )}
                 </FormControl>
 
@@ -113,12 +138,20 @@ export default function Auth() {
                         <InputLeftElement pointerEvents="none">
                           <LockIcon color="gray.300" />
                         </InputLeftElement>
-                        <Input autoComplete="new-password" maxLength={161} minLength={6}
-                               name="retypePassword" placeholder={t("auth.retype-password-placeholder")}
-                               required type="password" />
+                        <Input
+                          autoComplete="new-password"
+                          maxLength={161}
+                          minLength={6}
+                          name="retypePassword"
+                          placeholder={t("auth.retype-password-placeholder")}
+                          required
+                          type="password"
+                        />
                       </InputGroup>
                       {fetcher.data?.retypePassword && (
-                        <FormErrorMessage>{t(fetcher.data.retypePassword)}</FormErrorMessage>
+                        <FormErrorMessage>
+                          {t(fetcher.data.retypePassword)}
+                        </FormErrorMessage>
                       )}
                     </FormControl>
 
@@ -130,30 +163,53 @@ export default function Auth() {
                             <InputLeftElement pointerEvents="none">
                               <CheckIcon color="gray.300" />
                             </InputLeftElement>
-                            <Input maxLength={4} minLength={4} name="captcha"
-                                   placeholder={t("auth.captcha-placeholder")} required />
+                            <Input
+                              maxLength={4}
+                              minLength={4}
+                              name="captcha"
+                              placeholder={t("auth.captcha-placeholder")}
+                              required
+                            />
                           </InputGroup>
                           {fetcher.data?.captcha && (
-                            <FormErrorMessage>{t(fetcher.data.captcha)}</FormErrorMessage>
+                            <FormErrorMessage>
+                              {t(fetcher.data.captcha)}
+                            </FormErrorMessage>
                           )}
                         </Box>
                         <Box>
-                          <Image cursor="pointer" alt="captcha" onClick={changeCaptcha} src={"/captcha?" + captcha} />
+                          <Image
+                            cursor="pointer"
+                            alt="captcha"
+                            onClick={changeCaptcha}
+                            src={"/captcha?" + captcha}
+                          />
                         </Box>
                       </HStack>
                     </FormControl>
                   </>
                 )}
 
-                <Button mt={1} colorScheme="blue" isLoading={fetcher.state === "submitting"} size="lg"
-                        type="submit">
+                <Button
+                  mt={1}
+                  colorScheme="blue"
+                  isLoading={fetcher.state === "submitting"}
+                  size="lg"
+                  type="submit"
+                >
                   {title}
                 </Button>
 
                 <Text align="center">
-                  {type === "login" ? t("auth.no-account") : t("auth.have-account")}
-                  <Link color={useColorModeValue("blue.500", "blue.200")}
-                        onClick={() => setType(type === "login" ? "register" : "login")}>
+                  {type === "login"
+                    ? t("auth.no-account")
+                    : t("auth.have-account")}
+                  <Link
+                    color={useColorModeValue("blue.500", "blue.200")}
+                    onClick={() =>
+                      setType(type === "login" ? "register" : "login")
+                    }
+                  >
                     {type === "login" ? t("auth.register") : t("auth.login")}
                   </Link>
                 </Text>

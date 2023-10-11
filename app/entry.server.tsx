@@ -25,7 +25,7 @@ export default async function handleRequest(
   responseHeaders: Headers,
   remixContext: EntryContext
 ) {
-  const callbackName = isbot(request.headers.get("user-agent"))
+  const callbackName = isbot(request.headers.get("User-Agent"))
     ? "onAllReady"
     : "onShellReady";
 
@@ -52,7 +52,7 @@ export default async function handleRequest(
         </I18nextProvider>
       </CacheProvider>,
       {
-        [callbackName]: () => {
+        [callbackName]() {
           const body = new PassThrough();
 
           responseHeaders.set("Content-Type", "text/html");
@@ -66,10 +66,10 @@ export default async function handleRequest(
 
           pipe(body);
         },
-        onShellError(error: unknown) {
+        onShellError(error) {
           reject(error);
         },
-        onError(error: unknown) {
+        onError(error) {
           didError = true;
 
           console.error(error);
@@ -79,4 +79,9 @@ export default async function handleRequest(
 
     setTimeout(abort, ABORT_DELAY);
   });
+}
+
+export function handleDataRequest(response: Response) {
+  response.headers.delete("X-Remix-Response");
+  return response;
 }

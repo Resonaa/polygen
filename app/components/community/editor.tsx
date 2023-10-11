@@ -1,15 +1,26 @@
-import { Tab, TabList, TabPanel, TabPanels, Tabs, Textarea } from "@chakra-ui/react";
+import {
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
+  Textarea
+} from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
 import TextareaAutosize from "react-textarea-autosize";
 
 import RenderedText from "./renderedText";
 
 interface EditorProps {
-  value: string,
-  setValue: (value: string) => void
+  value: string;
+  setValue: (value: string) => void;
 }
 
-export default function Editor<T extends EditorProps>({ value, setValue, ...props }: T) {
+export default function Editor<T extends EditorProps>({
+  value,
+  setValue,
+  ...props
+}: T) {
   const { t } = useTranslation();
 
   return (

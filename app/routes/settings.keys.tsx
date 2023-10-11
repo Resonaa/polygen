@@ -17,7 +17,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export default function Keys() {
   const [mode, setMode] = useState(MapMode.Hexagon);
-  const [userColors, setUserColors] = useState(Settings.defaultSettings.game.colors.standard);
+  const [userColors, setUserColors] = useState(
+    Settings.defaultSettings.game.colors.standard
+  );
 
   useEffect(() => {
     const settings = getSettings();
@@ -50,7 +52,6 @@ export default function Keys() {
     gm.get(clearMovements).color = 5;
     gm.get(undoMovement).color = 6;
     gm.get(surrender).color = 7;
-
 
     renderer.bind(gm, 0);
 
@@ -132,13 +133,15 @@ export default function Keys() {
     window.location.reload();
   };
 
-  const tableData = [["选家", defaultSettings.game.keys[mode].selectHome],
+  const tableData = [
+    ["选家", defaultSettings.game.keys[mode].selectHome],
     ["移动", defaultSettings.game.keys[mode].move.toString()],
     ["选择左上角领地", defaultSettings.game.keys[mode].selectTopLeft],
     ["半兵", defaultSettings.game.keys[mode].splitArmy],
     ["清除全部移动", defaultSettings.game.keys[mode].clearMovements],
     ["撤销一步移动", defaultSettings.game.keys[mode].undoMovement],
-    ["投降", defaultSettings.game.keys[mode].surrender]];
+    ["投降", defaultSettings.game.keys[mode].surrender]
+  ];
 
   return (
     <div>
@@ -147,7 +150,12 @@ export default function Keys() {
       <Menu text>
         <Menu.Item header>模式</Menu.Item>
         {Object.values(MapMode).map(name => (
-          <Menu.Item key={name} name={name} active={mode === name} onClick={() => setMode(name as MapMode)} />
+          <Menu.Item
+            key={name}
+            name={name}
+            active={mode === name}
+            onClick={() => setMode(name as MapMode)}
+          />
         ))}
       </Menu>
 
@@ -166,7 +174,11 @@ export default function Keys() {
             <Table.Body>
               {tableData.map(([description, defaultValue], id) => (
                 <Table.Row key={id}>
-                  <Table.Cell style={{ backgroundColor: numberColorToString(userColors[id + 1]) }} />
+                  <Table.Cell
+                    style={{
+                      backgroundColor: numberColorToString(userColors[id + 1])
+                    }}
+                  />
                   <Table.Cell>{description}</Table.Cell>
                   <Table.Cell>{defaultValue}</Table.Cell>
                 </Table.Row>
@@ -174,7 +186,9 @@ export default function Keys() {
             </Table.Body>
           </Table>
 
-          <Button negative onClick={resetToDefault}>恢复默认</Button>
+          <Button negative onClick={resetToDefault}>
+            恢复默认
+          </Button>
         </Grid.Column>
       </Grid>
     </div>

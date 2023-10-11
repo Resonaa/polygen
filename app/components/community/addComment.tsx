@@ -21,8 +21,12 @@ export default function AddComment({ parentId }: { parentId: number }) {
     <fetcher.Form method="post" style={{ width: "100%" }}>
       <Editor value={value} setValue={setValue} mt="-4px" />
       <input type="hidden" name="parentId" value={parentId} />
-      <Button colorScheme="blue" isLoading={fetcher.state !== "idle"} leftIcon={<BsFillSendFill />}
-              type="submit">
+      <Button
+        colorScheme="blue"
+        isLoading={fetcher.state !== "idle"}
+        leftIcon={<BsFillSendFill />}
+        type="submit"
+      >
         {t("community.add-comment")}
       </Button>
     </fetcher.Form>

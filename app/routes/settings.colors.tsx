@@ -66,7 +66,8 @@ export default function Colors() {
       return;
     }
 
-    renderer.settings.game.colors.standard = Settings.defaultSettings.game.colors.standard;
+    renderer.settings.game.colors.standard =
+      Settings.defaultSettings.game.colors.standard;
     renderer.updateAll();
     saveSettings(renderer.settings);
 
@@ -81,12 +82,18 @@ export default function Colors() {
     }
 
     renderer.settings.game.colors.standard[curId] = color;
-    renderer.updateGraphics([Math.ceil(curId / size), (curId - 1) % size + 1]);
+    renderer.updateGraphics([
+      Math.ceil(curId / size),
+      ((curId - 1) % size) + 1
+    ]);
     saveSettings(renderer.settings);
     setCurColor(renderer.settings.game.colors.standard[curId]);
   };
 
-  const resetToDefault = () => setCurColorAndSave(Settings.defaultSettings.game.colors.standard[curId as number]);
+  const resetToDefault = () =>
+    setCurColorAndSave(
+      Settings.defaultSettings.game.colors.standard[curId as number]
+    );
 
   return (
     <div>
@@ -102,16 +109,25 @@ export default function Colors() {
             <Form className="mb-4">
               <Form.Field>
                 修改颜色序号：{curId}
-                <input className="ml-4" type="color" value={numberColorToString(curColor)} onChange={({ target }) => {
-                  setCurColorAndSave(stringColorToNumber(target.value));
-                }} />
+                <input
+                  className="ml-4"
+                  type="color"
+                  value={numberColorToString(curColor)}
+                  onChange={({ target }) => {
+                    setCurColorAndSave(stringColorToNumber(target.value));
+                  }}
+                />
               </Form.Field>
               <Form.Field>
-                <Button primary onClick={resetToDefault}>恢复默认</Button>
+                <Button primary onClick={resetToDefault}>
+                  恢复默认
+                </Button>
               </Form.Field>
             </Form>
           )}
-          <Button negative onClick={resetAllToDefault}>全部恢复默认</Button>
+          <Button negative onClick={resetAllToDefault}>
+            全部恢复默认
+          </Button>
         </Grid.Column>
       </Grid>
     </div>

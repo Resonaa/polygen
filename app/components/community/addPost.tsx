@@ -20,8 +20,12 @@ export default function AddPost() {
   return (
     <fetcher.Form method="post" style={{ width: "100%" }}>
       <Editor value={value} setValue={setValue} mt="-4px" />
-      <Button colorScheme="blue" isLoading={fetcher.state !== "idle"} leftIcon={<BsFillSendFill />}
-              type="submit">
+      <Button
+        colorScheme="blue"
+        isLoading={fetcher.state !== "idle"}
+        leftIcon={<BsFillSendFill />}
+        type="submit"
+      >
         {t("community.add-post")}
       </Button>
     </fetcher.Form>

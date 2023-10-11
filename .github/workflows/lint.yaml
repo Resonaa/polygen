@@ -1,4 +1,4 @@
-name: ⚙️ Build
+name: ⬣ Lint
 on: [push]
 
 concurrency:
@@ -6,7 +6,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - name: ⬇️ Checkout repo
@@ -19,14 +19,8 @@ jobs:
           cache-dependency-path: ./package.json
           node-version: 18
 
-      - name: 🏄 Copy test env vars
-        run: cp .env.example .env
-
       - name: 📥 Install deps
         run: npm install
 
-      - name: 🛠 Setup Database
-        run: npx prisma migrate reset --force
-
-      - name: ⚙️ Build
-        run: npm run build
+      - name: 🔬 Lint
+        run: npm run lint

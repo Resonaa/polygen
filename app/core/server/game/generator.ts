@@ -174,16 +174,38 @@ function generateMazeMap(playerCount: number, mode: MapMode): Map {
 
   for (let i = 1; i <= height; i++) {
     for (let j = 1; j <= width; j++) {
-      let tmp1 = i - 1, tmp3 = j - 1, tmp4 = j + 1;
+      let tmp1 = i - 1,
+        tmp3 = j - 1,
+        tmp4 = j + 1;
       let tmp2 = i + 1;
 
-      if (i % 2 === 0 && j % 2 === 1 && map.check([tmp1, j]) && map.check([tmp2, j])) {
+      if (
+        i % 2 === 0 &&
+        j % 2 === 1 &&
+        map.check([tmp1, j]) &&
+        map.check([tmp2, j])
+      ) {
         vNum[i][j] = edges.length;
-        edges.push({ a: vNum[tmp1][j], b: vNum[tmp2][j], w: 10 + _.random(0, 9), pos: [i, j] as Pos });
+        edges.push({
+          a: vNum[tmp1][j],
+          b: vNum[tmp2][j],
+          w: 10 + _.random(0, 9),
+          pos: [i, j] as Pos
+        });
       }
-      if (i % 2 === 1 && j % 2 === 0 && map.check([i, tmp3]) && map.check([i, tmp4])) {
+      if (
+        i % 2 === 1 &&
+        j % 2 === 0 &&
+        map.check([i, tmp3]) &&
+        map.check([i, tmp4])
+      ) {
         vNum[i][j] = edges.length;
-        edges.push({ a: vNum[i][tmp3], b: vNum[i][tmp4], w: 10 + _.random(0, 9), pos: [i, j] as Pos });
+        edges.push({
+          a: vNum[i][tmp3],
+          b: vNum[i][tmp4],
+          w: 10 + _.random(0, 9),
+          pos: [i, j] as Pos
+        });
       }
     }
   }
@@ -217,7 +239,7 @@ function generateMazeMap(playerCount: number, mode: MapMode): Map {
   let randPos = generateRandomPos(width, height);
   let generals = [];
 
-  for (let i = 1; i <= playerCount;) {
+  for (let i = 1; i <= playerCount; ) {
     const pos = randPos.shift();
     if (!pos) {
       return generateMazeMap(playerCount, mode);
@@ -258,7 +280,7 @@ function generateMazeMap(playerCount: number, mode: MapMode): Map {
     }
   }
 
-  for (let i = 1; i <= (height * width) / 15;) {
+  for (let i = 1; i <= (height * width) / 15; ) {
     const pos = randPos.shift();
     if (!pos) {
       return generateMazeMap(playerCount, mode);
@@ -287,7 +309,9 @@ function generateMazeMap(playerCount: number, mode: MapMode): Map {
 }
 
 function generatePlotMap(playerCount: number, mode: MapMode): Map {
-  const plotSize = 5, plotsPerPlayer = 4, cityAmount = 161;
+  const plotSize = 5,
+    plotsPerPlayer = 4,
+    cityAmount = 161;
   const plotCount = Math.ceil(Math.sqrt(playerCount * plotsPerPlayer));
   const size = plotSize + (plotSize - 1) * (plotCount - 1);
 
@@ -297,10 +321,17 @@ function generatePlotMap(playerCount: number, mode: MapMode): Map {
 
   for (let i = 1; i <= size; i++) {
     for (let j = 1; j <= size; j++) {
-      const m1 = i % (plotSize - 1), m2 = j % (plotSize - 1);
+      const m1 = i % (plotSize - 1),
+        m2 = j % (plotSize - 1);
       let land = map.get([i, j]);
       if (m1 === 1 || m2 === 1) {
-        if (i !== 1 && i !== size && j !== 1 && j !== size && (m1 === (plotSize + 1) / 2 || m2 === (plotSize + 1) / 2)) {
+        if (
+          i !== 1 &&
+          i !== size &&
+          j !== 1 &&
+          j !== size &&
+          (m1 === (plotSize + 1) / 2 || m2 === (plotSize + 1) / 2)
+        ) {
           land.type = LandType.City;
           land.amount = cityAmount;
         } else {

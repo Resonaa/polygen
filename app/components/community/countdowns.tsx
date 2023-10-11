@@ -3,11 +3,9 @@ import { useTranslation } from "react-i18next";
 
 import { useServerTime } from "~/utils";
 
-const countDowns = [
-  { date: "2024-02-10", name: "polygen-public-preview" }
-];
+const countDowns = [{ date: "2024-02-10", name: "polygen-public-preview" }];
 
-function Countdown({ date, name }: { date: string, name: string }) {
+function Countdown({ date, name }: { date: string; name: string }) {
   const now = useServerTime().getTime();
   const { i18n, t } = useTranslation();
 
@@ -40,9 +38,13 @@ export default function Countdowns() {
 
   return (
     <Center flexDir="column">
-      <Heading mb={2} size="sm">{t("community.countdowns")}</Heading>
+      <Heading mb={2} size="sm">
+        {t("community.countdowns")}
+      </Heading>
       <VStack textAlign="center">
-        {countDowns.map(({ date, name }) => <Countdown key={name} date={date} name={name} />)}
+        {countDowns.map(({ date, name }) => (
+          <Countdown key={name} date={date} name={name} />
+        ))}
       </VStack>
     </Center>
   );

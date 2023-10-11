@@ -7,9 +7,12 @@ import { ajax } from "~/utils";
 import type { CommentProps } from "./comment";
 import Comment from "./comment";
 
-export default function Comments({ comments, parentId }: {
-  comments: CommentProps[],
-  parentId: number
+export default function Comments({
+  comments,
+  parentId
+}: {
+  comments: CommentProps[];
+  parentId: number;
 }) {
   const [extraComments, setExtraComments] = useState<CommentProps[]>([]);
 

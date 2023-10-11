@@ -26,7 +26,10 @@ export function playerCountToSize(playerCount: number, mode: MapMode) {
     }
   }
 
-  return [Math.floor(Math.sqrt(piles / r) * r), Math.floor(Math.sqrt(piles / r))];
+  return [
+    Math.floor(Math.sqrt(piles / r) * r),
+    Math.floor(Math.sqrt(piles / r))
+  ];
 }
 
 export function astar(map: Map, from: Pos, to: Pos, cannotPassCity?: boolean) {
@@ -53,7 +56,11 @@ export function astar(map: Map, from: Pos, to: Pos, cannotPassCity?: boolean) {
     const [cur, len] = front;
 
     for (let nxt of map.neighbours(cur)) {
-      if (vis[nxt[0]][nxt[1]] || !map.accessible(nxt) || (cannotPassCity && map.get(nxt).type === LandType.City)) {
+      if (
+        vis[nxt[0]][nxt[1]] ||
+        !map.accessible(nxt) ||
+        (cannotPassCity && map.get(nxt).type === LandType.City)
+      ) {
         continue;
       }
 

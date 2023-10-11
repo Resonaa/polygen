@@ -6,7 +6,11 @@ import mountain from "static/mountain.png";
 import obstacle from "static/obstacle.png";
 import type { ISettings } from "~/core/client/settings";
 import { Controls, getSettings } from "~/core/client/settings";
-import { formatLargeNumber, getPileSizeByScale, getScaleByPileSize } from "~/core/client/utils";
+import {
+  formatLargeNumber,
+  getPileSizeByScale,
+  getScaleByPileSize
+} from "~/core/client/utils";
 import { LandType } from "~/core/server/game/land";
 import type { Pos } from "~/core/server/game/utils";
 
@@ -20,10 +24,14 @@ export class Renderer {
   private app: PIXI.Application;
   private readonly graphics: PIXI.Graphics = new PIXI.Graphics();
 
-  private readonly textures = [PIXI.Texture.EMPTY, PIXI.Texture.from(general),
+  private readonly textures = [
+    PIXI.Texture.EMPTY,
+    PIXI.Texture.from(general),
     PIXI.Texture.from(city),
     PIXI.Texture.from(mountain),
-    PIXI.Texture.from(obstacle), PIXI.Texture.EMPTY];
+    PIXI.Texture.from(obstacle),
+    PIXI.Texture.EMPTY
+  ];
 
   selected: Pos | null = null;
 
@@ -69,15 +77,20 @@ export class Renderer {
     const settings = getSettings();
     this.settings = settings;
 
+    PIXI.BitmapFont.from(
+      "LandAmount",
+      {
+        fontSize: 16,
+        fill: this.settings.game.colors.selectedBorder,
+        fontWeight: "bold"
+      },
+      { chars: PIXI.BitmapFont.ASCII }
+    );
 
-    PIXI.BitmapFont.from("LandAmount", {
-      fontSize: 16,
-      fill: this.settings.game.colors.selectedBorder,
-      fontWeight: "bold"
-    }, { chars: PIXI.BitmapFont.ASCII });
-
-
-    this.isTouch = settings.game.controls === Controls.Touch || (settings.game.controls === Controls.Auto && document.body.clientWidth < 640);
+    this.isTouch =
+      settings.game.controls === Controls.Touch ||
+      (settings.game.controls === Controls.Auto &&
+        document.body.clientWidth < 640);
 
     if (!this.isTouch) {
       canvas.onwheel = event => {
@@ -92,12 +105,15 @@ export class Renderer {
     }
 
     canvas.onpointerdown = event => {
-      const startX = event.pageX, startY = event.pageY;
-      const initialStartX = this.startX, initialStartY = this.startY;
+      const startX = event.pageX,
+        startY = event.pageY;
+      const initialStartX = this.startX,
+        initialStartY = this.startY;
       let flag = false;
 
       document.onpointermove = event => {
-        const deltaX = event.pageX - startX, deltaY = event.pageY - startY;
+        const deltaX = event.pageX - startX,
+          deltaY = event.pageY - startY;
 
         if (!flag && (Math.abs(deltaX) > 20 || Math.abs(deltaY) > 20)) {
           flag = true;
@@ -167,7 +183,10 @@ export class Renderer {
           for (let i = 1; i <= this.gm.height; i++) {
             for (let j = 1; j <= this.gm.width; j++) {
               const land = this.gm.get([i, j]);
-              if (land.color === this.myColor && land.type === LandType.General) {
+              if (
+                land.color === this.myColor &&
+                land.type === LandType.General
+              ) {
                 this.select([i, j]);
                 return;
               }
@@ -196,8 +215,9 @@ export class Renderer {
 
     switch (this.gm.mode) {
       case MapMode.Hexagon: {
-        realWidth = this.pileSize * (1 + .75 * (this.gm.width - 1));
-        realHeight = Math.sqrt(3) / 4 * this.pileSize * (1 + 2 * this.gm.height);
+        realWidth = this.pileSize * (1 + 0.75 * (this.gm.width - 1));
+        realHeight =
+          (Math.sqrt(3) / 4) * this.pileSize * (1 + 2 * this.gm.height);
         break;
       }
       case MapMode.Square: {
@@ -207,12 +227,18 @@ export class Renderer {
       }
     }
 
-    [this.startX, this.startY] = [(this.app.view.width - realWidth) / 2, (this.app.view.height - realHeight) / 2];
+    [this.startX, this.startY] = [
+      (this.app.view.width - realWidth) / 2,
+      (this.app.view.height - realHeight) / 2
+    ];
 
-    if (this.pileSize <= MIN_PILE_SIZE + .1) {
+    if (this.pileSize <= MIN_PILE_SIZE + 0.1) {
       for (let i = 1; i <= this.gm.height; i++) {
         for (let j = 1; j <= this.gm.width; j++) {
-          if (this.gm.get([i, j]).color === this.myColor && this.gm.get([i, j]).type === LandType.General) {
+          if (
+            this.gm.get([i, j]).color === this.myColor &&
+            this.gm.get([i, j]).type === LandType.General
+          ) {
             const [gx, gy] = this.getPileCenterPos([i, j]);
             this.startX += this.app.view.width / 2 - gx;
             this.startY += this.app.view.height / 2 - gy;
@@ -225,13 +251,14 @@ export class Renderer {
   }
 
   private setDefaultScale() {
-    const width = this.app.view.width, height = this.app.view.height;
+    const width = this.app.view.width,
+      height = this.app.view.height;
     let maxXWidth, maxYWidth;
 
     switch (this.gm.mode) {
       case MapMode.Hexagon: {
-        maxXWidth = width / (1 + .75 * (this.gm.width - 1));
-        maxYWidth = 4 * height / (Math.sqrt(3) * (1 + 2 * this.gm.height));
+        maxXWidth = width / (1 + 0.75 * (this.gm.width - 1));
+        maxYWidth = (4 * height) / (Math.sqrt(3) * (1 + 2 * this.gm.height));
         break;
       }
       case MapMode.Square: {
@@ -254,7 +281,8 @@ export class Renderer {
     this.pileSize = getPileSizeByScale(this.scale);
     const rate = this.pileSize / previousPileSize;
 
-    const width = this.app.view.width, height = this.app.view.height;
+    const width = this.app.view.width,
+      height = this.app.view.height;
 
     this.startX = width / 2 - rate * (width / 2 - this.startX);
     this.startY = height / 2 - rate * (height / 2 - this.startY);
@@ -263,11 +291,19 @@ export class Renderer {
   private getPileUpperLeftPos([i, j]: Pos) {
     switch (this.gm.mode) {
       case MapMode.Hexagon: {
-        return [this.startX + .75 * (j - 1) * this.pileSize,
-          this.startY + Math.sqrt(3) / 4 * this.pileSize * (2 * (i - 1) + (j % 2 === 0 ? 1 : 0))];
+        return [
+          this.startX + 0.75 * (j - 1) * this.pileSize,
+          this.startY +
+            (Math.sqrt(3) / 4) *
+              this.pileSize *
+              (2 * (i - 1) + (j % 2 === 0 ? 1 : 0))
+        ];
       }
       case MapMode.Square: {
-        return [this.startX + (j - 1) * this.pileSize, this.startY + (i - 1) * this.pileSize];
+        return [
+          this.startX + (j - 1) * this.pileSize,
+          this.startY + (i - 1) * this.pileSize
+        ];
       }
     }
   }
@@ -278,22 +314,37 @@ export class Renderer {
   }
 
   private getPilePath(pos: Pos) {
-    const [upperLeftX, upperLeftY] = this.getPileUpperLeftPos(pos), pileWidth = this.pileSize;
+    const [upperLeftX, upperLeftY] = this.getPileUpperLeftPos(pos),
+      pileWidth = this.pileSize;
 
     switch (this.gm.mode) {
       case MapMode.Hexagon: {
-        return [upperLeftX + pileWidth / 4, upperLeftY,
-          upperLeftX + .75 * pileWidth, upperLeftY,
-          upperLeftX + pileWidth, upperLeftY + Math.sqrt(3) / 4 * pileWidth,
-          upperLeftX + .75 * pileWidth, upperLeftY + Math.sqrt(3) / 2 * pileWidth,
-          upperLeftX + pileWidth / 4, upperLeftY + Math.sqrt(3) / 2 * pileWidth,
-          upperLeftX, upperLeftY + Math.sqrt(3) / 4 * pileWidth];
+        return [
+          upperLeftX + pileWidth / 4,
+          upperLeftY,
+          upperLeftX + 0.75 * pileWidth,
+          upperLeftY,
+          upperLeftX + pileWidth,
+          upperLeftY + (Math.sqrt(3) / 4) * pileWidth,
+          upperLeftX + 0.75 * pileWidth,
+          upperLeftY + (Math.sqrt(3) / 2) * pileWidth,
+          upperLeftX + pileWidth / 4,
+          upperLeftY + (Math.sqrt(3) / 2) * pileWidth,
+          upperLeftX,
+          upperLeftY + (Math.sqrt(3) / 4) * pileWidth
+        ];
       }
       case MapMode.Square: {
-        return [upperLeftX, upperLeftY,
-          upperLeftX + pileWidth, upperLeftY,
-          upperLeftX + pileWidth, upperLeftY + pileWidth,
-          upperLeftX, upperLeftY + pileWidth];
+        return [
+          upperLeftX,
+          upperLeftY,
+          upperLeftX + pileWidth,
+          upperLeftY,
+          upperLeftX + pileWidth,
+          upperLeftY + pileWidth,
+          upperLeftX,
+          upperLeftY + pileWidth
+        ];
       }
     }
   }
@@ -326,13 +377,15 @@ export class Renderer {
 
         switch (this.gm.mode) {
           case MapMode.Hexagon: {
-            image.width = image.height = this.pileSize * (3 - Math.sqrt(3)) / 2;
+            image.width = image.height =
+              (this.pileSize * (3 - Math.sqrt(3))) / 2;
             image.x = x + (this.pileSize - image.width) / 2;
-            image.y = y + (Math.sqrt(3) / 2 * this.pileSize - image.height) / 2;
+            image.y =
+              y + ((Math.sqrt(3) / 2) * this.pileSize - image.height) / 2;
             break;
           }
           case MapMode.Square: {
-            image.width = image.height = this.pileSize * .78125;
+            image.width = image.height = this.pileSize * 0.78125;
             image.x = x + (this.pileSize - image.width) / 2;
             image.y = y + (this.pileSize - image.height) / 2;
             break;
@@ -367,7 +420,7 @@ export class Renderer {
     switch (this.gm.mode) {
       case MapMode.Hexagon: {
         maxWidth = this.pileSize;
-        maxHeight = Math.sqrt(3) / 2 * this.pileSize;
+        maxHeight = (Math.sqrt(3) / 2) * this.pileSize;
         break;
       }
       case MapMode.Square: {
@@ -402,8 +455,10 @@ export class Renderer {
 
   updateType([i, j]: Pos) {
     const type = this.gm.get([i, j]).type;
-    this.images[i][j].texture = type === LandType.UnknownCity || type === LandType.UnknownMountain
-      ? this.textures[4] : this.textures[type];
+    this.images[i][j].texture =
+      type === LandType.UnknownCity || type === LandType.UnknownMountain
+        ? this.textures[4]
+        : this.textures[type];
   }
 
   updateGraphics(pos: Pos) {
@@ -423,10 +478,11 @@ export class Renderer {
 
     const lineWidth = selected ? (this.pileSize <= 25 ? 3 : 4) : 0;
 
-    this.graphics.lineStyle(lineWidth, this.settings.game.colors.selectedBorder, 1, 0)
-        .beginFill(fillColor)
-        .drawPolygon(this.getPilePath(pos))
-        .endFill();
+    this.graphics
+      .lineStyle(lineWidth, this.settings.game.colors.selectedBorder, 1, 0)
+      .beginFill(fillColor)
+      .drawPolygon(this.getPilePath(pos))
+      .endFill();
   }
 
   updateLand(pos: Pos) {
@@ -483,8 +539,10 @@ export class Renderer {
   }
 
   updateHit(pos: Pos) {
-    const hittable = this.gm.accessible(pos) && (this.myColor === 0 || this.gm.get(pos).color === this.myColor)
-      , hit = this.hitAreas[pos[0]][pos[1]];
+    const hittable =
+        this.gm.accessible(pos) &&
+        (this.myColor === 0 || this.gm.get(pos).color === this.myColor),
+      hit = this.hitAreas[pos[0]][pos[1]];
 
     if (hittable && hit.cursor !== "pointer") {
       hit.cursor = "pointer";

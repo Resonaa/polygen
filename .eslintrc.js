@@ -11,7 +11,8 @@ module.exports = {
   plugins: ["chakra-ui"],
   extends: [
     "@remix-run/eslint-config",
-    "@remix-run/eslint-config/node"
+    "@remix-run/eslint-config/node",
+    "prettier"
   ],
   ignorePatterns: ["public/**/*.js"],
   rules: {

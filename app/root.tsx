@@ -36,9 +36,7 @@ import { useNProgress } from "~/utils";
 
 import { requireAuthenticatedOptionalUser } from "./session.server";
 
-export const links: LinksFunction = () => [
-  { rel: "stylesheet", href: katex }
-];
+export const links: LinksFunction = () => [{ rel: "stylesheet", href: katex }];
 
 export async function loader({ request }: LoaderFunctionArgs) {
   return json({
@@ -51,19 +49,23 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 const COLOR_MODE_KEY = "chakra-ui-color-mode";
 
-export function getKeyFromCookies(cookies: string | undefined | null, key: string) {
-  return cookies
-    ?.match(new RegExp(`(^| )${key}=([^;]+)`))
-    ?.at(2);
+export function getKeyFromCookies(
+  cookies: string | undefined | null,
+  key: string
+) {
+  return cookies?.match(new RegExp(`(^| )${key}=([^;]+)`))?.at(2);
 }
 
 function HighlightLink() {
   return <link rel="stylesheet" href={useColorModeValue(github, githubDark)} />;
 }
 
-function Document({ children, title }: {
-  children: ReactNode,
-  title?: string
+function Document({
+  children,
+  title
+}: {
+  children: ReactNode;
+  title?: string;
 }) {
   useNProgress();
 
@@ -92,21 +94,33 @@ function Document({ children, title }: {
   const { i18n } = useTranslation();
 
   return (
-    <chakra.html lang={locale} h="100%" dir={i18n.dir()}
-                 {...colorMode
-                 && { "data-theme": colorMode, style: { colorScheme: colorMode } }
-                 }>
+    <chakra.html
+      lang={locale}
+      h="100%"
+      dir={i18n.dir()}
+      {...(colorMode && {
+        "data-theme": colorMode,
+        style: { colorScheme: colorMode }
+      })}
+    >
       <head>
         <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, shrink-to-fit=no"
+        />
         {title && <title>{title}</title>}
         <Meta />
         <Links />
       </head>
       <chakra.body
         h="100%"
-        {...colorMode && { className: `chakra-ui-${colorMode}` }}>
-        <ChakraProvider colorModeManager={cookieStorageManagerSSR(cookies)} theme={theme}>
+        {...(colorMode && { className: `chakra-ui-${colorMode}` })}
+      >
+        <ChakraProvider
+          colorModeManager={cookieStorageManagerSSR(cookies)}
+          theme={theme}
+        >
           {children}
           <HighlightLink />
         </ChakraProvider>
@@ -117,9 +131,7 @@ function Document({ children, title }: {
   );
 }
 
-function RouteErrorWrapper({ children }: {
-  children: ReactNode
-}) {
+function RouteErrorWrapper({ children }: { children: ReactNode }) {
   const { t } = useTranslation();
 
   return (
@@ -139,7 +151,9 @@ export function ErrorBoundary() {
   if (isRouteErrorResponse(error)) {
     return (
       <RouteErrorWrapper>
-        <Heading>{error.status} {error.statusText}</Heading>
+        <Heading>
+          {error.status} {error.statusText}
+        </Heading>
         {error.data}
       </RouteErrorWrapper>
     );

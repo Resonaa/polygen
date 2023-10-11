@@ -28,12 +28,16 @@ export async function getSession(request: Request) {
   return await sessionStorage.getSession(cookie);
 }
 
-export async function getUsername(request: Request): Promise<User["username"] | undefined> {
+export async function getUsername(
+  request: Request
+): Promise<User["username"] | undefined> {
   const session = await getSession(request);
   return await session.get(USER_SESSION_KEY);
 }
 
-export async function getCaptcha(request: Request): Promise<string | undefined> {
+export async function getCaptcha(
+  request: Request
+): Promise<string | undefined> {
   const session = await getSession(request);
   return await session.get(CAPTCHA_SESSION_KEY);
 }
@@ -52,7 +56,10 @@ export async function getUser(request: Request) {
   throw await logout(request);
 }
 
-export async function requireAuthenticatedUser(request: Request, required: Access) {
+export async function requireAuthenticatedUser(
+  request: Request,
+  required: Access
+) {
   const user = await getUser(request);
 
   if (user && access(user, required)) {
@@ -62,7 +69,10 @@ export async function requireAuthenticatedUser(request: Request, required: Acces
   throw forbidden();
 }
 
-export async function requireAuthenticatedOptionalUser(request: Request, required: Access) {
+export async function requireAuthenticatedOptionalUser(
+  request: Request,
+  required: Access
+) {
   const user = await getUser(request);
 
   if (access(user, required)) {
@@ -86,7 +96,11 @@ export async function createUserSession(request: Request, username: string) {
   });
 }
 
-export async function createCaptchaSession(request: Request, captcha: string, data: string) {
+export async function createCaptchaSession(
+  request: Request,
+  captcha: string,
+  data: string
+) {
   const session = await getSession(request);
   session.flash(CAPTCHA_SESSION_KEY, captcha);
   return new Response(data, {

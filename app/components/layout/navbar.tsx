@@ -1,4 +1,10 @@
-import { ChevronRightIcon, CloseIcon, HamburgerIcon, MoonIcon, SunIcon } from "@chakra-ui/icons";
+import {
+  ChevronRightIcon,
+  CloseIcon,
+  HamburgerIcon,
+  MoonIcon,
+  SunIcon
+} from "@chakra-ui/icons";
 import {
   Box,
   ButtonGroup,
@@ -34,17 +40,24 @@ export default function Navbar() {
   const user = useOptionalUser();
 
   return (
-    <Box pos="fixed" zIndex={161} top={0} w="100%"
-         color={useColorModeValue("gray.600", "white")}
-         bg={useColorModeValue("white", "gray.800")}
-         borderStyle="solid" borderColor={useColorModeValue("gray.200", "gray.900")}
-         borderBottom={1}
+    <Box
+      pos="fixed"
+      zIndex={161}
+      top={0}
+      w="100%"
+      color={useColorModeValue("gray.600", "white")}
+      bg={useColorModeValue("white", "gray.800")}
+      borderStyle="solid"
+      borderColor={useColorModeValue("gray.200", "gray.900")}
+      borderBottom={1}
     >
       <Flex align="center" maxW="6xl" mx="auto" px={4} py={2}>
         <Flex display={{ base: "flex", md: "none" }} ml={-2}>
           <IconButton
             aria-label="Toggle Navigation"
-            icon={isOpen ? <CloseIcon w={3} h={3} /> : <HamburgerIcon w={5} h={5} />}
+            icon={
+              isOpen ? <CloseIcon w={3} h={3} /> : <HamburgerIcon w={5} h={5} />
+            }
             onClick={onToggle}
             variant="ghost"
           />
@@ -68,10 +81,14 @@ export default function Navbar() {
         </Flex>
 
         <ButtonGroup size="md" spacing={3}>
-          <IconButton display={{ base: "none", md: "inline-flex" }} aria-label="Toggle ColorMode"
-                      icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
-                      isRound onClick={toggleColorMode}
-                      variant="ghost" />
+          <IconButton
+            display={{ base: "none", md: "inline-flex" }}
+            aria-label="Toggle ColorMode"
+            icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
+            isRound
+            onClick={toggleColorMode}
+            variant="ghost"
+          />
           <LocaleSelect />
           {user ? <UserDropdown /> : <Auth />}
         </ButtonGroup>
@@ -99,12 +116,20 @@ function DesktopNav() {
           <PopoverTrigger>
             <Box>
               <Flex
-                as={to ? Link : undefined} align="center" p={2} color={linkColor} fontSize=".9rem"
-                fontWeight={500} _hover={{
-                textDecoration: "none",
-                color: linkHoverColor
-              }} cursor="pointer" transition={linkTransition}
-                to={to}>
+                as={to ? Link : undefined}
+                align="center"
+                p={2}
+                color={linkColor}
+                fontSize=".9rem"
+                fontWeight={500}
+                _hover={{
+                  textDecoration: "none",
+                  color: linkHoverColor
+                }}
+                cursor="pointer"
+                transition={linkTransition}
+                to={to}
+              >
                 <Icon as={icon} mr="5px" />
                 {t("nav." + label)}
               </Flex>
@@ -112,9 +137,18 @@ function DesktopNav() {
           </PopoverTrigger>
 
           {children && (
-            <PopoverContent minW="xs" p={4} bg={popoverContentBgColor} border={0} shadow="xl" rounded="xl">
+            <PopoverContent
+              minW="xs"
+              p={4}
+              bg={popoverContentBgColor}
+              border={0}
+              shadow="xl"
+              rounded="xl"
+            >
               <VStack>
-                {children.map(child => <DesktopSubNav key={child.label} {...child} />)}
+                {children.map(child => (
+                  <DesktopSubNav key={child.label} {...child} />
+                ))}
               </VStack>
             </PopoverContent>
           )}
@@ -133,21 +167,43 @@ function DesktopSubNav({ label, to, icon, description }: NavItem) {
   const { t } = useTranslation();
 
   return (
-    <Box as={Link} display="block" w="100%" p={2} _hover={{ bg: linkHoverBg }} transition={transition}
-         role="group" rounded="md" to={to}>
+    <Box
+      as={Link}
+      display="block"
+      w="100%"
+      p={2}
+      _hover={{ bg: linkHoverBg }}
+      transition={transition}
+      role="group"
+      rounded="md"
+      to={to}
+    >
       <HStack align="center">
         <Box>
-          <Text alignItems="center" display="flex" color={groupColor}
-                fontWeight={500} _groupHover={{ color: groupHoverColor }} transition={transition}>
+          <Text
+            alignItems="center"
+            display="flex"
+            color={groupColor}
+            fontWeight={500}
+            _groupHover={{ color: groupHoverColor }}
+            transition={transition}
+          >
             <Icon as={icon} mr="5px" />
             {t("nav." + label)}
           </Text>
-          <Text color={groupColor} fontSize="sm">{t("nav." + description)}</Text>
+          <Text color={groupColor} fontSize="sm">
+            {t("nav." + description)}
+          </Text>
         </Box>
-        <Flex align="center" justify="flex-end" flex={1}
-              opacity={0}
-              _groupHover={{ opacity: "100%", transform: "translateX(0)" }} transform="translateX(-10px)"
-              transition={transition}>
+        <Flex
+          align="center"
+          justify="flex-end"
+          flex={1}
+          opacity={0}
+          _groupHover={{ opacity: "100%", transform: "translateX(0)" }}
+          transform="translateX(-10px)"
+          transition={transition}
+        >
           <Icon as={ChevronRightIcon} w={5} h={5} color={groupHoverColor} />
         </Flex>
       </HStack>
@@ -157,9 +213,14 @@ function DesktopSubNav({ label, to, icon, description }: NavItem) {
 
 function MobileNav() {
   return (
-    <VStack alignItems="flex-start" gap={3}
-            display={{ base: "flex", md: "none" }} p={4} bg={useColorModeValue("white", "gray.800")}>
-      {NAV_ITEMS.map((navItem) => (
+    <VStack
+      alignItems="flex-start"
+      gap={3}
+      display={{ base: "flex", md: "none" }}
+      p={4}
+      bg={useColorModeValue("white", "gray.800")}
+    >
+      {NAV_ITEMS.map(navItem => (
         <MobileNavItem key={navItem.label} {...navItem} />
       ))}
     </VStack>
@@ -172,10 +233,22 @@ function MobileNavItem({ label, to, icon, children }: NavItem) {
   const { t } = useTranslation();
 
   return (
-    <VStack alignItems="flex-start" w="100%" onClick={children && onToggle} spacing={2}>
-      <Flex as={children ? undefined : Link} align="center" justify="start" w="100%"
-            color={useColorModeValue("gray.600", "gray.200")} fontWeight={500} _hover={{ textDecoration: "none" }}
-            to={to}>
+    <VStack
+      alignItems="flex-start"
+      w="100%"
+      onClick={children && onToggle}
+      spacing={2}
+    >
+      <Flex
+        as={children ? undefined : Link}
+        align="center"
+        justify="start"
+        w="100%"
+        color={useColorModeValue("gray.600", "gray.200")}
+        fontWeight={500}
+        _hover={{ textDecoration: "none" }}
+        to={to}
+      >
         <Icon as={icon} mr="5px" />
         {t("nav." + label)}
         {children && <DropdownRightIcon isOpen={isOpen} />}
@@ -185,8 +258,13 @@ function MobileNavItem({ label, to, icon, children }: NavItem) {
         <VStack pl={4} borderLeftWidth="2px">
           {children &&
             children.map(child => (
-              <Flex key={child.label} as={Link} align="center" py={2}
-                    to={child.to}>
+              <Flex
+                key={child.label}
+                as={Link}
+                align="center"
+                py={2}
+                to={child.to}
+              >
                 <Icon as={child.icon} mr="5px" />
                 {t("nav." + child.label)}
               </Flex>
@@ -198,11 +276,11 @@ function MobileNavItem({ label, to, icon, children }: NavItem) {
 }
 
 interface NavItem {
-  label: string,
-  icon: IconType,
-  to?: string,
-  children?: NavItem[],
-  description?: string
+  label: string;
+  icon: IconType;
+  to?: string;
+  children?: NavItem[];
+  description?: string;
 }
 
 const NAV_ITEMS: Array<NavItem> = [
@@ -210,8 +288,15 @@ const NAV_ITEMS: Array<NavItem> = [
   { label: "game", icon: FaCrown, to: "/game" },
   { label: "leaderboard", icon: FaTrophy, to: "/leaderboard" },
   {
-    label: "apps", icon: FaDove, children: [
-      { label: "pastebin", icon: FaPaste, to: "/paste", description: "description-pastebin" }
+    label: "apps",
+    icon: FaDove,
+    children: [
+      {
+        label: "pastebin",
+        icon: FaPaste,
+        to: "/paste",
+        description: "description-pastebin"
+      }
     ]
   }
 ];

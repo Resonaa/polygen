@@ -1,11 +1,17 @@
 import _ from "lodash";
 
 export function getPileSizeByScale(scale: number) {
-  return 0.1058 * scale * scale * scale - 0.9028 * scale * scale + 6.7619 * scale + 4.5391;
+  return (
+    0.1058 * scale * scale * scale -
+    0.9028 * scale * scale +
+    6.7619 * scale +
+    4.5391
+  );
 }
 
 export function getScaleByPileSize(pileSize: number) {
-  let l = 0, r = 15;
+  let l = 0,
+    r = 15;
   const eps = 1e-6;
 
   while (r - l > eps) {

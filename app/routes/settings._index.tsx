@@ -21,13 +21,15 @@ export default function Index() {
       <p>
         <strong>所有设置数据保存在本地，清空浏览器缓存会导致数据丢失。</strong>
       </p>
-      <p>
-        若您有备份数据的需要，可以在下方导入/导出数据：
-      </p>
+      <p>若您有备份数据的需要，可以在下方导入/导出数据：</p>
 
       <Form>
-        <TextArea rows={4} value={settings} placeholder="导入/导出数据"
-                  onChange={(_, { value }) => setSettings(value as string)} />
+        <TextArea
+          rows={4}
+          value={settings}
+          placeholder="导入/导出数据"
+          onChange={(_, { value }) => setSettings(value as string)}
+        />
       </Form>
 
       <Button.Group fluid className="!mt-4">
@@ -36,10 +38,15 @@ export default function Index() {
           导出数据
         </Button>
 
-        <Button negative icon labelPosition="left" onClick={() => {
-          localStorage.setItem(SETTINGS_KEY, settings);
-          window.location.reload();
-        }}>
+        <Button
+          negative
+          icon
+          labelPosition="left"
+          onClick={() => {
+            localStorage.setItem(SETTINGS_KEY, settings);
+            window.location.reload();
+          }}
+        >
           <Icon name="download" />
           导入数据
         </Button>

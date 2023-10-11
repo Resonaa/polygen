@@ -11,7 +11,9 @@ const baseDir = join(cwd(), "usercontent/avatar");
 
 export async function loader({ params }: LoaderFunctionArgs) {
   try {
-    return new Response(await readFile(join(baseDir, params.username ?? "")), { headers });
+    return new Response(await readFile(join(baseDir, params.username ?? "")), {
+      headers
+    });
   } catch {
     return new Response(null, { headers });
   }

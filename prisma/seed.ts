@@ -5,7 +5,7 @@ import { PrismaClient } from "@prisma/client";
 import { readdir, readFile } from "fs-extra";
 import invariant from "tiny-invariant";
 
-import { SESSION_SECRET } from "~/constants.server";
+import { SESSION_SECRET } from "~/env.server";
 import { hashPassword } from "~/session.server";
 
 const prisma = new PrismaClient();

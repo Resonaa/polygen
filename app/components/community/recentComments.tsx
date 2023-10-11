@@ -10,10 +10,15 @@ import UserLink from "./userLink";
 import { useRelativeDateFormatter } from "./utils";
 
 type RecentCommentProps = CommentProps & {
-  parentId: Comment["parentId"]
-}
+  parentId: Comment["parentId"];
+};
 
-function RecentComment({ username, createdAt, content, parentId }: RecentCommentProps) {
+function RecentComment({
+  username,
+  createdAt,
+  content,
+  parentId
+}: RecentCommentProps) {
   const relativeDate = useRelativeDateFormatter();
 
   return (
@@ -36,14 +41,22 @@ function RecentComment({ username, createdAt, content, parentId }: RecentComment
   );
 }
 
-export default function RecentComments({ comments }: { comments: RecentCommentProps[] }) {
+export default function RecentComments({
+  comments
+}: {
+  comments: RecentCommentProps[];
+}) {
   const { t } = useTranslation();
 
   return (
     <Center flexDir="column" w="100%">
-      <Heading mb={2} size="sm">{t("community.recent-comments")}</Heading>
+      <Heading mb={2} size="sm">
+        {t("community.recent-comments")}
+      </Heading>
       <VStack w="100%" spacing={0}>
-        {comments.map(data => <RecentComment key={data.id} {...data} />)}
+        {comments.map(data => (
+          <RecentComment key={data.id} {...data} />
+        ))}
       </VStack>
     </Center>
   );

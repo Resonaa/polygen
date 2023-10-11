@@ -21,7 +21,7 @@ export async function action({ request }: ActionFunctionArgs) {
   if (res.success) {
     const { username, password } = res.data;
 
-    if (!await verifyLogin(username, password)) {
+    if (!(await verifyLogin(username, password))) {
       return loginError({ username: "auth.username-or-password-incorrect" });
     }
 

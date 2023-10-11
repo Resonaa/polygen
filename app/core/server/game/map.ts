@@ -21,7 +21,11 @@ export class Map {
   gm: Land[][];
   mode: MapMode;
 
-  constructor(width: number = 0, height: number = 0, mode: MapMode = MapMode.Hexagon) {
+  constructor(
+    width: number = 0,
+    height: number = 0,
+    mode: MapMode = MapMode.Hexagon
+  ) {
     this.width = width;
     this.height = height;
     this.gm = [];
@@ -46,20 +50,41 @@ export class Map {
 
   accessible(pos: Pos) {
     const land = this.get(pos);
-    return land.type !== LandType.Mountain && land.type !== LandType.UnknownMountain;
+    return (
+      land.type !== LandType.Mountain && land.type !== LandType.UnknownMountain
+    );
   }
 
   dir([, j]: Pos): [number, number][] {
     switch (this.mode) {
       case MapMode.Hexagon: {
         if (j % 2 === 1) {
-          return [[-1, -1], [-1, 0], [-1, 1], [0, 1], [1, 0], [0, -1]];
+          return [
+            [-1, -1],
+            [-1, 0],
+            [-1, 1],
+            [0, 1],
+            [1, 0],
+            [0, -1]
+          ];
         } else {
-          return [[0, -1], [-1, 0], [0, 1], [1, 1], [1, 0], [1, -1]];
+          return [
+            [0, -1],
+            [-1, 0],
+            [0, 1],
+            [1, 1],
+            [1, 0],
+            [1, -1]
+          ];
         }
       }
       case MapMode.Square: {
-        return [[-1, 0], [0, -1], [1, 0], [0, 1]];
+        return [
+          [-1, 0],
+          [0, -1],
+          [1, 0],
+          [0, 1]
+        ];
       }
     }
   }
@@ -103,7 +128,10 @@ export class Map {
       case MapMode.Square: {
         for (let i = pos[0] - 1; i <= pos[0] + 1; i++) {
           for (let j = pos[1] - 1; j <= pos[1] + 1; j++) {
-            if (this.check([i, j]) && this.ownedByTeam([i, j], myColor, teams)) {
+            if (
+              this.check([i, j]) &&
+              this.ownedByTeam([i, j], myColor, teams)
+            ) {
               return true;
             }
           }

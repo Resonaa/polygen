@@ -17,7 +17,11 @@ export function getComments(page: number, parentId?: Comment["parentId"]) {
   });
 }
 
-export function createComment(username: Comment["username"], content: Comment["content"], parentId: Comment["parentId"]) {
+export function createComment(
+  username: Comment["username"],
+  content: Comment["content"],
+  parentId: Comment["parentId"]
+) {
   return prisma.comment.create({
     data: {
       content,

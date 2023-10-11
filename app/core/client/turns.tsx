@@ -11,7 +11,8 @@ export function Turns({ client }: { client?: ClientSocket }) {
       return;
     }
 
-    client.on("gameStart", ({ turns }) => setTurns(turns))
+    client
+      .on("gameStart", ({ turns }) => setTurns(turns))
       .on("patch", () => setTurns(turns => turns + 1))
       .on("win", () => setTurns(-161));
   }, [client]);
