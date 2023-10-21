@@ -1,7 +1,7 @@
 import * as PIXI from "pixi.js";
 
 import city from "static/city.png";
-import general from "static/general.png";
+import crown from "static/crown.png";
 import mountain from "static/mountain.png";
 import obstacle from "static/obstacle.png";
 import type { ISettings } from "~/core/client/settings";
@@ -26,7 +26,7 @@ export class Renderer {
 
   private readonly textures = [
     PIXI.Texture.EMPTY,
-    PIXI.Texture.from(general),
+    PIXI.Texture.from(crown),
     PIXI.Texture.from(city),
     PIXI.Texture.from(mountain),
     PIXI.Texture.from(obstacle),

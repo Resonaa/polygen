@@ -1,4 +1,4 @@
-import { Button } from "@chakra-ui/react";
+import { Button } from "@chakra-ui/button";
 import { useFetcher } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -24,8 +24,10 @@ export default function AddComment({ parentId }: { parentId: number }) {
       <Button
         colorScheme="blue"
         isLoading={fetcher.state !== "idle"}
+        isDisabled={value.trim().length === 0}
         leftIcon={<BsFillSendFill />}
         type="submit"
+        float="right"
       >
         {t("community.add-comment")}
       </Button>

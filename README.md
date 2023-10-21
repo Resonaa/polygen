@@ -1,5 +1,10 @@
 # polygen
 
+[![GitHub Actions](https://img.shields.io/github/actions/workflow/status/jwcub/polygen/build.yml)](https://github.com/jwcub/polygen/actions)
+[![License](https://img.shields.io/github/license/jwcub/polygen)](https://github.com/jwcub/polygen/blob/main/LICENSE)
+
+`polygen` is a polygon-based web game inspired by [generals.io](https://generals.io).
+
 ## Development
 
 - Copy .env file:
@@ -30,3 +35,7 @@
   ```sh
   npm run dev
   ```
+
+## License
+
+This project is licensed under the [Unlicense](https://github.com/jwcub/polygen/blob/main/LICENSE).

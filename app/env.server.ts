@@ -1,8 +1,11 @@
 import { env } from "process";
 
-import dotenv from "dotenv";
+import { config } from "dotenv";
+import invariant from "tiny-invariant";
 
-dotenv.config();
+config();
+
+invariant(env.SESSION_SECRET, "SESSION_SECRET must be set");
 
 export const MODE = env.NODE_ENV;
 export const SESSION_SECRET = env.SESSION_SECRET;

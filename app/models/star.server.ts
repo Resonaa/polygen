@@ -1,7 +1,7 @@
 import type { Star } from "@prisma/client";
 import { rating, ordinal } from "openskill";
 
-import { prisma } from "~/db.server";
+import prisma from "~/db.server";
 
 export type { Star };
 

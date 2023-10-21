@@ -1,5 +1,8 @@
-import { Center, Spinner, useColorModeValue } from "@chakra-ui/react";
-import { useState } from "react";
+import { useColorModeValue } from "@chakra-ui/color-mode";
+import { Center } from "@chakra-ui/layout";
+import { Spinner } from "@chakra-ui/spinner";
+import nProgress from "nprogress";
+import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 export default function LoadMore({
@@ -12,17 +15,16 @@ export default function LoadMore({
 
   const { t } = useTranslation();
 
-  const loadMore = () => {
-    if (loading || page === -1) {
-      return;
-    }
-
+  const loadMore = useCallback(() => {
+    nProgress.start();
     setLoading(true);
+
     loader(page).then(visible => {
       setLoading(false);
       setPage(page => (visible ? page + 1 : -1));
+      nProgress.done();
     });
-  };
+  }, [loader, page]);
 
   const hoverColor = useColorModeValue("gray.700", "gray.100");
 

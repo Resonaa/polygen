@@ -1,6 +1,6 @@
 import type { Comment } from "@prisma/client";
 
-import { prisma } from "~/db.server";
+import prisma from "~/db.server";
 
 export type { Comment } from "@prisma/client";
 

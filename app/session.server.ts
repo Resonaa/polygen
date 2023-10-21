@@ -1,14 +1,12 @@
 import { createCookieSessionStorage } from "@remix-run/node";
 import bcrypt from "bcryptjs";
-import invariant from "tiny-invariant";
 
 import type Access from "~/access";
 import { access } from "~/access";
+import { SESSION_SECRET } from "~/env.server";
 import type { User } from "~/models/user.server";
 import { getUser as getUserFromDb } from "~/models/user.server";
 import { forbidden } from "~/reponses.server";
-
-invariant(process.env.SESSION_SECRET, "SESSION_SECRET must be set");
 
 export const sessionStorage = createCookieSessionStorage({
   cookie: {
@@ -16,7 +14,7 @@ export const sessionStorage = createCookieSessionStorage({
     httpOnly: true,
     path: "/",
     sameSite: "lax",
-    secrets: [process.env.SESSION_SECRET]
+    secrets: [SESSION_SECRET]
   }
 });
 

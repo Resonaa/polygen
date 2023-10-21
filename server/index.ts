@@ -27,8 +27,6 @@ const USERCONTENT_DIR = join(cwd(), "usercontent");
     exit(1);
   }
 
-  const build = await import(BUILD_DIR);
-
   await ensureDir(join(USERCONTENT_DIR, "avatar"));
 
   const app = fastify({
@@ -42,6 +40,9 @@ const USERCONTENT_DIR = join(cwd(), "usercontent");
   app.addContentTypeParser("application/json", noopContentParser);
   app.addContentTypeParser("*", noopContentParser);
 
+  const build = await import(BUILD_DIR);
+  const requestHandler = createRequestHandler({ build, mode: build.mode });
+
   await app
     .register(fastifySocketIO, { transports: ["websocket"] })
     .register(fastifyEarlyHints, { warn: true })
@@ -52,7 +53,7 @@ const USERCONTENT_DIR = join(cwd(), "usercontent");
     .all("*", async (request, reply) => {
       const links = getEarlyHintLinks(request, build);
       await reply.writeEarlyHintsLinks(links);
-      return createRequestHandler({ build, mode: build.mode })(request, reply);
+      return requestHandler(request, reply);
     })
     .listen({ port: PORT });
 

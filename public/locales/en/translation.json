@@ -1,8 +1,4 @@
 {
-  "lang": {
-    "zh": "中文",
-    "en": "English"
-  },
   "nav": {
     "home": "Home",
     "game": "Game",
@@ -60,9 +56,11 @@
     "view_other": "views",
     "comment_one": "comment",
     "comment_other": "comments",
-    "load-more": "Show More...",
+    "load-more": "Show More",
     "post-of": "{{username}}'s Post",
-    "published": "Published"
+    "published": "Published",
+    "placeholder": "Markdown & KaTeX supported",
+    "nothing-to-preview": "Nothing to preview"
   },
   "utils": {
     "plurals_one": "",

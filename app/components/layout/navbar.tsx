@@ -1,10 +1,4 @@
-import {
-  ChevronRightIcon,
-  CloseIcon,
-  HamburgerIcon,
-  MoonIcon,
-  SunIcon
-} from "@chakra-ui/icons";
+import { ChevronRightIcon, CloseIcon, HamburgerIcon } from "@chakra-ui/icons";
 import {
   Box,
   ButtonGroup,
@@ -17,8 +11,6 @@ import {
   PopoverContent,
   PopoverTrigger,
   Text,
-  useBreakpointValue,
-  useColorMode,
   useColorModeValue,
   useDisclosure,
   VStack
@@ -31,11 +23,11 @@ import { FaCrown, FaDove, FaHome, FaPaste, FaTrophy } from "react-icons/fa";
 import { useOptionalUser } from "~/utils";
 
 import Auth from "./auth";
-import LocaleSelect from "./localeSelect";
+import ColorModeToggle from "./colorModeToggle";
+import LocaleToggle from "./localeToggle";
 import UserDropdown, { DropdownRightIcon } from "./userDropdown";
 
 export default function Navbar() {
-  const { colorMode, toggleColorMode } = useColorMode();
   const { isOpen, onToggle } = useDisclosure();
   const user = useOptionalUser();
 
@@ -46,10 +38,11 @@ export default function Navbar() {
       top={0}
       w="100%"
       color={useColorModeValue("gray.600", "white")}
-      bg={useColorModeValue("white", "gray.800")}
-      borderStyle="solid"
-      borderColor={useColorModeValue("gray.200", "gray.900")}
-      borderBottom={1}
+      bg={useColorModeValue("whiteAlpha.800", "rgba(26, 32, 44, .8)")}
+      borderBottomWidth="1px"
+      borderBottomStyle="solid"
+      borderBottomColor={useColorModeValue("gray.200", "gray.700")}
+      backdropFilter="blur(14px)"
     >
       <Flex align="center" maxW="6xl" mx="auto" px={4} py={2}>
         <Flex display={{ base: "flex", md: "none" }} ml={-2}>
@@ -58,6 +51,7 @@ export default function Navbar() {
             icon={
               isOpen ? <CloseIcon w={3} h={3} /> : <HamburgerIcon w={5} h={5} />
             }
+            isRound
             onClick={onToggle}
             variant="ghost"
           />
@@ -65,12 +59,12 @@ export default function Navbar() {
         <Flex align="center" justify="start" flex={1}>
           <Text
             display={{ base: "none", sm: "block" }}
-            pl={useBreakpointValue({ base: 3, md: 0 })}
+            pl={{ base: 3, md: 0 }}
             color={useColorModeValue("gray.800", "white")}
             fontFamily="heading"
             fontSize="xl"
             fontWeight={600}
-            textAlign={useBreakpointValue({ base: "center", md: "left" })}
+            textAlign="center"
           >
             polygen
           </Text>
@@ -80,16 +74,9 @@ export default function Navbar() {
           </Flex>
         </Flex>
 
-        <ButtonGroup size="md" spacing={3}>
-          <IconButton
-            display={{ base: "none", md: "inline-flex" }}
-            aria-label="Toggle ColorMode"
-            icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
-            isRound
-            onClick={toggleColorMode}
-            variant="ghost"
-          />
-          <LocaleSelect />
+        <ButtonGroup spacing={3}>
+          <ColorModeToggle />
+          <LocaleToggle />
           {user ? <UserDropdown /> : <Auth />}
         </ButtonGroup>
       </Flex>
@@ -218,7 +205,6 @@ function MobileNav() {
       gap={3}
       display={{ base: "flex", md: "none" }}
       p={4}
-      bg={useColorModeValue("white", "gray.800")}
     >
       {NAV_ITEMS.map(navItem => (
         <MobileNavItem key={navItem.label} {...navItem} />
@@ -242,15 +228,17 @@ function MobileNavItem({ label, to, icon, children }: NavItem) {
       <Flex
         as={children ? undefined : Link}
         align="center"
-        justify="start"
+        justify="space-between"
         w="100%"
         color={useColorModeValue("gray.600", "gray.200")}
         fontWeight={500}
         _hover={{ textDecoration: "none" }}
         to={to}
       >
-        <Icon as={icon} mr="5px" />
-        {t("nav." + label)}
+        <Box>
+          <Icon as={icon} mr="5px" />
+          {t("nav." + label)}
+        </Box>
         {children && <DropdownRightIcon isOpen={isOpen} />}
       </Flex>
 

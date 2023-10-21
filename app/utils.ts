@@ -1,4 +1,9 @@
-import { useFetchers, useMatches, useNavigation } from "@remix-run/react";
+import {
+  useFetchers,
+  useMatches,
+  useNavigation,
+  useRevalidator
+} from "@remix-run/react";
 import nProgress from "nprogress";
 import { useEffect, useMemo } from "react";
 
@@ -82,11 +87,16 @@ export function stringColorToNumber(color: string) {
   return Number(color.replace("#", "0x"));
 }
 
-function useNavigationAndFetchersState() {
+function useGlobalLoadingState() {
   const navigation = useNavigation();
   const fetchers = useFetchers();
+  const revalidator = useRevalidator();
 
-  const states = [navigation.state, ...fetchers.map(fetcher => fetcher.state)];
+  const states = [
+    navigation.state,
+    revalidator.state,
+    ...fetchers.map(fetcher => fetcher.state)
+  ];
 
   if (states.includes("submitting")) {
     return "submitting";
@@ -98,7 +108,7 @@ function useNavigationAndFetchersState() {
 }
 
 export function useNProgress() {
-  const state = useNavigationAndFetchersState();
+  const state = useGlobalLoadingState();
 
   useEffect(() => {
     if (state === "idle") {

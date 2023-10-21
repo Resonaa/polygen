@@ -2,13 +2,10 @@ node_modules
 
 /.idea
 
-/build
 /public/build
 /server/build
-/server/index.js
-.env
 
-/ssl
+.env
 
 /prisma/data.db
 /prisma/data.db-journal

@@ -9,7 +9,8 @@ import {
   MenuButton,
   MenuDivider,
   MenuItem,
-  MenuList
+  MenuList,
+  useColorModeValue
 } from "@chakra-ui/react";
 import { Link, useFetcher } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
@@ -31,8 +32,10 @@ export function DropdownRightIcon({ isOpen }: { isOpen: boolean }) {
 export default function UserDropdown() {
   const user = useUser();
   const { t } = useTranslation();
-
   const fetcher = useFetcher();
+
+  const menuItemTransition = "background .15s ease";
+  const dividerColor = useColorModeValue("gray.300", "gray.600");
 
   return (
     <Menu autoSelect={false}>
@@ -53,21 +56,35 @@ export default function UserDropdown() {
               {user.username}
             </Flex>
           </MenuButton>
-          <MenuList>
-            <MenuItem as={Link} icon={<FaUser />} to={`/user/${user.username}`}>
+          <MenuList border="none" shadow="xl">
+            <MenuItem
+              as={Link}
+              transition={menuItemTransition}
+              icon={<FaUser />}
+              to={`/user/${user.username}`}
+            >
               {t("nav.profile")}
             </MenuItem>
-            <MenuItem as={Link} icon={<SettingsIcon />} to="/settings">
+            <MenuItem
+              as={Link}
+              transition={menuItemTransition}
+              icon={<SettingsIcon />}
+              to="/settings"
+            >
               {t("nav.settings")}
             </MenuItem>
-            <MenuDivider />
+            <MenuDivider borderBottomColor={dividerColor} />
             <chakra.form
               as={fetcher.Form}
               action="/auth/logout"
               method="post"
               mb={0}
             >
-              <MenuItem icon={<FaSignOutAlt />} type="submit">
+              <MenuItem
+                transition={menuItemTransition}
+                icon={<FaSignOutAlt />}
+                type="submit"
+              >
                 {t("nav.logout")}
               </MenuItem>
             </chakra.form>

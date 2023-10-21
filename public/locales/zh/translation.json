@@ -1,8 +1,4 @@
 {
-  "lang": {
-    "zh": "中文",
-    "en": "English"
-  },
   "nav": {
     "home": "首页",
     "game": "游戏",
@@ -60,9 +56,11 @@
     "view_other": "浏览",
     "comment_one": "评论",
     "comment_other": "评论",
-    "load-more": "点击查看更多...",
+    "load-more": "点击查看更多",
     "post-of": "{{username}}的说说",
-    "published": "发布于"
+    "published": "发布于",
+    "placeholder": "支持 Markdown 与 KaTeX 语法",
+    "nothing-to-preview": "预览内容为空"
   },
   "utils": {
     "plurals_one": "",

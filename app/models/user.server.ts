@@ -6,7 +6,7 @@ import type { NodeOnDiskFile } from "@remix-run/node";
 import { writeFile } from "fs-extra";
 import sharp from "sharp";
 
-import { prisma } from "~/db.server";
+import prisma from "~/db.server";
 import { getRank } from "~/models/star.server";
 import { comparePassword, hashPassword } from "~/session.server";
 

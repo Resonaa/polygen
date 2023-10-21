@@ -1,6 +1,6 @@
 import type { Post } from "@prisma/client";
 
-import { prisma } from "~/db.server";
+import prisma from "~/db.server";
 
 import type { User } from "./user.server";
 
