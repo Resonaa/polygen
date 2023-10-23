@@ -4,12 +4,12 @@ import { Grid, Menu, Segment } from "semantic-ui-react";
 
 import Access from "~/access";
 import Layout from "~/components/layout";
-import { requireAuthenticatedOptionalUser } from "~/session.server";
+import { requireOptionalUser } from "~/session.server";
 
 export const meta: MetaFunction = () => [{ title: "设置 - polygen" }];
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  return await requireAuthenticatedOptionalUser(request, Access.Settings);
+  return await requireOptionalUser(request, Access.Settings);
 }
 
 function SettingsMenu() {

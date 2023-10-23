@@ -19,7 +19,6 @@ import { VoteManager } from "~/core/server/vote";
 import type { Server } from "~/core/types";
 import type { Star } from "~/models/star.server";
 import { getStarOrCreate, updateStar } from "~/models/star.server";
-import { singleton } from "~/singleton.server";
 
 export const SocketRoom = {
   rid: (rid: string) => `#${rid}`,
@@ -509,7 +508,7 @@ export class Room {
   }
 }
 
-export const roomData = singleton("roomData", () => new Map<string, Room>());
+export const roomData = new Map<string, Room>();
 
 export class RoomManager {
   private server: Server;

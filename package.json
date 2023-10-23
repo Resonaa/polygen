@@ -3,22 +3,15 @@
   "sideEffects": false,
   "scripts": {
     "build": "remix build",
-    "dev": "remix dev -c \"ts-node server/index.ts\"",
+    "dev": "remix dev -c \"node server/build/index.js\"",
     "bench": "ts-node benchmarks/index.ts",
     "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint .",
     "migrate": "npx prisma migrate dev",
     "setup": "prisma generate && prisma migrate deploy && prisma db seed",
-    "start": "npx nodemon server/index.ts",
+    "start": "cross-env NODE_ENV=production npx pm2 start --name polygen server/build/index.js",
     "typecheck": "tsc -b",
     "postinstall": "patch-package",
     "format": "prettier --write . && npm run lint -- --fix"
-  },
-  "nodemonConfig": {
-    "watch": [
-      "server/index.ts"
-    ],
-    "ext": "none",
-    "exec": "cross-env NODE_ENV=production npx ts-node"
   },
   "eslintIgnore": [
     "/node_modules",
@@ -85,6 +78,7 @@
     "sharp": "latest",
     "socket.io": "latest",
     "socket.io-client": "latest",
+    "source-map-support": "latest",
     "svg-captcha": "latest",
     "tiny-invariant": "latest",
     "ts-node": "latest",
@@ -103,12 +97,13 @@
     "@types/nprogress": "latest",
     "@types/react": "latest",
     "@types/react-dom": "latest",
+    "@types/source-map-support": "latest",
     "@typescript-eslint/parser": "latest",
     "eslint": "latest",
     "eslint-config-prettier": "latest",
     "eslint-plugin-chakra-ui": "latest",
-    "nodemon": "latest",
     "patch-package": "latest",
+    "pm2": "latest",
     "prettier": "latest",
     "prettier-plugin-prisma": "latest",
     "prisma": "latest",

@@ -25,7 +25,7 @@ import type { Post as PostType } from "~/models/post.server";
 import { useOptionalUser } from "~/utils";
 
 import Editor from "./editor";
-import RenderedText from "./renderedText";
+import TextRenderer from "./textRenderer";
 import UserAvatar from "./userAvatar";
 import UserLink from "./userLink";
 import {
@@ -128,14 +128,12 @@ export default function Post({
                   aria-label="save"
                   colorScheme="green"
                   icon={<CheckIcon />}
-                  isRound
                   type="submit"
                 />
                 <IconButton
                   aria-label="cancel"
                   colorScheme="red"
                   icon={<CloseIcon />}
-                  isRound
                   onClick={onCancelClick}
                 />
                 <input type="hidden" name="content" value={value} />
@@ -203,12 +201,12 @@ export default function Post({
       ) : linked ? (
         <chakra.a as={Link} to={postUrl} maxH="200px" overflowY="auto">
           <object>
-            <RenderedText content={content} />
+            <TextRenderer content={content} />
           </object>
         </chakra.a>
       ) : (
         <object>
-          <RenderedText content={content} />
+          <TextRenderer content={content} />
         </object>
       )}
     </VStack>

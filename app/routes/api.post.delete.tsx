@@ -3,7 +3,7 @@ import { redirect } from "@remix-run/node";
 
 import Access from "~/access";
 import { deletePost, getPost } from "~/models/post.server";
-import { requireAuthenticatedUser } from "~/session.server";
+import { requireUser } from "~/session.server";
 import { validateDeletePostFormData } from "~/validators/community.server";
 
 export async function loader() {
@@ -11,7 +11,7 @@ export async function loader() {
 }
 
 export async function action({ request }: ActionFunctionArgs) {
-  const user = await requireAuthenticatedUser(request, Access.Community);
+  const user = await requireUser(request, Access.Community);
 
   const data = await request.formData();
   const res = validateDeletePostFormData(data);
@@ -25,7 +25,7 @@ export async function action({ request }: ActionFunctionArgs) {
     }
 
     if (user.username !== post.username) {
-      await requireAuthenticatedUser(request, Access.ManageCommunity);
+      await requireUser(request, Access.ManageCommunity);
     }
 
     await deletePost(id);

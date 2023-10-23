@@ -4,7 +4,7 @@ import { json, redirect } from "@remix-run/node";
 import Access from "~/access";
 import { getPosts } from "~/models/post.server";
 import { badRequest } from "~/reponses.server";
-import { requireAuthenticatedOptionalUser } from "~/session.server";
+import { requireOptionalUser } from "~/session.server";
 import { validateGetPostPageFormData } from "~/validators/community.server";
 
 export async function loader() {
@@ -12,7 +12,7 @@ export async function loader() {
 }
 
 export async function action({ request }: ActionFunctionArgs) {
-  await requireAuthenticatedOptionalUser(request, Access.Basic);
+  await requireOptionalUser(request, Access.Basic);
 
   const data = await request.formData();
   const res = validateGetPostPageFormData(data);
@@ -23,5 +23,5 @@ export async function action({ request }: ActionFunctionArgs) {
     return json(await getPosts(page));
   }
 
-  return badRequest();
+  return badRequest;
 }

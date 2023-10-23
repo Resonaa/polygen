@@ -1,4 +1,4 @@
-import { VStack } from "@chakra-ui/react";
+import { Divider, VStack } from "@chakra-ui/react";
 import type {
   ActionFunctionArgs,
   LoaderFunctionArgs,
@@ -17,7 +17,7 @@ import { getLocale, getT } from "~/i18next.server";
 import { getAnnouncements } from "~/models/announcement.server";
 import { getComments } from "~/models/comment.server";
 import { createPost, getPosts } from "~/models/post.server";
-import { requireAuthenticatedUser } from "~/session.server";
+import { requireUser } from "~/session.server";
 import { useOptionalUser } from "~/utils";
 import { validateAddPostFormData } from "~/validators/community.server";
 
@@ -41,10 +41,7 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => [
 ];
 
 export async function action({ request }: ActionFunctionArgs) {
-  const { username } = await requireAuthenticatedUser(
-    request,
-    Access.Community
-  );
+  const { username } = await requireUser(request, Access.Community);
 
   const data = await request.formData();
   const res = validateAddPostFormData(data);
@@ -66,17 +63,17 @@ export default function Index() {
 
   return (
     <Layout>
-      <VStack w={{ base: "100%", md: "75%" }}>
+      <VStack w={{ base: "100%", md: "75%" }} spacing={4}>
         {user && <AddPost />}
 
         <Posts posts={posts} />
       </VStack>
 
-      <VStack w={{ base: "100%", md: "25%" }} spacing={5}>
+      <VStack w={{ base: "100%", md: "25%" }} spacing={4}>
         <Announcements announcements={announcements} />
-
+        <Divider />
         <Countdowns />
-
+        <Divider />
         <RecentComments comments={recentComments} />
       </VStack>
     </Layout>

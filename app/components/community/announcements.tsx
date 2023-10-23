@@ -1,10 +1,4 @@
 import {
-  Box,
-  Button,
-  Center,
-  chakra,
-  Divider,
-  Heading,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -12,18 +6,22 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Tooltip,
+  Box,
+  Center,
+  Heading,
+  Divider,
+  VStack,
   useDisclosure,
-  VStack
+  Button,
+  chakra,
+  Tooltip
 } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
 
-import RenderedText from "~/components/community/renderedText";
-import {
-  formatDate,
-  useRelativeDateFormatter
-} from "~/components/community/utils";
 import type { Announcement as AnnouncementType } from "~/models/announcement.server";
+
+import TextRenderer from "./textRenderer";
+import { formatDate, useRelativeDateFormatter } from "./utils";
 
 type AnnouncementProps = Pick<
   AnnouncementType,
@@ -74,7 +72,7 @@ function Announcement({
               </Tooltip>
             </Box>
             <Divider my={3} />
-            <RenderedText content={content} />
+            <TextRenderer content={content} />
           </ModalBody>
           <ModalFooter>
             <Button onClick={onClose}>{t("community.close")}</Button>

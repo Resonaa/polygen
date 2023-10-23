@@ -10,7 +10,8 @@ module.exports = {
   cacheDirectory: "./node_modules/.cache/remix",
   ignoredRouteFiles: ["**/.*", "**/*.css"],
   serverBuildPath: "server/build/index.js",
-  serverModuleFormat: "esm",
+  serverModuleFormat: "cjs",
+  server: "server/index.ts",
   serverDependenciesToBundle: [
     /^rehype.*/,
     /^remark.*/,

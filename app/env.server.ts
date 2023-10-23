@@ -1,4 +1,4 @@
-import { env } from "process";
+import { env } from "node:process";
 
 import { config } from "dotenv";
 import invariant from "tiny-invariant";

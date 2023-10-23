@@ -10,10 +10,10 @@ import {
   saveSettings,
   Settings
 } from "~/core/client/settings";
-import { requireAuthenticatedUser } from "~/session.server";
+import { requireUser } from "~/session.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  return await requireAuthenticatedUser(request, Access.Settings);
+  return await requireUser(request, Access.Settings);
 }
 
 export default function SettingsControls() {

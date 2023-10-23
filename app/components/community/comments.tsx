@@ -1,11 +1,11 @@
 import { VStack } from "@chakra-ui/react";
 import { useState } from "react";
 
-import LoadMore from "~/components/community/loadMore";
 import { ajax } from "~/utils";
 
 import type { CommentProps } from "./comment";
 import Comment from "./comment";
+import LoadMore from "./loadMore";
 
 export default function Comments({
   comments,

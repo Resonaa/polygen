@@ -39,18 +39,18 @@ import {
   updateBio
 } from "~/models/user.server";
 import { badRequest, notFound } from "~/reponses.server";
-import { requireAuthenticatedUser } from "~/session.server";
+import { requireUser } from "~/session.server";
 import { useOptionalUser } from "~/utils";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   const username = String(params.username);
   if (!username) {
-    throw badRequest("请求无效");
+    throw badRequest;
   }
 
   const user = await getUser(username);
   if (!user) {
-    throw notFound("用户不存在");
+    throw notFound;
   }
 
   const stats = await getStats(username);
@@ -61,7 +61,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
 }
 
 export async function action({ request }: ActionFunctionArgs) {
-  const user = await requireAuthenticatedUser(request, Access.Settings);
+  const user = await requireUser(request, Access.Settings);
 
   const uploadHandler = unstable_composeUploadHandlers(
     unstable_createFileUploadHandler({

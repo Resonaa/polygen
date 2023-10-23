@@ -10,7 +10,7 @@ export const usernameSchema = z
     /^[\u4e00-\u9fa5a-zA-Z0-9_\-\\!@$%^&*()=+[\]{}|:;'",.<>`~ ]+$/,
     "auth.username-invalid-chars"
   )
-  .regex(/^[^ ].*[^ ]$/, "auth.username-start-or-end-with-space")
+  .regex(/^[^ ].*[^ ]$/, "auth.username-starts-or-ends-with-space")
   .refine(
     username => !/ {2,}/.test(username),
     "auth.username-successive-spaces"

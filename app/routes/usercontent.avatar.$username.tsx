@@ -1,8 +1,10 @@
-import { join } from "path";
-import { cwd } from "process";
+import { createReadStream } from "node:fs";
+import { join } from "node:path";
+import { cwd } from "node:process";
+import { PassThrough } from "node:stream";
 
 import type { LoaderFunctionArgs } from "@remix-run/node";
-import { readFile } from "fs-extra";
+import { createReadableStreamFromReadable } from "@remix-run/node";
 
 const headers = new Headers();
 headers.append("Cache-Control", "public, max-age=3600");
@@ -10,11 +12,13 @@ headers.append("Cache-Control", "public, max-age=3600");
 const baseDir = join(cwd(), "usercontent/avatar");
 
 export async function loader({ params }: LoaderFunctionArgs) {
-  try {
-    return new Response(await readFile(join(baseDir, params.username ?? "")), {
-      headers
-    });
-  } catch {
-    return new Response(null, { headers });
-  }
+  const path = join(baseDir, params.username ?? "");
+  const stream = createReadStream(path);
+  const body = new PassThrough();
+
+  stream.on("error", () => body.destroy()).pipe(body);
+
+  return new Response(createReadableStreamFromReadable(body), {
+    headers
+  });
 }

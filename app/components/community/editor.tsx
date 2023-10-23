@@ -1,17 +1,18 @@
-import { useColorModeValue } from "@chakra-ui/color-mode";
 import {
+  useColorModeValue,
+  Text,
   Tab,
   TabIndicator,
   TabList,
   TabPanel,
   TabPanels,
-  Tabs
-} from "@chakra-ui/tabs";
-import { Textarea } from "@chakra-ui/textarea";
+  Tabs,
+  Textarea
+} from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
 import TextareaAutosize from "react-textarea-autosize";
 
-import RenderedText from "./renderedText";
+import TextRenderer from "./textRenderer";
 
 interface EditorProps {
   value: string;
@@ -47,7 +48,7 @@ export default function Editor<T extends EditorProps>({
       <TabIndicator
         h="2px"
         bg={useColorModeValue("blue.600", "blue.300")}
-        borderRadius="1px"
+        rounded="full"
         transitionDuration=".2s !important"
       />
 
@@ -62,12 +63,15 @@ export default function Editor<T extends EditorProps>({
             onChange={e => setValue(e.target.value)}
             placeholder={t("community.placeholder")}
             value={value}
-            variant="filled"
           />
         </TabPanel>
 
         <TabPanel px={0}>
-          <RenderedText content={value} />
+          {value.trim().length > 0 ? (
+            <TextRenderer content={value} />
+          ) : (
+            <Text color="gray.500">{t("community.nothing-to-preview")}</Text>
+          )}
         </TabPanel>
       </TabPanels>
     </Tabs>

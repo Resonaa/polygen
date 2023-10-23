@@ -8,11 +8,11 @@ import { getSettings, saveSettings, Settings } from "~/core/client/settings";
 import { LandType } from "~/core/server/game/land";
 import { Map, MapMode } from "~/core/server/game/map";
 import type { Pos } from "~/core/server/game/utils";
-import { requireAuthenticatedUser } from "~/session.server";
+import { requireUser } from "~/session.server";
 import { numberColorToString } from "~/utils";
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  return await requireAuthenticatedUser(request, Access.Settings);
+  return await requireUser(request, Access.Settings);
 }
 
 export default function Keys() {

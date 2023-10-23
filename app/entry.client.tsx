@@ -12,7 +12,7 @@ import { I18nextProvider, initReactI18next } from "react-i18next";
 
 import i18n from "./i18n";
 
-const cache = createCache({ key: "-" });
+const cache = createCache({ key: "-", stylisPlugins: [] });
 
 i18next
   .use(initReactI18next)

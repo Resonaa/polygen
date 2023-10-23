@@ -1,9 +1,8 @@
-import { join } from "path";
-import { cwd, exit } from "process";
+import { readdir, readFile } from "node:fs/promises";
+import { join } from "node:path";
+import { cwd, exit } from "node:process";
 
 import { PrismaClient } from "@prisma/client";
-import { readdir, readFile } from "fs-extra";
-import invariant from "tiny-invariant";
 
 import { SESSION_SECRET } from "~/env.server";
 import { hashPassword } from "~/session.server";
@@ -19,8 +18,6 @@ async function seed() {
   await prisma.comment.deleteMany({});
 
   const password = SESSION_SECRET;
-
-  invariant(password);
 
   await prisma.user.create({
     data: {

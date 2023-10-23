@@ -11,12 +11,12 @@ import { Chat } from "~/core/client/chat";
 import { RoomInfo } from "~/core/client/roomInfo";
 import { Turns } from "~/core/client/turns";
 import type { ClientSocket } from "~/core/types";
-import { requireAuthenticatedUser } from "~/session.server";
+import { requireUser } from "~/session.server";
 
 export const meta: MetaFunction = () => [{ title: "游戏 - polygen" }];
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  await requireAuthenticatedUser(request, Access.Gaming);
+  await requireUser(request, Access.Gaming);
   return json(params.rid);
 }
 

@@ -16,7 +16,7 @@ import { getT } from "~/i18next.server";
 import { createComment, getComments } from "~/models/comment.server";
 import { getPost } from "~/models/post.server";
 import { badRequest, notFound } from "~/reponses.server";
-import { requireAuthenticatedUser } from "~/session.server";
+import { requireUser } from "~/session.server";
 import { useOptionalUser } from "~/utils";
 import {
   validateAddCommentFormData,
@@ -29,14 +29,14 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   const res = validateGetPostParams(params);
 
   if (!res.success) {
-    throw badRequest();
+    throw badRequest;
   }
 
   const { id } = res.data;
 
   const post = await getPost(id);
   if (!post) {
-    throw notFound();
+    throw notFound;
   }
 
   const comments = await getComments(1, id);
@@ -53,10 +53,7 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => [
 ];
 
 export async function action({ request }: ActionFunctionArgs) {
-  const { username } = await requireAuthenticatedUser(
-    request,
-    Access.Community
-  );
+  const { username } = await requireUser(request, Access.Community);
 
   const data = await request.formData();
   const res = validateAddCommentFormData(data);
@@ -77,7 +74,7 @@ export default function PostId() {
 
   return (
     <Layout>
-      <VStack w="100%">
+      <VStack w="100%" spacing={4}>
         <Post linked={false} {...post} />
 
         <Divider />

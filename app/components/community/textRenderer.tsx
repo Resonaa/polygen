@@ -1,6 +1,4 @@
-import { Text } from "@chakra-ui/layout";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
-import { useTranslation } from "react-i18next";
 import ReactMarkdown from "react-markdown";
 import rehypeHighlight from "rehype-highlight";
 import rehypeKatex from "rehype-katex";
@@ -13,13 +11,11 @@ interface RenderedTextProps {
   content: string;
 }
 
-export default function RenderedText<T extends RenderedTextProps>({
+export default function TextRenderer<T extends RenderedTextProps>({
   content,
   ...props
 }: T) {
-  const { t } = useTranslation();
-
-  return content.trim().length > 0 ? (
+  return (
     <ReactMarkdown
       components={renderer}
       remarkPlugins={[remarkGfm, remarkMath]}
@@ -31,7 +27,5 @@ export default function RenderedText<T extends RenderedTextProps>({
       children={content}
       {...props}
     />
-  ) : (
-    <Text color="gray.500">{t("community.nothing-to-preview")}</Text>
   );
 }

@@ -2,7 +2,6 @@
 
 import {
   Center,
-  chakra,
   ChakraProvider,
   cookieStorageManagerSSR,
   Heading,
@@ -31,16 +30,16 @@ import { useTranslation } from "react-i18next";
 import Access from "~/access";
 import Layout from "~/components/layout/layout";
 import { getLocale } from "~/i18next.server";
-import theme from "~/theme";
+import theme from "~/theme/theme";
 import { useNProgress } from "~/utils";
 
-import { requireAuthenticatedOptionalUser } from "./session.server";
+import { requireOptionalUser } from "./session.server";
 
 export const links: LinksFunction = () => [{ rel: "stylesheet", href: katex }];
 
 export async function loader({ request }: LoaderFunctionArgs) {
   return json({
-    user: await requireAuthenticatedOptionalUser(request, Access.Basic),
+    user: await requireOptionalUser(request, Access.Basic),
     time: Date.now(),
     cookies: request.headers.get("Cookie") ?? "",
     locale: await getLocale(request)
@@ -94,14 +93,11 @@ function Document({
   const { i18n } = useTranslation();
 
   return (
-    <chakra.html
+    <html
       lang={locale}
-      h="100%"
+      style={{ height: "100%", colorScheme: colorMode }}
       dir={i18n.dir()}
-      {...(colorMode && {
-        "data-theme": colorMode,
-        style: { colorScheme: colorMode }
-      })}
+      data-theme={colorMode}
     >
       <head>
         <meta charSet="utf-8" />
@@ -109,12 +105,16 @@ function Document({
           name="viewport"
           content="width=device-width, initial-scale=1, shrink-to-fit=no"
         />
+        <meta
+          name="description"
+          content="polygen is a polygon-based web game inspired by generals.io."
+        />
         {title && <title>{title}</title>}
         <Meta />
         <Links />
       </head>
-      <chakra.body
-        h="100%"
+      <body
+        style={{ height: "100%" }}
         {...(colorMode && { className: `chakra-ui-${colorMode}` })}
       >
         <ChakraProvider
@@ -126,8 +126,8 @@ function Document({
         </ChakraProvider>
         <ScrollRestoration />
         <Scripts />
-      </chakra.body>
-    </chakra.html>
+      </body>
+    </html>
   );
 }
 

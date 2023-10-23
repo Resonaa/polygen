@@ -1,5 +1,5 @@
-import { resolve } from "path";
-import { PassThrough } from "stream";
+import { resolve } from "node:path";
+import { PassThrough } from "node:stream";
 
 import createCache from "@emotion/cache";
 import { CacheProvider } from "@emotion/react";
@@ -39,7 +39,7 @@ export default async function handleRequest(
 
   return new Promise((resolve, reject) => {
     let didError = false;
-    const cache = createCache({ key: "-" });
+    const cache = createCache({ key: "-", stylisPlugins: [] });
 
     const { pipe, abort } = renderToPipeableStream(
       <CacheProvider value={cache}>

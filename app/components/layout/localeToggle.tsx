@@ -1,5 +1,6 @@
-import { IconButton } from "@chakra-ui/button";
+import { IconButton } from "@chakra-ui/react";
 import { useRevalidator } from "@remix-run/react";
+import nProgress from "nprogress";
 import { useTranslation } from "react-i18next";
 import { FaGlobe } from "react-icons/fa";
 
@@ -14,13 +15,15 @@ export default function LocaleToggle() {
       aria-label="Toggle Language"
       icon={<FaGlobe />}
       isRound
+      onClick={() => {
+        nProgress.start();
+        i18n
+          .changeLanguage(
+            i18nConfig.supportedLngs.find(lang => lang !== i18n.language)
+          )
+          .then(revalidator.revalidate);
+      }}
       variant="ghost"
-      onClick={() =>
-        i18n.changeLanguage(
-          i18nConfig.supportedLngs.find(lang => lang !== i18n.language),
-          revalidator.revalidate
-        )
-      }
     />
   );
 }

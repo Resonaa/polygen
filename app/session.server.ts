@@ -54,30 +54,24 @@ export async function getUser(request: Request) {
   throw await logout(request);
 }
 
-export async function requireAuthenticatedUser(
-  request: Request,
-  required: Access
-) {
+export async function requireUser(request: Request, required: Access) {
   const user = await getUser(request);
 
   if (user && access(user, required)) {
     return user;
   }
 
-  throw forbidden();
+  throw forbidden;
 }
 
-export async function requireAuthenticatedOptionalUser(
-  request: Request,
-  required: Access
-) {
+export async function requireOptionalUser(request: Request, required: Access) {
   const user = await getUser(request);
 
   if (access(user, required)) {
     return user;
   }
 
-  throw forbidden();
+  throw forbidden;
 }
 
 export async function createUserSession(request: Request, username: string) {

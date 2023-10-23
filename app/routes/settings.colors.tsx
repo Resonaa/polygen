@@ -7,11 +7,11 @@ import { Renderer } from "~/core/client/renderer";
 import { saveSettings, Settings } from "~/core/client/settings";
 import { LandType } from "~/core/server/game/land";
 import { Map } from "~/core/server/game/map";
-import { requireAuthenticatedUser } from "~/session.server";
+import { requireUser } from "~/session.server";
 import { numberColorToString, stringColorToNumber } from "~/utils";
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  return await requireAuthenticatedUser(request, Access.Settings);
+  return await requireUser(request, Access.Settings);
 }
 
 export default function Colors() {

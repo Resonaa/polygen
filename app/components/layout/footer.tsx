@@ -26,7 +26,6 @@ function SocialButton({
         rounded="full"
         w={8}
         h={8}
-        cursor="pointer"
         as="a"
         href={href}
         display="inline-flex"

@@ -25,12 +25,6 @@
   npm run setup
   ```
 
-- Build the app:
-
-  ```sh
-  npm run build
-  ```
-
 - Start dev server:
   ```sh
   npm run dev

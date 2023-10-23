@@ -13,13 +13,13 @@ import {
 import Layout from "~/components/layout";
 import { formatStar } from "~/core/client/utils";
 import { rankList } from "~/models/star.server";
-import { requireAuthenticatedOptionalUser } from "~/session.server";
+import { requireOptionalUser } from "~/session.server";
 import { useOptionalUser } from "~/utils";
 
 export const meta: MetaFunction = () => [{ title: "排行榜 - polygen" }];
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  await requireAuthenticatedOptionalUser(request, Access.Basic);
+  await requireOptionalUser(request, Access.Basic);
   return json(await rankList());
 }
 

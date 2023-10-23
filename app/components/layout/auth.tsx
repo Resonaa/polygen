@@ -6,7 +6,6 @@ import {
   FormErrorMessage,
   FormLabel,
   HStack,
-  Icon,
   Image,
   Input,
   InputGroup,
@@ -74,20 +73,19 @@ export default function Auth() {
         isOpen={isOpen}
         onClose={onClose}
         scrollBehavior="inside"
-        size="lg"
       >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>{title}</ModalHeader>
           <ModalCloseButton />
-          <ModalBody>
+          <ModalBody pb={4}>
             <fetcher.Form method="post" action={`/auth/${type}`}>
               <Stack spacing={4}>
                 <FormControl isInvalid={!!fetcher.data?.username}>
                   <FormLabel>{t("auth.username")}</FormLabel>
                   <InputGroup>
-                    <InputLeftElement pointerEvents="none">
-                      <Icon as={FaUser} color="gray.300" />
+                    <InputLeftElement>
+                      <FaUser />
                     </InputLeftElement>
                     <Input
                       autoComplete="username"
@@ -108,8 +106,8 @@ export default function Auth() {
                 <FormControl isInvalid={!!fetcher.data?.password}>
                   <FormLabel>{t("auth.password")}</FormLabel>
                   <InputGroup>
-                    <InputLeftElement pointerEvents="none">
-                      <LockIcon color="gray.300" />
+                    <InputLeftElement>
+                      <LockIcon />
                     </InputLeftElement>
                     <Input
                       autoComplete={
@@ -135,8 +133,8 @@ export default function Auth() {
                     <FormControl isInvalid={!!fetcher.data?.retypePassword}>
                       <FormLabel>{t("auth.retype-password")}</FormLabel>
                       <InputGroup>
-                        <InputLeftElement pointerEvents="none">
-                          <LockIcon color="gray.300" />
+                        <InputLeftElement>
+                          <LockIcon />
                         </InputLeftElement>
                         <Input
                           autoComplete="new-password"
@@ -160,8 +158,8 @@ export default function Auth() {
                       <HStack alignItems="flex-start">
                         <Box w="100%">
                           <InputGroup>
-                            <InputLeftElement pointerEvents="none">
-                              <CheckIcon color="gray.300" />
+                            <InputLeftElement>
+                              <CheckIcon />
                             </InputLeftElement>
                             <Input
                               maxLength={4}

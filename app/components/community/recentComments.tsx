@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import type { Comment } from "~/models/comment.server";
 
 import type { CommentProps } from "./comment";
-import RenderedText from "./renderedText";
+import TextRenderer from "./textRenderer";
 import UserLink from "./userLink";
 import { useRelativeDateFormatter } from "./utils";
 
@@ -33,7 +33,7 @@ function RecentComment({
       <Box overflowY="auto" maxH="100px">
         <Link to={`/post/${parentId}`}>
           <object>
-            <RenderedText content={content} />
+            <TextRenderer content={content} />
           </object>
         </Link>
       </Box>

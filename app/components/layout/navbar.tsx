@@ -74,7 +74,7 @@ export default function Navbar() {
           </Flex>
         </Flex>
 
-        <ButtonGroup spacing={3}>
+        <ButtonGroup spacing="13px">
           <ColorModeToggle />
           <LocaleToggle />
           {user ? <UserDropdown /> : <Auth />}
@@ -235,10 +235,10 @@ function MobileNavItem({ label, to, icon, children }: NavItem) {
         _hover={{ textDecoration: "none" }}
         to={to}
       >
-        <Box>
+        <Flex align="center">
           <Icon as={icon} mr="5px" />
           {t("nav." + label)}
-        </Box>
+        </Flex>
         {children && <DropdownRightIcon isOpen={isOpen} />}
       </Flex>
 

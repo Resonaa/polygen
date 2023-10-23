@@ -1,5 +1,6 @@
-import { join } from "path";
-import { cwd, exit } from "process";
+import { mkdir } from "node:fs/promises";
+import { join } from "node:path";
+import { cwd } from "node:process";
 
 import fastifyEarlyHints from "@fastify/early-hints";
 import {
@@ -7,27 +8,22 @@ import {
   getEarlyHintLinks,
   staticFilePlugin
 } from "@mcansh/remix-fastify";
+import * as build from "@remix-run/dev/server-build";
 import { broadcastDevReady } from "@remix-run/node";
 import fastify from "fastify";
 import type { FastifyContentTypeParser } from "fastify/types/content-type-parser";
 import fastifySocketIO from "fastify-socket.io";
-import { ensureDir, exists } from "fs-extra";
+import { install } from "source-map-support";
 
 import { setServer } from "~/core/server";
 import { MODE, PORT } from "~/env.server";
 
-const BUILD_DIR = join(cwd(), "server/build");
 const USERCONTENT_DIR = join(cwd(), "usercontent");
 
 (async () => {
-  if (!(await exists(BUILD_DIR))) {
-    console.warn(
-      "Build directory doesn't exist, please run `npm run build` before starting the server."
-    );
-    exit(1);
-  }
+  install();
 
-  await ensureDir(join(USERCONTENT_DIR, "avatar"));
+  await mkdir(join(USERCONTENT_DIR, "avatar"), { recursive: true });
 
   const app = fastify({
     logger: { transport: { target: "@fastify/one-line-logger" } }
@@ -40,7 +36,6 @@ const USERCONTENT_DIR = join(cwd(), "usercontent");
   app.addContentTypeParser("application/json", noopContentParser);
   app.addContentTypeParser("*", noopContentParser);
 
-  const build = await import(BUILD_DIR);
   const requestHandler = createRequestHandler({ build, mode: build.mode });
 
   await app

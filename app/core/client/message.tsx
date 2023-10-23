@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useRef, useState } from "react";
 import { Label } from "semantic-ui-react";
 
-import RenderedText from "~/components/community/renderedText";
+import TextRenderer from "~/components/community/textRenderer";
 import type { Message } from "~/core/server/message";
 import { MessageType } from "~/core/server/message";
 import type { ClientSocket } from "~/core/types";
@@ -25,7 +25,7 @@ function GameMessage({
       >
         {sender}
       </a>
-      <RenderedText
+      <TextRenderer
         content={content}
         mode="dark"
         className="inline-block !ml-2"

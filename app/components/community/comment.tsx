@@ -23,7 +23,7 @@ import Access, { access } from "~/access";
 import type { Comment as CommentType } from "~/models/comment.server";
 import { useOptionalUser } from "~/utils";
 
-import RenderedText from "./renderedText";
+import TextRenderer from "./textRenderer";
 import UserAvatar from "./userAvatar";
 import UserLink from "./userLink";
 import { formatDate, useRelativeDateFormatter } from "./utils";
@@ -118,7 +118,7 @@ export default function Comment({
 
       <Box overflowY="auto" maxH="200px">
         <object>
-          <RenderedText content={content} />
+          <TextRenderer content={content} />
         </object>
       </Box>
     </VStack>

@@ -1,9 +1,9 @@
-import { join } from "path";
-import { cwd } from "process";
+import { writeFile } from "node:fs/promises";
+import { join } from "node:path";
+import { cwd } from "node:process";
 
 import type { Password, User } from "@prisma/client";
 import type { NodeOnDiskFile } from "@remix-run/node";
-import { writeFile } from "fs-extra";
 import sharp from "sharp";
 
 import prisma from "~/db.server";
