@@ -64,7 +64,7 @@ export default function Index() {
   return (
     <Layout>
       <VStack w={{ base: "100%", md: "75%" }} spacing={4}>
-        {user && <AddPost />}
+        {user ? <AddPost /> : null}
 
         <Posts posts={posts} />
       </VStack>

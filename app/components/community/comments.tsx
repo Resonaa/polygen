@@ -27,7 +27,7 @@ export default function Comments({
       {comments.concat(extraComments).map(data => (
         <Comment key={data.id} {...data} />
       ))}
-      {comments.length === 10 && <LoadMore loader={loader} />}
+      {comments.length === 10 ? <LoadMore loader={loader} /> : null}
     </VStack>
   );
 }

@@ -33,7 +33,7 @@ export function playerCountToSize(playerCount: number, mode: MapMode) {
 }
 
 export function astar(map: Map, from: Pos, to: Pos, cannotPassCity?: boolean) {
-  let vis: boolean[][] = [];
+  const vis: boolean[][] = [];
   for (let i = 0; i <= map.height; i++) {
     vis.push([]);
 
@@ -42,12 +42,12 @@ export function astar(map: Map, from: Pos, to: Pos, cannotPassCity?: boolean) {
     }
   }
 
-  let q: [Pos, number][] = [[from, 0]];
+  const q: [Pos, number][] = [[from, 0]];
 
   vis[from[0]][from[1]] = true;
 
   while (q.length > 0) {
-    let front = q.shift();
+    const front = q.shift();
 
     if (!front) {
       return -1;
@@ -55,7 +55,7 @@ export function astar(map: Map, from: Pos, to: Pos, cannotPassCity?: boolean) {
 
     const [cur, len] = front;
 
-    for (let nxt of map.neighbours(cur)) {
+    for (const nxt of map.neighbours(cur)) {
       if (
         vis[nxt[0]][nxt[1]] ||
         !map.accessible(nxt) ||

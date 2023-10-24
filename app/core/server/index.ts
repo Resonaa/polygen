@@ -12,6 +12,7 @@ export function setServer(server: Server) {
       return;
     }
 
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     // noinspection JSConstantReassignment
     delete socket.conn.request;

@@ -77,7 +77,7 @@ function Document({
     cookies = document.cookie;
   }
 
-  let colorMode = useMemo(() => {
+  const colorMode = useMemo(() => {
     let color = getKeyFromCookies(cookies, COLOR_MODE_KEY);
 
     if (!color) {
@@ -109,7 +109,7 @@ function Document({
           name="description"
           content="polygen is a polygon-based web game inspired by generals.io."
         />
-        {title && <title>{title}</title>}
+        {title ? <title>{title}</title> : null}
         <Meta />
         <Links />
       </head>
@@ -146,7 +146,7 @@ function RouteErrorWrapper({ children }: { children: ReactNode }) {
 }
 
 export function ErrorBoundary() {
-  const error = useRouteError() as any;
+  const error = useRouteError();
 
   if (isRouteErrorResponse(error)) {
     return (
@@ -161,7 +161,14 @@ export function ErrorBoundary() {
 
   return (
     <RouteErrorWrapper>
-      <Heading>{error.message ?? "Unknown Error"}</Heading>
+      <Heading>
+        {typeof error === "object" &&
+        !!error &&
+        "message" in error &&
+        typeof error.message === "string"
+          ? error.message
+          : "Unknown Error"}
+      </Heading>
     </RouteErrorWrapper>
   );
 }

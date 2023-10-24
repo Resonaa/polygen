@@ -1,27 +1,25 @@
-const enum Access {
-  Basic = 0,
+export default class Access {
+  static Basic = 0;
 
-  Community = 1,
-  Gaming = 1,
-  Settings = 1,
+  static Community = 1;
+  static Gaming = 1;
+  static Settings = 1;
 
-  ManageCommunity = 2,
-  ManageAccess = 2,
+  static ManageCommunity = 2;
+  static ManageAccess = 2;
 
-  ManageAnnouncement = 3,
-  ManageUser = 3,
-  ManageGame = 3,
+  static ManageAnnouncement = 3;
+  static ManageUser = 3;
+  static ManageGame = 3;
 
-  ManageServer = 4,
-  ManageDb = 4
+  static ManageServer = 4;
+  static ManageDb = 4;
 }
-
-export default Access;
 
 interface HasAccess {
   access: number;
 }
 
-export function access(user: HasAccess | undefined | null, access: Access) {
+export function access(user: HasAccess | undefined | null, access: number) {
   return (user?.access ?? 0) >= access;
 }

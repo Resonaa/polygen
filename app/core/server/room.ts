@@ -81,10 +81,10 @@ export class Room {
       return;
     }
 
-    let newTeams: typeof this.teams = new Map();
+    const newTeams: typeof this.teams = new Map();
     let teamCnt = 1;
 
-    for (let [team, players] of this.teams) {
+    for (const [team, players] of this.teams) {
       if (players.length === 0) {
         continue;
       }
@@ -118,7 +118,7 @@ export class Room {
     this.gamingPlayers.delete(player);
     this.playerMaps.delete(player);
 
-    for (let [team, players] of this.teams) {
+    for (const [team, players] of this.teams) {
       const index = players.indexOf(player);
       if (index !== -1) {
         players.splice(index, 1);
@@ -141,7 +141,7 @@ export class Room {
         : this.getNewTeamId();
     }
 
-    let item = this.teams.get(team);
+    const item = this.teams.get(team);
     if (item) {
       item.push(player);
     } else {
@@ -177,12 +177,12 @@ export class Room {
     this.turns = 0;
 
     let players: string[] = [];
-    for (let [teamId, playersInTeam] of this.teams) {
+    for (const [teamId, playersInTeam] of this.teams) {
       if (teamId === 0) {
         continue;
       }
 
-      for (let player of playersInTeam) {
+      for (const player of playersInTeam) {
         this.gamingPlayers.add(player);
       }
 
@@ -207,7 +207,7 @@ export class Room {
       ])
     );
     this.gameTeams.clear();
-    for (let [color, player] of this.colors) {
+    for (const [color, player] of this.colors) {
       this.gameTeams.set(color, this.playerToTeam(player));
     }
 
@@ -215,7 +215,7 @@ export class Room {
   }
 
   playerToColor(player: string) {
-    for (let [color, username] of this.colors) {
+    for (const [color, username] of this.colors) {
       if (username === player) {
         return color;
       }
@@ -233,7 +233,7 @@ export class Room {
   winCheck() {
     let winner = undefined;
 
-    for (let player of this.gamingPlayers) {
+    for (const player of this.gamingPlayers) {
       const color = this.playerToColor(player);
       const team = this.gameTeams.get(color) as TeamId;
 
@@ -326,9 +326,9 @@ export class Room {
   }
 
   moveAll() {
-    let deaths: string[] = [];
+    const deaths: string[] = [];
 
-    for (let [color, player] of this.colors) {
+    for (const [color, player] of this.colors) {
       if (deaths.includes(player)) {
         continue;
       }
@@ -378,8 +378,8 @@ export class Room {
   }
 
   patchAll() {
-    let res: Map<string, [number, Partial<MaybeLand>][]> = new Map();
-    for (let player of this.exportPlayers()) {
+    const res = new Map<string, [number, Partial<MaybeLand>][]>();
+    for (const player of this.exportPlayers()) {
       const now = this.gm.mask(this.playerToColor(player), this.gameTeams);
 
       let pre = this.playerMaps.get(player);
@@ -387,13 +387,13 @@ export class Room {
         pre = new GameMap(this.gm.width, this.gm.height, this.gm.mode).export();
       }
 
-      let patch: [number, Partial<MaybeLand>][] = [];
+      const patch: [number, Partial<MaybeLand>][] = [];
 
       for (let i = 1; i <= this.gm.height; i++) {
         for (let j = 1; j <= this.gm.width; j++) {
           const preLand = pre.gm[i][j],
             nowLand = now.gm[i][j];
-          let partial: Partial<MaybeLand> = {};
+          const partial: Partial<MaybeLand> = {};
 
           if (preLand.c !== nowLand.c) {
             partial.c = nowLand.c;
@@ -426,8 +426,8 @@ export class Room {
   }
 
   rankAll() {
-    let ans: [number | null, LandColor, string, number, number][] = [],
-      data: Map<LandColor, [number, number]> = new Map();
+    const ans: [number | null, LandColor, string, number, number][] = [],
+      data = new Map<LandColor, [number, number]>();
 
     for (let i = 1; i <= this.gm.height; i++) {
       for (let j = 1; j <= this.gm.width; j++) {
@@ -449,9 +449,9 @@ export class Room {
       }
     }
 
-    let teamData: Map<TeamId, [number, number]> = new Map();
+    const teamData = new Map<TeamId, [number, number]>();
 
-    for (let [color, [land, army]] of data) {
+    for (const [color, [land, army]] of data) {
       const username = this.colors.get(color) as string;
       const star = this.stars.get(username)?.star as number;
       ans.push([star, color, username, land, army]);
@@ -721,7 +721,7 @@ export class RoomManager {
       }
       const masks = room.maskAll();
 
-      for (let [color, player] of room.colors) {
+      for (const [color, player] of room.colors) {
         this.server
           .to(SocketRoom.usernameRid(player, room.id))
           .emit("gameStart", {
@@ -734,7 +734,7 @@ export class RoomManager {
 
       const exportedMap = room.gm.export();
 
-      for (let player of room.exportPlayers()) {
+      for (const player of room.exportPlayers()) {
         if (!room.gamingPlayers.has(player)) {
           this.server
             .to(SocketRoom.usernameRid(player, room.id))
@@ -769,7 +769,7 @@ export class RoomManager {
 
     const team = room.gameTeams.get(deadColor) as TeamId;
     let teamDied = true;
-    for (let [color] of room.colors) {
+    for (const [color] of room.colors) {
       if (color !== deadColor && room.gameTeams.get(color) === team) {
         teamDied = false;
         break;
@@ -794,7 +794,7 @@ export class RoomManager {
 
     const exportedMap = room.gm.export();
 
-    for (let player of room.surrenders) {
+    for (const player of room.surrenders) {
       this.checkTeamDeath(player);
 
       room.gamingPlayers.delete(player);
@@ -825,7 +825,7 @@ export class RoomManager {
     room.turns++;
 
     const deaths = room.moveAll();
-    for (let deadPlayer of deaths) {
+    for (const deadPlayer of deaths) {
       this.checkTeamDeath(deadPlayer);
       room.gamingPlayers.delete(deadPlayer);
       room.colors.delete(room.playerToColor(deadPlayer));
@@ -839,7 +839,7 @@ export class RoomManager {
     const rank = room.rankAll();
 
     const patches = room.patchAll();
-    for (let [player, updates] of patches) {
+    for (const [player, updates] of patches) {
       this.server.to(SocketRoom.usernameRid(player, room.id)).emit(
         "patch",
         LZString.compressToUTF16(
@@ -985,9 +985,9 @@ export class RoomManager {
 
     const teams = room.ongoing ? room.teamsInGame : room.teams;
 
-    for (let [, players] of teams) {
+    for (const [, players] of teams) {
       if (players.includes(sender)) {
-        for (let receiver of players) {
+        for (const receiver of players) {
           this.server
             .to(SocketRoom.usernameRid(receiver, room.id))
             .emit("message", {

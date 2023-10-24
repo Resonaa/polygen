@@ -35,9 +35,9 @@ export class Renderer {
 
   selected: Pos | null = null;
 
-  private pileSize: number = 0;
-  private startX: number = 0;
-  private startY: number = 0;
+  private pileSize = 0;
+  private startX = 0;
+  private startY = 0;
 
   private images: PIXI.Sprite[][] = [[]];
   private texts: PIXI.BitmapText[][] = [[]];
@@ -47,20 +47,20 @@ export class Renderer {
 
   private extraTexts: (string | undefined)[][] = [[]];
 
-  handleMove: (from: Pos, to: Pos) => any = () => false;
-  handleSplitArmy: () => any = () => false;
-  handleClearMovements: () => any = () => false;
-  handleUndoMovement: () => any = () => false;
-  handleSurrender: () => any = () => false;
-  handleSelect: () => any = () => false;
+  handleMove: (from: Pos, to: Pos) => unknown = () => false;
+  handleSplitArmy: () => unknown = () => false;
+  handleClearMovements: () => unknown = () => false;
+  handleUndoMovement: () => unknown = () => false;
+  handleSurrender: () => unknown = () => false;
+  handleSelect: () => unknown = () => false;
 
-  private myColor: number = 0;
+  private myColor = 0;
 
   settings: ISettings;
 
   private lastSelected: Pos[] = [];
 
-  isTouch: boolean = false;
+  isTouch = false;
 
   constructor(canvas: HTMLCanvasElement, backgroundColor?: PIXI.ColorSource) {
     this.app = new PIXI.Application({
@@ -146,7 +146,7 @@ export class Renderer {
         const eventKey = event.key === " " ? "Space" : event.key.toUpperCase();
 
         const keys = settings.game.keys[this.gm.mode];
-        for (let [index, key] of keys.move.entries()) {
+        for (const [index, key] of keys.move.entries()) {
           if (key === eventKey && this.selected) {
             event.preventDefault();
 
@@ -565,7 +565,7 @@ export class Renderer {
 
   private setHitAreas() {
     const [x, y] = this.getPileUpperLeftPos([1, 1]);
-    let path = this.getPilePath([1, 1]);
+    const path = this.getPilePath([1, 1]);
     for (let p = 0; p < path.length; p += 2) {
       path[p] -= x;
       path[p + 1] -= y;

@@ -141,9 +141,9 @@ export default function User() {
             <div className="text-2xl" title={`权限等级：${user.access}`}>
               {user.username}
             </div>
-            {user.bio.length > 0 && (
+            {user.bio.length > 0 ? (
               <div className="mt-2 break-all">{user.bio}</div>
-            )}
+            ) : null}
           </div>
         </div>
         {edit ? (
@@ -155,7 +155,7 @@ export default function User() {
             className="mt-4"
           >
             <Form.Field>
-              <label>头像</label>
+              <label htmlFor="avatar">头像</label>
               <input
                 type="file"
                 name="avatar"
@@ -163,7 +163,7 @@ export default function User() {
               />
             </Form.Field>
             <Form.Field>
-              <label>个性签名</label>
+              <label htmlFor="bio">个性签名</label>
               <TextareaAutosize
                 maxLength={161}
                 defaultValue={user.bio}
@@ -175,9 +175,9 @@ export default function User() {
               保存
             </Button>
             <Button onClick={() => setEdit(false)}>取消</Button>
-            {actionData && actionData !== "编辑成功" && (
+            {actionData && actionData !== "编辑成功" ? (
               <div className="error-message">{actionData}</div>
-            )}
+            ) : null}
           </Form>
         ) : (
           <>
@@ -200,7 +200,7 @@ export default function User() {
       </Grid.Column>
       <Grid.Column width={12}>
         <div ref={anchor} />
-        {stats.star !== undefined && stats.rank !== undefined && (
+        {stats.star !== undefined && stats.rank !== undefined ? (
           <Statistic.Group className="justify-center" size="small">
             <Statistic>
               <Statistic.Value>
@@ -212,7 +212,7 @@ export default function User() {
               <Statistic.Label>#{stats.rank}</Statistic.Label>
             </Statistic>
           </Statistic.Group>
-        )}
+        ) : null}
 
         <Statistic.Group className="justify-center" size="small">
           <Statistic>

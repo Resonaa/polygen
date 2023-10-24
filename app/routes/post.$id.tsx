@@ -79,7 +79,7 @@ export default function PostId() {
 
         <Divider />
 
-        {user && <AddComment parentId={parentId} />}
+        {user ? <AddComment parentId={parentId} /> : null}
 
         <Comments comments={comments} parentId={parentId} />
       </VStack>

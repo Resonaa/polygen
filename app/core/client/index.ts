@@ -50,11 +50,11 @@ export function registerClientSocket(
     })
     .on("patch", data => {
       const patch: Patch = JSON.parse(LZString.decompressFromUTF16(data));
-      for (let [id, maybeLand] of patch.updates) {
+      for (const [id, maybeLand] of patch.updates) {
         const y = ((id - 1) % gm.width) + 1,
           x = (id - y) / gm.width + 1;
         const pos: Pos = [x, y];
-        let land = gm.get(pos);
+        const land = gm.get(pos);
 
         if (maybeLand.t !== undefined) {
           land.type = maybeLand.t;

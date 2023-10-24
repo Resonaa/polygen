@@ -23,16 +23,21 @@ export function useMatchesData(id: string) {
   return route?.data;
 }
 
-function isLoaderData(data: any): data is object {
-  return data && typeof data === "object";
+function isLoaderData(data: unknown): data is object {
+  return typeof data === "object";
 }
 
-function isUser(user: any): user is User {
-  return user && typeof user === "object" && typeof user.username === "string";
+function isUser(user: unknown): user is User {
+  return (
+    typeof user === "object" &&
+    !!user &&
+    "username" in user &&
+    typeof user.username === "string"
+  );
 }
 
-function isServerTime(time: any): time is number {
-  return time && typeof time === "number";
+function isServerTime(time: unknown): time is number {
+  return typeof time === "number";
 }
 
 export function useOptionalUser() {

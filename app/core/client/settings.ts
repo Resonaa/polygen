@@ -38,28 +38,35 @@ export interface ISettings {
   };
 }
 
-function merge(from: any, to: any) {
-  let target: any = {};
+type DeepPartial<T> = {
+  [P in keyof T]?: DeepPartial<T[P]>;
+};
 
-  for (const prop in from) {
-    if (from.hasOwnProperty(prop)) {
-      if (!to.hasOwnProperty(prop)) {
-        target[prop] = from[prop];
-      } else if (
-        Object.prototype.toString.call(from[prop]) === "[object Object]"
-      ) {
-        target[prop] = merge(from[prop], to[prop]);
-      } else {
-        target[prop] = to[prop];
-      }
+type AsObject<T> = T extends object ? T : never;
+
+function merge<Schema extends object>(from: Schema, to: DeepPartial<Schema>) {
+  const target: DeepPartial<Schema> = {};
+
+  for (const key in Object.keys(from)) {
+    const prop = key as keyof Schema;
+
+    if (!Object.hasOwn(to, prop)) {
+      target[prop] = from[prop];
+    } else if (typeof from[prop] === "object") {
+      target[prop] = merge<AsObject<Schema[typeof prop]>>(
+        from[prop] as AsObject<Schema[typeof prop]>,
+        to[prop] as AsObject<Schema[typeof prop]>
+      );
+    } else {
+      target[prop] = to[prop];
     }
   }
 
-  return target;
+  return target as Schema;
 }
 
 export class Settings {
-  private readonly settings: Partial<ISettings>;
+  private readonly settings: DeepPartial<ISettings>;
   static defaultSettings: ISettings = {
     game: {
       keys: {
@@ -97,12 +104,12 @@ export class Settings {
     }
   };
 
-  constructor(settings: Partial<ISettings>) {
+  constructor(settings: DeepPartial<ISettings>) {
     this.settings = settings;
   }
 
   merge() {
-    return merge(Settings.defaultSettings, this.settings) as ISettings;
+    return merge(Settings.defaultSettings, this.settings);
   }
 }
 

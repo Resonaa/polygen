@@ -33,7 +33,7 @@ export function Vote({
   }) {
     return (
       <List.Item
-        active={players && players.includes(user.username)}
+        active={players?.includes(user.username)}
         onClick={() =>
           client?.emit("vote", {
             item: type as VoteItem,
@@ -44,12 +44,12 @@ export function Vote({
       >
         <List.Content>
           <List.Header>{value}</List.Header>
-          {players && (
+          {players ? (
             <>
               {players.length}票{players.length > 0 ? ": " : ""}
               {players.join(", ")}
             </>
-          )}
+          ) : null}
         </List.Content>
       </List.Item>
     );
@@ -72,11 +72,11 @@ export function Vote({
             当前投票
           </Header>
           <List divided inverted relaxed selection animated size="large">
-            {voteData &&
-              type &&
-              voteData.data[type]?.map(([value, players]) => (
-                <Item key={value} value={value} players={players} />
-              ))}
+            {voteData && type
+              ? voteData.data[type]?.map(([value, players]) => (
+                  <Item key={value} value={value} players={players} />
+                ))
+              : null}
           </List>
           <Divider inverted />
           <Header as="h3" inverted textAlign="center">
@@ -92,7 +92,7 @@ export function Vote({
                 ? (voteData.data[type] as NonNullable<VoteData[typeof type]>)
                 : [];
               const others = (
-                voteItems[type] as Array<VoteValue<typeof type>>
+                voteItems[type] as VoteValue<typeof type>[]
               ).filter(
                 value =>
                   !data.some(([existingValue]) => existingValue === value)

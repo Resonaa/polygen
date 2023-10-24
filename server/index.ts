@@ -16,9 +16,16 @@ import fastifySocketIO from "fastify-socket.io";
 import { install } from "source-map-support";
 
 import { setServer } from "~/core/server";
+import type { Server } from "~/core/types";
 import { MODE, PORT } from "~/env.server";
 
 const USERCONTENT_DIR = join(cwd(), "usercontent");
+
+declare module "fastify" {
+  interface FastifyInstance {
+    io: Server;
+  }
+}
 
 (async () => {
   install();
@@ -56,6 +63,5 @@ const USERCONTENT_DIR = join(cwd(), "usercontent");
     await broadcastDevReady(build);
   }
 
-  // @ts-ignore
   setServer(app.io);
 })();

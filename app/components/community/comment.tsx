@@ -68,7 +68,7 @@ export default function Comment({
           </Box>
         </Flex>
 
-        {editable && (
+        {editable ? (
           <AlertDialog
             isCentered
             isOpen={isOpen}
@@ -103,9 +103,9 @@ export default function Comment({
               </AlertDialogContent>
             </AlertDialogOverlay>
           </AlertDialog>
-        )}
+        ) : null}
 
-        {editable && (
+        {editable ? (
           <IconButton
             aria-label="delete"
             icon={<DeleteIcon />}
@@ -113,13 +113,11 @@ export default function Comment({
             onClick={onOpen}
             variant="ghost"
           />
-        )}
+        ) : null}
       </Flex>
 
       <Box overflowY="auto" maxH="200px">
-        <object>
-          <TextRenderer content={content} />
-        </object>
+        <TextRenderer content={content} />
       </Box>
     </VStack>
   );

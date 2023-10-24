@@ -113,7 +113,7 @@ export default function Post({
           </Box>
         </Flex>
 
-        {editable && (
+        {editable ? (
           <>
             {editing ? (
               <ButtonGroup
@@ -193,7 +193,7 @@ export default function Post({
               </AlertDialogOverlay>
             </AlertDialog>
           </>
-        )}
+        ) : null}
       </Flex>
 
       {editable && editing ? (
@@ -205,9 +205,7 @@ export default function Post({
           </object>
         </chakra.a>
       ) : (
-        <object>
-          <TextRenderer content={content} />
-        </object>
+        <TextRenderer content={content} />
       )}
     </VStack>
   );

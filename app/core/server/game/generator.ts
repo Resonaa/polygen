@@ -11,7 +11,7 @@ const cityDensity = 0.05;
 const mountainDensity = 0.15;
 
 function generateRandomPos(width: number, height: number) {
-  let ans = [];
+  const ans = [];
 
   for (let i = 1; i <= height; i++) {
     for (let j = 1; j <= width; j++) {
@@ -24,10 +24,10 @@ function generateRandomPos(width: number, height: number) {
 
 function generateRandomMap(playerCount: number, mode: MapMode): Map {
   const [width, height] = playerCountToSize(playerCount, mode);
-  let map = new Map(width, height, mode);
+  const map = new Map(width, height, mode);
   const gm = map.gm;
 
-  let randPos = generateRandomPos(width, height);
+  const randPos = generateRandomPos(width, height);
 
   for (let i = 1; i <= mountainDensity * width * height; i++) {
     const pos = randPos.shift();
@@ -50,7 +50,7 @@ function generateRandomMap(playerCount: number, mode: MapMode): Map {
     }
   }
 
-  let generals = [];
+  const generals = [];
 
   for (let i = 1; i <= playerCount; i++) {
     const ans = randPos.shift();
@@ -66,7 +66,7 @@ function generateRandomMap(playerCount: number, mode: MapMode): Map {
     } else {
       let tooClose = false;
 
-      for (let last of generals) {
+      for (const last of generals) {
         if (astar(map, ans, last) > 7 && astar(map, ans, last, true) !== -1) {
           continue;
         }
@@ -93,12 +93,12 @@ function generateRandomMap(playerCount: number, mode: MapMode): Map {
 
 function generateEmptyMap(playerCount: number, mode: MapMode): Map {
   const [width, height] = playerCountToSize(playerCount, mode);
-  let map = new Map(width, height, mode);
+  const map = new Map(width, height, mode);
   const gm = map.gm;
 
-  let randPos = generateRandomPos(width, height);
+  const randPos = generateRandomPos(width, height);
 
-  let generals = [];
+  const generals = [];
 
   for (let i = 1; i <= playerCount; i++) {
     const ans = randPos.shift();
@@ -114,7 +114,7 @@ function generateEmptyMap(playerCount: number, mode: MapMode): Map {
     } else {
       let tooClose = false;
 
-      for (let last of generals) {
+      for (const last of generals) {
         if (astar(map, ans, last) > 5) {
           continue;
         }
@@ -148,11 +148,11 @@ function generateMazeMap(playerCount: number, mode: MapMode): Map {
     height++;
   }
 
-  let map = new Map(width, height, mode);
+  const map = new Map(width, height, mode);
 
-  let edges = [];
+  const edges = [];
   let vCnt = 0;
-  let vNum: number[][] = [];
+  const vNum: number[][] = [];
 
   for (let i = 0; i <= height; i++) {
     vNum.push([]);
@@ -174,10 +174,10 @@ function generateMazeMap(playerCount: number, mode: MapMode): Map {
 
   for (let i = 1; i <= height; i++) {
     for (let j = 1; j <= width; j++) {
-      let tmp1 = i - 1,
+      const tmp1 = i - 1,
         tmp3 = j - 1,
         tmp4 = j + 1;
-      let tmp2 = i + 1;
+      const tmp2 = i + 1;
 
       if (
         i % 2 === 0 &&
@@ -210,7 +210,7 @@ function generateMazeMap(playerCount: number, mode: MapMode): Map {
     }
   }
 
-  let id: number[] = [];
+  const id: number[] = [];
   for (let i = 0; i < vCnt; i++) {
     id.push(i);
   }
@@ -226,7 +226,7 @@ function generateMazeMap(playerCount: number, mode: MapMode): Map {
 
   edges.sort((x, y) => x.w - y.w);
 
-  for (let { a, b, pos } of edges) {
+  for (const { a, b, pos } of edges) {
     if (find(a) !== find(b)) {
       id[find(a)] = id[b];
       map.get(pos).type = LandType.City;
@@ -236,8 +236,8 @@ function generateMazeMap(playerCount: number, mode: MapMode): Map {
     }
   }
 
-  let randPos = generateRandomPos(width, height);
-  let generals = [];
+  const randPos = generateRandomPos(width, height);
+  const generals = [];
 
   for (let i = 1; i <= playerCount; ) {
     const pos = randPos.shift();
@@ -250,7 +250,7 @@ function generateMazeMap(playerCount: number, mode: MapMode): Map {
     }
 
     let landCnt = 0;
-    for (let neighbour of map.neighbours(pos)) {
+    for (const neighbour of map.neighbours(pos)) {
       if (map.get(neighbour).type !== LandType.Mountain) {
         landCnt++;
       }
@@ -259,7 +259,7 @@ function generateMazeMap(playerCount: number, mode: MapMode): Map {
     if (landCnt === 1) {
       let tooClose = false;
 
-      for (let last of generals) {
+      for (const last of generals) {
         if (astar(map, pos, last) >= 8) {
           continue;
         }
@@ -291,7 +291,7 @@ function generateMazeMap(playerCount: number, mode: MapMode): Map {
     }
 
     let nearHome = false;
-    for (let neighbour of map.neighbours(pos)) {
+    for (const neighbour of map.neighbours(pos)) {
       if (map.get(neighbour).type === LandType.General) {
         nearHome = true;
         break;
@@ -315,7 +315,7 @@ function generatePlotMap(playerCount: number, mode: MapMode): Map {
   const plotCount = Math.ceil(Math.sqrt(playerCount * plotsPerPlayer));
   const size = plotSize + (plotSize - 1) * (plotCount - 1);
 
-  let map = new Map(size, size, mode);
+  const map = new Map(size, size, mode);
 
   let homes = [];
 
@@ -323,7 +323,7 @@ function generatePlotMap(playerCount: number, mode: MapMode): Map {
     for (let j = 1; j <= size; j++) {
       const m1 = i % (plotSize - 1),
         m2 = j % (plotSize - 1);
-      let land = map.get([i, j]);
+      const land = map.get([i, j]);
       if (m1 === 1 || m2 === 1) {
         if (
           i !== 1 &&
@@ -349,7 +349,7 @@ function generatePlotMap(playerCount: number, mode: MapMode): Map {
   homes = _.shuffle(homes);
 
   for (let i = 1; i <= playerCount; i++) {
-    let pos = homes.shift() as Pos;
+    const pos = homes.shift() as Pos;
     map.get(pos).color = i;
     map.get(pos).type = LandType.General;
     map.get(pos).amount = 1;

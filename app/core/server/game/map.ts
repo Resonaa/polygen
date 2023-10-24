@@ -21,11 +21,7 @@ export class Map {
   gm: Land[][];
   mode: MapMode;
 
-  constructor(
-    width: number = 0,
-    height: number = 0,
-    mode: MapMode = MapMode.Hexagon
-  ) {
+  constructor(width = 0, height = 0, mode: MapMode = MapMode.Hexagon) {
     this.width = width;
     this.height = height;
     this.gm = [];
@@ -101,7 +97,7 @@ export class Map {
   }
 
   static from({ width, height, mode, gm }: MaybeMap) {
-    let map = new this(width, height, mode);
+    const map = new this(width, height, mode);
     map.gm = gm.map(row => row.map(maybeLand => Land.from(maybeLand)));
     return map;
   }
@@ -118,7 +114,7 @@ export class Map {
           return true;
         }
 
-        for (let neighbour of this.neighbours(pos)) {
+        for (const neighbour of this.neighbours(pos)) {
           if (this.ownedByTeam(neighbour, myColor, teams)) {
             return true;
           }
@@ -142,13 +138,13 @@ export class Map {
   }
 
   mask(myColor: LandColor, teams: Room["gameTeams"]): MaybeMap {
-    let ans = this.export();
+    const ans = this.export();
 
     for (let i = 1; i <= this.height; i++) {
       for (let j = 1; j <= this.width; j++) {
         const pos = [i, j] as Pos;
         if (myColor !== 0 && !this.visible(pos, myColor, teams)) {
-          let land = this.get(pos);
+          const land = this.get(pos);
           if (land.type === LandType.Mountain) {
             ans.gm[i][j].t = LandType.UnknownMountain;
           } else if (land.type === LandType.City) {

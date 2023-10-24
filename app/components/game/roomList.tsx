@@ -88,20 +88,22 @@ function Room({ id, ongoing, players, rated, votes }: RoomProps) {
       display="table-row"
       fontWeight="normal"
       cursor={user ? "pointer" : undefined}
-      onClick={user && (() => window.open(`/game/${encodeURIComponent(id)}`))}
+      onClick={
+        user ? () => window.open(`/game/${encodeURIComponent(id)}`) : undefined
+      }
       title={user ? undefined : "登录后加入"}
       variant="ghost"
     >
       <Td>{id}</Td>
       <Td gap={2} display="inline-flex">
-        {rated && (
+        {rated ? (
           <RoomProperty
             icon={StarIcon}
             color="green"
             label="Rated"
             description="计入排名"
           />
-        )}
+        ) : null}
         <VotedRoomProperty
           icon={FaCrown}
           color="orange"
@@ -148,8 +150,15 @@ export default function RoomList({ rooms }: { rooms: RoomProps[] }) {
           </Tr>
         </Thead>
         <Tbody>
-          {rooms.map(props => (
-            <Room key={props.id} {...props} />
+          {rooms.map(({ id, ongoing, votes, players, rated }) => (
+            <Room
+              key={id}
+              ongoing={ongoing}
+              votes={votes}
+              id={id}
+              players={players}
+              rated={rated}
+            />
           ))}
         </Tbody>
       </Table>

@@ -105,7 +105,7 @@ export default function Colors() {
         </Grid.Column>
 
         <Grid.Column>
-          {curColor && (
+          {curColor ? (
             <Form className="mb-4">
               <Form.Field>
                 修改颜色序号：{curId}
@@ -124,7 +124,7 @@ export default function Colors() {
                 </Button>
               </Form.Field>
             </Form>
-          )}
+          ) : null}
           <Button negative onClick={resetAllToDefault}>
             全部恢复默认
           </Button>

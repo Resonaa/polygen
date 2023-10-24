@@ -24,8 +24,9 @@ export default function TextRenderer<T extends RenderedTextProps>({
         [rehypeHighlight, { ignoreMissing: true }]
       ]}
       skipHtml
-      children={content}
       {...props}
-    />
+    >
+      {content}
+    </ReactMarkdown>
   );
 }

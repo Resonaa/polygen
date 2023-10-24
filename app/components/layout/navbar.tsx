@@ -123,7 +123,7 @@ function DesktopNav() {
             </Box>
           </PopoverTrigger>
 
-          {children && (
+          {children ? (
             <PopoverContent
               minW="xs"
               p={4}
@@ -138,7 +138,7 @@ function DesktopNav() {
                 ))}
               </VStack>
             </PopoverContent>
-          )}
+          ) : null}
         </Popover>
       ))}
     </HStack>
@@ -222,7 +222,7 @@ function MobileNavItem({ label, to, icon, children }: NavItem) {
     <VStack
       alignItems="flex-start"
       w="100%"
-      onClick={children && onToggle}
+      onClick={children ? onToggle : undefined}
       spacing={2}
     >
       <Flex
@@ -239,24 +239,25 @@ function MobileNavItem({ label, to, icon, children }: NavItem) {
           <Icon as={icon} mr="5px" />
           {t("nav." + label)}
         </Flex>
-        {children && <DropdownRightIcon isOpen={isOpen} />}
+        {children ? <DropdownRightIcon isOpen={isOpen} /> : null}
       </Flex>
 
       <Collapse animateOpacity in={isOpen} style={{ marginTop: "0!important" }}>
         <VStack pl={4} borderLeftWidth="2px">
-          {children &&
-            children.map(child => (
-              <Flex
-                key={child.label}
-                as={Link}
-                align="center"
-                py={2}
-                to={child.to}
-              >
-                <Icon as={child.icon} mr="5px" />
-                {t("nav." + child.label)}
-              </Flex>
-            ))}
+          {children
+            ? children.map(child => (
+                <Flex
+                  key={child.label}
+                  as={Link}
+                  align="center"
+                  py={2}
+                  to={child.to}
+                >
+                  <Icon as={child.icon} mr="5px" />
+                  {t("nav." + child.label)}
+                </Flex>
+              ))
+            : null}
         </VStack>
       </Collapse>
     </VStack>
@@ -271,7 +272,7 @@ interface NavItem {
   description?: string;
 }
 
-const NAV_ITEMS: Array<NavItem> = [
+const NAV_ITEMS: NavItem[] = [
   { label: "home", icon: FaHome, to: "/" },
   { label: "game", icon: FaCrown, to: "/game" },
   { label: "leaderboard", icon: FaTrophy, to: "/leaderboard" },

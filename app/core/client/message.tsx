@@ -120,7 +120,7 @@ export function Messages({ client }: { client?: ClientSocket }) {
       {messages}
 
       <div ref={messageEnd} className="h-1" />
-      {newCount > 0 && (
+      {newCount > 0 ? (
         <Label
           color="red"
           circular
@@ -132,7 +132,7 @@ export function Messages({ client }: { client?: ClientSocket }) {
         >
           {newCount}
         </Label>
-      )}
+      ) : null}
     </>
   );
 }

@@ -43,7 +43,7 @@ export default function Keys() {
     gm.get(selectHome).type = LandType.General;
     gm.get(selectHome).color = 1;
 
-    for (let neighbour of gm.neighbours(selectHome)) {
+    for (const neighbour of gm.neighbours(selectHome)) {
       gm.get(neighbour).color = 2;
     }
 
@@ -64,7 +64,7 @@ export default function Keys() {
     renderer.extraText(undoMovement, keys.undoMovement);
     renderer.extraText(surrender, keys.surrender);
 
-    for (let [index, neighbour] of gm.neighbours(selectHome).entries()) {
+    for (const [index, neighbour] of gm.neighbours(selectHome).entries()) {
       renderer.extraText(neighbour, keys.move[index]);
     }
 
@@ -103,7 +103,7 @@ export default function Keys() {
         keys.undoMovement = key;
         save = true;
       } else {
-        for (let [index, neighbour] of gm.neighbours(selectHome).entries()) {
+        for (const [index, neighbour] of gm.neighbours(selectHome).entries()) {
           if (neighbour.join() === pos.join()) {
             keys.move[index] = key;
             save = true;
@@ -127,7 +127,7 @@ export default function Keys() {
   const defaultSettings = Settings.defaultSettings;
 
   const resetToDefault = () => {
-    let settings = getSettings();
+    const settings = getSettings();
     settings.game.keys[mode] = defaultSettings.game.keys[mode];
     saveSettings(settings);
     window.location.reload();

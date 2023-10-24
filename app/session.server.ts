@@ -1,7 +1,6 @@
 import { createCookieSessionStorage } from "@remix-run/node";
 import bcrypt from "bcryptjs";
 
-import type Access from "~/access";
 import { access } from "~/access";
 import { SESSION_SECRET } from "~/env.server";
 import type { User } from "~/models/user.server";
@@ -54,7 +53,7 @@ export async function getUser(request: Request) {
   throw await logout(request);
 }
 
-export async function requireUser(request: Request, required: Access) {
+export async function requireUser(request: Request, required: number) {
   const user = await getUser(request);
 
   if (user && access(user, required)) {
@@ -64,7 +63,7 @@ export async function requireUser(request: Request, required: Access) {
   throw forbidden;
 }
 
-export async function requireOptionalUser(request: Request, required: Access) {
+export async function requireOptionalUser(request: Request, required: number) {
   const user = await getUser(request);
 
   if (access(user, required)) {

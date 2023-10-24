@@ -24,7 +24,7 @@ export class Land {
   constructor(
     color: LandColor = 0,
     type: LandType = LandType.Land,
-    amount: number = 0
+    amount = 0
   ) {
     this.color = color;
     this.type = type;

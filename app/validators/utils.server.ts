@@ -1,8 +1,10 @@
 import type { Params } from "@remix-run/react";
 import type { z } from "zod";
 
+type RawErrorValue = number | boolean | FormDataEntryValue | undefined;
+
 function toObject(data: FormData | Params) {
-  const object: Record<string, any> = {};
+  const object: Record<string, RawErrorValue> = {};
 
   if (data instanceof FormData) {
     for (const [key, value] of data) {
@@ -48,13 +50,14 @@ export function safeParseAndFlatten<T>(
   return flattenError(schema.safeParse(toObject(data)));
 }
 
-export type ErrorType<F extends (...args: any) => any> = ReturnType<F> extends
-  | {
-      success: true;
-    }
-  | {
-      success: false;
-      error: infer ErrorType;
-    }
-  ? ErrorType
-  : never;
+export type ErrorType<F extends (...args: never) => never> =
+  ReturnType<F> extends
+    | {
+        success: true;
+      }
+    | {
+        success: false;
+        error: infer ErrorType;
+      }
+    ? ErrorType
+    : never;

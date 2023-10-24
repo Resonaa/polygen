@@ -96,11 +96,11 @@ export default function Auth() {
                       required
                     />
                   </InputGroup>
-                  {fetcher.data?.username && (
+                  {fetcher.data?.username ? (
                     <FormErrorMessage>
                       {t(fetcher.data.username)}
                     </FormErrorMessage>
-                  )}
+                  ) : null}
                 </FormControl>
 
                 <FormControl isInvalid={!!fetcher.data?.password}>
@@ -121,14 +121,14 @@ export default function Auth() {
                       type="password"
                     />
                   </InputGroup>
-                  {fetcher.data?.password && (
+                  {fetcher.data?.password ? (
                     <FormErrorMessage>
                       {t(fetcher.data.password)}
                     </FormErrorMessage>
-                  )}
+                  ) : null}
                 </FormControl>
 
-                {type === "register" && (
+                {type === "register" ? (
                   <>
                     <FormControl isInvalid={!!fetcher.data?.retypePassword}>
                       <FormLabel>{t("auth.retype-password")}</FormLabel>
@@ -146,11 +146,11 @@ export default function Auth() {
                           type="password"
                         />
                       </InputGroup>
-                      {fetcher.data?.retypePassword && (
+                      {fetcher.data?.retypePassword ? (
                         <FormErrorMessage>
                           {t(fetcher.data.retypePassword)}
                         </FormErrorMessage>
-                      )}
+                      ) : null}
                     </FormControl>
 
                     <FormControl isInvalid={!!fetcher.data?.captcha}>
@@ -169,11 +169,11 @@ export default function Auth() {
                               required
                             />
                           </InputGroup>
-                          {fetcher.data?.captcha && (
+                          {fetcher.data?.captcha ? (
                             <FormErrorMessage>
                               {t(fetcher.data.captcha)}
                             </FormErrorMessage>
-                          )}
+                          ) : null}
                         </Box>
                         <Box>
                           <Image
@@ -186,7 +186,7 @@ export default function Auth() {
                       </HStack>
                     </FormControl>
                   </>
-                )}
+                ) : null}
 
                 <Button
                   mt={1}

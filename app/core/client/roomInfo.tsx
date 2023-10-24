@@ -136,7 +136,7 @@ export function RoomInfo({
     >
       <Table.Header>
         <Table.Row>
-          {!smallTable && (
+          {!smallTable ? (
             <>
               <Table.HeaderCell className="!cursor-pointer">
                 <Star />
@@ -145,7 +145,7 @@ export function RoomInfo({
                 玩家
               </Table.HeaderCell>
             </>
-          )}
+          ) : null}
           <Table.HeaderCell className="!cursor-pointer">兵力</Table.HeaderCell>
           <Table.HeaderCell className="!cursor-pointer">领地</Table.HeaderCell>
         </Table.Row>
@@ -154,9 +154,11 @@ export function RoomInfo({
       <Table.Body>
         {rank.map(([star, color, player, land, army]) => (
           <Table.Row key={player}>
-            {!smallTable && (
+            {!smallTable ? (
               <>
-                {star !== null && <Table.Cell>{formatStar(star)}</Table.Cell>}
+                {star !== null ? (
+                  <Table.Cell>{formatStar(star)}</Table.Cell>
+                ) : null}
                 <td
                   colSpan={star !== null ? 1 : 2}
                   style={
@@ -166,7 +168,7 @@ export function RoomInfo({
                   {player}
                 </td>
               </>
-            )}
+            ) : null}
 
             <Table.Cell
               style={

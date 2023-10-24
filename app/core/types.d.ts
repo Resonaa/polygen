@@ -62,13 +62,13 @@ interface SocketData {
 type Server = ServerType<
   ClientToServerEvents,
   ServerToClientEvents,
-  {},
+  never,
   SocketData
 >;
 type ServerSocket = SocketType<
   ClientToServerEvents,
   ServerToClientEvents,
-  {},
+  never,
   SocketData
 >;
 type ClientSocket = ClientSocketType<

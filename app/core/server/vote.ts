@@ -41,15 +41,16 @@ export type VoteData = {
 export class VoteManager {
   data: VoteData = {};
   ans = (() => {
-    let ans: Partial<MaxVotedItems> = {};
-    for (let key in voteItems) {
-      ans[key as VoteItem] = [voteItems[key as VoteItem][0] as any];
+    const ans: Partial<MaxVotedItems> = {};
+    for (const key in voteItems) {
+      const value = voteItems[key as VoteItem][0];
+      (ans[key as VoteItem] as (typeof value)[]) = [value];
     }
     return ans as MaxVotedItems;
   })();
 
   sort() {
-    for (let arr of Object.values(this.data)) {
+    for (const arr of Object.values(this.data)) {
       arr &&
         arr.sort(([itemA, a], [itemB, b]) => {
           if (a.length !== b.length) {
@@ -60,12 +61,12 @@ export class VoteManager {
         });
     }
 
-    for (let key in voteItems) {
+    for (const key in voteItems) {
       const item = key as VoteItem;
       if (this.data[item] && this.data[item]?.length) {
-        const items = this.data[item] as Array<
-          ArrElement<NonNullable<VoteData[typeof item]>>
-        >;
+        const items = this.data[item] as ArrElement<
+          NonNullable<VoteData[typeof item]>
+        >[];
         const choices = items.filter(
           ([, players]) => players.length === items[0][1].length
         );
@@ -79,7 +80,7 @@ export class VoteManager {
   remove(player: string) {
     let updated = false;
 
-    for (let [key, arr] of Object.entries(this.data)) {
+    for (const [key, arr] of Object.entries(this.data)) {
       const valueIndex = arr
         ? arr.findIndex(([, players]) => players.includes(player))
         : -1;
@@ -104,7 +105,7 @@ export class VoteManager {
   }
 
   add<T extends VoteItem>(item: T, value: VoteValue<T>, player: string) {
-    let list = this.data[item];
+    const list = this.data[item];
     if (list) {
       const preVotedValueIndex = list.findIndex(([, players]) =>
         players.includes(player)
@@ -137,10 +138,11 @@ export class VoteManager {
   }
 
   sample() {
-    let sample: Partial<SampleMaxVotedItems> = {};
+    const sample: Partial<SampleMaxVotedItems> = {};
 
     for (const [key, value] of Object.entries(this.ans)) {
-      sample[key as keyof SampleMaxVotedItems] = _.sample(value) as any;
+      const item = _.sample(value) as ArrElement<typeof value>;
+      (sample[key as keyof SampleMaxVotedItems] as typeof item) = item;
     }
 
     return sample as SampleMaxVotedItems;
