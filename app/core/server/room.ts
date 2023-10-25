@@ -279,7 +279,7 @@ export class Room {
     const fromLand = this.gm.get(from);
     return (
       !(fromLand.color !== color || fromLand.amount < 1) &&
-      this.gm.neighbours(from).some(neighbour => neighbour.join() === to.join())
+      this.gm.neighbors(from).some(neighbor => neighbor.join() === to.join())
     );
   }
 

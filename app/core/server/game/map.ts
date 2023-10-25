@@ -85,7 +85,7 @@ export class Map {
     }
   }
 
-  neighbours([i, j]: Pos) {
+  neighbors([i, j]: Pos) {
     return this.dir([i, j])
       .map(([dx, dy]) => [dx + i, dy + j] as Pos)
       .filter(pos => this.check(pos));
@@ -114,8 +114,8 @@ export class Map {
           return true;
         }
 
-        for (const neighbour of this.neighbours(pos)) {
-          if (this.ownedByTeam(neighbour, myColor, teams)) {
+        for (const neighbor of this.neighbors(pos)) {
+          if (this.ownedByTeam(neighbor, myColor, teams)) {
             return true;
           }
         }

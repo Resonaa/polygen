@@ -90,7 +90,7 @@ export default function Post({
 
   return (
     <VStack align="normal" w="100%" spacing={2}>
-      <Flex>
+      <Flex role="group">
         <Flex align="center" wrap="wrap" flex={1} gap={3}>
           <UserAvatar username={username} />
 
@@ -140,7 +140,13 @@ export default function Post({
                 <input type="hidden" name="id" value={id} />
               </ButtonGroup>
             ) : (
-              <ButtonGroup gap={1} variant="ghost">
+              <ButtonGroup
+                gap={1}
+                opacity={0}
+                _groupHover={{ opacity: "100%" }}
+                transition="opacity .25s ease-in-out"
+                variant="ghost"
+              >
                 <IconButton
                   aria-label="edit"
                   icon={<EditIcon />}

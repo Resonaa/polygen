@@ -54,7 +54,7 @@ export default function Comment({
 
   return (
     <VStack align="normal" w="100%" spacing={2}>
-      <Flex>
+      <Flex role="group">
         <Flex align="center" wrap="wrap" flex={1} gap={3}>
           <UserAvatar username={username} />
 
@@ -107,6 +107,9 @@ export default function Comment({
 
         {editable ? (
           <IconButton
+            opacity={0}
+            _groupHover={{ opacity: "100%" }}
+            transition="opacity .25s ease-in-out"
             aria-label="delete"
             icon={<DeleteIcon />}
             isRound

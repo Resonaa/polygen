@@ -11,6 +11,7 @@ module.exports = {
     project: true,
     tsconfigRootDir: __dirname
   },
+
   env: {
     browser: true,
     commonjs: true,
@@ -19,6 +20,36 @@ module.exports = {
 
   // Base config
   extends: ["eslint:recommended"],
+
+  plugins: ["@cspell"],
+  rules: {
+    "@cspell/spellchecker": [
+      "warn",
+      {
+        autoFix: true,
+        checkStrings: false,
+        checkStringTemplates: false,
+        cspell: {
+          words: [
+            "polygen",
+            "fastify",
+            "nprogress",
+            "revalidator",
+            "usercontent",
+            "autosize",
+            "rehype",
+            "katex",
+            "chakra",
+            "pixi",
+            "stylis",
+            "isbot",
+            "leaderboard",
+            "lngs"
+          ]
+        }
+      }
+    ]
+  },
 
   overrides: [
     // React

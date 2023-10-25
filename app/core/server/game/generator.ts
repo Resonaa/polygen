@@ -4,7 +4,7 @@ import { LandType } from "~/core/server/game/land";
 import type { MapMode } from "~/core/server/game/map";
 import { Map } from "~/core/server/game/map";
 import type { Pos } from "~/core/server/game/utils";
-import { astar, playerCountToSize } from "~/core/server/game/utils";
+import { aStar, playerCountToSize } from "~/core/server/game/utils";
 import { RoomMap } from "~/core/server/vote";
 
 const cityDensity = 0.05;
@@ -67,7 +67,7 @@ function generateRandomMap(playerCount: number, mode: MapMode): Map {
       let tooClose = false;
 
       for (const last of generals) {
-        if (astar(map, ans, last) > 7 && astar(map, ans, last, true) !== -1) {
+        if (aStar(map, ans, last) > 7 && aStar(map, ans, last, true) !== -1) {
           continue;
         }
 
@@ -115,7 +115,7 @@ function generateEmptyMap(playerCount: number, mode: MapMode): Map {
       let tooClose = false;
 
       for (const last of generals) {
-        if (astar(map, ans, last) > 5) {
+        if (aStar(map, ans, last) > 5) {
           continue;
         }
 
@@ -250,8 +250,8 @@ function generateMazeMap(playerCount: number, mode: MapMode): Map {
     }
 
     let landCnt = 0;
-    for (const neighbour of map.neighbours(pos)) {
-      if (map.get(neighbour).type !== LandType.Mountain) {
+    for (const neighbor of map.neighbors(pos)) {
+      if (map.get(neighbor).type !== LandType.Mountain) {
         landCnt++;
       }
     }
@@ -260,7 +260,7 @@ function generateMazeMap(playerCount: number, mode: MapMode): Map {
       let tooClose = false;
 
       for (const last of generals) {
-        if (astar(map, pos, last) >= 8) {
+        if (aStar(map, pos, last) >= 8) {
           continue;
         }
 
@@ -291,8 +291,8 @@ function generateMazeMap(playerCount: number, mode: MapMode): Map {
     }
 
     let nearHome = false;
-    for (const neighbour of map.neighbours(pos)) {
-      if (map.get(neighbour).type === LandType.General) {
+    for (const neighbor of map.neighbors(pos)) {
+      if (map.get(neighbor).type === LandType.General) {
         nearHome = true;
         break;
       }

@@ -43,8 +43,8 @@ export default function Keys() {
     gm.get(selectHome).type = LandType.General;
     gm.get(selectHome).color = 1;
 
-    for (const neighbour of gm.neighbours(selectHome)) {
-      gm.get(neighbour).color = 2;
+    for (const neighbor of gm.neighbors(selectHome)) {
+      gm.get(neighbor).color = 2;
     }
 
     gm.get(selectTopLeft).color = 3;
@@ -64,8 +64,8 @@ export default function Keys() {
     renderer.extraText(undoMovement, keys.undoMovement);
     renderer.extraText(surrender, keys.surrender);
 
-    for (const [index, neighbour] of gm.neighbours(selectHome).entries()) {
-      renderer.extraText(neighbour, keys.move[index]);
+    for (const [index, neighbor] of gm.neighbors(selectHome).entries()) {
+      renderer.extraText(neighbor, keys.move[index]);
     }
 
     document.onkeydown = event => {
@@ -103,8 +103,8 @@ export default function Keys() {
         keys.undoMovement = key;
         save = true;
       } else {
-        for (const [index, neighbour] of gm.neighbours(selectHome).entries()) {
-          if (neighbour.join() === pos.join()) {
+        for (const [index, neighbor] of gm.neighbors(selectHome).entries()) {
+          if (neighbor.join() === pos.join()) {
             keys.move[index] = key;
             save = true;
             break;
