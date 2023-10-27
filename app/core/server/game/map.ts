@@ -4,8 +4,8 @@ import type { Pos } from "~/core/server/game/utils";
 import type { Room } from "~/core/server/room";
 
 export enum MapMode {
-  Hexagon = "六边形",
-  Square = "四边形"
+  Hexagon = "Hexagon",
+  Square = "Square"
 }
 
 export interface MaybeMap {

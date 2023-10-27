@@ -7,29 +7,29 @@ import { BsFillSendFill } from "react-icons/bs";
 import Editor from "./editor";
 
 export default function AddPost() {
-  const fetcher = useFetcher();
+  const { state, Form } = useFetcher();
   const [value, setValue] = useState("");
   const { t } = useTranslation();
 
   useEffect(() => {
-    if (fetcher.state === "idle") {
+    if (state === "idle") {
       setValue("");
     }
-  }, [fetcher.state]);
+  }, [state]);
 
   return (
-    <fetcher.Form method="post" style={{ width: "100%" }}>
+    <Form method="post" style={{ width: "100%" }}>
       <Editor value={value} setValue={setValue} mt="-4px" />
       <Button
         float="right"
         colorScheme="blue"
         isDisabled={value.trim().length === 0}
-        isLoading={fetcher.state !== "idle"}
+        isLoading={state !== "idle"}
         leftIcon={<BsFillSendFill />}
         type="submit"
       >
         {t("community.add-post")}
       </Button>
-    </fetcher.Form>
+    </Form>
   );
 }

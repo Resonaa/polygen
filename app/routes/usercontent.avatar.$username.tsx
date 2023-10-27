@@ -6,8 +6,10 @@ import { PassThrough } from "node:stream";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { createReadableStreamFromReadable } from "@remix-run/node";
 
-const headers = new Headers();
-headers.append("Cache-Control", "public, max-age=3600");
+const headers = new Headers({
+  "Cache-Control": "public, max-age=3600",
+  "Content-Type": "image/avif"
+});
 
 const baseDir = join(cwd(), "usercontent/avatar");
 

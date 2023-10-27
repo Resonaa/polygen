@@ -31,7 +31,7 @@ export function DropdownRightIcon({ isOpen }: { isOpen: boolean }) {
 export default function UserDropdown() {
   const user = useUser();
   const { t } = useTranslation();
-  const fetcher = useFetcher();
+  const { Form } = useFetcher();
 
   return (
     <Menu autoSelect={false}>
@@ -59,12 +59,7 @@ export default function UserDropdown() {
               {t("nav.settings")}
             </MenuItem>
             <MenuDivider />
-            <chakra.form
-              as={fetcher.Form}
-              action="/auth/logout"
-              method="post"
-              mb={0}
-            >
+            <chakra.form as={Form} action="/auth/logout" method="post" mb={0}>
               <MenuItem icon={<FaSignOutAlt />} type="submit">
                 {t("nav.logout")}
               </MenuItem>

@@ -13,7 +13,7 @@ import { Turns } from "~/core/client/turns";
 import type { ClientSocket } from "~/core/types";
 import { requireUser } from "~/session.server";
 
-export const meta: MetaFunction = () => [{ title: "游戏 - polygen" }];
+export const meta: MetaFunction = () => [{ title: "房间 - polygen" }];
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   await requireUser(request, Access.Gaming);

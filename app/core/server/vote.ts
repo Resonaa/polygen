@@ -6,10 +6,10 @@ type ArrElement<ArrType extends readonly unknown[]> =
   ArrType extends readonly (infer ElementType)[] ? ElementType : never;
 
 export enum RoomMap {
-  Random = "随机地图",
-  Empty = "空白地图",
-  Maze = "迷宫地图",
-  Plot = "格点地图"
+  Random = "Random",
+  Empty = "Empty",
+  Maze = "Maze",
+  Plot = "Plot"
 }
 
 export const voteItems = {
@@ -21,9 +21,9 @@ export const voteItems = {
 export type VoteItem = keyof typeof voteItems;
 
 export const translations: { [item in VoteItem]: string } = {
-  mode: "模式",
-  map: "地图",
-  speed: "速度"
+  mode: "Mode",
+  map: "Map",
+  speed: "Speed"
 };
 
 export type VoteValue<T extends VoteItem> = ArrElement<(typeof voteItems)[T]>;

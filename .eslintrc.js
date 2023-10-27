@@ -78,8 +78,6 @@ module.exports = {
           "warn",
           { validStrategies: ["ternary"] }
         ],
-        "jsx-a11y/click-events-have-key-events": "off",
-        "jsx-a11y/no-static-element-interactions": "off",
         "chakra-ui/props-order": "error",
         "chakra-ui/props-shorthand": "error",
         "chakra-ui/require-specific-component": "error"

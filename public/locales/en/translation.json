@@ -68,5 +68,24 @@
   },
   "errors": {
     "title": "Error - polygen"
+  },
+  "game": {
+    "id": "Id",
+    "properties": "Properties",
+    "players": "Players",
+    "status": "Status",
+    "waiting": "Waiting",
+    "playing": "Playing",
+    "join-after-login": "You must have an account to join the room",
+    "rated": "Included in Ranking",
+    "vote-item-mode": "Mode",
+    "vote-value-hexagon": "Hexagon",
+    "vote-value-square": "Square",
+    "vote-item-map": "Map",
+    "vote-value-random": "Random",
+    "vote-value-empty": "Empty",
+    "vote-value-maze": "Maze",
+    "vote-value-plots": "Plots",
+    "vote-item-speed": "Speed"
   }
 }

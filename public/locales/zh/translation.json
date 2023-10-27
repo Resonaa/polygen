@@ -68,5 +68,24 @@
   },
   "errors": {
     "title": "错误 - polygen"
+  },
+  "game": {
+    "id": "名称",
+    "properties": "属性",
+    "players": "玩家",
+    "status": "状态",
+    "waiting": "等待中",
+    "playing": "游戏中",
+    "join-after-login": "登录后才可加入房间",
+    "rated": "计入排名",
+    "vote-item-mode": "模式",
+    "vote-value-hexagon": "六边形",
+    "vote-value-square": "四边形",
+    "vote-item-map": "地图",
+    "vote-value-random": "随机地图",
+    "vote-value-empty": "空白地图",
+    "vote-value-maze": "迷宫地图",
+    "vote-value-plots": "格点地图",
+    "vote-item-speed": "速度"
   }
 }

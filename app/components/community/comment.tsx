@@ -48,7 +48,7 @@ export default function Comment({
 
   const cancelRef = useRef<HTMLButtonElement>(null);
 
-  const fetcher = useFetcher();
+  const { Form } = useFetcher();
 
   const { t } = useTranslation();
 
@@ -82,7 +82,7 @@ export default function Comment({
                 </AlertDialogHeader>
                 <AlertDialogBody>{t("community.confirm-body")}</AlertDialogBody>
                 <AlertDialogFooter
-                  as={fetcher.Form}
+                  as={Form}
                   m={0}
                   action="/api/comment/delete"
                   method="post"

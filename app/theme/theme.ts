@@ -5,6 +5,7 @@ import global from "./global";
 import Input from "./input";
 import Menu from "./menu";
 import Modal from "./modal";
+import Tag from "./tag";
 import Textarea from "./textarea";
 import Tooltip from "./tooltip";
 
@@ -18,6 +19,7 @@ export default extendTheme({
     Button,
     Menu,
     Textarea,
-    Tooltip
+    Tooltip,
+    Tag
   }
 });

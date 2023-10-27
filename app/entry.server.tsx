@@ -51,7 +51,7 @@ export default async function handleRequest(
         [callbackName]() {
           const body = new PassThrough();
 
-          responseHeaders.set("Content-Type", "text/html");
+          responseHeaders.set("Content-Type", "text/html; charset=utf-8");
 
           resolve(
             new Response(createReadableStreamFromReadable(body), {

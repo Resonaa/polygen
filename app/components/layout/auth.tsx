@@ -37,14 +37,14 @@ export default function Auth() {
 
   const title = t("auth." + type);
 
-  const fetcher = useFetcher<typeof action>();
+  const { data, state, Form } = useFetcher<typeof action>();
 
   const [captcha, setCaptcha] = useState(0);
   const changeCaptcha = () => setCaptcha(x => x + 1);
 
   useEffect(() => {
     changeCaptcha();
-  }, [fetcher.data]);
+  }, [data]);
 
   return (
     <>
@@ -79,9 +79,9 @@ export default function Auth() {
           <ModalHeader>{title}</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={4}>
-            <fetcher.Form method="post" action={`/auth/${type}`}>
+            <Form method="post" action={`/auth/${type}`}>
               <Stack spacing={4}>
-                <FormControl isInvalid={!!fetcher.data?.username}>
+                <FormControl isInvalid={!!data?.username}>
                   <FormLabel>{t("auth.username")}</FormLabel>
                   <InputGroup>
                     <InputLeftElement>
@@ -96,14 +96,12 @@ export default function Auth() {
                       required
                     />
                   </InputGroup>
-                  {fetcher.data?.username ? (
-                    <FormErrorMessage>
-                      {t(fetcher.data.username)}
-                    </FormErrorMessage>
+                  {data?.username ? (
+                    <FormErrorMessage>{t(data.username)}</FormErrorMessage>
                   ) : null}
                 </FormControl>
 
-                <FormControl isInvalid={!!fetcher.data?.password}>
+                <FormControl isInvalid={!!data?.password}>
                   <FormLabel>{t("auth.password")}</FormLabel>
                   <InputGroup>
                     <InputLeftElement>
@@ -121,16 +119,14 @@ export default function Auth() {
                       type="password"
                     />
                   </InputGroup>
-                  {fetcher.data?.password ? (
-                    <FormErrorMessage>
-                      {t(fetcher.data.password)}
-                    </FormErrorMessage>
+                  {data?.password ? (
+                    <FormErrorMessage>{t(data.password)}</FormErrorMessage>
                   ) : null}
                 </FormControl>
 
                 {type === "register" ? (
                   <>
-                    <FormControl isInvalid={!!fetcher.data?.retypePassword}>
+                    <FormControl isInvalid={!!data?.retypePassword}>
                       <FormLabel>{t("auth.retype-password")}</FormLabel>
                       <InputGroup>
                         <InputLeftElement>
@@ -146,14 +142,14 @@ export default function Auth() {
                           type="password"
                         />
                       </InputGroup>
-                      {fetcher.data?.retypePassword ? (
+                      {data?.retypePassword ? (
                         <FormErrorMessage>
-                          {t(fetcher.data.retypePassword)}
+                          {t(data.retypePassword)}
                         </FormErrorMessage>
                       ) : null}
                     </FormControl>
 
-                    <FormControl isInvalid={!!fetcher.data?.captcha}>
+                    <FormControl isInvalid={!!data?.captcha}>
                       <FormLabel>{t("auth.captcha")}</FormLabel>
                       <HStack alignItems="flex-start">
                         <Box w="100%">
@@ -169,9 +165,9 @@ export default function Auth() {
                               required
                             />
                           </InputGroup>
-                          {fetcher.data?.captcha ? (
+                          {data?.captcha ? (
                             <FormErrorMessage>
-                              {t(fetcher.data.captcha)}
+                              {t(data.captcha)}
                             </FormErrorMessage>
                           ) : null}
                         </Box>
@@ -191,7 +187,7 @@ export default function Auth() {
                 <Button
                   mt={1}
                   colorScheme="blue"
-                  isLoading={fetcher.state === "submitting"}
+                  isLoading={state === "submitting"}
                   size="lg"
                   type="submit"
                 >
@@ -212,7 +208,7 @@ export default function Auth() {
                   </Link>
                 </Text>
               </Stack>
-            </fetcher.Form>
+            </Form>
           </ModalBody>
         </ModalContent>
       </Modal>

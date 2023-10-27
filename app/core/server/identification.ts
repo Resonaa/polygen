@@ -1,6 +1,5 @@
-import invariant from "tiny-invariant";
-
 import type { ServerSocket } from "~/core/types";
+import { SESSION_SECRET } from "~/env.server";
 import { getUser } from "~/models/user.server";
 import { sessionStorage, USER_SESSION_KEY } from "~/session.server";
 
@@ -11,12 +10,8 @@ export async function identify(socket: ServerSocket) {
     return null;
   }
 
-  const secret = process.env.SESSION_SECRET;
-
-  invariant(secret);
-
-  if (cookie.startsWith(secret)) {
-    return cookie.substring(secret.length);
+  if (cookie.startsWith(SESSION_SECRET)) {
+    return cookie.substring(SESSION_SECRET.length);
   }
 
   const username = (await sessionStorage.getSession(cookie)).get(

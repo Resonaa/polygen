@@ -71,7 +71,7 @@ export function RoomInfo({
     return (
       <List.Content>
         <strong>{translations[item]}</strong>
-        <div
+        <button
           title={canVote ? "进入投票" : "旁观玩家无法投票"}
           className={clsx(
             canVote && "cursor-pointer hover:underline",
@@ -80,7 +80,7 @@ export function RoomInfo({
           onClick={canVote ? () => setType(item) : undefined}
         >
           {voteData?.ans[item]}
-        </div>
+        </button>
       </List.Content>
     );
   }
@@ -97,13 +97,13 @@ export function RoomInfo({
           <List.Icon name="hashtag" inverted />
           <List.Content>
             <strong>名称</strong>
-            <div
+            <button
               title="复制链接"
               className="cursor-pointer hover:underline float-right"
               onClick={copyLink}
             >
               {rid}
-            </div>
+            </button>
           </List.Content>
         </List.Item>
 

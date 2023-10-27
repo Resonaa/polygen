@@ -17,9 +17,9 @@ export interface IKeys {
 export type IColor = number;
 
 export enum Controls {
-  Keyboard = "键盘",
-  Touch = "触控",
-  Auto = "自动适配"
+  Keyboard = "Keyboard",
+  Touch = "Touch",
+  Auto = "Auto"
 }
 
 export interface ISettings {
@@ -47,7 +47,7 @@ type AsObject<T> = T extends object ? T : never;
 function merge<Schema extends object>(from: Schema, to: DeepPartial<Schema>) {
   const target: DeepPartial<Schema> = {};
 
-  for (const key in Object.keys(from)) {
+  for (const key of Object.keys(from)) {
     const prop = key as keyof Schema;
 
     if (!Object.hasOwn(to, prop)) {

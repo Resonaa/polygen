@@ -16,12 +16,12 @@ import {
   Tooltip,
   Tr
 } from "@chakra-ui/react";
+import { useTranslation } from "react-i18next";
 import type { IconType } from "react-icons";
 import { FaTachometerAlt } from "react-icons/fa";
 import { FaCrown, FaMap } from "react-icons/fa6";
 
 import type { MaxVotedItems, VoteItem } from "~/core/server/vote";
-import { translations } from "~/core/server/vote";
 import { useOptionalUser } from "~/utils";
 
 import UserTag from "../community/userTag";
@@ -47,7 +47,7 @@ function RoomProperty({
 }) {
   return (
     <Tooltip label={description}>
-      <Tag borderRadius="full" colorScheme={color}>
+      <Tag colorScheme={color}>
         <TagLeftIcon as={icon} boxSize={3} />
         <TagLabel>{label}</TagLabel>
       </Tag>
@@ -66,8 +66,19 @@ function VotedRoomProperty<T extends VoteItem>({
   color: string;
   item: T;
 }) {
-  const label = data.join("/");
-  const description = `${translations[item]}：${label}`;
+  const { t } = useTranslation();
+
+  const label = data
+    .map(s => {
+      if (typeof s === "number") {
+        return s.toString();
+      } else {
+        return t(`game.vote-value-${s.toLowerCase()}`);
+      }
+    })
+    .join("/");
+
+  const description = `${t("game.vote-item-" + item)}: ${label}`;
 
   return (
     <RoomProperty
@@ -81,6 +92,7 @@ function VotedRoomProperty<T extends VoteItem>({
 
 function Room({ id, ongoing, players, rated, votes }: RoomProps) {
   const user = useOptionalUser();
+  const { t } = useTranslation();
 
   return (
     <Button
@@ -91,7 +103,7 @@ function Room({ id, ongoing, players, rated, votes }: RoomProps) {
       onClick={
         user ? () => window.open(`/game/${encodeURIComponent(id)}`) : undefined
       }
-      title={user ? undefined : "登录后加入"}
+      title={user ? undefined : t("game.join-after-login")}
       variant="ghost"
     >
       <Td>{id}</Td>
@@ -101,7 +113,7 @@ function Room({ id, ongoing, players, rated, votes }: RoomProps) {
             icon={StarIcon}
             color="green"
             label="Rated"
-            description="计入排名"
+            description={t("game.rated")}
           />
         ) : null}
         <VotedRoomProperty
@@ -131,22 +143,24 @@ function Room({ id, ongoing, players, rated, votes }: RoomProps) {
         </Box>
       </Td>
       <Td color={ongoing ? "blue.400" : "green.400"}>
-        {ongoing ? "游戏中" : "等待中"}
+        {ongoing ? t("game.playing") : t("game.waiting")}
       </Td>
     </Button>
   );
 }
 
 export default function RoomList({ rooms }: { rooms: RoomProps[] }) {
+  const { t } = useTranslation();
+
   return (
     <TableContainer w="100%">
       <Table>
         <Thead>
           <Tr>
-            <Th fontSize="sm">名称</Th>
-            <Th fontSize="sm">属性</Th>
-            <Th fontSize="sm">玩家</Th>
-            <Th fontSize="sm">状态</Th>
+            <Th fontSize="sm">{t("game.id")}</Th>
+            <Th fontSize="sm">{t("game.properties")}</Th>
+            <Th fontSize="sm">{t("game.players")}</Th>
+            <Th fontSize="sm">{t("game.status")}</Th>
           </Tr>
         </Thead>
         <Tbody>
