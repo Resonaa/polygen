@@ -12,9 +12,9 @@ import {
 } from "~/components/community";
 import Layout from "~/components/layout";
 import { formatStar } from "~/core/client/utils";
+import { useOptionalUser } from "~/hooks/loader";
 import { rankList } from "~/models/star.server";
 import { requireOptionalUser } from "~/session.server";
-import { useOptionalUser } from "~/utils";
 
 export const meta: MetaFunction = () => [{ title: "排行榜 - polygen" }];
 

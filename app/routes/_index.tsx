@@ -13,12 +13,13 @@ import Announcements from "~/components/community/announcements";
 import Countdowns from "~/components/community/countdowns";
 import Posts from "~/components/community/posts";
 import RecentComments from "~/components/community/recentComments";
+import { useOptionalUser } from "~/hooks/loader";
+import { useRevalidationInterval } from "~/hooks/revalidator";
 import { getLocale, getT } from "~/i18next.server";
 import { getAnnouncements } from "~/models/announcement.server";
 import { getComments } from "~/models/comment.server";
 import { createPost, getPosts } from "~/models/post.server";
 import { requireUser } from "~/session.server";
-import { useOptionalUser } from "~/utils";
 import { validateAddPostFormData } from "~/validators/community.server";
 
 import Layout from "../components/layout/layout";
@@ -60,6 +61,8 @@ export default function Index() {
     useLoaderData<typeof loader>();
 
   const user = useOptionalUser();
+
+  useRevalidationInterval(1000 * 60);
 
   return (
     <Layout>

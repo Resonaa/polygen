@@ -20,13 +20,13 @@ import { useRef } from "react";
 import { useTranslation } from "react-i18next";
 
 import Access, { access } from "~/access";
+import { formatDate, useRelativeDateFormatter } from "~/hooks/datetime";
+import { useOptionalUser } from "~/hooks/loader";
 import type { Comment as CommentType } from "~/models/comment.server";
-import { useOptionalUser } from "~/utils";
 
 import TextRenderer from "./textRenderer";
 import UserAvatar from "./userAvatar";
 import UserLink from "./userLink";
-import { formatDate, useRelativeDateFormatter } from "./utils";
 
 export type CommentProps = Pick<CommentType, "id" | "username" | "content"> & {
   createdAt: string;

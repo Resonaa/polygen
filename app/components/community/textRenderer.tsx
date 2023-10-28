@@ -23,7 +23,6 @@ export default function TextRenderer<T extends RenderedTextProps>({
         [rehypeKatex, { output: "html", throwOnError: false }],
         [rehypeHighlight, { ignoreMissing: true }]
       ]}
-      skipHtml
       {...props}
     >
       {content}

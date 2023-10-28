@@ -9,7 +9,7 @@ import type {
 } from "~/core/server/vote";
 import { translations, voteItems } from "~/core/server/vote";
 import type { ClientSocket } from "~/core/types";
-import { useUser } from "~/utils";
+import { useUser } from "~/hooks/loader";
 
 export function Vote({
   client,

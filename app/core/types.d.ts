@@ -55,8 +55,7 @@ interface ClientToServerEvents {
 }
 
 interface SocketData {
-  username: string;
-  rid: string;
+  username: string | null;
 }
 
 type Server = ServerType<

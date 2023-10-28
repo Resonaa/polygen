@@ -21,18 +21,15 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import Access, { access } from "~/access";
+import { formatDate, useRelativeDateFormatter } from "~/hooks/datetime";
+import { useOptionalUser } from "~/hooks/loader";
 import type { Post as PostType } from "~/models/post.server";
-import { useOptionalUser } from "~/utils";
 
 import Editor from "./editor";
 import TextRenderer from "./textRenderer";
 import UserAvatar from "./userAvatar";
 import UserLink from "./userLink";
-import {
-  formatDate,
-  formatLargeNumber,
-  useRelativeDateFormatter
-} from "./utils";
+import { formatLargeNumber } from "./utils";
 
 export type PostProps = Pick<
   PostType,

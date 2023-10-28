@@ -2,12 +2,12 @@ import { Box, Center, Heading, HStack, Text, VStack } from "@chakra-ui/react";
 import { Link } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
 
+import { useRelativeDateFormatter } from "~/hooks/datetime";
 import type { Comment } from "~/models/comment.server";
 
 import type { CommentProps } from "./comment";
 import TextRenderer from "./textRenderer";
 import UserLink from "./userLink";
-import { useRelativeDateFormatter } from "./utils";
 
 type RecentCommentProps = CommentProps & {
   parentId: Comment["parentId"];

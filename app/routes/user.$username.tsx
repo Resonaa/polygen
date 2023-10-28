@@ -31,6 +31,7 @@ import Access from "~/access";
 import { formatDate, relativeDate, Star } from "~/components/community";
 import Layout from "~/components/layout";
 import { formatStar } from "~/core/client/utils";
+import { useOptionalUser } from "~/hooks/loader";
 import { getPostsByUsername } from "~/models/post.server";
 import {
   getStats,
@@ -40,7 +41,6 @@ import {
 } from "~/models/user.server";
 import { badRequest, notFound } from "~/reponses.server";
 import { requireUser } from "~/session.server";
-import { useOptionalUser } from "~/utils";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   const username = String(params.username);

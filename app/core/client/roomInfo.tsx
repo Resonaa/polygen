@@ -10,7 +10,8 @@ import type { LandColor } from "~/core/server/game/land";
 import type { MaxVotedItems, VoteData, VoteItem } from "~/core/server/vote";
 import { translations } from "~/core/server/vote";
 import type { ClientSocket, Patch } from "~/core/types";
-import { numberColorToString, useUser } from "~/utils";
+import { useUser } from "~/hooks/loader";
+import { numberColorToString } from "~/utils";
 
 import { getSettings, Settings } from "../client/settings";
 

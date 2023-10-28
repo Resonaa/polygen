@@ -13,7 +13,7 @@ import { useEffect, useState } from "react";
 import { registerClientSocket } from "~/core/client";
 import { getMinReadyPlayerCount } from "~/core/server/game/utils";
 import type { ClientSocket } from "~/core/types";
-import { useUser } from "~/utils";
+import { useUser } from "~/hooks/loader";
 
 import UserTag from "../community/userTag";
 

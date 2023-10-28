@@ -20,7 +20,7 @@ import { useTranslation } from "react-i18next";
 import type { IconType } from "react-icons";
 import { FaCrown, FaDove, FaHome, FaPaste, FaTrophy } from "react-icons/fa";
 
-import { useOptionalUser } from "~/utils";
+import { useOptionalUser } from "~/hooks/loader";
 
 import Auth from "./auth";
 import ColorModeToggle from "./colorModeToggle";

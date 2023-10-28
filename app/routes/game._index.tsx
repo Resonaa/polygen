@@ -6,6 +6,7 @@ import { useLoaderData } from "@remix-run/react";
 import RoomList from "~/components/game/roomList";
 import Layout from "~/components/layout/layout";
 import { roomData } from "~/core/server/room";
+import { useRevalidationInterval } from "~/hooks/revalidator";
 import { getT } from "~/i18next.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -22,6 +23,8 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => [
 
 export default function Index() {
   const { rooms } = useLoaderData<typeof loader>();
+
+  useRevalidationInterval(5000);
 
   return (
     <Layout>

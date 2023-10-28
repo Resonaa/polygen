@@ -18,10 +18,10 @@ import {
 } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
 
+import { formatDate, useRelativeDateFormatter } from "~/hooks/datetime";
 import type { Announcement as AnnouncementType } from "~/models/announcement.server";
 
 import TextRenderer from "./textRenderer";
-import { formatDate, useRelativeDateFormatter } from "./utils";
 
 type AnnouncementProps = Pick<
   AnnouncementType,

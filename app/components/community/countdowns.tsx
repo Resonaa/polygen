@@ -1,7 +1,7 @@
 import { Center, Heading, Text, Tooltip, VStack } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
 
-import { useServerTime } from "~/utils";
+import { useServerTime } from "~/hooks/loader";
 
 const countDowns = [{ date: "2024-02-10", name: "polygen-public-preview" }];
 

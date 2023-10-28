@@ -12,12 +12,13 @@ import AddComment from "~/components/community/addComment";
 import Comments from "~/components/community/comments";
 import Post from "~/components/community/post";
 import Layout from "~/components/layout/layout";
+import { useOptionalUser } from "~/hooks/loader";
+import { useRevalidationInterval } from "~/hooks/revalidator";
 import { getT } from "~/i18next.server";
 import { createComment, getComments } from "~/models/comment.server";
 import { getPost } from "~/models/post.server";
 import { badRequest, notFound } from "~/reponses.server";
 import { requireUser } from "~/session.server";
-import { useOptionalUser } from "~/utils";
 import {
   validateAddCommentFormData,
   validateGetPostParams
@@ -71,6 +72,8 @@ export default function PostId() {
   const user = useOptionalUser();
 
   const parentId = post.id;
+
+  useRevalidationInterval(1000 * 60);
 
   return (
     <Layout>

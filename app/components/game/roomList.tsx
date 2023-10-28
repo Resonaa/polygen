@@ -22,7 +22,7 @@ import { FaTachometerAlt } from "react-icons/fa";
 import { FaCrown, FaMap } from "react-icons/fa6";
 
 import type { MaxVotedItems, VoteItem } from "~/core/server/vote";
-import { useOptionalUser } from "~/utils";
+import { useOptionalUser } from "~/hooks/loader";
 
 import UserTag from "../community/userTag";
 

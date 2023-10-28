@@ -16,7 +16,7 @@ import { useTranslation } from "react-i18next";
 import { FaSignOutAlt } from "react-icons/fa";
 import { FaUser } from "react-icons/fa6";
 
-import { useUser } from "~/utils";
+import { useUser } from "~/hooks/loader";
 
 export function DropdownRightIcon({ isOpen }: { isOpen: boolean }) {
   return (

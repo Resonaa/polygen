@@ -4,8 +4,13 @@ import { RoomManager, SocketRoom } from "~/core/server/room";
 import type { Server } from "~/core/types";
 
 export function setServer(server: Server) {
-  server.on("connection", async socket => {
-    const username = await identify(socket);
+  server.use(async (socket, next) => {
+    socket.data.username = await identify(socket);
+    next();
+  });
+
+  server.on("connection", socket => {
+    const username = socket.data.username;
 
     if (!username) {
       socket.disconnect();
@@ -22,10 +27,10 @@ export function setServer(server: Server) {
     const rm = new RoomManager(server);
 
     socket
-      .on("joinRoom", rid => {
+      .on("joinRoom", async rid => {
         server.in(SocketRoom.usernameRid(username, rid)).disconnectSockets();
 
-        rm.leave(username);
+        await rm.leave(username);
 
         socket.join(SocketRoom.rid(rid));
         socket.join(SocketRoom.usernameRid(username, rid));
