@@ -8,6 +8,7 @@ import {
 } from "@chakra-ui/react";
 import type { LinksFunction, LoaderFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
+import type { ShouldRevalidateFunctionArgs } from "@remix-run/react";
 import {
   isRouteErrorResponse,
   Links,
@@ -38,9 +39,27 @@ export async function loader({ request }: LoaderFunctionArgs) {
   return json({
     user: await requireOptionalUser(request, Access.Basic),
     time: Date.now(),
-    cookies: request.headers.get("Cookie") ?? "",
+    cookies: request.headers.get("Cookie")?.replace(/__session.*?;/, "") ?? "",
     locale: await getLocale(request)
   });
+}
+
+export function shouldRevalidate({
+  defaultShouldRevalidate,
+  formAction,
+  currentUrl
+}: ShouldRevalidateFunctionArgs) {
+  // fetching room data
+  if (currentUrl.pathname === "/game") {
+    return false;
+  }
+
+  // changing language
+  if (!formAction) {
+    return false;
+  }
+
+  return defaultShouldRevalidate;
 }
 
 const COLOR_MODE_KEY = "chakra-ui-color-mode";
@@ -68,7 +87,7 @@ function Document({
   const loaderData = useLoaderData<typeof loader>();
   const defaultColorMode = useColorModePreference() ?? "light";
 
-  let cookies = loaderData?.cookies;
+  let cookies = loaderData.cookies;
 
   if (typeof document !== "undefined") {
     cookies = document.cookie;
@@ -86,7 +105,7 @@ function Document({
     return color;
   }, [cookies]);
 
-  const locale = loaderData?.locale ?? "en";
+  const locale = loaderData.locale;
   const { i18n } = useTranslation();
 
   return (

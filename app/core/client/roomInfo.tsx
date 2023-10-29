@@ -61,11 +61,8 @@ export function RoomInfo({
     );
   }, [client]);
 
-  const canVote = !(
-    teamData &&
-    teamData.some(
-      ([id, players]) => id === 0 && players.includes(user.username)
-    )
+  const canVote = !teamData.some(
+    ([id, players]) => id === 0 && players.includes(user.username)
   );
 
   function VoteEntry({ item }: { item: VoteItem }) {

@@ -1,15 +1,18 @@
-import type { ActionFunctionArgs } from "@remix-run/node";
+import type { ActionFunctionArgs, TypedResponse } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 
 import { createUser, getUser } from "~/models/user.server";
 import { createUserSession, verifyCaptcha } from "~/session.server";
 import { validateRegisterFormData } from "~/validators/auth.server";
+import type { ErrorType } from "~/validators/utils.server";
 
-export async function loader() {
+export function loader() {
   return redirect("/");
 }
 
-export async function action({ request }: ActionFunctionArgs) {
+type R = Promise<TypedResponse<ErrorType<typeof validateRegisterFormData>>>;
+
+export async function action({ request }: ActionFunctionArgs): R {
   const data = await request.formData();
   const res = validateRegisterFormData(data);
 

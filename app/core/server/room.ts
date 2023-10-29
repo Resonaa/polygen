@@ -235,7 +235,7 @@ export class Room {
 
     for (const player of this.gamingPlayers) {
       const color = this.playerToColor(player);
-      const team = this.gameTeams.get(color) as TeamId;
+      const team = this.gameTeams.get(color)!;
 
       if (winner === undefined) {
         winner = team;
@@ -435,7 +435,7 @@ export class Room {
         if (
           land.color === 0 ||
           !this.colors.has(land.color) ||
-          !this.gamingPlayers.has(this.colors.get(land.color) as string)
+          !this.gamingPlayers.has(this.colors.get(land.color)!)
         ) {
           continue;
         }
@@ -452,11 +452,11 @@ export class Room {
     const teamData = new Map<TeamId, [number, number]>();
 
     for (const [color, [land, army]] of data) {
-      const username = this.colors.get(color) as string;
-      const star = this.stars.get(username)?.star as number;
+      const username = this.colors.get(color)!;
+      const star = this.stars.get(username)!.star;
       ans.push([star, color, username, land, army]);
 
-      const team = this.gameTeams.get(color) as number;
+      const team = this.gameTeams.get(color)!;
       const datum = teamData.get(team);
       if (!datum) {
         teamData.set(team, [land, army]);
@@ -466,19 +466,19 @@ export class Room {
     }
 
     ans.sort((a, b) => {
-      const teamA = this.gameTeams.get(a[1]) as TeamId,
-        teamB = this.gameTeams.get(b[1]) as TeamId;
+      const teamA = this.gameTeams.get(a[1])!,
+        teamB = this.gameTeams.get(b[1])!;
       if (teamA !== teamB) {
-        const dataA = teamData.get(teamA) as [number, number],
-          dataB = teamData.get(teamB) as [number, number];
+        const dataA = teamData.get(teamA)!,
+          dataB = teamData.get(teamB)!;
         return dataA[1] !== dataB[1]
           ? dataB[1] - dataA[1]
           : dataB[0] !== dataA[0]
           ? dataB[0] - dataA[0]
           : teamA - teamB;
       } else {
-        const dataA = data.get(a[1]) as [number, number],
-          dataB = data.get(b[1]) as [number, number];
+        const dataA = data.get(a[1])!,
+          dataB = data.get(b[1])!;
         return dataA[1] !== dataB[1]
           ? dataB[1] - dataA[1]
           : dataB[0] !== dataA[0]
@@ -495,10 +495,10 @@ export class Room {
       let lastTeam = 0;
       for (let i = 0; i < ans.length; i++) {
         const color = ans[i][1];
-        const team = this.gameTeams.get(color) as TeamId;
+        const team = this.gameTeams.get(color)!;
         if (team !== lastTeam) {
           lastTeam = team;
-          const [land, army] = teamData.get(team) as [number, number];
+          const [land, army] = teamData.get(team)!;
           ans.splice(i, 0, [null, -1, `Team ${team}`, land, army]);
         }
       }
@@ -576,7 +576,7 @@ export class RoomManager {
             turns: room.turns
           });
         room.playerMaps.set(player, maybeMap);
-        const team = room.gameTeams.get(myColor) as TeamId;
+        const team = room.gameTeams.get(myColor)!;
         const index = room.ranks.indexOf(team);
         if (index !== -1) {
           room.ranks.splice(index, 1);
@@ -767,7 +767,7 @@ export class RoomManager {
       return;
     }
 
-    const team = room.gameTeams.get(deadColor) as TeamId;
+    const team = room.gameTeams.get(deadColor)!;
     let teamDied = true;
     for (const [color] of room.colors) {
       if (color !== deadColor && room.gameTeams.get(color) === team) {
@@ -882,23 +882,23 @@ export class RoomManager {
       room.ranks.reverse();
 
       const data = room.ranks.map(teamId =>
-        (room.teamsInGame.get(teamId) as string[]).map(username =>
-          rating(room.stars.get(username) as Star)
-        )
+        room.teamsInGame
+          .get(teamId)!
+          .map(username => rating(room.stars.get(username)))
       );
 
       const res = rate(data);
 
       for (const [index, team] of res.entries()) {
-        for (const [userIndex, username] of (
-          room.teamsInGame.get(room.ranks[index]) as string[]
-        ).entries()) {
+        for (const [userIndex, username] of room.teamsInGame
+          .get(room.ranks[index])!
+          .entries()) {
           await updateStar(username, team[userIndex].mu, team[userIndex].sigma);
         }
       }
     }
 
-    const winners = room.teamsInGame.get(winner) as string[];
+    const winners = room.teamsInGame.get(winner)!;
 
     this.server.to(SocketRoom.rid(room.id)).emit("win", winners.join(", "));
     this.server.to(SocketRoom.rid(room.id)).emit(

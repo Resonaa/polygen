@@ -45,7 +45,7 @@ export function setServer(server: Server) {
           server.emit("message", { type, content, sender: username });
         } else if (type === MessageType.Room) {
           rm.roomMessage(username, content);
-        } else if (type === MessageType.Team) {
+        } else {
           rm.teamMessage(username, content);
         }
       })

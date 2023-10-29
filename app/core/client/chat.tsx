@@ -11,7 +11,9 @@ export function Chat({ client }: { client?: ClientSocket }) {
     const [content, setContent] = useState("");
 
     const handleSubmit = () => {
-      if (content.length <= 0 || content.length > 616) return;
+      if (content.length <= 0 || content.length > 616) {
+        return;
+      }
 
       client?.emit("message", { type, content });
 
@@ -21,7 +23,9 @@ export function Chat({ client }: { client?: ClientSocket }) {
     const handleEnter = (e: KeyboardEvent) => {
       const input = document.querySelector("input");
 
-      if (!input) return;
+      if (!input) {
+        return;
+      }
 
       if (
         (e.key === "ArrowUp" || e.key === "ArrowDown") &&
@@ -43,7 +47,9 @@ export function Chat({ client }: { client?: ClientSocket }) {
         if (document.activeElement === input) {
           setTimeout(() => input.blur(), 100);
           handleSubmit();
-        } else input.focus();
+        } else {
+          input.focus();
+        }
       }
     };
 

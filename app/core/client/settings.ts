@@ -116,10 +116,14 @@ export class Settings {
 export const SETTINGS_KEY = "settings";
 
 export function getSettings() {
-  const s = localStorage.getItem(SETTINGS_KEY) as string;
+  const s = localStorage.getItem(SETTINGS_KEY)!;
 
   try {
-    return new Settings(JSON.parse(LZString.decompressFromUTF16(s))).merge();
+    const partial = JSON.parse(
+      LZString.decompressFromUTF16(s)
+    ) as DeepPartial<ISettings>;
+
+    return new Settings(partial).merge();
   } catch {
     return new Settings({}).merge();
   }

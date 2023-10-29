@@ -7,9 +7,13 @@ import { MessageType } from "~/core/server/message";
 import type { ClientSocket } from "~/core/types";
 
 export function getColorByMessageType(type: MessageType) {
-  if (type === MessageType.World) return "green";
-  else if (type === MessageType.Room) return "blue";
-  else return "salmon";
+  if (type === MessageType.World) {
+    return "green";
+  } else if (type === MessageType.Room) {
+    return "blue";
+  } else {
+    return "salmon";
+  }
 }
 
 function GameMessage({
@@ -63,17 +67,21 @@ export function Messages({ client }: { client?: ClientSocket }) {
   };
 
   useEffect(() => {
-    if (delta <= 80) scrollDown();
-    else setNewCount(newCount => newCount + 1);
+    if (delta <= 80) {
+      scrollDown();
+    } else {
+      setNewCount(newCount => newCount + 1);
+    }
   }, [delta, messages]);
 
   const updateMessageList = (content: JSX.Element) => {
-    const messages = document.getElementsByClassName("messages")[0];
+    const messages = document.getElementsByClassName("messages").item(0);
 
-    if (messages)
+    if (messages) {
       setDelta(
         messages.scrollHeight - messages.scrollTop - messages.clientHeight
       );
+    }
 
     setPreviousTime(previousTime => {
       const curTime = Date.now(),

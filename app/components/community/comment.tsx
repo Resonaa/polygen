@@ -53,8 +53,8 @@ export default function Comment({
   const { t } = useTranslation();
 
   return (
-    <VStack align="normal" w="100%" spacing={2}>
-      <Flex role="group">
+    <VStack align="normal" w="100%" role="group" spacing={2}>
+      <Flex>
         <Flex align="center" wrap="wrap" flex={1} gap={3}>
           <UserAvatar username={username} />
 

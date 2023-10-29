@@ -7,7 +7,7 @@ import { badRequest } from "~/reponses.server";
 import { requireOptionalUser } from "~/session.server";
 import { validateGetPostPageFormData } from "~/validators/community.server";
 
-export async function loader() {
+export function loader() {
   return redirect("/");
 }
 

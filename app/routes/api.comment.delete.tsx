@@ -6,7 +6,7 @@ import { deleteComment, getComment } from "~/models/comment.server";
 import { requireUser } from "~/session.server";
 import { validateDeleteCommentFormData } from "~/validators/community.server";
 
-export async function loader() {
+export function loader() {
   return redirect("/");
 }
 

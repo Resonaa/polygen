@@ -349,7 +349,7 @@ function generatePlotMap(playerCount: number, mode: MapMode): Map {
   homes = _.shuffle(homes);
 
   for (let i = 1; i <= playerCount; i++) {
-    const pos = homes.shift() as Pos;
+    const pos = homes.shift()!;
     map.get(pos).color = i;
     map.get(pos).type = LandType.General;
     map.get(pos).amount = 1;

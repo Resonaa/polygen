@@ -91,9 +91,7 @@ export default function Colors() {
   };
 
   const resetToDefault = () =>
-    setCurColorAndSave(
-      Settings.defaultSettings.game.colors.standard[curId as number]
-    );
+    setCurColorAndSave(Settings.defaultSettings.game.colors.standard[curId!]);
 
   return (
     <div>

@@ -1,41 +1,23 @@
-import { useMatches } from "@remix-run/react";
-import { useMemo } from "react";
+import type { LoaderFunction, TypedResponse } from "@remix-run/node";
+import { useRouteLoaderData } from "@remix-run/react";
 
-import type { User } from "~/models/user.server";
+import type { loader } from "~/root";
 
-export function useMatchesData(id: string) {
-  const matchingRoutes = useMatches();
+type LoaderReturn<T extends LoaderFunction> = ReturnType<T> extends Promise<
+  TypedResponse<infer R>
+>
+  ? R
+  : never;
 
-  const route = useMemo(
-    () => matchingRoutes.find(route => route.id === id),
-    [matchingRoutes, id]
-  );
-
-  return route?.data;
-}
-
-function isLoaderData(data: unknown): data is object {
-  return typeof data === "object";
-}
-
-function isUser(user: unknown): user is User {
-  return (
-    typeof user === "object" &&
-    !!user &&
-    "username" in user &&
-    typeof user.username === "string"
-  );
-}
-
-function isServerTime(time: unknown): time is number {
-  return typeof time === "number";
+function isLoaderData(data: unknown): data is LoaderReturn<typeof loader> {
+  return typeof data === "object" && !!data && "user" in data && "time" in data;
 }
 
 export function useOptionalUser() {
-  const data = useMatchesData("root");
+  const data = useRouteLoaderData("root");
 
-  if (isLoaderData(data) && "user" in data && isUser(data.user)) {
-    return data.user as User;
+  if (isLoaderData(data)) {
+    return data.user;
   }
 }
 
@@ -50,9 +32,9 @@ export function useUser() {
 }
 
 export function useServerTime() {
-  const data = useMatchesData("root");
+  const data = useRouteLoaderData("root");
 
-  if (isLoaderData(data) && "time" in data && isServerTime(data.time)) {
+  if (isLoaderData(data)) {
     return new Date(data.time);
   }
 

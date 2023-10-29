@@ -31,9 +31,9 @@ function SocialButton({
         display="inline-flex"
         alignItems="center"
         justifyContent="center"
-        transition="background 0.3s ease"
+        transition="background .3s ease"
         _hover={{
-          bg: useColorModeValue("blackAlpha.200", "whiteAlpha.200")
+          bg: useColorModeValue("blackAlpha.300", "whiteAlpha.300")
         }}
       >
         {children}

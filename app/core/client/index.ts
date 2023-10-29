@@ -18,24 +18,26 @@ export function registerClientSocket(
   });
 
   const canvas = document.querySelector("canvas");
-  if (!canvas) return;
+  if (!canvas) {
+    return;
+  }
 
   const renderer = new Renderer(canvas, backgroundColor);
 
   let halfTag = false;
 
   renderer.handleMove = (from, to) => {
-    client?.emit("move", [from, to, halfTag]);
+    client.emit("move", [from, to, halfTag]);
     halfTag = false;
   };
 
   renderer.handleSplitArmy = () => (halfTag = !halfTag);
 
-  renderer.handleClearMovements = () => client?.emit("clearMovements");
+  renderer.handleClearMovements = () => client.emit("clearMovements");
 
-  renderer.handleUndoMovement = () => client?.emit("undoMovement");
+  renderer.handleUndoMovement = () => client.emit("undoMovement");
 
-  renderer.handleSurrender = () => client?.emit("surrender");
+  renderer.handleSurrender = () => client.emit("surrender");
 
   let gm: Map;
 
@@ -49,7 +51,7 @@ export function registerClientSocket(
       setShowCanvas(false);
     })
     .on("patch", data => {
-      const patch: Patch = JSON.parse(LZString.decompressFromUTF16(data));
+      const patch = JSON.parse(LZString.decompressFromUTF16(data)) as Patch;
       for (const [id, maybeLand] of patch.updates) {
         const y = ((id - 1) % gm.width) + 1,
           x = (id - y) / gm.width + 1;

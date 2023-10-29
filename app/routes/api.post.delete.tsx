@@ -6,7 +6,7 @@ import { deletePost, getPost } from "~/models/post.server";
 import { requireUser } from "~/session.server";
 import { validateDeletePostFormData } from "~/validators/community.server";
 
-export async function loader() {
+export function loader() {
   return redirect("/");
 }
 

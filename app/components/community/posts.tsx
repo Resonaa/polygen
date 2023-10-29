@@ -11,7 +11,10 @@ export default function Posts({ posts }: { posts: PostProps[] }) {
   const [extraPosts, setExtraPosts] = useState<PostProps[]>([]);
 
   const loader = async (page: number) => {
-    const data = await ajax("post", "/api/post/page", { page: page });
+    const data = (await ajax("post", "/api/post/page", {
+      page: page
+    })) as PostProps[];
+
     setExtraPosts(extraPosts => extraPosts.concat(data));
     return data.length === 10;
   };

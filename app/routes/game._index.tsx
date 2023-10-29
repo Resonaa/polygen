@@ -1,6 +1,6 @@
 import { VStack } from "@chakra-ui/react";
-import type { MetaFunction } from "@remix-run/node";
-import { json, LoaderFunctionArgs } from "@remix-run/node";
+import type { MetaFunction, LoaderFunctionArgs } from "@remix-run/node";
+import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 
 import RoomList from "~/components/game/roomList";

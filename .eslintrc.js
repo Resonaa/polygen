@@ -8,8 +8,7 @@ module.exports = {
     ecmaFeatures: {
       jsx: true
     },
-    project: true,
-    tsconfigRootDir: __dirname
+    project: "./tsconfig.json"
   },
 
   env: {
@@ -102,7 +101,7 @@ module.exports = {
       },
       extends: [
         "plugin:@typescript-eslint/recommended",
-        "plugin:@typescript-eslint/stylistic",
+        "plugin:@typescript-eslint/stylistic-type-checked",
         "plugin:import/recommended",
         "plugin:import/typescript",
         "prettier"
@@ -116,7 +115,13 @@ module.exports = {
             "newlines-between": "always"
           }
         ],
-        "import/no-named-as-default-member": "off"
+        "import/no-named-as-default-member": "off",
+        "@typescript-eslint/consistent-type-exports": "error",
+        "@typescript-eslint/consistent-type-imports": "error",
+        "@typescript-eslint/require-await": "error",
+        curly: "error",
+        "no-multiple-empty-lines": ["error", { max: 1 }],
+        "@typescript-eslint/no-unnecessary-condition": "error"
       }
     },
 

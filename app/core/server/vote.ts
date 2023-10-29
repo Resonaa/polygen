@@ -51,19 +51,18 @@ export class VoteManager {
 
   sort() {
     for (const arr of Object.values(this.data)) {
-      arr &&
-        arr.sort(([itemA, a], [itemB, b]) => {
-          if (a.length !== b.length) {
-            return b.length - a.length;
-          } else {
-            return itemA.toString() > itemB.toString() ? 1 : -1;
-          }
-        });
+      arr.sort(([itemA, a], [itemB, b]) => {
+        if (a.length !== b.length) {
+          return b.length - a.length;
+        } else {
+          return itemA.toString() > itemB.toString() ? 1 : -1;
+        }
+      });
     }
 
     for (const key in voteItems) {
       const item = key as VoteItem;
-      if (this.data[item] && this.data[item]?.length) {
+      if (this.data[item]?.length) {
         const items = this.data[item] as ArrElement<
           NonNullable<VoteData[typeof item]>
         >[];
@@ -81,9 +80,10 @@ export class VoteManager {
     let updated = false;
 
     for (const [key, arr] of Object.entries(this.data)) {
-      const valueIndex = arr
-        ? arr.findIndex(([, players]) => players.includes(player))
-        : -1;
+      const valueIndex = arr.findIndex(([, players]) =>
+        players.includes(player)
+      );
+
       if (valueIndex !== -1) {
         const playerId = arr[valueIndex][1].indexOf(player);
         arr[valueIndex][1].splice(playerId, 1);
@@ -142,7 +142,7 @@ export class VoteManager {
 
     for (const [key, value] of Object.entries(this.ans)) {
       const item = _.sample(value) as ArrElement<typeof value>;
-      (sample[key as keyof SampleMaxVotedItems] as typeof item) = item;
+      (sample[key as keyof SampleMaxVotedItems]! as typeof item) = item;
     }
 
     return sample as SampleMaxVotedItems;

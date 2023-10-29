@@ -30,7 +30,7 @@ export async function getStats(username: User["username"]) {
     posts: data?._count.posts,
     comments: data?._count.comments,
     rank: rank?.rank,
-    star: rank?.star?.star
+    star: rank?.star.star
   };
 }
 

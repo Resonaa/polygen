@@ -17,7 +17,10 @@ export default function Comments({
   const [extraComments, setExtraComments] = useState<CommentProps[]>([]);
 
   const loader = async (page: number) => {
-    const data = await ajax("post", "/api/post/comment", { page, parentId });
+    const data = (await ajax("post", "/api/post/comment", {
+      page,
+      parentId
+    })) as CommentProps[];
     setExtraComments(extraComments => extraComments.concat(data));
     return data.length === 10;
   };

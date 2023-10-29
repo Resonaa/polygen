@@ -25,18 +25,14 @@ export async function getSession(request: Request) {
   return await sessionStorage.getSession(cookie);
 }
 
-export async function getUsername(
-  request: Request
-): Promise<User["username"] | undefined> {
+export async function getUsername(request: Request) {
   const session = await getSession(request);
-  return await session.get(USER_SESSION_KEY);
+  return (await session.get(USER_SESSION_KEY)) as User["username"] | undefined;
 }
 
-export async function getCaptcha(
-  request: Request
-): Promise<string | undefined> {
+export async function getCaptcha(request: Request) {
   const session = await getSession(request);
-  return await session.get(CAPTCHA_SESSION_KEY);
+  return (await session.get(CAPTCHA_SESSION_KEY)) as string | undefined;
 }
 
 export async function getUser(request: Request) {

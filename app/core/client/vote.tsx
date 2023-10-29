@@ -36,7 +36,7 @@ export function Vote({
         active={players?.includes(user.username)}
         onClick={() =>
           client?.emit("vote", {
-            item: type as VoteItem,
+            item: type!,
             value
           })
         }
@@ -88,9 +88,7 @@ export function Vote({
                 return <></>;
               }
 
-              const data = voteData.data[type]
-                ? (voteData.data[type] as NonNullable<VoteData[typeof type]>)
-                : [];
+              const data = voteData.data[type] ? voteData.data[type]! : [];
               const others = (
                 voteItems[type] as VoteValue<typeof type>[]
               ).filter(

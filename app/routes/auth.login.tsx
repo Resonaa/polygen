@@ -5,7 +5,7 @@ import { verifyLogin } from "~/models/user.server";
 import { createUserSession } from "~/session.server";
 import { validateLoginFormData } from "~/validators/auth.server";
 
-export async function loader() {
+export function loader() {
   return redirect("/");
 }
 

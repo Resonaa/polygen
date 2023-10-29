@@ -50,7 +50,7 @@ export function safeParseAndFlatten<T>(
   return flattenError(schema.safeParse(toObject(data)));
 }
 
-export type ErrorType<F extends (...args: never) => never> =
+export type ErrorType<F extends (arg: FormData) => void> =
   ReturnType<F> extends
     | {
         success: true;

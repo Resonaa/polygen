@@ -13,7 +13,7 @@ const headers = new Headers({
 
 const baseDir = join(cwd(), "usercontent/avatar");
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export function loader({ params }: LoaderFunctionArgs) {
   const path = join(baseDir, params.username ?? "");
   const stream = createReadStream(path);
   const body = new PassThrough();

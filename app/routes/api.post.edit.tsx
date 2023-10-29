@@ -6,7 +6,7 @@ import { getPost, updatePost } from "~/models/post.server";
 import { requireUser } from "~/session.server";
 import { validateEditPostFormData } from "~/validators/community.server";
 
-export async function loader() {
+export function loader() {
   return redirect("/");
 }
 

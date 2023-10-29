@@ -3,9 +3,10 @@ import { PassThrough } from "node:stream";
 
 import createCache from "@emotion/cache";
 import { CacheProvider } from "@emotion/react";
-import type { EntryContext } from "@remix-run/node";
+import type { DataFunctionArgs, EntryContext } from "@remix-run/node";
 import { createReadableStreamFromReadable } from "@remix-run/node";
 import { RemixServer } from "@remix-run/react";
+import fnv1a from "fnv1a";
 import i18next from "i18next";
 import Backend from "i18next-fs-backend";
 import isbot from "isbot";
@@ -74,7 +75,30 @@ export default async function handleRequest(
   });
 }
 
-export function handleDataRequest(response: Response) {
+function hash(payload: string) {
+  return '"' + fnv1a(payload).toString(36) + '"';
+}
+
+export async function handleDataRequest(
+  response: Response,
+  { request }: DataFunctionArgs
+) {
   response.headers.delete("X-Remix-Response");
-  return response;
+
+  if (!request.url.endsWith("game._index")) {
+    return response;
+  }
+
+  const body = await response.text();
+  const etag = hash(body);
+  response.headers.set("ETag", etag);
+
+  if (request.headers.get("If-None-Match") === etag) {
+    return new Response(null, { status: 304 });
+  } else {
+    return new Response(body, {
+      status: response.status,
+      headers: response.headers
+    });
+  }
 }

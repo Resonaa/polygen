@@ -46,6 +46,7 @@
     "dotenv": "latest",
     "fastify": "latest",
     "fastify-socket.io": "latest",
+    "fnv1a": "latest",
     "framer-motion": "latest",
     "fs-extra": "latest",
     "highlight.js": "latest",
