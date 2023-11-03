@@ -4,7 +4,7 @@ import Backend from "i18next-fs-backend";
 import { RemixI18Next } from "remix-i18next";
 
 import i18n from "~/i18n";
-import { getKeyFromCookies } from "~/root";
+import { getKeyFromCookie } from "~/root";
 
 export const i18next = new RemixI18Next({
   detection: {
@@ -25,7 +25,7 @@ const I18NEXT_KEY = "i18next";
 
 export async function getLocale(request: Request) {
   return (
-    getKeyFromCookies(request.headers.get("Cookie"), I18NEXT_KEY) ??
+    getKeyFromCookie(request.headers.get("Cookie"), I18NEXT_KEY) ??
     (await i18next.getLocale(request))
   );
 }

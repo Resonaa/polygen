@@ -1,5 +1,5 @@
 import { createCookieSessionStorage } from "@remix-run/node";
-import bcrypt from "bcryptjs";
+import { hash, compare } from "bcryptjs";
 
 import { access } from "~/access";
 import { SESSION_SECRET } from "~/env.server";
@@ -112,10 +112,10 @@ export async function logout(request: Request) {
   });
 }
 
-export function hashPassword(password: string) {
-  return bcrypt.hash(password, 10);
+export async function hashPassword(password: string) {
+  return await hash(password, 10);
 }
 
-export function comparePassword(input: string, hash: string) {
-  return bcrypt.compare(input, hash);
+export async function comparePassword(input: string, hash: string) {
+  return await compare(input, hash);
 }

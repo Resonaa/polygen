@@ -11,7 +11,7 @@ export async function ajax(
     body.append(key, String(data[key]));
   }
 
-  const options = { method: method, body };
+  const options = { method, body };
 
   return await (await fetch(url, options)).json();
 }

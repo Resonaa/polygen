@@ -1,8 +1,8 @@
 import { useFetchers, useNavigation } from "@remix-run/react";
-import nProgress from "nprogress";
+import { configure, start, done } from "nprogress";
 import { useEffect } from "react";
 
-nProgress.configure({ showSpinner: false, trickleSpeed: 161 });
+configure({ showSpinner: false, trickleSpeed: 161 });
 
 function useGlobalLoadingState() {
   const navigation = useNavigation();
@@ -24,9 +24,9 @@ export function useNProgress() {
 
   useEffect(() => {
     if (state === "idle") {
-      nProgress.done();
+      done();
     } else {
-      nProgress.start();
+      start();
     }
   }, [state]);
 }

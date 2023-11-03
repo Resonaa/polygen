@@ -12,8 +12,7 @@ import {
   IconButton,
   Text,
   Tooltip,
-  useDisclosure,
-  VStack
+  useDisclosure
 } from "@chakra-ui/react";
 import { useFetcher } from "@remix-run/react";
 import { useRef } from "react";
@@ -53,8 +52,8 @@ export default function Comment({
   const { t } = useTranslation();
 
   return (
-    <VStack align="normal" w="100%" role="group" spacing={2}>
-      <Flex>
+    <Flex direction="column" w="100%" role="group">
+      <Flex mb={2}>
         <Flex align="center" wrap="wrap" flex={1} gap={3}>
           <UserAvatar username={username} />
 
@@ -122,6 +121,6 @@ export default function Comment({
       <Box overflowY="auto" maxH="200px">
         <TextRenderer content={content} />
       </Box>
-    </VStack>
+    </Flex>
   );
 }

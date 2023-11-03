@@ -39,23 +39,17 @@ export async function loader({ request }: LoaderFunctionArgs) {
   return json({
     user: await requireOptionalUser(request, Access.Basic),
     time: Date.now(),
-    cookies: request.headers.get("Cookie")?.replace(/__session.*?;/, "") ?? "",
+    cookie: request.headers.get("Cookie")?.replace(/__session.*?;/, "") ?? "",
     locale: await getLocale(request)
   });
 }
 
 export function shouldRevalidate({
   defaultShouldRevalidate,
-  formAction,
   currentUrl
 }: ShouldRevalidateFunctionArgs) {
   // fetching room data
   if (currentUrl.pathname === "/game") {
-    return false;
-  }
-
-  // changing language
-  if (!formAction) {
     return false;
   }
 
@@ -64,11 +58,11 @@ export function shouldRevalidate({
 
 const COLOR_MODE_KEY = "chakra-ui-color-mode";
 
-export function getKeyFromCookies(
-  cookies: string | undefined | null,
+export function getKeyFromCookie(
+  cookie: string | undefined | null,
   key: string
 ) {
-  return cookies?.match(new RegExp(`(^| )${key}=([^;]+)`))?.at(2);
+  return cookie?.match(new RegExp(`(^| )${key}=([^;]+)`))?.at(2);
 }
 
 function HighlightLink() {
@@ -87,23 +81,13 @@ function Document({
   const loaderData = useLoaderData<typeof loader>();
   const defaultColorMode = useColorModePreference() ?? "light";
 
-  let cookies = loaderData.cookies;
+  const cookie =
+    typeof document === "undefined" ? loaderData.cookie : document.cookie;
 
-  if (typeof document !== "undefined") {
-    cookies = document.cookie;
-  }
-
-  const colorMode = useMemo(() => {
-    let color = getKeyFromCookies(cookies, COLOR_MODE_KEY);
-
-    if (!color) {
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      cookies += ` ${COLOR_MODE_KEY}=${defaultColorMode}`;
-      color = defaultColorMode;
-    }
-
-    return color;
-  }, [cookies]);
+  const colorMode = useMemo(
+    () => getKeyFromCookie(cookie, COLOR_MODE_KEY) ?? defaultColorMode,
+    [cookie, defaultColorMode]
+  );
 
   const locale = loaderData.locale;
   const { i18n } = useTranslation();
@@ -134,7 +118,7 @@ function Document({
         {...(colorMode && { className: `chakra-ui-${colorMode}` })}
       >
         <ChakraProvider
-          colorModeManager={cookieStorageManagerSSR(cookies)}
+          colorModeManager={cookieStorageManagerSSR(cookie)}
           theme={theme}
         >
           {children}

@@ -13,8 +13,7 @@ import {
   Flex,
   IconButton,
   Tooltip,
-  useDisclosure,
-  VStack
+  useDisclosure
 } from "@chakra-ui/react";
 import { Form, Link, useFetcher } from "@remix-run/react";
 import { useEffect, useRef, useState } from "react";
@@ -86,8 +85,8 @@ export default function Post({
   const cancelRef = useRef<HTMLButtonElement>(null);
 
   return (
-    <VStack align="normal" w="100%" role="group" spacing={2}>
-      <Flex>
+    <Flex direction="column" w="100%" role="group">
+      <Flex mb={2}>
         <Flex align="center" wrap="wrap" flex={1} gap={3}>
           <UserAvatar username={username} />
 
@@ -210,6 +209,6 @@ export default function Post({
       ) : (
         <TextRenderer content={content} />
       )}
-    </VStack>
+    </Flex>
   );
 }

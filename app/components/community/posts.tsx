@@ -20,7 +20,7 @@ export default function Posts({ posts }: { posts: PostProps[] }) {
   };
 
   return (
-    <VStack w="100%" spacing={4}>
+    <VStack w="100%" spacing={5}>
       {posts.concat(extraPosts).map(data => (
         <Post key={data.id} linked {...data} />
       ))}

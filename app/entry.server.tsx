@@ -6,13 +6,13 @@ import { CacheProvider } from "@emotion/react";
 import type { DataFunctionArgs, EntryContext } from "@remix-run/node";
 import { createReadableStreamFromReadable } from "@remix-run/node";
 import { RemixServer } from "@remix-run/react";
-import fnv1a from "fnv1a";
 import i18next from "i18next";
 import Backend from "i18next-fs-backend";
 import isbot from "isbot";
 import { renderToPipeableStream } from "react-dom/server";
 import { I18nextProvider, initReactI18next } from "react-i18next";
 
+import hash from "./hash.server";
 import i18n from "./i18n";
 import { getLocale } from "./i18next.server";
 
@@ -75,10 +75,6 @@ export default async function handleRequest(
   });
 }
 
-function hash(payload: string) {
-  return '"' + fnv1a(payload).toString(36) + '"';
-}
-
 export async function handleDataRequest(
   response: Response,
   { request }: DataFunctionArgs
@@ -89,8 +85,8 @@ export async function handleDataRequest(
     return response;
   }
 
-  const body = await response.text();
-  const etag = hash(body);
+  const body = await response.arrayBuffer();
+  const etag = hash(Buffer.from(body));
   response.headers.set("ETag", etag);
 
   if (request.headers.get("If-None-Match") === etag) {

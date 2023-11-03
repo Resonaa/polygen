@@ -53,7 +53,7 @@ export default function RecentComments({
       <Heading mb={2} size="sm">
         {t("community.recent-comments")}
       </Heading>
-      <VStack w="100%" spacing={0}>
+      <VStack w="100%" spacing={1}>
         {comments.map(data => (
           <RecentComment key={data.id} {...data} />
         ))}

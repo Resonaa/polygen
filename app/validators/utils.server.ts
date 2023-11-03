@@ -3,20 +3,12 @@ import type { z } from "zod";
 
 type RawErrorValue = number | boolean | FormDataEntryValue | undefined;
 
-function toObject(data: FormData | Params) {
-  const object: Record<string, RawErrorValue> = {};
-
+function toObject(data: FormData | Params): Record<string, RawErrorValue> {
   if (data instanceof FormData) {
-    for (const [key, value] of data) {
-      object[key] = value;
-    }
+    return Object.fromEntries(data);
   } else {
-    for (const [key, value] of Object.entries(data)) {
-      object[key] = value;
-    }
+    return data;
   }
-
-  return object;
 }
 
 function mapError<Input>(error: z.typeToFlattenedError<Input>["fieldErrors"]) {
