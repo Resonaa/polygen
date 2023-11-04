@@ -1,13 +1,3 @@
-import { Link } from "@remix-run/react";
-
-export function UserLink({ username }: { username: string }) {
-  return (
-    <Link to={`/user/${username}`} className="user">
-      {username}
-    </Link>
-  );
-}
-
 export function formatDate(date: string) {
   const d = new Date(date);
   const year = padZero(d.getFullYear(), 4),

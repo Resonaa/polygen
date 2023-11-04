@@ -86,6 +86,8 @@
     "vote-value-empty": "Empty",
     "vote-value-maze": "Maze",
     "vote-value-plots": "Plots",
-    "vote-item-speed": "Speed"
+    "vote-item-speed": "Speed",
+    "player": "Player",
+    "updated-at": "Updated At"
   }
 }

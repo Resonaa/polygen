@@ -157,10 +157,10 @@ export default function RoomList({ rooms }: { rooms: RoomProps[] }) {
       <Table>
         <Thead>
           <Tr>
-            <Th fontSize="sm">{t("game.id")}</Th>
-            <Th fontSize="sm">{t("game.properties")}</Th>
-            <Th fontSize="sm">{t("game.players")}</Th>
-            <Th fontSize="sm">{t("game.status")}</Th>
+            <Th>{t("game.id")}</Th>
+            <Th>{t("game.properties")}</Th>
+            <Th>{t("game.players")}</Th>
+            <Th>{t("game.status")}</Th>
           </Tr>
         </Thead>
         <Tbody>

@@ -46,10 +46,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export function shouldRevalidate({
   defaultShouldRevalidate,
+  formAction,
   currentUrl
 }: ShouldRevalidateFunctionArgs) {
   // fetching room data
-  if (currentUrl.pathname === "/game") {
+  if (currentUrl.pathname === "/game" && !formAction) {
     return false;
   }
 
