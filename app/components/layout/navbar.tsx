@@ -23,8 +23,8 @@ import { FaCrown, FaDove, FaHome, FaPaste, FaTrophy } from "react-icons/fa";
 import { useOptionalUser } from "~/hooks/loader";
 
 import Auth from "./auth";
-import ColorModeToggle from "./colorModeToggle";
 import LocaleToggle from "./localeToggle";
+import ThemeEditor from "./themeEditor";
 import UserDropdown, { DropdownRightIcon } from "./userDropdown";
 
 export default function Navbar() {
@@ -75,8 +75,8 @@ export default function Navbar() {
         </Flex>
 
         <ButtonGroup spacing="13px">
-          <ColorModeToggle />
           <LocaleToggle />
+          <ThemeEditor />
           {user ? <UserDropdown /> : <Auth />}
         </ButtonGroup>
       </Flex>

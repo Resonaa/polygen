@@ -8,7 +8,8 @@
     "description-pastebin": "Create and share pastes",
     "profile": "Profile",
     "settings": "Settings",
-    "logout": "Logout"
+    "logout": "Logout",
+    "theme-editor": "Theme Editor"
   },
   "auth": {
     "login": "Login",

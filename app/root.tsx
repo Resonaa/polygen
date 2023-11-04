@@ -3,9 +3,11 @@
 import {
   ChakraProvider,
   cookieStorageManagerSSR,
-  useColorModePreference,
-  useColorModeValue
+  useColorModePreference
 } from "@chakra-ui/react";
+import mono from "@fontsource-variable/noto-sans-mono/index.css";
+import noto from "@fontsource-variable/noto-sans-sc/index.css";
+import { ThemeEditorProvider } from "@hypertheme-editor/chakra-ui";
 import type { LinksFunction, LoaderFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import type { ShouldRevalidateFunctionArgs } from "@remix-run/react";
@@ -19,8 +21,6 @@ import {
   useLoaderData,
   useRouteError
 } from "@remix-run/react";
-import githubDark from "highlight.js/styles/github-dark.css";
-import github from "highlight.js/styles/github.css";
 import katex from "katex/dist/katex.min.css";
 import type { ReactNode } from "react";
 import { useMemo } from "react";
@@ -33,7 +33,11 @@ import theme from "~/theme/theme";
 
 import { requireOptionalUser } from "./session.server";
 
-export const links: LinksFunction = () => [{ rel: "stylesheet", href: katex }];
+export const links: LinksFunction = () => [
+  { rel: "stylesheet", href: mono },
+  { rel: "stylesheet", href: noto },
+  { rel: "stylesheet", href: katex }
+];
 
 export async function loader({ request }: LoaderFunctionArgs) {
   return json({
@@ -64,10 +68,6 @@ export function getKeyFromCookie(
   key: string
 ) {
   return cookie?.match(new RegExp(`(^| )${key}=([^;]+)`))?.at(2);
-}
-
-function HighlightLink() {
-  return <link rel="stylesheet" href={useColorModeValue(github, githubDark)} />;
 }
 
 function Document({
@@ -122,8 +122,7 @@ function Document({
           colorModeManager={cookieStorageManagerSSR(cookie)}
           theme={theme}
         >
-          {children}
-          <HighlightLink />
+          <ThemeEditorProvider>{children}</ThemeEditorProvider>
         </ChakraProvider>
         <ScrollRestoration />
         <Scripts />

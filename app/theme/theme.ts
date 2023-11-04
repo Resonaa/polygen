@@ -1,6 +1,7 @@
 import { extendTheme } from "@chakra-ui/react";
 
 import Button from "./button";
+import Code from "./code";
 import global from "./global";
 import Input from "./input";
 import Menu from "./menu";
@@ -22,6 +23,12 @@ export default extendTheme({
     Textarea,
     Tooltip,
     Tag,
-    Table
+    Table,
+    Code
+  },
+  fonts: {
+    heading: "'Noto Sans SC Variable', -apple-system, system-ui, sans-serif",
+    body: "'Noto Sans SC Variable', -apple-system, system-ui, sans-serif",
+    mono: "'Noto Sans Mono Variable', Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace"
   }
 });

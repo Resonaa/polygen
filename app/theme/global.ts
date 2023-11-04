@@ -23,5 +23,8 @@ export default {
     boxShadow: "0 0 10px #29d, 0 0 5px #29d",
     opacity: 1.0,
     transform: "rotate(3deg) translate(0px, -4px)"
+  },
+  ".chakra-modal__content-container > div[role='dialog']": {
+    fontFamily: "inherit"
   }
 };
