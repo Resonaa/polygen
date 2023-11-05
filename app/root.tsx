@@ -5,9 +5,10 @@ import {
   cookieStorageManagerSSR,
   useColorModePreference
 } from "@chakra-ui/react";
-import mono from "@fontsource-variable/noto-sans-mono/index.css";
-import noto from "@fontsource-variable/noto-sans-sc/index.css";
+import "@fontsource-variable/noto-sans-mono/index.css";
+import "@fontsource-variable/noto-sans-sc/index.css";
 import { ThemeEditorProvider } from "@hypertheme-editor/chakra-ui";
+import { cssBundleHref } from "@remix-run/css-bundle";
 import type { LinksFunction, LoaderFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import type { ShouldRevalidateFunctionArgs } from "@remix-run/react";
@@ -21,7 +22,8 @@ import {
   useLoaderData,
   useRouteError
 } from "@remix-run/react";
-import katex from "katex/dist/katex.min.css";
+import "katex/dist/katex.min.css";
+import "nprogress/nprogress.css";
 import type { ReactNode } from "react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -33,11 +35,8 @@ import theme from "~/theme/theme";
 
 import { requireOptionalUser } from "./session.server";
 
-export const links: LinksFunction = () => [
-  { rel: "stylesheet", href: mono },
-  { rel: "stylesheet", href: noto },
-  { rel: "stylesheet", href: katex }
-];
+export const links: LinksFunction = () =>
+  cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : [];
 
 export async function loader({ request }: LoaderFunctionArgs) {
   return json({

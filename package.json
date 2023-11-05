@@ -39,6 +39,7 @@
     "@hypertheme-editor/chakra-ui": "0.1.6-rc.0",
     "@mcansh/remix-fastify": "latest",
     "@prisma/client": "latest",
+    "@remix-run/css-bundle": "latest",
     "@remix-run/node": "latest",
     "@remix-run/react": "latest",
     "bcryptjs": "latest",
