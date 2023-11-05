@@ -25,7 +25,7 @@ function RecentComment({
     <VStack align="normal" w="100%" spacing={1}>
       <HStack justifyContent="space-between">
         <UserLink username={username} />
-        <Text color="gray.400" fontSize="sm">
+        <Text color="gray.400" fontSize="xs">
           {relativeDate(createdAt)}
         </Text>
       </HStack>

@@ -60,7 +60,7 @@ export default function Comment({
           <Box>
             <UserLink username={username} />
             <Tooltip label={formatDate(createdAt)} openDelay={500}>
-              <Text color="gray.400" fontSize="sm">
+              <Text color="gray.400" fontSize="xs">
                 {relativeDate(createdAt)}
               </Text>
             </Tooltip>

@@ -21,14 +21,6 @@ export async function getPost(id: Post["id"]) {
 }
 
 export async function getPosts(page: number) {
-  const firstPost = await prisma.post.findFirst({ orderBy: { id: "desc" } });
-  const maxId = firstPost ? firstPost.id : 0;
-
-  await prisma.post.updateMany({
-    where: { id: { gt: maxId - page * 10 } },
-    data: { viewCount: { increment: 1 } }
-  });
-
   return prisma.post.findMany({
     orderBy: { id: "desc" },
     skip: (page - 1) * 10,
@@ -43,17 +35,6 @@ export async function getPostsByUsername(
   username: User["username"],
   page: number
 ) {
-  const firstPost = await prisma.post.findFirst({
-    where: { username },
-    orderBy: { id: "desc" }
-  });
-  const maxId = firstPost?.id ?? 0;
-
-  await prisma.post.updateMany({
-    where: { id: { gt: maxId - page * 10 }, username },
-    data: { viewCount: { increment: 1 } }
-  });
-
   return prisma.post.findMany({
     where: { username },
     orderBy: { id: "desc" },

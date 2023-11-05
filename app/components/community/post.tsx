@@ -92,19 +92,24 @@ export default function Post({
 
           <Box>
             <UserLink username={username} />
-            <Box color="gray.400" fontSize="sm">
+            <Box color="gray.400" fontSize="xs">
               <Tooltip label={formatDate(createdAt)} openDelay={500}>
                 {relativeDate(createdAt)}
               </Tooltip>
-              <span>
-                {" "}
-                · {formatLargeNumber(viewCount)}{" "}
-                {t("community.view", { count: viewCount })} ·{" "}
-              </span>
-              <span>
-                {formatLargeNumber(comments)}{" "}
-                {t("community.comment", { count: comments })}
-              </span>
+              {!linked ? (
+                <span>
+                  {" "}
+                  · {formatLargeNumber(viewCount)}{" "}
+                  {t("community.view", { count: viewCount })}
+                </span>
+              ) : null}
+              {comments ? (
+                <span>
+                  {" · "}
+                  {formatLargeNumber(comments)}{" "}
+                  {t("community.comment", { count: comments })}
+                </span>
+              ) : null}
             </Box>
           </Box>
         </Flex>
