@@ -1,9 +1,5 @@
 import { Divider, VStack } from "@chakra-ui/react";
-import type {
-  ActionFunctionArgs,
-  LoaderFunctionArgs,
-  MetaFunction
-} from "@remix-run/node";
+import type { ActionFunctionArgs, MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 
@@ -15,7 +11,7 @@ import Posts from "~/components/community/posts";
 import RecentComments from "~/components/community/recentComments";
 import { useOptionalUser } from "~/hooks/loader";
 import { useRevalidationInterval } from "~/hooks/revalidator";
-import { getLocale, getT } from "~/i18next.server";
+import { getT } from "~/i18n";
 import { getAnnouncements } from "~/models/announcement.server";
 import { getComments } from "~/models/comment.server";
 import { createPost, getPosts } from "~/models/post.server";
@@ -24,22 +20,18 @@ import { validateAddPostFormData } from "~/validators/community.server";
 
 import Layout from "../components/layout/layout";
 
-export async function loader({ request }: LoaderFunctionArgs) {
-  const lang = await getLocale(request);
-  const t = await getT(request);
-
-  const announcements = await getAnnouncements(lang);
+export async function loader() {
+  const announcements = await getAnnouncements();
   const posts = await getPosts(1);
   const recentComments = await getComments(1);
 
-  const title = `${t("nav.home")} - polygen`;
-
-  return json({ announcements, posts, recentComments, title });
+  return json({ announcements, posts, recentComments });
 }
 
-export const meta: MetaFunction<typeof loader> = ({ data }) => [
-  { title: data?.title }
-];
+export const meta: MetaFunction = ({ matches }) => {
+  const t = getT(matches);
+  return [{ title: `${t("nav.home")} - polygen` }];
+};
 
 export async function action({ request }: ActionFunctionArgs) {
   const { username } = await requireUser(request, Access.Community);

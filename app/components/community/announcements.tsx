@@ -88,7 +88,7 @@ export default function Announcements({
 }: {
   announcements: AnnouncementProps[];
 }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   return (
     <Center flexDir="column">
@@ -96,9 +96,11 @@ export default function Announcements({
         {t("community.announcements")}
       </Heading>
       <VStack spacing={0}>
-        {announcements.map(data => (
-          <Announcement key={data.id} {...data} />
-        ))}
+        {announcements.map(data =>
+          i18n.language === data.lang ? (
+            <Announcement key={data.id} {...data} />
+          ) : null
+        )}
       </VStack>
     </Center>
   );

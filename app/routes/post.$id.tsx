@@ -14,7 +14,7 @@ import Post from "~/components/community/post";
 import Layout from "~/components/layout/layout";
 import { useOptionalUser } from "~/hooks/loader";
 import { useRevalidationInterval } from "~/hooks/revalidator";
-import { getT } from "~/i18next.server";
+import { getT } from "~/i18n";
 import { createComment, getComments } from "~/models/comment.server";
 import { getPost } from "~/models/post.server";
 import { badRequest, notFound } from "~/reponses.server";
@@ -24,9 +24,7 @@ import {
   validateGetPostParams
 } from "~/validators/community.server";
 
-export async function loader({ params, request }: LoaderFunctionArgs) {
-  const t = await getT(request);
-
+export async function loader({ params }: LoaderFunctionArgs) {
   const res = validateGetPostParams(params);
 
   if (!res.success) {
@@ -42,16 +40,19 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 
   const comments = await getComments(1, id);
 
-  const title = `${t("community.post-of", {
-    username: post.username
-  })} - polygen`;
-
-  return json({ post, comments, title });
+  return json({ post, comments });
 }
 
-export const meta: MetaFunction<typeof loader> = ({ data }) => [
-  { title: data?.title }
-];
+export const meta: MetaFunction<typeof loader> = ({ matches, data }) => {
+  const t = getT(matches);
+  return [
+    {
+      title: `${t("community.post-of", {
+        username: data?.post.username
+      })} - polygen`
+    }
+  ];
+};
 
 export async function action({ request }: ActionFunctionArgs) {
   const { username } = await requireUser(request, Access.Community);

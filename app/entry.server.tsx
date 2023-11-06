@@ -81,7 +81,8 @@ export async function handleDataRequest(
 ) {
   response.headers.delete("X-Remix-Response");
 
-  if (!request.url.endsWith("game._index")) {
+  // does not cache root loader
+  if (request.url.endsWith("_data=root")) {
     return response;
   }
 

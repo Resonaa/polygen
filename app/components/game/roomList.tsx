@@ -100,9 +100,7 @@ function Room({ id, ongoing, players, rated, votes }: RoomProps) {
       display="table-row"
       fontWeight="normal"
       cursor={user ? "pointer" : undefined}
-      onClick={
-        user ? () => window.open(`/game/${encodeURIComponent(id)}`) : undefined
-      }
+      onClick={user ? () => open(`/game/${encodeURIComponent(id)}`) : undefined}
       title={user ? undefined : t("game.join-after-login")}
       variant="ghost"
     >

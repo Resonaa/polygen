@@ -29,7 +29,3 @@ export async function getLocale(request: Request) {
     (await i18next.getLocale(request))
   );
 }
-
-export async function getT(request: Request) {
-  return await i18next.getFixedT(await getLocale(request));
-}

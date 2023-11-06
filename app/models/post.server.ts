@@ -7,11 +7,6 @@ import type { User } from "./user.server";
 export type { Post } from "@prisma/client";
 
 export async function getPost(id: Post["id"]) {
-  await prisma.post.updateMany({
-    where: { id },
-    data: { viewCount: { increment: 1 } }
-  });
-
   return prisma.post.findUnique({
     where: { id },
     include: {

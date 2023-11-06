@@ -28,7 +28,6 @@ CREATE TABLE "Post" (
     "content" TEXT NOT NULL,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "username" TEXT NOT NULL,
-    "viewCount" INTEGER NOT NULL DEFAULT 0,
     CONSTRAINT "Post_username_fkey" FOREIGN KEY ("username") REFERENCES "User" ("username") ON DELETE CASCADE ON UPDATE CASCADE
 );
 

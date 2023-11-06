@@ -30,10 +30,7 @@ import UserAvatar from "./userAvatar";
 import UserLink from "./userLink";
 import { formatLargeNumber } from "./utils";
 
-export type PostProps = Pick<
-  PostType,
-  "id" | "username" | "content" | "viewCount"
-> & {
+export type PostProps = Pick<PostType, "id" | "username" | "content"> & {
   _count: {
     comments: number;
   };
@@ -45,7 +42,6 @@ export default function Post({
   username,
   createdAt,
   content,
-  viewCount,
   _count: { comments },
   linked
 }: PostProps & {
@@ -96,13 +92,6 @@ export default function Post({
               <Tooltip label={formatDate(createdAt)} openDelay={500}>
                 {relativeDate(createdAt)}
               </Tooltip>
-              {!linked ? (
-                <span>
-                  {" "}
-                  · {formatLargeNumber(viewCount)}{" "}
-                  {t("community.view", { count: viewCount })}
-                </span>
-              ) : null}
               {comments ? (
                 <span>
                   {" · "}

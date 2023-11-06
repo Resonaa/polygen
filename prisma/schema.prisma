@@ -49,8 +49,6 @@ model Post {
   username String
 
   comments Comment[]
-
-  viewCount Int @default(0)
 }
 
 model Comment {
