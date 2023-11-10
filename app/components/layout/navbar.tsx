@@ -18,7 +18,8 @@ import {
 import { Link } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
 import type { IconType } from "react-icons";
-import { FaCrown, FaDove, FaHome, FaPaste, FaTrophy } from "react-icons/fa";
+import { BiSolidGame } from "react-icons/bi";
+import { FaCrown, FaDove, FaHome, FaTrophy } from "react-icons/fa";
 
 import { useOptionalUser } from "~/hooks/loader";
 
@@ -281,10 +282,10 @@ const NAV_ITEMS: NavItem[] = [
     icon: FaDove,
     children: [
       {
-        label: "pastebin",
-        icon: FaPaste,
-        to: "/paste",
-        description: "description-pastebin"
+        label: "casual-games",
+        icon: BiSolidGame,
+        to: "/catch-the-cat",
+        description: "description-casual-games"
       }
     ]
   }

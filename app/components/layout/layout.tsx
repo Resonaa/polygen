@@ -13,7 +13,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         maxW="calc(72rem + 28px)"
         mx="auto"
         px="14px"
-        pt="72px"
+        pt="74px"
         pb={{ base: "calc(24px + 104px)", md: "calc(24px + 64px)" }}
         spacing={7}
       >

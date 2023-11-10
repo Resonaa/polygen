@@ -46,6 +46,8 @@ const deletePostSchema = z
 
 const deleteCommentSchema = deletePostSchema;
 
+const deleteAnnouncementSchema = deletePostSchema;
+
 const getPostPageSchema = z
   .object({
     page: pageSchema
@@ -100,4 +102,8 @@ export function validateGetCommentPageFormData(data: FormData) {
 
 export function validateGetUserPostFormData(data: FormData) {
   return safeParseAndFlatten(getUserPostSchema, data);
+}
+
+export function validateDeleteAnnouncementFormData(data: FormData) {
+  return safeParseAndFlatten(deleteAnnouncementSchema, data);
 }

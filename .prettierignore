@@ -3,5 +3,7 @@ node_modules
 /public/build
 /server/build
 
+/static
+
 .env
 package-lock.json
