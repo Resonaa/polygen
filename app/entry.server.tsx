@@ -81,8 +81,8 @@ export async function handleDataRequest(
 ) {
   response.headers.delete("X-Remix-Response");
 
-  // does not cache root loader
-  if (request.url.endsWith("_data=root")) {
+  // does not cache root loader or API routes
+  if (request.url.endsWith("_data=root") || request.url.includes("api")) {
     return response;
   }
 

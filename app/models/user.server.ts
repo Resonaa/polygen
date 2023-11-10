@@ -7,7 +7,7 @@ import type { NodeOnDiskFile } from "@remix-run/node";
 import sharp from "sharp";
 
 import prisma from "~/db.server";
-import { getRank } from "~/models/star.server";
+import { getRank as getStarRank } from "~/models/star.server";
 import { comparePassword, hashPassword } from "~/session.server";
 
 export type { User } from "@prisma/client";
@@ -25,7 +25,8 @@ export async function getStats(username: User["username"]) {
     where: { username },
     include: { _count: { select: { comments: true, posts: true } } }
   });
-  const rank = await getRank(username);
+  const rank = await getStarRank(username);
+
   return {
     posts: data?._count.posts,
     comments: data?._count.comments,
@@ -92,4 +93,23 @@ export async function updateAvatar(
     join(cwd(), `usercontent/avatar/${username}.avif`),
     await img.toBuffer()
   );
+}
+
+export async function rankList() {
+  return await prisma.user.findMany({
+    orderBy: { createdAt: "desc" },
+    select: { username: true, createdAt: true }
+  });
+}
+
+export async function getRank(cur: User["username"]) {
+  const list = await rankList();
+
+  for (const [rank, { username, createdAt }] of list.entries()) {
+    if (cur === username) {
+      return { rank: rank + 1, createdAt };
+    }
+  }
+
+  return null;
 }

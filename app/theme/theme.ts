@@ -4,6 +4,7 @@ import Button from "./button";
 import Code from "./code";
 import global from "./global";
 import Input from "./input";
+import Link from "./link";
 import Menu from "./menu";
 import Modal from "./modal";
 import Table from "./table";
@@ -24,11 +25,15 @@ export default extendTheme({
     Tooltip,
     Tag,
     Table,
-    Code
+    Code,
+    Link
   },
   fonts: {
     heading: "'Noto Sans SC Variable', -apple-system, system-ui, sans-serif",
     body: "'Noto Sans SC Variable', -apple-system, system-ui, sans-serif",
     mono: "'Noto Sans Mono Variable', Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace"
+  },
+  colors: {
+    star: "#ffd700"
   }
 });

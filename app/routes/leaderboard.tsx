@@ -1,16 +1,35 @@
-import { VStack } from "@chakra-ui/react";
+import {
+  VStack,
+  Tabs,
+  TabList,
+  TabPanels,
+  Tab,
+  TabPanel
+} from "@chakra-ui/react";
 import type { MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
+import { useTranslation } from "react-i18next";
 
-import Ranks from "~/components/game/ranks";
 import Layout from "~/components/layout/layout";
+import CommentLeaderboard from "~/components/leaderboard/commentLeaderboard";
+import PostLeaderboard from "~/components/leaderboard/postLeaderboard";
+import RegistrationTimeLeaderboard from "~/components/leaderboard/registrationTimeLeaderboard";
+import StarLeaderboard from "~/components/leaderboard/starLeaderboard";
 import { useRevalidationInterval } from "~/hooks/revalidator";
 import { getT } from "~/i18n";
-import { rankList } from "~/models/star.server";
+import { rankList as commentRankList } from "~/models/comment.server";
+import { rankList as postRankLink } from "~/models/post.server";
+import { rankList as starRankList } from "~/models/star.server";
+import { rankList as registrationTimeRankList } from "~/models/user.server";
 
 export async function loader() {
-  return json(await rankList());
+  const star = await starRankList();
+  const posts = await postRankLink();
+  const comments = await commentRankList();
+  const registrationTime = await registrationTimeRankList();
+
+  return json({ star, posts, comments, registrationTime });
 }
 
 export const meta: MetaFunction = ({ matches }) => {
@@ -19,14 +38,41 @@ export const meta: MetaFunction = ({ matches }) => {
 };
 
 export default function Leaderboard() {
-  const ranks = useLoaderData<typeof loader>();
+  const { star, posts, comments, registrationTime } =
+    useLoaderData<typeof loader>();
+  const { t } = useTranslation();
 
   useRevalidationInterval(60 * 1000);
 
   return (
     <Layout>
       <VStack w="100%">
-        <Ranks ranks={ranks} />
+        <Tabs w="100%" isFitted variant="enclosed-colored">
+          <TabList>
+            <Tab>★</Tab>
+            <Tab>{t("leaderboard.posts")}</Tab>
+            <Tab>{t("leaderboard.comments")}</Tab>
+            <Tab>{t("leaderboard.registration-time")}</Tab>
+          </TabList>
+
+          <TabPanels>
+            <TabPanel>
+              <StarLeaderboard ranks={star} />
+            </TabPanel>
+
+            <TabPanel>
+              <PostLeaderboard ranks={posts} />
+            </TabPanel>
+
+            <TabPanel>
+              <CommentLeaderboard ranks={comments} />
+            </TabPanel>
+
+            <TabPanel>
+              <RegistrationTimeLeaderboard ranks={registrationTime} />
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
       </VStack>
     </Layout>
   );

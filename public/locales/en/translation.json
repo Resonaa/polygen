@@ -87,8 +87,13 @@
     "vote-value-empty": "Empty",
     "vote-value-maze": "Maze",
     "vote-value-plots": "Plots",
-    "vote-item-speed": "Speed",
+    "vote-item-speed": "Speed"
+  },
+  "leaderboard": {
     "player": "Player",
-    "updated-at": "Updated At"
+    "updated-at": "Updated At",
+    "posts": "Posts",
+    "comments": "Comments",
+    "registration-time": "Registration Time"
   }
 }

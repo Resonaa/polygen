@@ -57,3 +57,30 @@ export function updatePost(content: Post["content"], id: Post["id"]) {
 export function deletePost(id: Post["id"]) {
   return prisma.post.delete({ where: { id } });
 }
+
+export async function rankList() {
+  const ranks = await prisma.user.findMany({
+    orderBy: { posts: { _count: "desc" } },
+    select: { _count: { select: { posts: true } }, username: true }
+  });
+
+  return ranks.filter(({ _count: { posts } }) => posts > 0);
+}
+
+export async function getRank(cur: User["username"]) {
+  const list = await rankList();
+
+  for (const [
+    rank,
+    {
+      username,
+      _count: { posts }
+    }
+  ] of list.entries()) {
+    if (username === cur) {
+      return { rank: rank + 1, posts };
+    }
+  }
+
+  return null;
+}

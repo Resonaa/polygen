@@ -87,8 +87,13 @@
     "vote-value-empty": "空白地图",
     "vote-value-maze": "迷宫地图",
     "vote-value-plots": "格点地图",
-    "vote-item-speed": "速度",
+    "vote-item-speed": "速度"
+  },
+  "leaderboard": {
     "player": "玩家",
-    "updated-at": "更新时间"
+    "updated-at": "更新时间",
+    "posts": "说说",
+    "comments": "评论",
+    "registration-time": "注册时间"
   }
 }
