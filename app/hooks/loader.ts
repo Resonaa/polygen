@@ -1,20 +1,9 @@
-import type {
-  ActionFunction,
-  LoaderFunction,
-  SerializeFrom,
-  TypedResponse
-} from "@remix-run/node";
+import type { ActionFunction, SerializeFrom } from "@remix-run/node";
 import { useRouteLoaderData } from "@remix-run/react";
 
 import type { loader } from "~/root";
 
-type LoaderReturn<T extends LoaderFunction> = ReturnType<T> extends Promise<
-  TypedResponse<infer R>
->
-  ? R
-  : never;
-
-function isLoaderData(data: unknown): data is LoaderReturn<typeof loader> {
+function isLoaderData(data: unknown): data is SerializeFrom<typeof loader> {
   return typeof data === "object" && !!data && "user" in data && "time" in data;
 }
 

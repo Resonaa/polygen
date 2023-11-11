@@ -44,7 +44,7 @@ export default async function handleRequest(
 
     const { pipe, abort } = renderToPipeableStream(
       <CacheProvider value={cache}>
-        <I18nextProvider i18n={instance}>
+        <I18nextProvider i18n={instance as typeof i18next}>
           <RemixServer context={remixContext} url={request.url} />
         </I18nextProvider>
       </CacheProvider>,

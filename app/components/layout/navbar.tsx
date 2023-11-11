@@ -22,6 +22,7 @@ import { BiSolidGame } from "react-icons/bi";
 import { FaCrown, FaHome, FaTrophy } from "react-icons/fa";
 
 import { useOptionalUser } from "~/hooks/loader";
+import type { TFunctionArg } from "~/i18next";
 
 import Auth from "./auth";
 import DoveCompatibleIcon from "./doveCompatibleIcon";
@@ -120,7 +121,7 @@ function DesktopNav() {
                 to={to}
               >
                 <DoveCompatibleIcon as={icon} mr="5px" />
-                {t("nav." + label)}
+                {t(label)}
               </Flex>
             </Box>
           </PopoverTrigger>
@@ -178,10 +179,10 @@ function DesktopSubNav({ label, to, icon, description }: NavItem) {
             transition={transition}
           >
             <DoveCompatibleIcon as={icon} mr="5px" />
-            {t("nav." + label)}
+            {t(label)}
           </Text>
           <Text color={groupColor} fontSize="sm">
-            {t("nav." + description)}
+            {t(description!)}
           </Text>
         </Box>
         <Flex
@@ -239,7 +240,7 @@ function MobileNavItem({ label, to, icon, children }: NavItem) {
       >
         <Flex align="center">
           <DoveCompatibleIcon as={icon} mr="5px" />
-          {t("nav." + label)}
+          {t(label)}
         </Flex>
         {children ? <DropdownRightIcon isOpen={isOpen} /> : null}
       </Flex>
@@ -256,7 +257,7 @@ function MobileNavItem({ label, to, icon, children }: NavItem) {
                   to={child.to}
                 >
                   <DoveCompatibleIcon as={child.icon} mr="5px" />
-                  {t("nav." + child.label)}
+                  {t(child.label)}
                 </Flex>
               ))
             : null}
@@ -267,26 +268,26 @@ function MobileNavItem({ label, to, icon, children }: NavItem) {
 }
 
 interface NavItem {
-  label: string;
+  label: TFunctionArg;
   icon: IconType | "dove";
   to?: string;
   children?: NavItem[];
-  description?: string;
+  description?: TFunctionArg;
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { label: "home", icon: FaHome, to: "/" },
-  { label: "game", icon: FaCrown, to: "/game" },
-  { label: "leaderboard", icon: FaTrophy, to: "/leaderboard" },
+  { label: "nav.home", icon: FaHome, to: "/" },
+  { label: "nav.game", icon: FaCrown, to: "/game" },
+  { label: "nav.leaderboard", icon: FaTrophy, to: "/leaderboard" },
   {
-    label: "apps",
+    label: "nav.apps",
     icon: "dove",
     children: [
       {
-        label: "casual-games",
+        label: "nav.casual-games",
         icon: BiSolidGame,
         to: "/catch-the-cat",
-        description: "description-casual-games"
+        description: "nav.description-casual-games"
       }
     ]
   }

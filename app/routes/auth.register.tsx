@@ -1,6 +1,7 @@
 import type { ActionFunctionArgs, TypedResponse } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 
+import type { TFunctionArg } from "~/i18next";
 import { createUser, getUser } from "~/models/user.server";
 import { createUserSession, verifyCaptcha } from "~/session.server";
 import { validateRegisterFormData } from "~/validators/auth.server";
@@ -10,7 +11,13 @@ export function loader() {
   return redirect("/");
 }
 
-type R = Promise<TypedResponse<ErrorType<typeof validateRegisterFormData>>>;
+type AsTFunctionArg<T> = {
+  [K in keyof T]: TFunctionArg;
+};
+
+type R = Promise<
+  TypedResponse<AsTFunctionArg<ErrorType<typeof validateRegisterFormData>>>
+>;
 
 export async function action({ request }: ActionFunctionArgs): R {
   const data = await request.formData();
@@ -35,6 +42,6 @@ export async function action({ request }: ActionFunctionArgs): R {
 
     return createUserSession(request, username);
   } else {
-    return json(res.error);
+    return json(res.error as AsTFunctionArg<typeof res.error>);
   }
 }

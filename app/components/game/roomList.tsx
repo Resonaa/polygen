@@ -23,6 +23,7 @@ import { FaCrown, FaMap } from "react-icons/fa6";
 
 import type { MaxVotedItems, VoteItem } from "~/core/server/vote";
 import { useOptionalUser } from "~/hooks/loader";
+import type { TFunctionArg } from "~/i18next";
 
 import UserTag from "../community/userTag";
 
@@ -73,12 +74,14 @@ function VotedRoomProperty<T extends VoteItem>({
       if (typeof s === "number") {
         return s.toString();
       } else {
-        return t(`game.vote-value-${s.toLowerCase()}`);
+        return t(`game.vote-value-${s.toLowerCase()}` as TFunctionArg);
       }
     })
     .join("/");
 
-  const description = `${t("game.vote-item-" + item)}: ${label}`;
+  const description = `${t(
+    ("game.vote-item-" + item) as TFunctionArg
+  )}: ${label}`;
 
   return (
     <RoomProperty

@@ -2,6 +2,7 @@ import { Center, Heading, Text, Tooltip, VStack } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
 
 import { useServerTime } from "~/hooks/loader";
+import type { TFunctionArg } from "~/i18next";
 
 const countDowns = [{ date: "2024-02-10", name: "polygen-public-preview" }];
 
@@ -15,7 +16,7 @@ function Countdown({ date, name }: { date: string; name: string }) {
     <Text>
       距离&nbsp;
       <Tooltip label={date} openDelay={500}>
-        <strong>{t("community." + name)}</strong>
+        <strong>{t(("community." + name) as TFunctionArg)}</strong>
       </Tooltip>
       &nbsp;还有&nbsp;
       <strong>{days}</strong>
@@ -27,7 +28,7 @@ function Countdown({ date, name }: { date: string; name: string }) {
       &nbsp;day{t("utils.plurals", { count: days })}
       &nbsp;before&nbsp;
       <Tooltip label={date} openDelay={500}>
-        <strong>{t("community." + name)}</strong>
+        <strong>{t(("community." + name) as TFunctionArg)}</strong>
       </Tooltip>
     </Text>
   );

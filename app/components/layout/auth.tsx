@@ -27,6 +27,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { FaUser } from "react-icons/fa6";
 
+import type { TFunctionArg } from "~/i18next";
 import type { action } from "~/routes/auth.register";
 
 export default function Auth() {
@@ -35,7 +36,7 @@ export default function Auth() {
 
   const { t } = useTranslation();
 
-  const title = t("auth." + type);
+  const title = t(("auth." + type) as TFunctionArg);
 
   const { data, state, Form } = useFetcher<typeof action>();
 
