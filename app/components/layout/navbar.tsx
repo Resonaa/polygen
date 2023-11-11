@@ -19,11 +19,12 @@ import { Link } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
 import type { IconType } from "react-icons";
 import { BiSolidGame } from "react-icons/bi";
-import { FaCrown, FaDove, FaHome, FaTrophy } from "react-icons/fa";
+import { FaCrown, FaHome, FaTrophy } from "react-icons/fa";
 
 import { useOptionalUser } from "~/hooks/loader";
 
 import Auth from "./auth";
+import DoveCompatibleIcon from "./doveCompatibleIcon";
 import LocaleToggle from "./localeToggle";
 import ThemeEditor from "./themeEditor";
 import UserDropdown, { DropdownRightIcon } from "./userDropdown";
@@ -118,7 +119,7 @@ function DesktopNav() {
                 transition={linkTransition}
                 to={to}
               >
-                <Icon as={icon} mr="5px" />
+                <DoveCompatibleIcon as={icon} mr="5px" />
                 {t("nav." + label)}
               </Flex>
             </Box>
@@ -176,7 +177,7 @@ function DesktopSubNav({ label, to, icon, description }: NavItem) {
             _groupHover={{ color: groupHoverColor }}
             transition={transition}
           >
-            <Icon as={icon} mr="5px" />
+            <DoveCompatibleIcon as={icon} mr="5px" />
             {t("nav." + label)}
           </Text>
           <Text color={groupColor} fontSize="sm">
@@ -237,7 +238,7 @@ function MobileNavItem({ label, to, icon, children }: NavItem) {
         to={to}
       >
         <Flex align="center">
-          <Icon as={icon} mr="5px" />
+          <DoveCompatibleIcon as={icon} mr="5px" />
           {t("nav." + label)}
         </Flex>
         {children ? <DropdownRightIcon isOpen={isOpen} /> : null}
@@ -254,7 +255,7 @@ function MobileNavItem({ label, to, icon, children }: NavItem) {
                   py={2}
                   to={child.to}
                 >
-                  <Icon as={child.icon} mr="5px" />
+                  <DoveCompatibleIcon as={child.icon} mr="5px" />
                   {t("nav." + child.label)}
                 </Flex>
               ))
@@ -267,7 +268,7 @@ function MobileNavItem({ label, to, icon, children }: NavItem) {
 
 interface NavItem {
   label: string;
-  icon: IconType;
+  icon: IconType | "dove";
   to?: string;
   children?: NavItem[];
   description?: string;
@@ -279,7 +280,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: "leaderboard", icon: FaTrophy, to: "/leaderboard" },
   {
     label: "apps",
-    icon: FaDove,
+    icon: "dove",
     children: [
       {
         label: "casual-games",

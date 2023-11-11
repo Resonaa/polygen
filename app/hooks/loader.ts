@@ -1,4 +1,9 @@
-import type { LoaderFunction, TypedResponse } from "@remix-run/node";
+import type {
+  ActionFunction,
+  LoaderFunction,
+  SerializeFrom,
+  TypedResponse
+} from "@remix-run/node";
 import { useRouteLoaderData } from "@remix-run/react";
 
 import type { loader } from "~/root";
@@ -39,4 +44,20 @@ export function useServerTime() {
   }
 
   throw new Error();
+}
+
+// Calls API routes with data
+export async function load<Action extends ActionFunction>(
+  url: string,
+  data: object
+) {
+  const body = new FormData();
+
+  for (const [key, value] of Object.entries(data)) {
+    body.append(key, value);
+  }
+
+  const options = { method: "post", body };
+
+  return (await (await fetch(url, options)).json()) as SerializeFrom<Action>;
 }

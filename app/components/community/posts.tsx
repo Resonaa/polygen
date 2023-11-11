@@ -1,7 +1,8 @@
 import { VStack } from "@chakra-ui/react";
 import { useState } from "react";
 
-import { ajax } from "~/utils";
+import { load } from "~/hooks/loader";
+import type { action } from "~/routes/api.post.page";
 
 import LoadMore from "./loadMore";
 import type { PostProps } from "./post";
@@ -11,9 +12,9 @@ export default function Posts({ posts }: { posts: PostProps[] }) {
   const [extraPosts, setExtraPosts] = useState<PostProps[]>([]);
 
   const loader = async (page: number) => {
-    const data = (await ajax("post", "/api/post/page", {
+    const data = await load<typeof action>("/api/post/page", {
       page: page
-    })) as PostProps[];
+    });
 
     setExtraPosts(extraPosts => extraPosts.concat(data));
     return data.length === 10;

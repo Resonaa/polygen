@@ -20,6 +20,7 @@ import { ImFontSize } from "react-icons/im";
 import { RiArrowGoBackFill, RiArrowGoForwardFill } from "react-icons/ri";
 
 import ColorModeToggle from "./colorModeToggle";
+import DoveSelect from "./doveSelect";
 
 function ThemeEditorDrawerHeader({ onClose }: { onClose: () => void }) {
   const { canUndo, canRedo, undo, redo } = useThemeEditor();
@@ -34,10 +35,12 @@ function ThemeEditorDrawerHeader({ onClose }: { onClose: () => void }) {
       py={{ base: 2, lg: 3 }}
       shadow="sm"
     >
-      <Text>{t("nav.theme-editor")}</Text>
+      <Text fontSize="lg">{t("nav.theme-editor")}</Text>
 
       <ButtonGroup alignItems="center" variant="ghost">
         <ColorModeToggle />
+
+        <DoveSelect />
 
         <IconButton
           h={10}
@@ -49,6 +52,7 @@ function ThemeEditorDrawerHeader({ onClose }: { onClose: () => void }) {
         />
 
         <IconButton
+          display={{ base: "none", sm: "inline-flex" }}
           h={10}
           aria-label="redo"
           icon={<RiArrowGoForwardFill />}

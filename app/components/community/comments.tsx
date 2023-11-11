@@ -1,7 +1,8 @@
 import { VStack } from "@chakra-ui/react";
 import { useState } from "react";
 
-import { ajax } from "~/utils";
+import { load } from "~/hooks/loader";
+import type { action } from "~/routes/api.post.comment";
 
 import type { CommentProps } from "./comment";
 import Comment from "./comment";
@@ -17,10 +18,10 @@ export default function Comments({
   const [extraComments, setExtraComments] = useState<CommentProps[]>([]);
 
   const loader = async (page: number) => {
-    const data = (await ajax("post", "/api/post/comment", {
+    const data = await load<typeof action>("/api/post/comment", {
       page,
       parentId
-    })) as CommentProps[];
+    });
     setExtraComments(extraComments => extraComments.concat(data));
     return data.length === 10;
   };

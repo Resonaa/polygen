@@ -25,10 +25,15 @@ import {
 import "katex/dist/katex.min.css";
 import "nprogress/nprogress.css";
 import type { ReactNode } from "react";
-import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 import Access from "~/access";
+import {
+  COLOR_MODE_KEY,
+  DEFAULT_COLOR_MODE,
+  useCookieValue
+} from "~/hooks/cookie";
+import { useForceUpdate } from "~/hooks/state";
 import { useNProgress } from "~/hooks/transition";
 import { getLocale } from "~/i18next.server";
 import theme from "~/theme/theme";
@@ -60,34 +65,16 @@ export function shouldRevalidate({
   return defaultShouldRevalidate;
 }
 
-const COLOR_MODE_KEY = "chakra-ui-color-mode";
-
-export function getKeyFromCookie(
-  cookie: string | undefined | null,
-  key: string
-) {
-  return cookie?.match(new RegExp(`(^| )${key}=([^;]+)`))?.at(2);
-}
-
-function Document({
-  children,
-  title
-}: {
-  children: ReactNode;
-  title?: string;
-}) {
+function Document({ children }: { children: ReactNode }) {
   useNProgress();
 
   const loaderData = useLoaderData<typeof loader>();
-  const defaultColorMode = useColorModePreference() ?? "light";
+  const defaultColorMode = useColorModePreference() ?? DEFAULT_COLOR_MODE;
 
   const cookie =
     typeof document === "undefined" ? loaderData.cookie : document.cookie;
 
-  const colorMode = useMemo(
-    () => getKeyFromCookie(cookie, COLOR_MODE_KEY) ?? defaultColorMode,
-    [cookie, defaultColorMode]
-  );
+  const colorMode = useCookieValue(COLOR_MODE_KEY, defaultColorMode);
 
   const locale = loaderData.locale;
   const { i18n } = useTranslation();
@@ -109,7 +96,6 @@ function Document({
           name="description"
           content="polygen is a polygon-based web game inspired by generals.io."
         />
-        {title ? <title>{title}</title> : null}
         <Meta />
         <Links />
       </head>
@@ -177,7 +163,7 @@ export function ErrorBoundary() {
 export default function App() {
   return (
     <Document>
-      <Outlet />
+      <Outlet context={useForceUpdate()} />
     </Document>
   );
 }
