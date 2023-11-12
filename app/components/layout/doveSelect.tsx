@@ -5,7 +5,8 @@ import {
   MenuList,
   MenuItem,
   IconButton,
-  Icon
+  Icon,
+  useColorModeValue
 } from "@chakra-ui/react";
 import { useOutletContext } from "@remix-run/react";
 import type { IconType } from "react-icons";
@@ -44,7 +45,14 @@ export default function DoveSelect() {
         variant="ghost"
       />
 
-      <MenuList px={0} fontSize="lg" border="none" shadow="xl" rounded="lg">
+      <MenuList
+        px={0}
+        color={useColorModeValue("gray.600", "white")}
+        fontSize="lg"
+        border="none"
+        shadow="xl"
+        rounded="lg"
+      >
         {doves.map((icon, id) => (
           <DoveItem icon={icon} id={id} key={id} />
         ))}
