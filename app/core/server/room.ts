@@ -474,16 +474,16 @@ export class Room {
         return dataA[1] !== dataB[1]
           ? dataB[1] - dataA[1]
           : dataB[0] !== dataA[0]
-          ? dataB[0] - dataA[0]
-          : teamA - teamB;
+            ? dataB[0] - dataA[0]
+            : teamA - teamB;
       } else {
         const dataA = data.get(a[1])!,
           dataB = data.get(b[1])!;
         return dataA[1] !== dataB[1]
           ? dataB[1] - dataA[1]
           : dataB[0] !== dataA[0]
-          ? dataB[0] - dataA[0]
-          : a[1] - b[1];
+            ? dataB[0] - dataA[0]
+            : a[1] - b[1];
       }
     });
 
