@@ -11,7 +11,6 @@ import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
 
-import Layout from "~/components/layout/layout";
 import CommentLeaderboard from "~/components/leaderboard/commentLeaderboard";
 import PostLeaderboard from "~/components/leaderboard/postLeaderboard";
 import RegistrationTimeLeaderboard from "~/components/leaderboard/registrationTimeLeaderboard";
@@ -45,35 +44,33 @@ export default function Leaderboard() {
   useRevalidationInterval(60 * 1000);
 
   return (
-    <Layout>
-      <VStack w="100%">
-        <Tabs w="100%" isFitted variant="enclosed-colored">
-          <TabList>
-            <Tab>★</Tab>
-            <Tab>{t("leaderboard.posts")}</Tab>
-            <Tab>{t("leaderboard.comments")}</Tab>
-            <Tab>{t("leaderboard.registration-time")}</Tab>
-          </TabList>
+    <VStack w="100%">
+      <Tabs w="100%" isFitted variant="enclosed-colored">
+        <TabList>
+          <Tab>★</Tab>
+          <Tab>{t("leaderboard.posts")}</Tab>
+          <Tab>{t("leaderboard.comments")}</Tab>
+          <Tab>{t("leaderboard.registration-time")}</Tab>
+        </TabList>
 
-          <TabPanels>
-            <TabPanel>
-              <StarLeaderboard ranks={star} />
-            </TabPanel>
+        <TabPanels>
+          <TabPanel>
+            <StarLeaderboard ranks={star} />
+          </TabPanel>
 
-            <TabPanel>
-              <PostLeaderboard ranks={posts} />
-            </TabPanel>
+          <TabPanel>
+            <PostLeaderboard ranks={posts} />
+          </TabPanel>
 
-            <TabPanel>
-              <CommentLeaderboard ranks={comments} />
-            </TabPanel>
+          <TabPanel>
+            <CommentLeaderboard ranks={comments} />
+          </TabPanel>
 
-            <TabPanel>
-              <RegistrationTimeLeaderboard ranks={registrationTime} />
-            </TabPanel>
-          </TabPanels>
-        </Tabs>
-      </VStack>
-    </Layout>
+          <TabPanel>
+            <RegistrationTimeLeaderboard ranks={registrationTime} />
+          </TabPanel>
+        </TabPanels>
+      </Tabs>
+    </VStack>
   );
 }

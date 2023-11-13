@@ -2,7 +2,6 @@ import { Flex } from "@chakra-ui/react";
 import type { MetaFunction } from "@remix-run/node";
 import { useEffect } from "react";
 
-import Layout from "~/components/layout/layout";
 import { getT } from "~/i18n";
 
 export const meta: MetaFunction = ({ matches }) => {
@@ -38,7 +37,7 @@ export default function CatchTheCat() {
       w,
       h,
       r: 16,
-      initialWallCount: w * h * 0.05,
+      initialWallCount: w * h * 0.03,
       backgroundColor: 0xffffff,
       parent: "game",
       statusBarAlign: "center"
@@ -51,14 +50,12 @@ export default function CatchTheCat() {
   }, []);
 
   return (
-    <Layout>
-      <Flex
-        align="center"
-        direction="column"
-        w="100%"
-        _dark={{ filter: "grayscale(1) invert(1)" }}
-        id="game"
-      />
-    </Layout>
+    <Flex
+      align="center"
+      direction="column"
+      w="100%"
+      _dark={{ filter: "grayscale(1) invert(1)" }}
+      id="game"
+    />
   );
 }

@@ -28,6 +28,7 @@ import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 
 import Access from "~/access";
+import Layout from "~/components/layout/layout";
 import {
   COLOR_MODE_KEY,
   DEFAULT_COLOR_MODE,
@@ -163,7 +164,9 @@ export function ErrorBoundary() {
 export default function App() {
   return (
     <Document>
-      <Outlet context={useForceUpdate()} />
+      <Layout>
+        <Outlet context={useForceUpdate()} />
+      </Layout>
     </Document>
   );
 }

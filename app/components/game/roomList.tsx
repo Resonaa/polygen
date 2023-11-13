@@ -74,13 +74,15 @@ function VotedRoomProperty<T extends VoteItem>({
       if (typeof s === "number") {
         return s.toString();
       } else {
-        return t(`game.vote-value-${s.toLowerCase()}` as TFunctionArg);
+        return t(
+          `game.vote-value-${s.toString().toLowerCase()}` as TFunctionArg
+        );
       }
     })
     .join("/");
 
   const description = `${t(
-    ("game.vote-item-" + item) as TFunctionArg
+    `game.vote-item-${item}` as TFunctionArg
   )}: ${label}`;
 
   return (

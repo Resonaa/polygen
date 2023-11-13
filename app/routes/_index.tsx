@@ -18,8 +18,6 @@ import { createPost, getPosts } from "~/models/post.server";
 import { requireUser } from "~/session.server";
 import { validateAddPostFormData } from "~/validators/community.server";
 
-import Layout from "../components/layout/layout";
-
 export async function loader() {
   const announcements = await getAnnouncements();
   const posts = await getPosts(1);
@@ -57,7 +55,7 @@ export default function Index() {
   useRevalidationInterval(1000 * 60);
 
   return (
-    <Layout>
+    <>
       <VStack w={{ base: "100%", md: "75%" }} spacing={4}>
         {user ? <AddPost /> : null}
 
@@ -71,6 +69,6 @@ export default function Index() {
         <Divider />
         <RecentComments comments={recentComments} />
       </VStack>
-    </Layout>
+    </>
   );
 }

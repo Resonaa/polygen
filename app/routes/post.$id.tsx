@@ -11,7 +11,6 @@ import Access from "~/access";
 import AddComment from "~/components/community/addComment";
 import Comments from "~/components/community/comments";
 import Post from "~/components/community/post";
-import Layout from "~/components/layout/layout";
 import { useOptionalUser } from "~/hooks/loader";
 import { useRevalidationInterval } from "~/hooks/revalidator";
 import { getT } from "~/i18n";
@@ -77,16 +76,14 @@ export default function PostId() {
   useRevalidationInterval(1000 * 60);
 
   return (
-    <Layout>
-      <VStack w="100%" spacing={4}>
-        <Post linked={false} {...post} />
+    <VStack w="100%" spacing={4}>
+      <Post linked={false} {...post} />
 
-        <Divider />
+      <Divider />
 
-        {user ? <AddComment parentId={parentId} /> : null}
+      {user ? <AddComment parentId={parentId} /> : null}
 
-        <Comments comments={comments} parentId={parentId} />
-      </VStack>
-    </Layout>
+      <Comments comments={comments} parentId={parentId} />
+    </VStack>
   );
 }

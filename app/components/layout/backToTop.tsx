@@ -26,7 +26,7 @@ export default function BackToTop() {
       shadow="xl"
       colorScheme="blue"
       onClick={scrollToTop}
-      opacity={isVisible ? 1 : 0}
+      transform={isVisible ? undefined : "translateX(88px)"}
     />
   );
 }

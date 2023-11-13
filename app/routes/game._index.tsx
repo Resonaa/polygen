@@ -4,7 +4,6 @@ import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 
 import RoomList from "~/components/game/roomList";
-import Layout from "~/components/layout/layout";
 import { roomData } from "~/core/server/room";
 import { useRevalidationInterval } from "~/hooks/revalidator";
 import { getT } from "~/i18n";
@@ -24,10 +23,8 @@ export default function Index() {
   useRevalidationInterval(5000);
 
   return (
-    <Layout>
-      <VStack w="100%">
-        <RoomList rooms={rooms} />
-      </VStack>
-    </Layout>
+    <VStack w="100%">
+      <RoomList rooms={rooms} />
+    </VStack>
   );
 }
