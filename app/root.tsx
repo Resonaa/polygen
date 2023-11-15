@@ -34,7 +34,7 @@ import {
   DEFAULT_COLOR_MODE,
   useCookieValue
 } from "~/hooks/cookie";
-import { useForceUpdate } from "~/hooks/state";
+import { ForceUpdateContext, useForceUpdate } from "~/hooks/state";
 import { useNProgress } from "~/hooks/transition";
 import { getLocale } from "~/i18next.server";
 import theme from "~/theme/theme";
@@ -164,9 +164,11 @@ export function ErrorBoundary() {
 export default function App() {
   return (
     <Document>
-      <Layout>
-        <Outlet context={useForceUpdate()} />
-      </Layout>
+      <ForceUpdateContext.Provider value={useForceUpdate()}>
+        <Layout>
+          <Outlet />
+        </Layout>
+      </ForceUpdateContext.Provider>
     </Document>
   );
 }

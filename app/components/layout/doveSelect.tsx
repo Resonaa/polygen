@@ -8,15 +8,16 @@ import {
   Icon,
   useColorModeValue
 } from "@chakra-ui/react";
-import { useOutletContext } from "@remix-run/react";
+import { useContext } from "react";
 import type { IconType } from "react-icons";
 
 import { DEFAULT_DOVE, DOVE_KEY, useCookieValue } from "~/hooks/cookie";
+import { ForceUpdateContext } from "~/hooks/state";
 
 import DoveCompatibleIcon, { doves } from "./doveCompatibleIcon";
 
 function DoveItem({ icon, id }: { icon: IconType; id: number }) {
-  const forceUpdate = useOutletContext<() => void>();
+  const forceUpdate = useContext(ForceUpdateContext);
   const curId = Number(useCookieValue(DOVE_KEY, DEFAULT_DOVE));
 
   const onClick = () => {

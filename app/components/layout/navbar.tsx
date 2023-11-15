@@ -46,6 +46,7 @@ export default function Navbar() {
       borderBottomStyle="solid"
       borderBottomColor={useColorModeValue("gray.200", "gray.700")}
       backdropFilter="blur(14px)"
+      style={{ paddingRight: "var(--removed-body-scroll-bar-size)" }}
     >
       <Flex align="center" maxW="6xl" mx="auto" px={4} py={2}>
         <Flex display={{ base: "flex", md: "none" }} ml={-2}>
@@ -77,7 +78,7 @@ export default function Navbar() {
           </Flex>
         </Flex>
 
-        <ButtonGroup pr="var(--removed-body-scroll-bar-size)" spacing="13px">
+        <ButtonGroup spacing="13px">
           <LocaleToggle />
           <ThemeEditor />
           {user ? <UserDropdown /> : <Auth />}

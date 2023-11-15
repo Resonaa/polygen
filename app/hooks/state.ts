@@ -1,4 +1,4 @@
-import { startTransition, useCallback, useState } from "react";
+import { createContext, startTransition, useCallback, useState } from "react";
 
 export function useForceUpdate() {
   const [, setTick] = useState(0);
@@ -6,3 +6,7 @@ export function useForceUpdate() {
     startTransition(() => setTick(tick => tick + 1));
   }, []);
 }
+
+export const ForceUpdateContext = createContext<
+  ReturnType<typeof useForceUpdate>
+>(() => undefined);
