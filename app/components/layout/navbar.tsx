@@ -77,7 +77,7 @@ export default function Navbar() {
           </Flex>
         </Flex>
 
-        <ButtonGroup spacing="13px">
+        <ButtonGroup pr="var(--removed-body-scroll-bar-size)" spacing="13px">
           <LocaleToggle />
           <ThemeEditor />
           {user ? <UserDropdown /> : <Auth />}
@@ -165,7 +165,7 @@ function DesktopSubNav({ label, to, icon, description }: NavItem) {
       _hover={{ bg: linkHoverBg }}
       transition={transition}
       role="group"
-      rounded="md"
+      rounded="lg"
       to={to}
     >
       <HStack align="center">

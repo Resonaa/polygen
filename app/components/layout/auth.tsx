@@ -1,4 +1,4 @@
-import { CheckIcon, LockIcon } from "@chakra-ui/icons";
+import { CheckIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
@@ -29,6 +29,8 @@ import { FaUser } from "react-icons/fa6";
 
 import type { TFunctionArg } from "~/i18next";
 import type { action } from "~/routes/auth.register";
+
+import PasswordInputGroup from "./passwordInputGroup";
 
 export default function Auth() {
   const [type, setType] = useState("login");
@@ -104,22 +106,16 @@ export default function Auth() {
 
                 <FormControl isInvalid={!!data?.password}>
                   <FormLabel>{t("auth.password")}</FormLabel>
-                  <InputGroup>
-                    <InputLeftElement>
-                      <LockIcon />
-                    </InputLeftElement>
-                    <Input
-                      autoComplete={
-                        type === "login" ? "current-password" : "new-password"
-                      }
-                      maxLength={161}
-                      minLength={6}
-                      name="password"
-                      placeholder={t("auth.password-placeholder")}
-                      required
-                      type="password"
-                    />
-                  </InputGroup>
+                  <PasswordInputGroup
+                    autoComplete={
+                      type === "login" ? "current-password" : "new-password"
+                    }
+                    maxLength={161}
+                    minLength={6}
+                    name="password"
+                    placeholder={t("auth.password-placeholder")}
+                    required
+                  />
                   {data?.password ? (
                     <FormErrorMessage>{t(data.password)}</FormErrorMessage>
                   ) : null}
@@ -129,20 +125,14 @@ export default function Auth() {
                   <>
                     <FormControl isInvalid={!!data?.retypePassword}>
                       <FormLabel>{t("auth.retype-password")}</FormLabel>
-                      <InputGroup>
-                        <InputLeftElement>
-                          <LockIcon />
-                        </InputLeftElement>
-                        <Input
-                          autoComplete="new-password"
-                          maxLength={161}
-                          minLength={6}
-                          name="retypePassword"
-                          placeholder={t("auth.retype-password-placeholder")}
-                          required
-                          type="password"
-                        />
-                      </InputGroup>
+                      <PasswordInputGroup
+                        autoComplete="new-password"
+                        maxLength={161}
+                        minLength={6}
+                        name="retypePassword"
+                        placeholder={t("auth.retype-password-placeholder")}
+                        required
+                      />
                       {data?.retypePassword ? (
                         <FormErrorMessage>
                           {t(data.retypePassword)}

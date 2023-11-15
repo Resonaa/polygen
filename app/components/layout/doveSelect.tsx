@@ -19,14 +19,26 @@ function DoveItem({ icon, id }: { icon: IconType; id: number }) {
   const forceUpdate = useOutletContext<() => void>();
   const curId = Number(useCookieValue(DOVE_KEY, DEFAULT_DOVE));
 
+  const onClick = () => {
+    document.cookie = `${DOVE_KEY}=${id}`;
+    forceUpdate();
+  };
+
   return (
     <MenuItem
       justifyContent="space-between"
-      transition="background .15s ease"
-      onClick={() => {
-        document.cookie = `${DOVE_KEY}=${id}`;
-        forceUpdate();
+      _hover={{
+        color: "black"
       }}
+      _dark={{
+        color: "gray.200",
+        _hover: {
+          color: "white"
+        }
+      }}
+      transition="background .15s ease"
+      onClick={onClick}
+      rounded="full"
     >
       <Icon as={icon} />
       {curId === id ? <CheckIcon /> : null}
@@ -46,7 +58,7 @@ export default function DoveSelect() {
       />
 
       <MenuList
-        px={0}
+        p={2}
         color={useColorModeValue("gray.600", "white")}
         fontSize="lg"
         border="none"

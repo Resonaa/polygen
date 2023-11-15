@@ -8,10 +8,21 @@ export default createMultiStyleConfigHelpers(
     list: {
       border: "none",
       shadow: "xl",
-      rounded: "xl"
+      rounded: "xl",
+      padding: 2
     },
     item: {
-      transition: "background .15s ease"
+      transition: "all .15s ease",
+      rounded: "full",
+      _hover: {
+        color: "black"
+      },
+      _dark: {
+        color: "gray.200",
+        _hover: {
+          color: "white"
+        }
+      }
     },
     divider: {
       borderBottomColor: "gray.300",
