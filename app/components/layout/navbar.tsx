@@ -39,14 +39,13 @@ export default function Navbar() {
       pos="fixed"
       zIndex={161}
       top={0}
-      w="100%"
+      w="100vw"
       color={useColorModeValue("gray.600", "white")}
       bg={useColorModeValue("whiteAlpha.800", "rgba(26, 32, 44, .8)")}
       borderBottomWidth="1px"
       borderBottomStyle="solid"
       borderBottomColor={useColorModeValue("gray.200", "gray.700")}
       backdropFilter="blur(14px)"
-      style={{ paddingRight: "var(--removed-body-scroll-bar-size)" }}
     >
       <Flex align="center" maxW="6xl" mx="auto" px={4} py={2}>
         <Flex display={{ base: "flex", md: "none" }} ml={-2}>

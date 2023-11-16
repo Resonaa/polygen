@@ -34,6 +34,7 @@
     "@emotion/styled": "latest",
     "@fastify/early-hints": "latest",
     "@fastify/one-line-logger": "latest",
+    "@fastify/static": "latest",
     "@fontsource-variable/noto-sans-mono": "latest",
     "@fontsource-variable/noto-sans-sc": "latest",
     "@hypertheme-editor/chakra-ui": "0.1.6-rc.0",

@@ -3,11 +3,8 @@ import { join } from "node:path";
 import { cwd } from "node:process";
 
 import fastifyEarlyHints from "@fastify/early-hints";
-import {
-  createRequestHandler,
-  getEarlyHintLinks,
-  staticFilePlugin
-} from "@mcansh/remix-fastify";
+import { fastifyStatic } from "@fastify/static";
+import { createRequestHandler, getEarlyHintLinks } from "@mcansh/remix-fastify";
 import * as build from "@remix-run/dev/server-build";
 import { broadcastDevReady } from "@remix-run/node";
 import fastify from "fastify";
@@ -20,6 +17,8 @@ import type { Server } from "~/core/types";
 import { MODE, PORT } from "~/env.server";
 
 const USERCONTENT_DIR = join(cwd(), "usercontent");
+const PUBLIC_DIR = join(cwd(), "public");
+const ASSET_DIR = join(PUBLIC_DIR, "build");
 
 declare module "fastify" {
   interface FastifyInstance {
@@ -48,9 +47,17 @@ declare module "fastify" {
   await app
     .register(fastifySocketIO, { transports: ["websocket"] })
     .register(fastifyEarlyHints, { warn: true })
-    .register(staticFilePlugin, {
-      assetsBuildDirectory: "public/build",
-      publicPath: "/build/"
+    .register(fastifyStatic, {
+      root: PUBLIC_DIR,
+      wildcard: false,
+      maxAge: "1h"
+    })
+    .register(fastifyStatic, {
+      root: ASSET_DIR,
+      prefix: "/build",
+      decorateReply: false,
+      maxAge: "1y",
+      immutable: true
     })
     .all("*", async (request, reply) => {
       const links = getEarlyHintLinks(request, build);
