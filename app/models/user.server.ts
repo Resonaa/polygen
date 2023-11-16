@@ -12,12 +12,12 @@ import { comparePassword, hashPassword } from "~/session.server";
 
 export type { User } from "@prisma/client";
 
-export function getUser(username: User["username"]) {
-  return prisma.user.findUnique({ where: { username } });
+export async function getUser(username: User["username"]) {
+  return await prisma.user.findUnique({ where: { username } });
 }
 
-export function getPassword(username: User["username"]) {
-  return prisma.password.findUnique({ where: { username } });
+export async function getPassword(username: User["username"]) {
+  return await prisma.password.findUnique({ where: { username } });
 }
 
 export async function getStats(username: User["username"]) {
@@ -56,8 +56,8 @@ export async function updatePassword(
   });
 }
 
-export function updateBio(username: User["username"], bio: string) {
-  return prisma.user.update({
+export async function updateBio(username: User["username"], bio: string) {
+  return await prisma.user.update({
     data: { bio },
     where: { username }
   });
@@ -89,7 +89,7 @@ export async function updateAvatar(
     img = img.resize(size, size, { fit: "fill" });
   }
 
-  return writeFile(
+  return await writeFile(
     join(cwd(), `usercontent/avatar/${username}.avif`),
     await img.toBuffer()
   );

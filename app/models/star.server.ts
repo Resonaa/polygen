@@ -16,19 +16,19 @@ export async function getStarOrCreate(username: Star["username"]) {
   return res;
 }
 
-export function updateStar(
+export async function updateStar(
   username: Star["username"],
   mu: Star["mu"],
   sigma: Star["sigma"]
 ) {
-  return prisma.star.update({
+  return await prisma.star.update({
     data: { mu, sigma, star: ordinal({ mu, sigma }) },
     where: { username }
   });
 }
 
-export function rankList() {
-  return prisma.star.findMany({ orderBy: { star: "desc" } });
+export async function rankList() {
+  return await prisma.star.findMany({ orderBy: { star: "desc" } });
 }
 
 export async function getRank(username: Star["username"]) {

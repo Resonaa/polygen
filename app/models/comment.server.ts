@@ -4,12 +4,15 @@ import prisma from "~/db.server";
 
 export type { Comment } from "@prisma/client";
 
-export function getComment(id: Comment["id"]) {
-  return prisma.comment.findUnique({ where: { id } });
+export async function getComment(id: Comment["id"]) {
+  return await prisma.comment.findUnique({ where: { id } });
 }
 
-export function getComments(page: number, parentId?: Comment["parentId"]) {
-  return prisma.comment.findMany({
+export async function getComments(
+  page: number,
+  parentId?: Comment["parentId"]
+) {
+  return await prisma.comment.findMany({
     where: { parentId },
     orderBy: { id: "desc" },
     skip: (page - 1) * 10,
@@ -17,12 +20,12 @@ export function getComments(page: number, parentId?: Comment["parentId"]) {
   });
 }
 
-export function createComment(
+export async function createComment(
   username: Comment["username"],
   content: Comment["content"],
   parentId: Comment["parentId"]
 ) {
-  return prisma.comment.create({
+  return await prisma.comment.create({
     data: {
       content,
       user: { connect: { username } },
@@ -31,8 +34,8 @@ export function createComment(
   });
 }
 
-export function deleteComment(id: Comment["id"]) {
-  return prisma.comment.delete({ where: { id } });
+export async function deleteComment(id: Comment["id"]) {
+  return await prisma.comment.delete({ where: { id } });
 }
 
 export async function rankList() {
