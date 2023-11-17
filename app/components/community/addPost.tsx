@@ -19,7 +19,7 @@ export default function AddPost() {
 
   return (
     <Form method="post" style={{ width: "100%" }}>
-      <Editor value={value} setValue={setValue} mt="-4px" />
+      <Editor value={value} setValue={setValue} mb={4} />
       <Button
         float="right"
         colorScheme="blue"

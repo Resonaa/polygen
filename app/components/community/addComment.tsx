@@ -19,7 +19,7 @@ export default function AddComment({ parentId }: { parentId: number }) {
 
   return (
     <Form method="post" style={{ width: "100%" }}>
-      <Editor value={value} setValue={setValue} mt="-4px" />
+      <Editor value={value} setValue={setValue} mb={4} />
       <input type="hidden" name="parentId" value={parentId} />
       <Button
         float="right"
