@@ -57,7 +57,12 @@ async function seed() {
 
   await prisma.post.create({
     data: {
-      content: "### Test\n$$\n\\KaTeX\n$$",
+      content: `
+### Test
+      
+- [x] GFM
+- [x] $\\KaTeX$
+      `,
       user: { connect: { username: "user" } }
     }
   });

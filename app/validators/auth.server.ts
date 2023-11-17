@@ -7,7 +7,7 @@ export const usernameSchema = z
   .min(3)
   .max(18)
   .regex(
-    /^[\u4e00-\u9fa5a-zA-Z0-9_\-\\!@$%^&*()=+[\]{}|:;'",.<>`~ ]+$/,
+    /^[\u4e00-\u9fa5a-zA-Z0-9_\-\\!$%^&*()=+[\]{}|:;'",.<>`~ ]+$/,
     "auth.username-invalid-chars"
   )
   .regex(/^[^ ].*[^ ]$/, "auth.username-starts-or-ends-with-space")

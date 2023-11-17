@@ -84,8 +84,8 @@ export default function Navbar() {
         </ButtonGroup>
       </Flex>
 
-      <Collapse animateOpacity in={isOpen}>
-        <MobileNav />
+      <Collapse in={isOpen}>
+        <MobileNav onClick={onToggle} />
       </Collapse>
     </Box>
   );
@@ -201,7 +201,7 @@ function DesktopSubNav({ label, to, icon, description }: NavItem) {
   );
 }
 
-function MobileNav() {
+function MobileNav({ onClick }: { onClick: () => void }) {
   return (
     <VStack
       alignItems="flex-start"
@@ -210,13 +210,21 @@ function MobileNav() {
       p={4}
     >
       {NAV_ITEMS.map(navItem => (
-        <MobileNavItem key={navItem.label} {...navItem} />
+        <MobileNavItem key={navItem.label} onClick={onClick} {...navItem} />
       ))}
     </VStack>
   );
 }
 
-function MobileNavItem({ label, to, icon, children }: NavItem) {
+function MobileNavItem({
+  label,
+  to,
+  icon,
+  children,
+  onClick
+}: NavItem & {
+  onClick: () => void;
+}) {
   const { isOpen, onToggle } = useDisclosure();
 
   const { t } = useTranslation();
@@ -225,7 +233,7 @@ function MobileNavItem({ label, to, icon, children }: NavItem) {
     <VStack
       alignItems="flex-start"
       w="100%"
-      onClick={children ? onToggle : undefined}
+      onClick={children ? onToggle : onClick}
       spacing={2}
     >
       <Flex
@@ -245,7 +253,7 @@ function MobileNavItem({ label, to, icon, children }: NavItem) {
         {children ? <DropdownRightIcon isOpen={isOpen} /> : null}
       </Flex>
 
-      <Collapse animateOpacity in={isOpen} style={{ marginTop: "0!important" }}>
+      <Collapse in={isOpen} style={{ marginTop: "0!important" }}>
         <VStack pl={4} borderLeftWidth="2px">
           {children
             ? children.map(child => (
@@ -254,6 +262,7 @@ function MobileNavItem({ label, to, icon, children }: NavItem) {
                   as={Link}
                   align="center"
                   py={2}
+                  onClick={onClick}
                   to={child.to}
                 >
                   <DoveCompatibleIcon as={child.icon} mr="5px" />
