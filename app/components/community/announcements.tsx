@@ -115,14 +115,19 @@ function Announcement({
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader pb={0}>
+          <ModalHeader mb={2} pb={0}>
             {title}
-            <chakra.span color="gray.400" ml={2} fontWeight="normal">
+            <chakra.span
+              color="gray.400"
+              ml={2}
+              fontFamily="mono"
+              fontWeight="normal"
+            >
               #{id}
             </chakra.span>
           </ModalHeader>
           <ModalCloseButton />
-          <ModalBody>
+          <ModalBody pt={0}>
             <Box color="gray.400" fontSize="xs">
               {lang} · {t("community.published")}&nbsp;
               <Tooltip label={formatDate(createdAt)} openDelay={500}>
@@ -130,7 +135,7 @@ function Announcement({
               </Tooltip>
             </Box>
             <Divider my={3} />
-            <TextRenderer content={content} />
+            <TextRenderer>{content}</TextRenderer>
           </ModalBody>
           <ModalFooter gap={3}>
             {editable ? (

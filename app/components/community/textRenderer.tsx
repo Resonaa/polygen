@@ -1,6 +1,7 @@
 import { Link } from "@chakra-ui/react";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import ReactMarkdown from "react-markdown";
+import type { ReactMarkdownOptions } from "react-markdown/lib/react-markdown";
 import rehypeKatex from "rehype-katex";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
@@ -11,14 +12,10 @@ import remarkMention from "./remarkMention";
 
 const renderer = ChakraUIRenderer();
 
-interface RenderedTextProps {
-  content: string;
-}
-
-export default function TextRenderer<T extends RenderedTextProps>({
-  content,
+export default function TextRenderer({
+  children,
   ...props
-}: T) {
+}: ReactMarkdownOptions) {
   return (
     <ReactMarkdown
       components={{
@@ -36,7 +33,7 @@ export default function TextRenderer<T extends RenderedTextProps>({
       rehypePlugins={[[rehypeKatex, { output: "html", throwOnError: false }]]}
       {...props}
     >
-      {content}
+      {children}
     </ReactMarkdown>
   );
 }

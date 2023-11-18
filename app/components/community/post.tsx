@@ -197,11 +197,11 @@ export default function Post({
       ) : linked ? (
         <chakra.a as={Link} to={postUrl} maxH="200px" overflowY="auto">
           <object>
-            <TextRenderer content={content} />
+            <TextRenderer>{content}</TextRenderer>
           </object>
         </chakra.a>
       ) : (
-        <TextRenderer content={content} />
+        <TextRenderer>{content}</TextRenderer>
       )}
     </Flex>
   );

@@ -1,19 +1,16 @@
+import type { FlexProps } from "@chakra-ui/react";
 import { Flex, Textarea, Box } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
 import TextareaAutosize from "react-textarea-autosize";
 
 import TextRenderer from "./textRenderer";
 
-interface EditorProps {
+interface EditorProps extends FlexProps {
   value: string;
   setValue: (value: string) => void;
 }
 
-export default function Editor<T extends EditorProps>({
-  value,
-  setValue,
-  ...props
-}: T) {
+export default function Editor({ value, setValue, ...props }: EditorProps) {
   const { t } = useTranslation();
 
   const hasValue = value.trim().length > 0;
@@ -25,6 +22,7 @@ export default function Editor<T extends EditorProps>({
         flex={1}
         minH="4rem"
         maxH="14rem"
+        fontFamily="mono"
         resize="none"
         name="content"
         onChange={e => setValue(e.target.value)}
@@ -42,7 +40,7 @@ export default function Editor<T extends EditorProps>({
         py={2}
         transition="width .2s"
       >
-        <TextRenderer content={value} />
+        <TextRenderer>{value}</TextRenderer>
       </Box>
     </Flex>
   );

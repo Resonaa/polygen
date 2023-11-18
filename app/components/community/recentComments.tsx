@@ -33,7 +33,7 @@ function RecentComment({
       <Box overflowY="auto" maxH="100px">
         <Link to={`/post/${parentId}`}>
           <object>
-            <TextRenderer content={content} />
+            <TextRenderer>{content}</TextRenderer>
           </object>
         </Link>
       </Box>

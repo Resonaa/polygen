@@ -29,11 +29,7 @@ function GameMessage({
       >
         {sender}
       </a>
-      <TextRenderer
-        content={content}
-        mode="dark"
-        className="inline-block !ml-2"
-      />
+      <TextRenderer>{content}</TextRenderer>
     </div>
   );
 }

@@ -119,7 +119,7 @@ export default function Comment({
       </Flex>
 
       <Box overflowY="auto" maxH="200px">
-        <TextRenderer content={content} />
+        <TextRenderer>{content}</TextRenderer>
       </Box>
     </Flex>
   );

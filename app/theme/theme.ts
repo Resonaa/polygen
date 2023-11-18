@@ -31,7 +31,7 @@ export default extendTheme({
   fonts: {
     heading: "'Noto Sans SC Variable', -apple-system, system-ui, sans-serif",
     body: "'Noto Sans SC Variable', -apple-system, system-ui, sans-serif",
-    mono: "'Noto Sans Mono Variable', Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace"
+    mono: "'Fira Code Variable', system-ui"
   },
   colors: {
     star: "#ffd700"

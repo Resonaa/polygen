@@ -5,13 +5,23 @@ import { FiArrowUp } from "react-icons/fi";
 export default function BackToTop() {
   const scrollToTop = () => window.scroll({ top: 0, behavior: "smooth" });
 
-  const getVisible = () => document.documentElement.scrollTop > 100;
-
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    setIsVisible(getVisible());
-    window.onscroll = () => setIsVisible(getVisible());
+    let preScrollTop = document.documentElement.scrollTop;
+
+    const listener = () => {
+      const newScrollTop = document.documentElement.scrollTop;
+      setIsVisible(newScrollTop > 100 && newScrollTop < preScrollTop);
+      preScrollTop = newScrollTop;
+    };
+
+    const options: AddEventListenerOptions = {
+      passive: true
+    };
+
+    window.addEventListener("scroll", listener, options);
+    return () => window.removeEventListener("scroll", listener, options);
   }, []);
 
   return (

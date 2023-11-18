@@ -5,7 +5,7 @@ import {
   cookieStorageManagerSSR,
   useColorModePreference
 } from "@chakra-ui/react";
-import "@fontsource-variable/noto-sans-mono/index.css";
+import "@fontsource-variable/fira-code/index.css";
 import "@fontsource-variable/noto-sans-sc/index.css";
 import { ThemeEditorProvider } from "@hypertheme-editor/chakra-ui";
 import { cssBundleHref } from "@remix-run/css-bundle";
@@ -41,8 +41,9 @@ import theme from "~/theme/theme";
 
 import { requireOptionalUser } from "./session.server";
 
-export const links: LinksFunction = () =>
-  cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : [];
+export const links: LinksFunction = () => [
+  { rel: "stylesheet", href: cssBundleHref! }
+];
 
 export async function loader({ request }: LoaderFunctionArgs) {
   return json({
@@ -117,7 +118,7 @@ function Document({ children }: { children: ReactNode }) {
   );
 }
 
-function RouteErrorWrapper({ children }: { children: ReactNode }) {
+function ErrorWrapper({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <head>
@@ -138,17 +139,17 @@ export function ErrorBoundary() {
 
   if (isRouteErrorResponse(error)) {
     return (
-      <RouteErrorWrapper>
+      <ErrorWrapper>
         <h1>
           {error.status} {error.statusText}
         </h1>
         {error.data}
-      </RouteErrorWrapper>
+      </ErrorWrapper>
     );
   }
 
   return (
-    <RouteErrorWrapper>
+    <ErrorWrapper>
       <h1>
         {typeof error === "object" &&
         !!error &&
@@ -157,7 +158,7 @@ export function ErrorBoundary() {
           ? error.message
           : "Unknown Error"}
       </h1>
-    </RouteErrorWrapper>
+    </ErrorWrapper>
   );
 }
 
