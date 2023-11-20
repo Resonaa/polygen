@@ -1,5 +1,5 @@
 import type { TagProps } from "@chakra-ui/react";
-import { Avatar, Tag, TagLabel, chakra } from "@chakra-ui/react";
+import { Avatar, Tag, TagLabel } from "@chakra-ui/react";
 import { Link } from "@remix-run/react";
 
 interface UserTagProps extends TagProps {
@@ -8,14 +8,8 @@ interface UserTagProps extends TagProps {
 
 export default function UserTag({ username, ...props }: UserTagProps) {
   return (
-    <chakra.a as={Link} to={`/user/${username}`} display="inline-block">
-      <Tag
-        fontSize="inherit"
-        fontWeight="inherit"
-        textDecoration="inherit"
-        rounded="full"
-        {...props}
-      >
+    <Link to={`/user/${username}`}>
+      <Tag verticalAlign="middle" {...props}>
         <Avatar
           mr={1}
           size="2xs"
@@ -23,6 +17,6 @@ export default function UserTag({ username, ...props }: UserTagProps) {
         />
         <TagLabel>{username}</TagLabel>
       </Tag>
-    </chakra.a>
+    </Link>
   );
 }

@@ -1,12 +1,12 @@
 export default {
   "p:last-child": {
-    marginBottom: 0
+    mb: 0
   },
-  ".chakra-heading:first-child": {
-    marginTop: 0
+  ".chakra-heading": {
+    mt: "0px !important"
   },
   ".chakra-heading:last-child": {
-    marginBottom: 0
+    mb: 0
   },
   ".chakra-modal__content-container > div[role='dialog']": {
     fontFamily: "inherit"
