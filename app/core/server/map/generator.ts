@@ -1,10 +1,10 @@
 import _ from "lodash";
 
-import { LandType } from "~/core/server/game/land";
-import type { MapMode } from "~/core/server/game/map";
-import { Map } from "~/core/server/game/map";
-import type { Pos } from "~/core/server/game/utils";
-import { aStar, playerCountToSize } from "~/core/server/game/utils";
+import { LandType } from "~/core/server/map/land";
+import type { MapMode } from "~/core/server/map/map";
+import { Map } from "~/core/server/map/map";
+import type { Pos } from "~/core/server/map/utils";
+import { aStar, playerCountToSize } from "~/core/server/map/utils";
 import { RoomMap } from "~/core/server/vote";
 
 const cityDensity = 0.05;

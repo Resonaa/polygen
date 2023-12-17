@@ -11,10 +11,9 @@ import {
   getPileSizeByScale,
   getScaleByPileSize
 } from "~/core/client/utils";
-import { LandType } from "~/core/server/game/land";
-import type { Pos } from "~/core/server/game/utils";
-
-import { Map, MapMode } from "../server/game/map";
+import { LandType } from "~/core/server/map/land";
+import { Map, MapMode } from "~/core/server/map/map";
+import type { Pos } from "~/core/server/map/utils";
 
 const MIN_PILE_SIZE = 50;
 

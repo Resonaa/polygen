@@ -1,8 +1,8 @@
 import type { Server as ServerType, Socket as SocketType } from "socket.io";
 import type { Socket as ClientSocketType } from "socket.io-client";
 
-import type { LandColor, MaybeLand } from "~/core/server/game/land";
-import type { Pos } from "~/core/server/game/utils";
+import type { LandColor, MaybeLand } from "~/core/server/map/land";
+import type { Pos } from "~/core/server/map/utils";
 import type { Message } from "~/core/server/message";
 import type { TeamId } from "~/core/server/room";
 import type {

@@ -11,7 +11,7 @@ import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 
 import { registerClientSocket } from "~/core/client";
-import { getMinReadyPlayerCount } from "~/core/server/game/utils";
+import { getMinReadyPlayerCount } from "~/core/server/map/utils";
 import type { ClientSocket } from "~/core/types";
 import { useUser } from "~/hooks/loader";
 

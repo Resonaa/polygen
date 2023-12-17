@@ -1,7 +1,7 @@
 import { Bench } from "tinybench";
 
-import { generateMap } from "~/core/server/game/generator";
-import { MapMode } from "~/core/server/game/map";
+import { generateMap } from "~/core/server/map/generator";
+import { MapMode } from "~/core/server/map/map";
 import { RoomMap } from "~/core/server/vote";
 
 (async () => {

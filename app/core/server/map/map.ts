@@ -1,6 +1,6 @@
-import type { LandColor, MaybeLand } from "~/core/server/game/land";
-import { Land, LandType } from "~/core/server/game/land";
-import type { Pos } from "~/core/server/game/utils";
+import type { LandColor, MaybeLand } from "~/core/server/map/land";
+import { Land, LandType } from "~/core/server/map/land";
+import type { Pos } from "~/core/server/map/utils";
 import type { Room } from "~/core/server/room";
 
 export enum MapMode {

@@ -6,7 +6,7 @@ import { Header, List, Table } from "semantic-ui-react";
 import { Star } from "~/components/community";
 import { formatStar } from "~/core/client/utils";
 import { Vote } from "~/core/client/vote";
-import type { LandColor } from "~/core/server/game/land";
+import type { LandColor } from "~/core/server/map/land";
 import type { MaxVotedItems, VoteData, VoteItem } from "~/core/server/vote";
 import { translations } from "~/core/server/vote";
 import type { ClientSocket, Patch } from "~/core/types";

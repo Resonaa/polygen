@@ -1,6 +1,6 @@
 import _ from "lodash";
 
-import { MapMode } from "~/core/server/game/map";
+import { MapMode } from "~/core/server/map/map";
 
 type ArrElement<ArrType extends readonly unknown[]> =
   ArrType extends readonly (infer ElementType)[] ? ElementType : never;
@@ -29,6 +29,8 @@ export const translations: { [item in VoteItem]: string } = {
 export type VoteValue<T extends VoteItem> = ArrElement<(typeof voteItems)[T]>;
 
 export type MaxVotedItems = typeof voteItems;
+
+export type Vote<T extends VoteItem = VoteItem> = [T, VoteValue<T>];
 
 export type SampleMaxVotedItems = {
   [item in VoteItem]: VoteValue<item>;

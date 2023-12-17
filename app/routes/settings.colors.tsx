@@ -5,8 +5,8 @@ import { Button, Form, Grid } from "semantic-ui-react";
 import Access from "~/access";
 import { Renderer } from "~/core/client/renderer";
 import { saveSettings, Settings } from "~/core/client/settings";
-import { LandType } from "~/core/server/game/land";
-import { Map } from "~/core/server/game/map";
+import { LandType } from "~/core/server/map/land";
+import { Map } from "~/core/server/map/map";
 import { requireUser } from "~/session.server";
 import { numberColorToString, stringColorToNumber } from "~/utils";
 

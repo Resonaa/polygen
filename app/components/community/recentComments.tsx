@@ -9,9 +9,7 @@ import type { CommentProps } from "./comment";
 import TextRenderer from "./textRenderer";
 import UserLink from "./userLink";
 
-type RecentCommentProps = CommentProps & {
-  parentId: Comment["parentId"];
-};
+type RecentCommentProps = CommentProps & Pick<Comment, "parentId">;
 
 function RecentComment({
   username,

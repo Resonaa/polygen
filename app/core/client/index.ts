@@ -1,9 +1,9 @@
 import LZString from "lz-string";
 
 import { Renderer } from "~/core/client/renderer";
-import { LandType } from "~/core/server/game/land";
-import { Map } from "~/core/server/game/map";
-import type { Pos } from "~/core/server/game/utils";
+import { LandType } from "~/core/server/map/land";
+import { Map } from "~/core/server/map/map";
+import type { Pos } from "~/core/server/map/utils";
 
 import type { ClientSocket, Patch } from "../types";
 

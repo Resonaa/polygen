@@ -1,6 +1,6 @@
-import { LandType } from "~/core/server/game/land";
-import type { Map } from "~/core/server/game/map";
-import { MapMode } from "~/core/server/game/map";
+import { LandType } from "~/core/server/map/land";
+import type { Map } from "~/core/server/map/map";
+import { MapMode } from "~/core/server/map/map";
 
 export type Pos = [number, number];
 

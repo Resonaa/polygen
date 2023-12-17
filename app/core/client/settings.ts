@@ -1,6 +1,6 @@
 import LZString from "lz-string";
 
-import { MapMode } from "~/core/server/game/map";
+import { MapMode } from "~/core/server/map/map";
 
 export type IKey = string;
 
@@ -44,7 +44,10 @@ type DeepPartial<T> = {
 
 type AsObject<T> = T extends object ? T : never;
 
-function merge<Schema extends object>(from: Schema, to: DeepPartial<Schema>) {
+export function merge<Schema extends object>(
+  from: Schema,
+  to: DeepPartial<Schema>
+) {
   const target: DeepPartial<Schema> = {};
 
   for (const key of Object.keys(from)) {

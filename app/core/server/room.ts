@@ -2,13 +2,13 @@ import _ from "lodash";
 import LZString from "lz-string";
 import { rate, rating } from "openskill";
 
-import { generateMap } from "~/core/server/game/generator";
-import type { LandColor, MaybeLand } from "~/core/server/game/land";
-import { LandType } from "~/core/server/game/land";
-import type { MaybeMap } from "~/core/server/game/map";
-import { Map as GameMap } from "~/core/server/game/map";
-import type { Pos } from "~/core/server/game/utils";
-import { getMinReadyPlayerCount } from "~/core/server/game/utils";
+import { generateMap } from "~/core/server/map/generator";
+import type { LandColor, MaybeLand } from "~/core/server/map/land";
+import { LandType } from "~/core/server/map/land";
+import type { MaybeMap } from "~/core/server/map/map";
+import { Map as GameMap } from "~/core/server/map/map";
+import type { Pos } from "~/core/server/map/utils";
+import { getMinReadyPlayerCount } from "~/core/server/map/utils";
 import { MessageType } from "~/core/server/message";
 import type {
   SampleMaxVotedItems,

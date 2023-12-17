@@ -5,9 +5,9 @@ import { Menu, Table, Grid, Button } from "semantic-ui-react";
 import Access from "~/access";
 import { Renderer } from "~/core/client/renderer";
 import { getSettings, saveSettings, Settings } from "~/core/client/settings";
-import { LandType } from "~/core/server/game/land";
-import { Map, MapMode } from "~/core/server/game/map";
-import type { Pos } from "~/core/server/game/utils";
+import { LandType } from "~/core/server/map/land";
+import { Map, MapMode } from "~/core/server/map/map";
+import type { Pos } from "~/core/server/map/utils";
 import { requireUser } from "~/session.server";
 import { numberColorToString } from "~/utils";
 
