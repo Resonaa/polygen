@@ -2,7 +2,7 @@ import { LandType } from "~/core/server/map/land";
 import type { Map } from "~/core/server/map/map";
 import { MapMode } from "~/core/server/map/map";
 
-export type Pos = [number, number];
+export type Pos = readonly [number, number];
 
 export function getMinReadyPlayerCount(playerCount: number) {
   if (playerCount === 0) {

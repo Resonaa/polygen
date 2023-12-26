@@ -3,10 +3,28 @@ import { MessageType } from "~/core/server/message";
 import { RoomManager, SocketRoom } from "~/core/server/room";
 import type { Server } from "~/core/types";
 
+/**
+ * Registers server side logic for Socket.IO Server.
+ */
 export function setServer(server: Server) {
+  // Set up a middleware to identify the incoming connection.
   server.use(async (socket, next) => {
-    socket.data.username = await identify(socket);
-    next();
+    // Get the username (null if failed).
+    const username = await identify(socket);
+
+    if (username) {
+      // Save the username in socket data.
+      socket.data.username = username;
+      next();
+    } else {
+      // Throw an error to reject the connection.
+      next(new Error("User not logged in"));
+    }
+  });
+
+  // Discard the initial HTTP request to save memory.
+  server.engine.on("connection", rawSocket => {
+    rawSocket.request = null;
   });
 
   server.on("connection", socket => {
@@ -17,10 +35,7 @@ export function setServer(server: Server) {
       return;
     }
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    // noinspection JSConstantReassignment
-    delete socket.conn.request;
+    console.log(socket.conn.request);
 
     socket.leave(socket.id);
 
