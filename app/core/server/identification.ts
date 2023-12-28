@@ -1,7 +1,8 @@
-import type { ServerSocket } from "~/core/types";
 import { SESSION_SECRET } from "~/env.server";
 import { getUser } from "~/models/user.server";
 import { sessionStorage, USER_SESSION_KEY } from "~/session.server";
+
+import type { ServerSocket } from "../types";
 
 /**
  * Gets and validates username from an incoming socket.

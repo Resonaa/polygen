@@ -1,7 +1,8 @@
-import { identify } from "~/core/server/identification";
-import { MessageType } from "~/core/server/message";
-import { RoomManager, SocketRoom } from "~/core/server/room";
-import type { Server } from "~/core/types";
+import type { Server } from "../types";
+
+import { identify } from "./identification";
+import { MessageType } from "./message";
+import { RoomManager, SocketRoom } from "./room";
 
 /**
  * Registers server side logic for Socket.IO Server.
