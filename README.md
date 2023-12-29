@@ -5,6 +5,12 @@
 
 `polygen` is a polygon-based web game inspired by [generals.io](https://generals.io).
 
+## Prerequisites
+
+- [Node 20+](https://nodejs.org/)
+- [Rust 1.30+](https://www.rust-lang.org/)
+- [wasm-pack](https://rustwasm.github.io/wasm-pack/)
+
 ## Development
 
 - Copy .env file:
@@ -23,6 +29,12 @@
 
   ```sh
   npm run setup
+  ```
+
+- Build wasm target:
+
+  ```sh
+  npm run rust
   ```
 
 - Start dev server:

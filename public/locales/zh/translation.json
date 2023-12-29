@@ -25,7 +25,7 @@
     "retype-password-placeholder": "再次输入密码",
     "captcha-placeholder": "右侧图形验证码",
     "username-starts-or-ends-with-space": "用户名不能以空格开头或结尾",
-    "username-successive-spaces": "用户名不能包含连续的多个空格",
+    "username-successive-spaces": "用尸名不能包含连续的多个空格",
     "username-invalid-chars": "用户名包含不允许的字符",
     "username-or-password-incorrect": "用户名或密码错误",
     "captcha-incorrect": "验证码错误",

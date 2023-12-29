@@ -10,6 +10,7 @@ declare class CatchTheCatGame {
     backgroundColor: number;
     parent: string;
     statusBarAlign: string;
+    credit: string;
   });
 
   destroy: () => void;
@@ -34,7 +35,8 @@ export default function CatchTheCat() {
       initialWallCount: w * h * wallDensity,
       backgroundColor: 0xffffff,
       parent: "game",
-      statusBarAlign: "center"
+      statusBarAlign: "center",
+      credit: "polygen"
     });
 
     return () => {

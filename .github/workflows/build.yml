@@ -5,6 +5,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  CARGO_TERM_COLOR: always
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -17,7 +20,10 @@ jobs:
         with:
           cache: npm
           cache-dependency-path: ./package.json
-          node-version: 18
+          node-version: 20
+
+#      - name: 🦀 Install wasm-pack
+#        run: cargo install wasm-pack
 
       - name: 🏄 Copy test env vars
         run: cp .env.example .env

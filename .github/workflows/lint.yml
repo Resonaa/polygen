@@ -5,6 +5,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  CARGO_TERM_COLOR: always
+
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -17,10 +20,16 @@ jobs:
         with:
           cache: npm
           cache-dependency-path: ./package.json
-          node-version: 18
+          node-version: 20
+
+#      - name: 🦀 Install wasm-pack
+#        run: cargo install wasm-pack
 
       - name: 📥 Install deps
         run: npm install
+
+#      - name: ⚙️ Build wasm target
+#        run: npm run rust
 
       - name: 🔬 Lint
         run: npm run lint
