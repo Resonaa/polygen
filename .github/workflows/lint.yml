@@ -22,14 +22,14 @@ jobs:
           cache-dependency-path: ./package.json
           node-version: 20
 
-#      - name: 🦀 Install wasm-pack
-#        run: cargo install wasm-pack
+      - name: 🦀 Install wasm-pack
+        run: cargo install wasm-pack
+
+      - name: ⚙️ Build wasm target
+        run: npm run wasm
 
       - name: 📥 Install deps
         run: npm install
-
-#      - name: ⚙️ Build wasm target
-#        run: npm run rust
 
       - name: 🔬 Lint
         run: npm run lint

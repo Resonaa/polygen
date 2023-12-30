@@ -1,15 +1,26 @@
+import { getRandomValues } from "node:crypto";
+
 import { Bench } from "tinybench";
 
-import { generateMap } from "~/core/server/map/generator";
-import { MapMode } from "~/core/server/map/map";
-import { RoomMap } from "~/core/server/vote";
+import { hashJs, hash } from "~/hash.server";
 
 (async () => {
-  const bench = new Bench();
+  const bench = new Bench({
+    time: 3000
+  });
 
-  for (const map of Object.values(RoomMap)) {
-    bench.add(`generate ${map}`, () => generateMap(12, MapMode.Hexagon, map));
-  }
+  const data = new Uint8Array(65536);
+
+  const genData = () => {
+    getRandomValues(data);
+  };
+
+  bench.add("Node hash", () => hashJs(data), {
+    beforeEach: genData
+  });
+  bench.add("WASM hash", () => hash(data), {
+    beforeEach: genData
+  });
 
   await bench.warmup();
   await bench.run();

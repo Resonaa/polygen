@@ -3,7 +3,11 @@ import { PassThrough } from "node:stream";
 
 import createCache from "@emotion/cache";
 import { CacheProvider } from "@emotion/react";
-import type { DataFunctionArgs, EntryContext } from "@remix-run/node";
+import type {
+  ActionFunctionArgs,
+  LoaderFunctionArgs,
+  EntryContext
+} from "@remix-run/node";
 import { createReadableStreamFromReadable } from "@remix-run/node";
 import { RemixServer } from "@remix-run/react";
 import i18next from "i18next";
@@ -12,7 +16,7 @@ import isbot from "isbot";
 import { renderToPipeableStream } from "react-dom/server";
 import { I18nextProvider, initReactI18next } from "react-i18next";
 
-import hash from "./hash.server";
+import { hash } from "./hash.server";
 import i18n from "./i18n";
 import { getLocale } from "./i18next.server";
 
@@ -75,24 +79,31 @@ export default async function handleRequest(
   });
 }
 
+/**
+ * Caches data responses.
+ */
 export async function handleDataRequest(
   response: Response,
-  { request }: DataFunctionArgs
+  { request }: LoaderFunctionArgs | ActionFunctionArgs
 ) {
+  // Delete remix header.
   response.headers.delete("X-Remix-Response");
 
-  // does not cache root loader or API routes
+  // Does not cache root loader or API routes.
   if (request.url.endsWith("_data=root") || request.url.includes("api")) {
     return response;
   }
 
+  // Compute and set the ETag.
   const body = await response.arrayBuffer();
-  const etag = hash(Buffer.from(body));
+  const etag = hash(new Uint8Array(body)).toString(36);
   response.headers.set("ETag", etag);
 
   if (request.headers.get("If-None-Match") === etag) {
+    // Cache hits.
     return new Response(null, { status: 304 });
   } else {
+    // Cache misses.
     return new Response(body, {
       status: response.status,
       headers: response.headers

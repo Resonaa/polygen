@@ -22,8 +22,11 @@ jobs:
           cache-dependency-path: ./package.json
           node-version: 20
 
-#      - name: 🦀 Install wasm-pack
-#        run: cargo install wasm-pack
+      - name: 🦀 Install wasm-pack
+        run: cargo install wasm-pack
+
+      - name: ⚙️ Build wasm target
+        run: npm run wasm
 
       - name: 🏄 Copy test env vars
         run: cp .env.example .env

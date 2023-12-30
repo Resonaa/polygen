@@ -5,11 +5,12 @@ import {
   Th,
   Thead,
   Tr,
-  Td
+  Td,
+  Tooltip
 } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
 
-import { useRelativeDateFormatter } from "~/hooks/datetime";
+import { formatDate, useRelativeDateFormatter } from "~/hooks/datetime";
 
 import UserTag from "../community/userTag";
 
@@ -29,7 +30,11 @@ function Rank({ createdAt, username, id }: Rank & { id: number }) {
         <UserTag username={username} />
       </Td>
 
-      <Td>{relativeDate(createdAt)}</Td>
+      <Td>
+        <Tooltip title={formatDate(createdAt)}>
+          {relativeDate(createdAt)}
+        </Tooltip>
+      </Td>
     </Tr>
   );
 }

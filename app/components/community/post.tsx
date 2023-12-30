@@ -115,16 +115,16 @@ export default function Post({
                 variant="ghost"
               >
                 <IconButton
-                  aria-label="cancel"
-                  colorScheme="red"
-                  icon={<CloseIcon />}
-                  onClick={onCancelClick}
-                />
-                <IconButton
                   aria-label="save"
                   colorScheme="green"
                   icon={<CheckIcon />}
                   type="submit"
+                />
+                <IconButton
+                  aria-label="cancel"
+                  colorScheme="red"
+                  icon={<CloseIcon />}
+                  onClick={onCancelClick}
                 />
 
                 <input type="hidden" name="content" value={value} />

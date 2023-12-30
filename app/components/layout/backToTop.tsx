@@ -12,7 +12,7 @@ export default function BackToTop() {
 
     const listener = () => {
       const newScrollTop = document.documentElement.scrollTop;
-      setIsVisible(newScrollTop > Infinity && newScrollTop < preScrollTop);
+      setIsVisible(newScrollTop > 100 && newScrollTop < preScrollTop);
       preScrollTop = newScrollTop;
     };
 
@@ -29,14 +29,13 @@ export default function BackToTop() {
       aria-label="Back to top"
       icon={<FiArrowUp />}
       pos="fixed"
-      bottom={12}
-      right={10}
+      bottom={6}
+      right={6}
       zIndex={387}
-      size="lg"
       shadow="xl"
       colorScheme="blue"
       onClick={scrollToTop}
-      transform={isVisible ? undefined : "translateX(88px)"}
+      transform={isVisible ? undefined : "translateX(64px)"}
     />
   );
 }

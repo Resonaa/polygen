@@ -62,7 +62,7 @@ export default function Index() {
         <Posts posts={posts} />
       </VStack>
 
-      <VStack w={{ base: "100%", md: "25%" }} spacing={5}>
+      <VStack w={{ base: "100%", md: "25%" }} spacing={4}>
         <Announcements announcements={announcements} />
         <Divider />
         <Countdowns />

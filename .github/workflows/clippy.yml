@@ -1,0 +1,22 @@
+name: 🦀 Clippy
+on: [push]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  clippy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v4
+
+      - name: 🔃 Switch directory
+        run: cd wasm
+
+      - name: 🦀 Clippy
+        run: cargo clippy

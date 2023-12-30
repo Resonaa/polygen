@@ -2,19 +2,17 @@
   "name": "polygen",
   "sideEffects": false,
   "scripts": {
-    "build": "remix build",
-    "build:remix": "remix build",
-    "dev": "remix dev -c \"node server/build/index.js\"",
     "bench": "ts-node benchmarks/index.ts",
-    "rust": "run-p rust:*",
-    "rust:fibonacci": "wasm-pack build fibonacci --out-name fibonacci",
+    "build": "remix build",
+    "dev": "remix dev -c \"node server/build/index.js\"",
+    "format": "prettier --write . && npm run lint -- --fix",
     "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint .",
     "migrate": "npx prisma migrate dev",
+    "postinstall": "patch-package",
     "setup": "prisma generate && prisma migrate deploy && prisma db seed",
     "start": "cross-env NODE_ENV=production npx pm2 start --name polygen server/build/index.js",
     "typecheck": "tsc -b",
-    "postinstall": "patch-package",
-    "format": "prettier --write . && npm run lint -- --fix"
+    "wasm": "wasm-pack build wasm --target nodejs"
   },
   "eslintIgnore": [
     "/node_modules",
@@ -54,7 +52,6 @@
     "dotenv": "latest",
     "fastify": "latest",
     "fastify-socket.io": "latest",
-    "fireworks-js": "latest",
     "framer-motion": "latest",
     "fs-extra": "latest",
     "i18next": "latest",
@@ -90,6 +87,7 @@
     "tiny-invariant": "latest",
     "ts-node": "latest",
     "typescript": "latest",
+    "wasm": "file:wasm/pkg",
     "zod": "latest"
   },
   "devDependencies": {
@@ -117,7 +115,6 @@
     "eslint-plugin-markdown": "latest",
     "eslint-plugin-react": "latest",
     "eslint-plugin-react-hooks": "latest",
-    "npm-run-all": "latest",
     "patch-package": "latest",
     "pm2": "latest",
     "prettier": "latest",
@@ -128,7 +125,7 @@
     "types-fastify-socket.io": "latest"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"

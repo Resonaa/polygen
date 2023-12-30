@@ -19,22 +19,22 @@
   cp .env.example .env
   ```
 
+- Build wasm target:
+
+  ```sh
+  npm run wasm
+  ```
+
 - Install dependencies:
 
   ```sh
-  npm i
+  npm install
   ```
 
 - Setup database:
 
   ```sh
   npm run setup
-  ```
-
-- Build wasm target:
-
-  ```sh
-  npm run rust
   ```
 
 - Start dev server:

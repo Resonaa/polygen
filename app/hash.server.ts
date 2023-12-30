@@ -1,11 +1,16 @@
-export default function hash(buf: Buffer) {
-  let hash = 2166136261;
+export { hash } from "wasm";
 
-  for (let i = 0; i < buf.length; ) {
-    hash ^= buf[i++];
+/**
+ * Hashes the given data. For benchmarking.
+ */
+export function hashJs(data: Uint8Array) {
+  let hash = 0x811c9dc5;
+
+  data.forEach(i => {
+    hash ^= i;
     hash +=
       (hash << 1) + (hash << 4) + (hash << 7) + (hash << 8) + (hash << 24);
-  }
+  });
 
-  return (hash >>> 0).toString(36);
+  return hash >>> 0;
 }

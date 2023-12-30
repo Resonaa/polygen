@@ -1,23 +1,11 @@
 import { Icon } from "@chakra-ui/react";
 import type { IconType } from "react-icons";
 import { FaDove, FaTwitter } from "react-icons/fa";
-import {
-  GiDove,
-  GiFreedomDove,
-  GiPeaceDove,
-  GiHummingbird
-} from "react-icons/gi";
+import { GiDove, GiFreedomDove, GiPeaceDove } from "react-icons/gi";
 
 import { DEFAULT_DOVE, DOVE_KEY, useCookieValue } from "~/hooks/cookie";
 
-export const doves = [
-  FaDove,
-  GiDove,
-  GiFreedomDove,
-  GiHummingbird,
-  GiPeaceDove,
-  FaTwitter
-];
+export const doves = [FaDove, GiDove, GiFreedomDove, GiPeaceDove, FaTwitter];
 
 export default function DoveCompatibleIcon<
   T extends {

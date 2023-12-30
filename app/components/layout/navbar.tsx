@@ -21,7 +21,6 @@ import type { IconType } from "react-icons";
 import { BiSolidGame } from "react-icons/bi";
 import { FaCrown, FaHome, FaTrophy } from "react-icons/fa";
 
-import TextRenderer from "~/components/community/textRenderer";
 import { useOptionalUser } from "~/hooks/loader";
 import type { TFunctionArg } from "~/i18next";
 
@@ -70,13 +69,7 @@ export default function Navbar() {
             fontWeight={600}
             textAlign="center"
           >
-            {user ? (
-              <TextRenderer>
-                {`$\\text{lo\\color{green}g}_{\\small\\color{green}e}{\\color{green}n}py$`}
-              </TextRenderer>
-            ) : (
-              "polygen"
-            )}
+            polygen
           </Box>
 
           <Flex display={{ base: "none", md: "flex" }} ml={10}>
