@@ -1,0 +1,35 @@
+name: ⏱️ Bench
+on: [push]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  bench:
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v4
+
+      - name: ⎔ Setup node
+        uses: actions/setup-node@v4
+        with:
+          cache: npm
+          cache-dependency-path: ./package.json
+          node-version: 20
+
+      - name: 🦀 Install wasm-pack
+        run: cargo install wasm-pack
+
+      - name: ⚙️ Build wasm target
+        run: npm run wasm
+
+      - name: 📥 Install deps
+        run: npm install
+
+      - name: ⏱️ Bench
+        run: npm run bench

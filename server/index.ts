@@ -20,6 +20,7 @@ const USERCONTENT_DIR = join(cwd(), "usercontent");
 const PUBLIC_DIR = join(cwd(), "public");
 const ASSET_DIR = join(PUBLIC_DIR, "build");
 
+// Declare the Socket.IO server type registered by the plugin.
 declare module "fastify" {
   interface FastifyInstance {
     io: Server;
@@ -27,14 +28,18 @@ declare module "fastify" {
 }
 
 (async () => {
+  // Install source map support.
   install();
 
+  // Create usercontent directory.
   await mkdir(join(USERCONTENT_DIR, "avatar"), { recursive: true });
 
+  // Construct Fastify app.
   const app = fastify({
     logger: { transport: { target: "@fastify/one-line-logger" } }
   });
 
+  // Add no-op content parser to fix Content-Type problems.
   const noopContentParser: FastifyContentTypeParser = (_, payload, done) => {
     done(null, payload);
   };
@@ -42,10 +47,14 @@ declare module "fastify" {
   app.addContentTypeParser("application/json", noopContentParser);
   app.addContentTypeParser("*", noopContentParser);
 
+  // Create request handler for incoming requests.
   const requestHandler = createRequestHandler({ build, mode: build.mode });
 
+  // Register Socket.IO server.
+  await app.register(fastifySocketIO, { transports: ["websocket"] });
+  setServer(app.io);
+
   await app
-    .register(fastifySocketIO, { transports: ["websocket"] })
     .register(fastifyEarlyHints, { warn: true })
     .register(fastifyStatic, {
       root: PUBLIC_DIR,
@@ -66,9 +75,8 @@ declare module "fastify" {
     })
     .listen({ port: PORT });
 
+  // Tell Remix dev server is ready.
   if (MODE === "development") {
     await broadcastDevReady(build);
   }
-
-  setServer(app.io);
 })();

@@ -34,6 +34,10 @@ jobs:
       - name: 👔 Format
         run: npm run format
 
+      - name: 👔 Rustfmt
+        working-directory: wasm/
+        run: cargo fmt
+
       - name: 💪 Commit
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"

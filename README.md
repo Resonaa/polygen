@@ -42,6 +42,42 @@
   npm run dev
   ```
 
+## Benchmarking
+
+Benchmarks are available for performance-sensitive functions.
+
+- Run all benchmarks:
+
+  ```sh
+  npm run bench
+  ```
+
+- Run a single benchmark:
+  ```sh
+  npm run bench:hash
+  ```
+
+Refer to [package.json](https://github.com/jwcub/polygen/blob/main/package.json) for more information.
+
+## Contributing
+
+Before committing, make sure to run through the checks:
+
+```sh
+npm run build
+npm run lint
+npm run typecheck
+npm run format
+```
+
+For Rust code in `/wasm`, use Clippy and Rustfmt:
+
+```sh
+cd wasm
+cargo clippy
+cargo fmt
+```
+
 ## License
 
 This project is licensed under the [Unlicense](https://github.com/jwcub/polygen/blob/main/LICENSE).

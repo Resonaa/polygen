@@ -12,8 +12,10 @@ import { I18nextProvider, initReactI18next } from "react-i18next";
 
 import i18n from "./i18n";
 
+// Create Emotion cache for each render.
 const cache = createCache({ key: "-", stylisPlugins: [] });
 
+// Setup i18next client-side backends.
 i18next
   .use(initReactI18next)
   .use(LanguageDetector)
@@ -24,7 +26,7 @@ i18next
       backends: [LocalStorageBackend, HttpBackend],
       backendOptions: [
         {
-          expirationTime: 1000 * 60 * 60 * 24
+          expirationTime: 1000 * 60 * 60 * 24 // 24 hours
         },
         {
           loadPath: "/locales/{{lng}}/{{ns}}.json"
@@ -34,10 +36,11 @@ i18next
     detection: {
       order: ["cookie", "htmlTag"],
       caches: ["cookie"],
-      cookieMinutes: 60 * 24 * 365
+      cookieMinutes: 60 * 24 * 365 // 1 year
     }
   })
   .then(() => {
+    // Hydrate the application.
     startTransition(() => {
       hydrateRoot(
         document,

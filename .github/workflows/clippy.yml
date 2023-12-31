@@ -15,8 +15,6 @@ jobs:
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v4
 
-      - name: 🔃 Switch directory
-        run: cd wasm
-
       - name: 🦀 Clippy
+        working-directory: wasm/
         run: cargo clippy

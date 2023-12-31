@@ -17,3 +17,10 @@ export async function getAnnouncements() {
 export async function deleteAnnouncement(id: Announcement["id"]) {
   return await prisma.announcement.delete({ where: { id } });
 }
+
+export async function updateAnnouncement(
+  id: Announcement["id"],
+  content: Announcement["content"]
+) {
+  return await prisma.announcement.update({ where: { id }, data: { content } });
+}

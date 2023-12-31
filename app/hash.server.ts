@@ -1,7 +1,7 @@
 export { hash } from "wasm";
 
 /**
- * Hashes the given data. For benchmarking.
+ * Hashes the given data. Only for benchmarking.
  */
 export function hashJs(data: Uint8Array) {
   let hash = 0x811c9dc5;

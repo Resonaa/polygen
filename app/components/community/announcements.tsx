@@ -23,15 +23,16 @@ import {
   AlertDialogFooter
 } from "@chakra-ui/react";
 import { useFetcher } from "@remix-run/react";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import Access, { access } from "~/access";
-import AddAnnouncement from "~/components/community/addAnnouncement";
 import { formatDate, useRelativeDateFormatter } from "~/hooks/datetime";
 import { useOptionalUser } from "~/hooks/loader";
 import type { Announcement as AnnouncementType } from "~/models/announcement.server";
 
+import AddAnnouncement from "./addAnnouncement";
+import Editor from "./editor";
 import TextRenderer from "./textRenderer";
 
 type AnnouncementProps = Pick<
@@ -100,6 +101,29 @@ function Announcement({
 
   const relativeDate = useRelativeDateFormatter();
 
+  // Support editing.
+  const [editing, setEditing] = useState(false);
+  const [value, setValue] = useState(content);
+
+  const editFetcher = useFetcher();
+
+  const onEditClick = () => {
+    setEditing(true);
+  };
+
+  const onCancelClick = () => {
+    setEditing(false);
+    setValue(content);
+  };
+
+  const submitting = editFetcher.state !== "idle";
+
+  useEffect(() => {
+    if (!submitting) {
+      setEditing(false);
+    }
+  }, [submitting]);
+
   return (
     <>
       <Button fontWeight="normal" onClick={onOpen} variant="ghost">
@@ -114,6 +138,7 @@ function Announcement({
         size="2xl"
       >
         <ModalOverlay />
+
         <ModalContent>
           <ModalHeader mb={2} pb={0}>
             {title}
@@ -126,7 +151,9 @@ function Announcement({
               #{id}
             </chakra.span>
           </ModalHeader>
+
           <ModalCloseButton />
+
           <ModalBody pt={0}>
             <Box color="gray.400" fontSize="xs">
               {lang} · {t("community.published")}&nbsp;
@@ -134,14 +161,42 @@ function Announcement({
                 {relativeDate(createdAt)}
               </Tooltip>
             </Box>
+
             <Divider my={3} />
-            <TextRenderer>{content}</TextRenderer>
+
+            {editing ? (
+              <Editor value={value} setValue={setValue} />
+            ) : (
+              <TextRenderer>{content}</TextRenderer>
+            )}
           </ModalBody>
-          <ModalFooter gap={3}>
-            {editable ? (
+
+          <ModalFooter
+            as={editFetcher.Form}
+            gap={3}
+            action="/api/announcement/edit"
+            method="post"
+          >
+            {editing ? (
+              <>
+                <Button
+                  colorScheme="green"
+                  isLoading={submitting}
+                  type="submit"
+                >
+                  {t("community.save")}
+                </Button>
+                <Button onClick={onCancelClick}>{t("community.cancel")}</Button>
+
+                <input type="hidden" name="content" value={value} />
+                <input type="hidden" name="id" value={id} />
+              </>
+            ) : editable ? (
               <>
                 <DeleteButton id={id} />
-                <Button colorScheme="blue">{t("community.edit")}</Button>
+                <Button colorScheme="blue" onClick={onEditClick}>
+                  {t("community.edit")}
+                </Button>
               </>
             ) : null}
             <Button onClick={onClose}>{t("community.close")}</Button>
@@ -167,6 +222,7 @@ export default function Announcements({
       <Heading mb={1} size="sm">
         {t("community.announcements")}
       </Heading>
+
       <VStack spacing={0}>
         {announcements.map(data =>
           i18n.language === data.lang ? (

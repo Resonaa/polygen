@@ -72,11 +72,13 @@ export default function Post({
     setValue(content);
   };
 
+  const submitting = editFetcher.state !== "idle";
+
   useEffect(() => {
-    if (editFetcher.state === "idle") {
+    if (!submitting) {
       setEditing(false);
     }
-  }, [editFetcher.state]);
+  }, [submitting]);
 
   const cancelRef = useRef<HTMLButtonElement>(null);
 
@@ -118,6 +120,7 @@ export default function Post({
                   aria-label="save"
                   colorScheme="green"
                   icon={<CheckIcon />}
+                  isLoading={submitting}
                   type="submit"
                 />
                 <IconButton

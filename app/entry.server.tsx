@@ -20,8 +20,12 @@ import { hash } from "./hash.server";
 import i18n from "./i18n";
 import { getLocale } from "./i18next.server";
 
+/**
+ * Maximum time before aborting the connection.
+ */
 const ABORT_DELAY = 6590;
 
+// Set up i18next server backend.
 void i18next
   .use(initReactI18next)
   .use(Backend)
@@ -30,22 +34,31 @@ void i18next
     backend: { loadPath: resolve("./public/locales/{{lng}}/{{ns}}.json") }
   });
 
+/**
+ * Handles incoming requests.
+ */
 export default async function handleRequest(
   request: Request,
   responseStatusCode: number,
   responseHeaders: Headers,
   remixContext: EntryContext
 ) {
+  // Bots see the full page on first streaming for SEO.
   const callbackName = isbot(request.headers.get("User-Agent"))
     ? "onAllReady"
     : "onShellReady";
 
+  // Create i18next instance.
   const instance = i18next.cloneInstance({ lng: await getLocale(request) });
 
   return new Promise((resolve, reject) => {
+    // Whether errors occur during server-side rendering.
     let didError = false;
+
+    // Create Emotion cache for each render.
     const cache = createCache({ key: "-", stylisPlugins: [] });
 
+    // Stream the page to the client.
     const { pipe, abort } = renderToPipeableStream(
       <CacheProvider value={cache}>
         <I18nextProvider i18n={instance as typeof i18next}>
@@ -75,6 +88,7 @@ export default async function handleRequest(
       }
     );
 
+    // Abort the connection after timeout.
     setTimeout(abort, ABORT_DELAY);
   });
 }

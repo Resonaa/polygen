@@ -61,7 +61,7 @@
     "post-of": "{{username}}的说说",
     "published": "发布于",
     "placeholder": "支持 Markdown 与 KaTeX 语法",
-    "nothing-to-preview": "预览内容为空"
+    "save": "保存"
   },
   "utils": {
     "plurals_one": "",

@@ -61,7 +61,7 @@
     "post-of": "{{username}}'s Post",
     "published": "Published",
     "placeholder": "Markdown & KaTeX supported",
-    "nothing-to-preview": "Nothing to preview"
+    "save": "Save"
   },
   "utils": {
     "plurals_one": "",
