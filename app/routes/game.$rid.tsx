@@ -4,6 +4,7 @@ import { useLoaderData } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import { Segment } from "semantic-ui-react";
 import { io } from "socket.io-client";
+import parser from "socket.io-msgpack-parser";
 
 import Access from "~/access";
 import GamePanel from "~/components/game/gamePanel";
@@ -25,7 +26,7 @@ export default function Rid() {
   const rid = useLoaderData<typeof loader>();
 
   useEffect(() => {
-    const client = io({ transports: ["websocket"] });
+    const client = io({ transports: ["websocket"], parser });
     setClient(client);
     return () => {
       client.close();

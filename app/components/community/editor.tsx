@@ -27,6 +27,7 @@ export default function Editor({ value, setValue, ...props }: EditorProps) {
         name="content"
         onChange={e => setValue(e.target.value)}
         placeholder={t("community.placeholder")}
+        required
         rounded="none"
         value={value}
         variant="flushed"

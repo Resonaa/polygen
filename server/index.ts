@@ -10,6 +10,7 @@ import { broadcastDevReady } from "@remix-run/node";
 import fastify from "fastify";
 import type { FastifyContentTypeParser } from "fastify/types/content-type-parser";
 import fastifySocketIO from "fastify-socket.io";
+import parser from "socket.io-msgpack-parser";
 import { install } from "source-map-support";
 
 import { setServer } from "~/core/server";
@@ -51,7 +52,7 @@ declare module "fastify" {
   const requestHandler = createRequestHandler({ build, mode: build.mode });
 
   // Register Socket.IO server.
-  await app.register(fastifySocketIO, { transports: ["websocket"] });
+  await app.register(fastifySocketIO, { transports: ["websocket"], parser });
   setServer(app.io);
 
   await app

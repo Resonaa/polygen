@@ -5,14 +5,14 @@ import prisma from "~/db.server";
 export type { Comment } from "@prisma/client";
 
 export async function getComment(id: Comment["id"]) {
-  return await prisma.comment.findUnique({ where: { id } });
+  return prisma.comment.findUnique({ where: { id } });
 }
 
 export async function getComments(
   page: number,
   parentId?: Comment["parentId"]
 ) {
-  return await prisma.comment.findMany({
+  return prisma.comment.findMany({
     where: { parentId },
     orderBy: { id: "desc" },
     skip: (page - 1) * 10,
@@ -25,7 +25,7 @@ export async function createComment(
   content: Comment["content"],
   parentId: Comment["parentId"]
 ) {
-  return await prisma.comment.create({
+  return prisma.comment.create({
     data: {
       content,
       user: { connect: { username } },
@@ -35,7 +35,7 @@ export async function createComment(
 }
 
 export async function deleteComment(id: Comment["id"]) {
-  return await prisma.comment.delete({ where: { id } });
+  return prisma.comment.delete({ where: { id } });
 }
 
 export async function rankList() {

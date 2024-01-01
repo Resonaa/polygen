@@ -1,4 +1,10 @@
 export default {
+  p: {
+    mt: 2
+  },
+  "p:first-child": {
+    mt: 0
+  },
   "p:last-child": {
     mb: 0
   },

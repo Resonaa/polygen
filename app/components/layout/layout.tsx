@@ -15,8 +15,8 @@ export default function Layout({ children }: { children: ReactNode }) {
         maxW="calc(72rem + 28px)"
         mx="auto"
         px="14px"
-        pt="74px"
-        pb={{ base: "calc(24px + 104px)", md: "calc(24px + 64px)" }}
+        pt="82px"
+        pb={{ base: "calc(32px + 104px)", md: "calc(32px + 64px)" }} // Padding-bottom + footer height.
         spacing={7}
       >
         {children}

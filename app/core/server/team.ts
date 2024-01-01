@@ -15,15 +15,6 @@ export default class Teams extends Players {
   }
 
   /**
-   * Sorts the Teams in place.
-   *
-   * Not recommended to use as the collection is normally sorted.
-   */
-  sortInPlace() {
-    this.sort(cmp);
-  }
-
-  /**
    * Simplifies team numbers by renumbering from Team 1.
    */
   simplify() {

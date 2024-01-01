@@ -12,6 +12,10 @@ const postContentSchema = z.string().trim().min(1).max(1e5);
 
 const commentContentSchema = z.string().trim().min(1).max(1e4);
 
+const langSchema = z.literal("zh").or(z.literal("en"));
+
+const titleSchema = z.string().trim().min(1).max(50);
+
 const addPostSchema = z
   .object({
     content: postContentSchema
@@ -48,7 +52,21 @@ const deleteCommentSchema = deletePostSchema;
 
 const deleteAnnouncementSchema = deletePostSchema;
 
-const editAnnouncementSchema = editPostSchema;
+const editAnnouncementSchema = z
+  .object({
+    id: idSchema,
+    title: titleSchema,
+    content: postContentSchema
+  })
+  .strict();
+
+const createAnnouncementSchema = z
+  .object({
+    lang: langSchema,
+    title: titleSchema,
+    content: postContentSchema
+  })
+  .strict();
 
 const getPostPageSchema = z
   .object({
@@ -112,4 +130,8 @@ export function validateDeleteAnnouncementFormData(data: FormData) {
 
 export function validateEditAnnouncementFormData(data: FormData) {
   return safeParseAndFlatten(editAnnouncementSchema, data);
+}
+
+export function validateCreateAnnouncementFormData(data: FormData) {
+  return safeParseAndFlatten(createAnnouncementSchema, data);
 }

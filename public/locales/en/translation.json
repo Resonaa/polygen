@@ -61,7 +61,9 @@
     "post-of": "{{username}}'s Post",
     "published": "Published",
     "placeholder": "Markdown & KaTeX supported",
-    "save": "Save"
+    "save": "Save",
+    "publish": "Publish",
+    "title": "Title"
   },
   "utils": {
     "plurals_one": "",

@@ -16,16 +16,12 @@ export function setServer(server: Server) {
     if (username) {
       // Save the username in socket data.
       socket.data.username = username;
+
       next();
     } else {
       // Throw an error to reject the connection.
       next(new Error("User not logged in"));
     }
-  });
-
-  // Discard the initial HTTP request to save memory.
-  server.engine.on("connection", rawSocket => {
-    rawSocket.request = null;
   });
 
   server.on("connection", socket => {
@@ -36,7 +32,11 @@ export function setServer(server: Server) {
       return;
     }
 
-    console.log(socket.conn.request);
+    // Discard the initial HTTP request to save memory.
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    // noinspection JSConstantReassignment
+    delete socket.conn.request;
 
     socket.leave(socket.id);
 

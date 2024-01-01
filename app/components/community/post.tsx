@@ -73,6 +73,7 @@ export default function Post({
   };
 
   const submitting = editFetcher.state !== "idle";
+  const disabled = value.trim().length === 0;
 
   useEffect(() => {
     if (!submitting) {
@@ -120,6 +121,7 @@ export default function Post({
                   aria-label="save"
                   colorScheme="green"
                   icon={<CheckIcon />}
+                  isDisabled={disabled}
                   isLoading={submitting}
                   type="submit"
                 />

@@ -83,6 +83,7 @@
     "sharp": "latest",
     "socket.io": "latest",
     "socket.io-client": "latest",
+    "socket.io-msgpack-parser": "latest",
     "source-map-support": "latest",
     "svg-captcha": "latest",
     "tiny-invariant": "latest",

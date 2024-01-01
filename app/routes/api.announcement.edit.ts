@@ -17,9 +17,9 @@ export async function action({ request }: ActionFunctionArgs) {
   const res = validateEditAnnouncementFormData(data);
 
   if (res.success) {
-    const { id, content } = res.data;
+    const { id, title, content } = res.data;
 
-    await updateAnnouncement(id, content);
+    await updateAnnouncement(id, title, content);
   }
 
   return null;

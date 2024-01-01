@@ -13,11 +13,11 @@ import { comparePassword, hashPassword } from "~/session.server";
 export type { User } from "@prisma/client";
 
 export async function getUser(username: User["username"]) {
-  return await prisma.user.findUnique({ where: { username } });
+  return prisma.user.findUnique({ where: { username } });
 }
 
 export async function getPassword(username: User["username"]) {
-  return await prisma.password.findUnique({ where: { username } });
+  return prisma.password.findUnique({ where: { username } });
 }
 
 export async function getStats(username: User["username"]) {
@@ -38,7 +38,7 @@ export async function getStats(username: User["username"]) {
 export async function createUser(username: User["username"], password: string) {
   const hash = await hashPassword(password);
 
-  return await prisma.user.create({
+  return prisma.user.create({
     data: {
       username,
       password: { create: { hash } }
@@ -50,14 +50,14 @@ export async function updatePassword(
   username: User["username"],
   password: string
 ) {
-  return await prisma.password.update({
+  return prisma.password.update({
     data: { hash: await hashPassword(password) },
     where: { username }
   });
 }
 
 export async function updateBio(username: User["username"], bio: string) {
-  return await prisma.user.update({
+  return prisma.user.update({
     data: { bio },
     where: { username }
   });
@@ -96,7 +96,7 @@ export async function updateAvatar(
 }
 
 export async function rankList() {
-  return await prisma.user.findMany({
+  return prisma.user.findMany({
     orderBy: { createdAt: "desc" },
     select: { username: true, createdAt: true }
   });

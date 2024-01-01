@@ -21,14 +21,14 @@ export async function updateStar(
   mu: Star["mu"],
   sigma: Star["sigma"]
 ) {
-  return await prisma.star.update({
+  return prisma.star.update({
     data: { mu, sigma, star: ordinal({ mu, sigma }) },
     where: { username }
   });
 }
 
 export async function rankList() {
-  return await prisma.star.findMany({ orderBy: { star: "desc" } });
+  return prisma.star.findMany({ orderBy: { star: "desc" } });
 }
 
 export async function getRank(username: Star["username"]) {

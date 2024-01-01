@@ -65,7 +65,7 @@ export default function Footer() {
           <chakra.span transform="scale(-1,1)" display="inline-block">
             ©
           </chakra.span>{" "}
-          2022-2023 polygen
+          2022-2024 polygen
         </Text>
         <Stack direction="row" spacing={6}>
           <SocialButton label="GitHub" href="https://github.com/jwcub/polygen">
