@@ -7,7 +7,6 @@ import {
 } from "@chakra-ui/react";
 import "@fontsource-variable/fira-code/index.css";
 import "@fontsource-variable/noto-sans-sc/index.css";
-import { ThemeEditorProvider } from "@hypertheme-editor/chakra-ui";
 import { cssBundleHref } from "@remix-run/css-bundle";
 import type { LinksFunction, LoaderFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
@@ -34,7 +33,6 @@ import {
   DEFAULT_COLOR_MODE,
   useCookieValue
 } from "~/hooks/cookie";
-import { ForceUpdateContext, useForceUpdate } from "~/hooks/state";
 import { useNProgress } from "~/hooks/transition";
 import { getLocale } from "~/i18next.server";
 import theme from "~/theme/theme";
@@ -109,7 +107,7 @@ function Document({ children }: { children: ReactNode }) {
           colorModeManager={cookieStorageManagerSSR(cookie)}
           theme={theme}
         >
-          <ThemeEditorProvider>{children}</ThemeEditorProvider>
+          {children}
         </ChakraProvider>
         <ScrollRestoration />
         <Scripts />
@@ -165,11 +163,9 @@ export function ErrorBoundary() {
 export default function App() {
   return (
     <Document>
-      <ForceUpdateContext.Provider value={useForceUpdate()}>
-        <Layout>
-          <Outlet />
-        </Layout>
-      </ForceUpdateContext.Provider>
+      <Layout>
+        <Outlet />
+      </Layout>
     </Document>
   );
 }

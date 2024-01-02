@@ -39,7 +39,6 @@
     "@fastify/static": "latest",
     "@fontsource-variable/fira-code": "latest",
     "@fontsource-variable/noto-sans-sc": "latest",
-    "@hypertheme-editor/chakra-ui": "latest",
     "@mcansh/remix-fastify": "latest",
     "@prisma/client": "latest",
     "@remix-run/css-bundle": "latest",

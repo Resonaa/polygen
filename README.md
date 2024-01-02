@@ -42,6 +42,18 @@
   npm run dev
   ```
 
+## Deployment
+
+[PM2](https://pm2.keymetrics.io/) is included as a dev-dependency in the project.
+To spin up your app in production mode, simply:
+
+```sh
+npm run build
+npm run start # This will spawn a PM2 daemon named "polygen"
+```
+
+The HTTP server listens on port 1606 by default, which can be configured through .env file.
+
 ## Benchmarking
 
 Benchmarks are available for performance-sensitive functions.
@@ -61,7 +73,7 @@ Refer to [package.json](https://github.com/jwcub/polygen/blob/main/package.json)
 
 ## Contributing
 
-Before committing, make sure to run through the checks:
+Before committing, make sure you run through all the checks:
 
 ```sh
 npm run build

@@ -4,8 +4,8 @@ import {
   ButtonGroup,
   Collapse,
   Flex,
-  HStack,
   Icon,
+  HStack,
   IconButton,
   Popover,
   PopoverContent,
@@ -18,16 +18,14 @@ import {
 import { Link } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
 import type { IconType } from "react-icons";
-import { BiSolidGame } from "react-icons/bi";
-import { FaCrown, FaHome, FaTrophy } from "react-icons/fa";
+import { FaCrown, FaHome, FaTrophy, FaFlask, FaCat } from "react-icons/fa";
 
 import { useOptionalUser } from "~/hooks/loader";
 import type { TFunctionArg } from "~/i18next";
 
 import Auth from "./auth";
-import DoveCompatibleIcon from "./doveCompatibleIcon";
+import ColorModeToggle from "./colorModeToggle";
 import LocaleToggle from "./localeToggle";
-import ThemeEditor from "./themeEditor";
 import UserDropdown, { DropdownRightIcon } from "./userDropdown";
 
 export default function Navbar() {
@@ -54,7 +52,6 @@ export default function Navbar() {
             icon={
               isOpen ? <CloseIcon w={3} h={3} /> : <HamburgerIcon w={5} h={5} />
             }
-            isRound
             onClick={onToggle}
             variant="ghost"
           />
@@ -79,7 +76,7 @@ export default function Navbar() {
 
         <ButtonGroup spacing="13px">
           <LocaleToggle />
-          <ThemeEditor />
+          <ColorModeToggle />
           {user ? <UserDropdown /> : <Auth />}
         </ButtonGroup>
       </Flex>
@@ -120,7 +117,7 @@ function DesktopNav() {
                 transition={linkTransition}
                 to={to}
               >
-                <DoveCompatibleIcon as={icon} mr="5px" />
+                <Icon as={icon} mr="5px" />
                 {t(label)}
               </Flex>
             </Box>
@@ -178,7 +175,7 @@ function DesktopSubNav({ label, to, icon, description }: NavItem) {
             _groupHover={{ color: groupHoverColor }}
             transition={transition}
           >
-            <DoveCompatibleIcon as={icon} mr="5px" />
+            <Icon as={icon} mr="5px" />
             {t(label)}
           </Text>
           <Text color={groupColor} fontSize="sm">
@@ -247,7 +244,7 @@ function MobileNavItem({
         to={to}
       >
         <Flex align="center">
-          <DoveCompatibleIcon as={icon} mr="5px" />
+          <Icon as={icon} mr="5px" />
           {t(label)}
         </Flex>
         {children ? <DropdownRightIcon isOpen={isOpen} /> : null}
@@ -265,7 +262,7 @@ function MobileNavItem({
                   onClick={onClick}
                   to={child.to}
                 >
-                  <DoveCompatibleIcon as={child.icon} mr="5px" />
+                  <Icon as={child.icon} mr="5px" />
                   {t(child.label)}
                 </Flex>
               ))
@@ -278,7 +275,7 @@ function MobileNavItem({
 
 interface NavItem {
   label: TFunctionArg;
-  icon: IconType | "dove";
+  icon: IconType;
   to?: string;
   children?: NavItem[];
   description?: TFunctionArg;
@@ -290,11 +287,11 @@ const NAV_ITEMS: NavItem[] = [
   { label: "nav.leaderboard", icon: FaTrophy, to: "/leaderboard" },
   {
     label: "nav.apps",
-    icon: "dove",
+    icon: FaFlask,
     children: [
       {
         label: "nav.casual-games",
-        icon: BiSolidGame,
+        icon: FaCat,
         to: "/catch-the-cat",
         description: "nav.description-casual-games"
       }

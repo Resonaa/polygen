@@ -6,10 +6,8 @@ export default function ColorModeToggle() {
 
   return (
     <IconButton
-      h={10}
       aria-label="Toggle ColorMode"
       icon={useColorModeValue(<MoonIcon />, <SunIcon />)}
-      isRound
       onClick={toggleColorMode}
       variant="ghost"
     />

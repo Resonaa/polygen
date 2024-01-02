@@ -11,7 +11,6 @@ export default function LocaleToggle() {
     <IconButton
       aria-label="Toggle Language"
       icon={<FaGlobe />}
-      isRound
       onClick={() =>
         i18n.changeLanguage(
           i18nConfig.supportedLngs.find(lang => lang !== i18n.language)

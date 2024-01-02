@@ -146,13 +146,11 @@ export default function Post({
                 <IconButton
                   aria-label="edit"
                   icon={<EditIcon />}
-                  isRound
                   onClick={onEditClick}
                 />
                 <IconButton
                   aria-label="delete"
                   icon={<DeleteIcon />}
-                  isRound
                   onClick={onOpen}
                 />
               </ButtonGroup>

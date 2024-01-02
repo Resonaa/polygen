@@ -111,7 +111,6 @@ export default function Comment({
             transition="opacity .25s ease-in-out"
             aria-label="delete"
             icon={<DeleteIcon />}
-            isRound
             onClick={onOpen}
             variant="ghost"
           />
