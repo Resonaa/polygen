@@ -64,7 +64,7 @@ function SliderInput({ value, setValue, min, max, label }: SliderInputProps) {
           <SliderFilledTrack />
         </SliderTrack>
 
-        <SliderThumb boxSize={8} fontSize="sm">
+        <SliderThumb boxSize={8} color="black" fontSize="sm">
           {value}
         </SliderThumb>
       </Slider>
@@ -72,6 +72,7 @@ function SliderInput({ value, setValue, min, max, label }: SliderInputProps) {
   );
 }
 
+// Load and init WebAssembly module in browser.
 if (typeof window !== "undefined") {
   void initWasm();
 }
