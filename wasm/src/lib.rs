@@ -2,8 +2,11 @@ use cfg_if::cfg_if;
 
 cfg_if! {
     if #[cfg(feature = "client")] {
+        use lol_alloc::{AssumeSingleThreaded, FreeListAllocator};
+
         #[global_allocator]
-        static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
+        static ALLOCATOR: AssumeSingleThreaded<FreeListAllocator> =
+            unsafe { AssumeSingleThreaded::new(FreeListAllocator::new()) };
     } else {
         mod hash;
     }
