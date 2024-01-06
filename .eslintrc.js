@@ -17,9 +17,6 @@ module.exports = {
     es6: true
   },
 
-  // Ignore build output
-  ignorePatterns: ["wasm/", "build/"],
-
   // Base config
   extends: ["eslint:recommended"],
 

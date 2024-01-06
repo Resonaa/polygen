@@ -7,11 +7,12 @@ edition = "2021"
 crate-type = ["cdylib"]
 
 [features]
-client = ["dep:lol_alloc"]
+default = ["console_log"]
+client = ["lol_alloc"]
 
 [dependencies]
 wasm-bindgen = "0.2"
-console_log = "1"
+console_log = { version = "1", optional = true }
 log = "0.4"
 lol_alloc = { version = "0.4", optional = true }
 cfg-if = "1"

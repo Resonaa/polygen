@@ -33,6 +33,7 @@ function hashJs(data: Uint8Array) {
   bench.add("Node hash", () => hashJs(data), {
     beforeEach: genData
   });
+
   bench.add("WASM hash", () => hash(data), {
     beforeEach: genData
   });

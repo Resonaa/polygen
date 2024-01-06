@@ -1,14 +1,23 @@
-import { memory, Map, Mode } from "~/wasm/server";
-import { readMap } from "~/wasm/utils";
+import { Bench } from "tinybench";
 
-const width = 255,
-  height = 255,
-  mode = Mode.Hexagon;
+import { Map as NodeMap, MapMode as NodeMode } from "~/core/server/map/map";
+import { Map, Mode } from "~/wasm/server";
 
-const map = new Map(mode, width, height);
+(async () => {
+  const bench = new Bench();
 
-const lands = readMap(memory, map);
+  for (const size of [20, 50, 100]) {
+    bench.add(`Node init map ${size}*${size}`, () => {
+      new NodeMap(size, size, NodeMode.Hexagon);
+    });
 
-console.log(lands);
+    bench.add(`WASM init map ${size}*${size}`, () => {
+      new Map(Mode.Hexagon, size, size).free();
+    });
+  }
 
-console.log(map.neighbors(425));
+  await bench.warmup();
+  await bench.run();
+
+  console.table(bench.table());
+})();

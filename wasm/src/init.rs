@@ -1,4 +1,3 @@
-use log::Level;
 use std::hint::black_box;
 use wasm_bindgen::prelude::wasm_bindgen;
 
@@ -10,7 +9,11 @@ fn grow(pages: usize) {
 #[wasm_bindgen(start)]
 /// Init the wasm instance.
 pub fn init() {
-    console_log::init_with_level(Level::Debug).unwrap();
+    #[cfg(feature = "console_log")]
+    {
+        use log::Level;
+        console_log::init_with_level(Level::Debug).unwrap();
+    }
 
     grow(100);
 }

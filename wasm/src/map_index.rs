@@ -15,13 +15,15 @@ impl ops::Index<Index> for Map {
     type Output = Land;
 
     fn index(&self, index: Index) -> &Self::Output {
-        &self.lands[index as usize]
+        // Safety: Bounds checking should be done by `Map::check`.
+        unsafe { self.lands.get_unchecked(index) }
     }
 }
 
 impl ops::IndexMut<Index> for Map {
     fn index_mut(&mut self, index: Index) -> &mut Self::Output {
-        &mut self.lands[index as usize]
+        // Safety: Bounds checking should be done by `Map::check`.
+        unsafe { self.lands.get_unchecked_mut(index) }
     }
 }
 
@@ -40,7 +42,7 @@ impl ops::IndexMut<Pos> for Map {
     }
 }
 
-type DirItem = (i16, i16);
+type DirItem = (i32, i32);
 
 static DIR_HEXAGON_ODD_COLUMNS: [DirItem; 6] = [(0, -1), (-1, 0), (0, 1), (1, 1), (1, 0), (1, -1)];
 
@@ -52,7 +54,7 @@ static DIR_SQUARE: [DirItem; 4] = [(1, 0), (0, 1), (-1, 0), (0, -1)];
 impl Map {
     /// Checks whether the position is in the `Map`.
     pub fn check_pos(&self, (x, y): DirItem) -> bool {
-        x >= 0 && (x as u8) < self.height && y >= 0 && (y as u8) < self.width
+        x >= 0 && (x as usize) < self.height && y >= 0 && (y as usize) < self.width
     }
 
     /// Tests whether the index is accessible.
