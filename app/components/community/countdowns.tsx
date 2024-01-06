@@ -2,7 +2,7 @@ import { Center, Heading, Text, Tooltip, VStack } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
 
 import { useServerTime } from "~/hooks/loader";
-import type { TFunctionArg } from "~/i18next";
+import type { TFunctionArg } from "~/i18n/i18next";
 
 const countDowns = [{ date: "2024-02-10", name: "polygen-public-preview" }];
 

@@ -34,7 +34,7 @@ import {
   useCookieValue
 } from "~/hooks/cookie";
 import { useNProgress } from "~/hooks/transition";
-import { getLocale } from "~/i18next.server";
+import { getLocale } from "~/i18n/i18next.server";
 import theme from "~/theme/theme";
 
 import { requireOptionalUser } from "./session.server";
@@ -106,6 +106,11 @@ function Document({ children }: { children: ReactNode }) {
         <ChakraProvider
           colorModeManager={cookieStorageManagerSSR(cookie)}
           theme={theme}
+          toastOptions={{
+            defaultOptions: {
+              position: "bottom-right"
+            }
+          }}
         >
           {children}
         </ChakraProvider>

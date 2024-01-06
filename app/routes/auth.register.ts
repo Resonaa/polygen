@@ -1,7 +1,7 @@
 import type { ActionFunctionArgs, TypedResponse } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 
-import type { TFunctionArg } from "~/i18next";
+import type { TFunctionArg } from "~/i18n/i18next";
 import { createUser, getUser } from "~/models/user.server";
 import { createUserSession, verifyCaptcha } from "~/session.server";
 import { validateRegisterFormData } from "~/validators/auth.server";

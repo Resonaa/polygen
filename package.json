@@ -3,17 +3,19 @@
   "sideEffects": false,
   "scripts": {
     "bench": "run-s bench:*",
-    "bench:hash": "ts-node benchmarks/hash.ts",
+    "bench:hash": "ts-node benches/hash.ts",
     "build": "remix build",
-    "dev": "remix dev -c \"node server/build/index.js\"",
+    "dev": "remix dev -c \"node build/server/index.js\"",
     "format": "prettier --write . && npm run lint -- --fix",
     "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint .",
     "migrate": "npx prisma migrate dev",
     "postinstall": "patch-package",
     "setup": "prisma generate && prisma migrate deploy && prisma db seed",
-    "start": "cross-env NODE_ENV=production npx pm2 start --name polygen server/build/index.js",
+    "start": "cross-env NODE_ENV=production npx pm2 start --name polygen build/server/index.js",
     "typecheck": "tsc -b",
-    "wasm": "wasm-pack build wasm --target nodejs"
+    "wasm": "npm run wasm:server && npm run wasm:client",
+    "wasm:server": "wasm-pack build wasm --out-dir server --target nodejs --weak-refs",
+    "wasm:client": "wasm-pack build wasm --out-dir client --target web --weak-refs -- --features client"
   },
   "eslintIgnore": [
     "/node_modules",
@@ -88,7 +90,7 @@
     "tiny-invariant": "latest",
     "ts-node": "latest",
     "typescript": "latest",
-    "wasm": "file:wasm/pkg",
+    "wasm-server": "file:wasm/server",
     "zod": "latest"
   },
   "devDependencies": {

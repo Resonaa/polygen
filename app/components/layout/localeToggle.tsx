@@ -2,7 +2,7 @@ import { IconButton } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
 import { FaGlobe } from "react-icons/fa";
 
-import i18nConfig from "~/i18n";
+import i18nConfig from "~/i18n/i18n";
 
 export default function LocaleToggle() {
   const { i18n } = useTranslation();

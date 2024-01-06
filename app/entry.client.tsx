@@ -10,7 +10,7 @@ import { startTransition, StrictMode } from "react";
 import { hydrateRoot } from "react-dom/client";
 import { I18nextProvider, initReactI18next } from "react-i18next";
 
-import i18n from "./i18n";
+import i18n from "./i18n/i18n";
 
 // Create Emotion cache for each render.
 const cache = createCache({ key: "-", stylisPlugins: [] });

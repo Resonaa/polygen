@@ -13,7 +13,7 @@ import Comments from "~/components/community/comments";
 import Post from "~/components/community/post";
 import { useOptionalUser } from "~/hooks/loader";
 import { useRevalidationInterval } from "~/hooks/revalidator";
-import { getT } from "~/i18n";
+import { getT } from "~/i18n/i18n";
 import { createComment, getComments } from "~/models/comment.server";
 import { getPost } from "~/models/post.server";
 import { badRequest, notFound } from "~/reponses.server";

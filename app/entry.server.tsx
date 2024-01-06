@@ -12,13 +12,13 @@ import { createReadableStreamFromReadable } from "@remix-run/node";
 import { RemixServer } from "@remix-run/react";
 import i18next from "i18next";
 import Backend from "i18next-fs-backend";
-import isbot from "isbot";
+import { isbot } from "isbot";
 import { renderToPipeableStream } from "react-dom/server";
 import { I18nextProvider, initReactI18next } from "react-i18next";
 
-import { hash } from "./hash.server";
-import i18n from "./i18n";
-import { getLocale } from "./i18next.server";
+import i18n from "./i18n/i18n";
+import { getLocale } from "./i18n/i18next.server";
+import { hash } from "./wasm/server";
 
 /**
  * Maximum time before aborting the connection.
@@ -44,7 +44,7 @@ export default async function handleRequest(
   remixContext: EntryContext
 ) {
   // Bots see the full page on first streaming for SEO.
-  const callbackName = isbot(request.headers.get("User-Agent"))
+  const callbackName = isbot(request.headers.get("User-Agent")!)
     ? "onAllReady"
     : "onShellReady";
 

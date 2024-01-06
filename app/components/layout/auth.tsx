@@ -27,7 +27,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { FaUser } from "react-icons/fa6";
 
-import type { TFunctionArg } from "~/i18next";
+import type { TFunctionArg } from "~/i18n/i18next";
 import type { action } from "~/routes/auth.register";
 
 import PasswordInputGroup from "./passwordInputGroup";

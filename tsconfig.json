@@ -1,5 +1,5 @@
 {
-  "include": ["**/*.ts", "**/*.tsx"],
+  "include": ["env.d.ts", "**/*.ts", "**/*.tsx"],
   "compilerOptions": {
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "isolatedModules": true,
@@ -17,8 +17,7 @@
       "~/*": ["./app/*"]
     },
     "skipLibCheck": true,
-    "noEmit": true,
-    "types": ["@remix-run/dev", "@remix-run/node"]
+    "noEmit": true
   },
   "ts-node": {
     "require": ["tsconfig-paths/register"],

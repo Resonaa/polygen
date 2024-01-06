@@ -2,8 +2,7 @@ node_modules
 
 /.idea
 
-/public/build
-/server/build
+/build
 
 .env
 

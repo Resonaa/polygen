@@ -16,7 +16,7 @@ import PostLeaderboard from "~/components/leaderboard/postLeaderboard";
 import RegistrationTimeLeaderboard from "~/components/leaderboard/registrationTimeLeaderboard";
 import StarLeaderboard from "~/components/leaderboard/starLeaderboard";
 import { useRevalidationInterval } from "~/hooks/revalidator";
-import { getT } from "~/i18n";
+import { getT } from "~/i18n/i18n";
 import { rankList as commentRankList } from "~/models/comment.server";
 import { rankList as postRankLink } from "~/models/post.server";
 import { rankList as starRankList } from "~/models/star.server";

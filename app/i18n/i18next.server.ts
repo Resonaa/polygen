@@ -4,7 +4,8 @@ import Backend from "i18next-fs-backend";
 import { RemixI18Next } from "remix-i18next";
 
 import { getCookieValue } from "~/hooks/cookie";
-import i18n from "~/i18n";
+
+import i18n from "./i18n";
 
 export const i18next = new RemixI18Next({
   detection: {

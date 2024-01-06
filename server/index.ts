@@ -14,19 +14,11 @@ import parser from "socket.io-msgpack-parser";
 import { install } from "source-map-support";
 
 import { setServer } from "~/core/server";
-import type { Server } from "~/core/types";
 import { MODE, PORT } from "~/env.server";
 
 const USERCONTENT_DIR = join(cwd(), "usercontent");
 const PUBLIC_DIR = join(cwd(), "public");
-const ASSET_DIR = join(PUBLIC_DIR, "build");
-
-// Declare the Socket.IO server type registered by the plugin.
-declare module "fastify" {
-  interface FastifyInstance {
-    io: Server;
-  }
-}
+const ASSET_DIR = join(cwd(), "build");
 
 (async () => {
   // Install source map support.
@@ -65,6 +57,7 @@ declare module "fastify" {
     .register(fastifyStatic, {
       root: ASSET_DIR,
       prefix: "/build",
+      wildcard: false,
       decorateReply: false,
       maxAge: "1y",
       immutable: true

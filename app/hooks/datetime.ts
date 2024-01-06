@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 
-import type { TFunctionArg } from "~/i18next";
+import type { TFunctionArg } from "~/i18n/i18next";
 
 import { useServerTime } from "./loader";
 

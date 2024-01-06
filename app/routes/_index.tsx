@@ -11,7 +11,7 @@ import Posts from "~/components/community/posts";
 import RecentComments from "~/components/community/recentComments";
 import { useOptionalUser } from "~/hooks/loader";
 import { useRevalidationInterval } from "~/hooks/revalidator";
-import { getT } from "~/i18n";
+import { getT } from "~/i18n/i18n";
 import { getAnnouncements } from "~/models/announcement.server";
 import { getComments } from "~/models/comment.server";
 import { createPost, getPosts } from "~/models/post.server";

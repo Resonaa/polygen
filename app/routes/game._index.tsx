@@ -6,7 +6,7 @@ import { useLoaderData } from "@remix-run/react";
 import RoomList from "~/components/game/roomList";
 import { roomData } from "~/core/server/room";
 import { useRevalidationInterval } from "~/hooks/revalidator";
-import { getT } from "~/i18n";
+import { getT } from "~/i18n/i18n";
 
 export function loader() {
   return json(Array.from(roomData.values()).map(room => room.export()));

@@ -7,4 +7,5 @@ Cargo.lock
 
 *.pdb
 
-pkg/
+server/
+client/

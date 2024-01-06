@@ -23,7 +23,7 @@ import { FaCrown, FaMap } from "react-icons/fa6";
 
 import type { MaxVotedItems, VoteItem } from "~/core/server/vote";
 import { useOptionalUser } from "~/hooks/loader";
-import type { TFunctionArg } from "~/i18next";
+import type { TFunctionArg } from "~/i18n/i18next";
 
 import UserTag from "../community/userTag";
 

@@ -9,7 +9,8 @@ module.exports = {
   },
   cacheDirectory: "./node_modules/.cache/remix",
   ignoredRouteFiles: ["**/.*", "**/*.css"],
-  serverBuildPath: "server/build/index.js",
+  serverBuildPath: "build/server/index.js",
+  assetsBuildDirectory: "build/",
   serverModuleFormat: "cjs",
   server: "server/index.ts",
   serverDependenciesToBundle: [
