@@ -6,8 +6,8 @@ fn grow(pages: usize) {
     black_box(Vec::<u8>::with_capacity(pages * 64 * 1024));
 }
 
-#[wasm_bindgen(start)]
 /// Init the wasm instance.
+#[wasm_bindgen(start)]
 pub fn init() {
     #[cfg(feature = "console_log")]
     {

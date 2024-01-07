@@ -82,10 +82,11 @@ npm run typecheck
 npm run format
 ```
 
-For Rust code in `/wasm`, use Clippy and Rustfmt:
+For Rust code in `/wasm`:
 
 ```sh
 cd wasm
+cargo test
 cargo clippy
 cargo fmt
 ```

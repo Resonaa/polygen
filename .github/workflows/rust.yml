@@ -1,4 +1,4 @@
-name: 🦀 Clippy
+name: 🦀 Rust
 on: [push]
 
 concurrency:
@@ -9,7 +9,7 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  clippy:
+  rust:
     runs-on: ubuntu-latest
     steps:
       - name: ⬇️ Checkout repo
@@ -18,3 +18,7 @@ jobs:
       - name: 🦀 Clippy
         working-directory: wasm/
         run: cargo clippy
+
+      - name: 🔍 Test
+        working-directory: wasm/
+        run: cargo test

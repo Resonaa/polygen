@@ -1,6 +1,6 @@
 use wasm_bindgen::prelude::wasm_bindgen;
 
-/// Hashes the given data.
+/// Hashes the given data. Uses 32-bit fnv1a algorithm.
 #[wasm_bindgen]
 pub fn hash(data: Box<[u8]>) -> u32 {
     let mut hash = 0x811c9dc5;
