@@ -1,7 +1,7 @@
 use crate::{
     land::{
-        Land,
-        Type::{Mountain, Obstacle}, LandProperties,
+        Land, LandProperties,
+        Type::{Mountain, Obstacle},
     },
     map::{
         Map,
