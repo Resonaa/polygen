@@ -2,7 +2,7 @@ use crate::land::Land;
 use std::{
     alloc::{alloc, Layout},
     iter,
-    mem::{align_of, size_of, transmute},
+    mem::{align_of, size_of},
 };
 use wasm_bindgen::prelude::wasm_bindgen;
 
@@ -29,7 +29,7 @@ pub struct Map {
     pub height: usize,
 
     #[wasm_bindgen(readonly)]
-    /// Equals to width * height.
+    /// Equals to [`Self::width`] * [`Self::height`].
     pub size: usize,
 
     pub(crate) lands: Vec<Land>,
@@ -39,7 +39,7 @@ pub struct Map {
 #[wasm_bindgen]
 impl Map {
     #[wasm_bindgen(constructor)]
-    /// Creates a new `Map`.
+    /// Creates a new [`Map`].
     pub fn new(mode: Mode, width: usize, height: usize) -> Self {
         let size = width * height;
 
@@ -52,7 +52,7 @@ impl Map {
         }
     }
 
-    /// Allocates for a new `Map` without initialization.
+    /// Allocates for a new [`Map`] without initialization.
     ///
     /// # Safety
     ///
@@ -76,26 +76,25 @@ impl Map {
         }
     }
 
-    /// Creates a new `Map` from raw bytes.
-    ///
-    /// # Safety
-    ///
-    /// Caller must ensure that `data` is of the same memory layout of `Box<[Land]>`.
-    pub unsafe fn with_lands(mode: Mode, width: usize, height: usize, data: Box<[u8]>) -> Self {
+    /// Creates a new [`Map`] from raw bytes.
+    pub fn with_lands(mode: Mode, width: usize, height: usize, data: Box<[u32]>) -> Self {
         let size = width * height;
-
-        let lands = transmute::<_, Box<[Land]>>(data).into_vec();
 
         Self {
             mode,
             width,
             height,
             size,
-            lands,
+            lands: data.into_vec(),
         }
     }
 
-    /// Returns a pointer to the `lands` of the `Map`.
+    /// Loads [`Map::lands`] from raw bytes.
+    pub fn load(&mut self, data: Box<[u32]>) {
+        self.lands = data.into_vec();
+    }
+
+    /// Returns a pointer to [`Map::lands`] of the [`Map`].
     pub fn export_lands(&self) -> *const Land {
         self.lands.as_ptr()
     }

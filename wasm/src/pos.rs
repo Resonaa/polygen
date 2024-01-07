@@ -11,12 +11,14 @@ pub trait ToPos {
 }
 
 impl ToPos for Index {
+    #[inline]
     fn to_pos(self, width: usize) -> Pos {
         (self / width, self % width)
     }
 }
 
 impl ToPos for Pos {
+    #[inline]
     fn to_pos(self, _width: usize) -> Pos {
         self
     }
@@ -29,12 +31,14 @@ pub trait ToIndex {
 }
 
 impl ToIndex for Pos {
+    #[inline]
     fn to_index(self, width: usize) -> Index {
         self.0 * width + self.1
     }
 }
 
 impl ToIndex for Index {
+    #[inline]
     fn to_index(self, _width: usize) -> Index {
         self
     }

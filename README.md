@@ -8,7 +8,7 @@
 ## Prerequisites
 
 - [Node 20+](https://nodejs.org/)
-- [Rust 1.30+](https://www.rust-lang.org/)
+- [Rust 1.34+](https://www.rust-lang.org/)
 - [wasm-pack](https://rustwasm.github.io/wasm-pack/)
 
 ## Development

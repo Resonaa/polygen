@@ -7,7 +7,7 @@ use wasm_bindgen::prelude::wasm_bindgen;
 /// Public methods, exported to JavaScript.
 #[wasm_bindgen]
 impl Map {
-    /// Gets the neighbors of the index.
+    /// Gets the neighbors of the [`Index`].
     pub fn neighbors(&self, index: Index) -> Vec<Index> {
         let (x, y) = index.to_pos(self.width);
 

@@ -86,7 +86,7 @@ export default function WasmTest() {
 
   const limits = {
     min: 1,
-    max: 255
+    max: 1024
   };
 
   const toast = useToast();

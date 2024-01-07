@@ -4,6 +4,7 @@ cfg_if! {
     if #[cfg(feature = "client")] {
         use lol_alloc::{AssumeSingleThreaded, FreeListAllocator};
 
+        // Safety: WebAssembly is single-threaded.
         #[global_allocator]
         static ALLOCATOR: AssumeSingleThreaded<FreeListAllocator> =
             unsafe { AssumeSingleThreaded::new(FreeListAllocator::new()) };
