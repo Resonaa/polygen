@@ -94,10 +94,15 @@ npm run format
 For Rust code in `/wasm`:
 
 ```sh
-cd wasm
 cargo test
 cargo clippy
 cargo fmt
+```
+
+It's also recommended to view the generated documentation:
+
+```sh
+cargo doc --no-deps --open --target wasm32-unknown-unknown
 ```
 
 ## License

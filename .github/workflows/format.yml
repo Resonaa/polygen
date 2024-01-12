@@ -31,6 +31,9 @@ jobs:
       - name: 🕸️ Add wasm target
         run: rustup +nightly target add wasm32-unknown-unknown
 
+      - name: 🛠️ Install Rustfmt
+        run: rustup +nightly component add rustfmt
+
       - name: ⚙️ Build wasm target
         run: npm run wasm
 
