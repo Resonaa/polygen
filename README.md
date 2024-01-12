@@ -15,7 +15,7 @@ The Nightly toolchain and `wasm32-unknown-unknown` target are required for build
 
 ```sh
 rustup install nightly
-rustup target add wasm32-unknown-unknown
+rustup +nightly target add wasm32-unknown-unknown
 ```
 
 ## Development
