@@ -18,6 +18,10 @@ jobs:
       - name: 🌙 Install Nightly toolchain
         run: rustup install nightly
 
+      - name: 🛠️ Install Clippy
+        working-directory: wasm/
+        run: rustup component add clippy
+
       - name: 🦀 Clippy
         working-directory: wasm/
         run: cargo clippy
@@ -25,3 +29,7 @@ jobs:
       - name: 🔍 Test
         working-directory: wasm/
         run: cargo test
+
+      - name: 📖 Doc
+        working-directory: wasm/
+        run: cargo doc --no-deps --target wasm32-unknown-unknown

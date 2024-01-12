@@ -10,8 +10,6 @@ crate-type = ["cdylib", "rlib"]
 default = ["console_log", "highway"]
 client = ["lol_alloc"]
 
-[target]
-
 [dependencies]
 wasm-bindgen = "0.2"
 console_log = { version = "1", optional = true }
