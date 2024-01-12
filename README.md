@@ -1,9 +1,18 @@
+<div align="center">
+
 # polygen
 
-[![GitHub Actions](https://img.shields.io/github/actions/workflow/status/jwcub/polygen/build.yml)](https://github.com/jwcub/polygen/actions)
-[![License](https://img.shields.io/github/license/jwcub/polygen)](https://github.com/jwcub/polygen/blob/main/LICENSE)
+Polygon-based web game inspired by [generals.io](https://generals.io).
 
-`polygen` is a polygon-based web game inspired by [generals.io](https://generals.io).
+[![GitHub Actions](https://img.shields.io/github/actions/workflow/status/jwcub/polygen/build.yml?style=flat-square)](https://github.com/jwcub/polygen/actions)
+[![License](https://img.shields.io/github/license/jwcub/polygen?style=flat-square&color=orange)](https://github.com/jwcub/polygen/blob/main/LICENSE)
+[![GitHub repo size](https://img.shields.io/github/repo-size/jwcub/polygen?style=flat-square)](https://github.com/jwcub/polygen)
+[![GitHub Repo stars](https://img.shields.io/github/stars/jwcub/polygen?style=flat-square&color=yellow)](https://github.com/jwcub/polygen/stargazers)
+[![GitHub commit activity](https://img.shields.io/github/commit-activity/y/jwcub/polygen?style=flat-square)](https://github.com/jwcub/polygen/commits/main/)
+[![GitHub contributors](https://img.shields.io/github/contributors/jwcub/polygen?style=flat-square)](https://github.com/jwcub/polygen/graphs/contributors)
+[![Website](https://img.shields.io/badge/website-online-green?style=flat-square)](https://polygen.fun)
+
+</div>
 
 ## Prerequisites
 

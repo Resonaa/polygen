@@ -1,6 +1,11 @@
 name: 🦀 Rust
 on: [push]
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -35,3 +40,14 @@ jobs:
       - name: 📖 Doc
         working-directory: wasm/
         run: cargo doc --no-deps --target wasm32-unknown-unknown
+
+      - name: ⚙️ Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: ⬆️ Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "wasm/target/wasm32-unknown-unknown/doc"
+
+      - name: 🚀 Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
