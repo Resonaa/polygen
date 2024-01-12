@@ -1,12 +1,16 @@
+//! Type definitions and convenient functions for [`crate::map::Map`] positioning.
+
+use std::simd::usizex2;
+
 /// Linear map index. Starts from 0.
 pub type Index = usize;
 
-/// 2D map position. Starts from (0, 0).
-pub type Pos = (usize, usize);
+/// 2D map position. Starts from [0, 0].
+pub type Pos = usizex2;
 
-/// Types that can be converted to position.
+/// Types that can be converted to [`Pos`].
 pub trait ToPos {
-    /// Converts self to position.
+    /// Converts self to [`Pos`].
     fn to_pos(self, width: usize) -> Pos;
 }
 
@@ -18,11 +22,11 @@ impl ToPos for Index {
     /// ```rust
     /// use wasm::pos::ToPos;
     ///
-    /// assert_eq!(4.to_pos(3), (1, 1));
+    /// assert_eq!(4.to_pos(3), [1, 1].into());
     /// ```
     #[inline]
     fn to_pos(self, width: usize) -> Pos {
-        (self / width, self % width)
+        [self / width, self % width].into()
     }
 }
 
@@ -34,9 +38,9 @@ impl ToPos for Pos {
     }
 }
 
-/// Types that can be converted to index.
+/// Types that can be converted to [`Index`].
 pub trait ToIndex {
-    /// Converts self to index.
+    /// Converts self to [`Index`].
     fn to_index(self, width: usize) -> Index;
 }
 
@@ -46,13 +50,13 @@ impl ToIndex for Pos {
     /// # Example
     ///
     /// ```rust
-    /// use wasm::pos::ToIndex;
+    /// use wasm::pos::{Pos, ToIndex};
     ///
-    /// assert_eq!((1, 1).to_index(3), 4);
+    /// assert_eq!(Pos::from([1, 1]).to_index(3), 4);
     /// ```
     #[inline]
     fn to_index(self, width: usize) -> Index {
-        self.0 * width + self.1
+        self[0] * width + self[1]
     }
 }
 

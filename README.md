@@ -8,39 +8,47 @@
 ## Prerequisites
 
 - [Node 20+](https://nodejs.org/)
-- [Rust 1.34+](https://www.rust-lang.org/)
+- [Rust (+Nightly)](https://www.rust-lang.org/)
 - [wasm-pack](https://rustwasm.github.io/wasm-pack/)
+
+The Nightly toolchain and `wasm32-unknown-unknown` target are required for building the WebAssembly package.
+
+```sh
+rustup install nightly
+rustup target add wasm32-unknown-unknown
+```
 
 ## Development
 
 - Copy .env file:
 
-  ```sh
-  cp .env.example .env
-  ```
+```sh
+cp .env.example .env
+```
 
-- Build wasm target:
+- Build WebAssembly target:
 
-  ```sh
-  npm run wasm
-  ```
+```sh
+npm run wasm
+```
 
 - Install dependencies:
 
-  ```sh
-  npm install
-  ```
+```sh
+npm install
+```
 
 - Setup database:
 
-  ```sh
-  npm run setup
-  ```
+```sh
+npm run setup
+```
 
 - Start dev server:
-  ```sh
-  npm run dev
-  ```
+
+```sh
+npm run dev
+```
 
 ## Deployment
 
@@ -60,20 +68,21 @@ Benchmarks are available for performance-sensitive functions.
 
 - Run all benchmarks:
 
-  ```sh
-  npm run bench
-  ```
+```sh
+npm run bench
+```
 
 - Run a single benchmark:
-  ```sh
-  npm run bench:hash
-  ```
+
+```sh
+npm run bench:hash
+```
 
 Refer to [package.json](https://github.com/jwcub/polygen/blob/main/package.json) for more information.
 
 ## Contributing
 
-Before committing, make sure you run through all the checks:
+Before pushing your commits, be sure to run through all the checks:
 
 ```sh
 npm run build

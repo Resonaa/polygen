@@ -9,3 +9,6 @@ Cargo.lock
 
 server/
 client/
+
+.idea/
+.vscode/

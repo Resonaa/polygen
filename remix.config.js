@@ -2,17 +2,13 @@
  * @type {import("@remix-run/dev").AppConfig}
  */
 module.exports = {
-  browserNodeBuiltinsPolyfill: {
-    modules: {
-      url: true
-    }
-  },
+  assetsBuildDirectory: "build/",
+  browserNodeBuiltinsPolyfill: { modules: { url: true } },
   cacheDirectory: "./node_modules/.cache/remix",
   ignoredRouteFiles: ["**/.*", "**/*.css"],
+  server: "server.ts",
   serverBuildPath: "build/server/index.js",
-  assetsBuildDirectory: "build/",
   serverModuleFormat: "cjs",
-  server: "server/index.ts",
   serverDependenciesToBundle: [
     /^rehype.*/,
     /^remark.*/,

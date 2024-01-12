@@ -1,14 +1,18 @@
+//! Hashing algorithms.
+
+use highway::{HighwayHash, HighwayHasher};
 use wasm_bindgen::prelude::wasm_bindgen;
 
-/// Hashes the given data. Uses 32-bit fnv1a algorithm.
+/// Hashes the given data. Uses Google's HighwayHash implementation.
+///
+/// # Example
+///
+/// ```rust
+/// use wasm::hash::hash;
+///
+/// assert_eq!(hash(vec![1, 6, 0, 6]), 16724549215765392899);
+/// ```
 #[wasm_bindgen]
-pub fn hash(data: Box<[u8]>) -> u32 {
-    let mut hash = 0x811c9dc5;
-
-    for i in data.into_vec() {
-        hash ^= i as u32;
-        hash = hash.wrapping_mul(0x01000193);
-    }
-
-    hash
+pub fn hash(data: Vec<u8>) -> u64 {
+    HighwayHasher::default().hash64(&data)
 }

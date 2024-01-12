@@ -25,6 +25,12 @@ jobs:
       - name: 🦀 Install wasm-pack
         run: cargo install wasm-pack
 
+      - name: 🌙 Install Nightly toolchain
+        run: rustup install nightly
+
+      - name: 🕸️ Add wasm target
+        run: rustup target add wasm32-unknown-unknown
+
       - name: ⚙️ Build wasm target
         run: npm run wasm
 

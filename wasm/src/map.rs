@@ -1,3 +1,5 @@
+//! Map operations.
+
 use crate::land::Land;
 use std::{
     alloc::{alloc, Layout},
@@ -6,18 +8,18 @@ use std::{
 };
 use wasm_bindgen::prelude::wasm_bindgen;
 
+/// Map modes.
 #[wasm_bindgen]
 #[repr(u8)]
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
-/// Map modes.
 pub enum Mode {
     Hexagon,
     Square,
 }
 
+/// Game map.
 #[wasm_bindgen]
 #[derive(Clone, Debug)]
-/// Game map.
 pub struct Map {
     #[wasm_bindgen(readonly)]
     pub mode: Mode,
@@ -28,18 +30,19 @@ pub struct Map {
     #[wasm_bindgen(readonly)]
     pub height: usize,
 
-    #[wasm_bindgen(readonly)]
     /// Equals to [`Self::width`] * [`Self::height`].
+    #[wasm_bindgen(readonly)]
     pub size: usize,
 
-    pub(crate) lands: Vec<Land>,
+    #[wasm_bindgen(skip)]
+    pub lands: Vec<Land>,
 }
 
 /// Public methods, exported to JavaScript.
 #[wasm_bindgen]
 impl Map {
-    #[wasm_bindgen(constructor)]
     /// Creates a new [`Map`].
+    #[wasm_bindgen(constructor)]
     pub fn new(mode: Mode, width: usize, height: usize) -> Self {
         let size = width * height;
 
@@ -58,10 +61,13 @@ impl Map {
     ///
     /// This function is unsafe because the map contains uninitialized data.
     /// Do not use the map before calling generators.
+    #[cold]
     pub unsafe fn alloc(mode: Mode, width: usize, height: usize) -> Self {
         let size = width * height;
 
-        let layout = Layout::from_size_align(size * size_of::<Land>(), align_of::<Land>()).unwrap();
+        // Safety: Alignment of `Land` is power of two.
+        let layout =
+            Layout::from_size_align_unchecked(size * size_of::<Land>(), align_of::<Land>());
 
         // Safety: `layout` is not zero-sized.
         let ptr = alloc(layout) as *mut Land;
@@ -76,8 +82,8 @@ impl Map {
         }
     }
 
-    /// Creates a new [`Map`] from raw bytes.
-    pub fn with_lands(mode: Mode, width: usize, height: usize, data: Box<[u32]>) -> Self {
+    /// Creates a new [`Map`] with lands.
+    pub fn with_lands(mode: Mode, width: usize, height: usize, lands: Vec<Land>) -> Self {
         let size = width * height;
 
         Self {
@@ -85,13 +91,13 @@ impl Map {
             width,
             height,
             size,
-            lands: data.into_vec(),
+            lands,
         }
     }
 
-    /// Loads [`Map::lands`] from raw bytes.
-    pub fn load(&mut self, data: Box<[u32]>) {
-        self.lands = data.into_vec();
+    /// Loads [`Map::lands`] from lands.
+    pub fn load(&mut self, lands: Vec<Land>) {
+        self.lands = lands;
     }
 
     /// Returns a pointer to [`Map::lands`] of the [`Map`].

@@ -1,3 +1,5 @@
+//! Basic indexing methods for [`Map`].
+
 use crate::{
     land::{
         Land, LandProperties,
@@ -29,38 +31,27 @@ impl ops::IndexMut<Index> for Map {
     }
 }
 
-impl ops::Index<Pos> for Map {
-    type Output = Land;
-
-    #[inline]
-    fn index(&self, pos: Pos) -> &Self::Output {
-        &self[pos.to_index(self.width)]
-    }
+/// Helper macro to create dir arrays.
+macro_rules! dir {
+    [$($pos: expr),*] => {
+        [$(Pos::from_array($pos)),*]
+    };
 }
 
-impl ops::IndexMut<Pos> for Map {
-    #[inline]
-    fn index_mut(&mut self, pos: Pos) -> &mut Self::Output {
-        let index = pos.to_index(self.width);
-        &mut self[index]
-    }
-}
+// !0 => -1
 
-/// (dx, dy) for [`Pos`].
-type DirItem = (i32, i32);
+static DIR_HEXAGON_ODD_COLUMNS: [Pos; 6] = dir![[0, !0], [!0, 0], [0, 1], [1, 1], [1, 0], [1, !0]];
 
-static DIR_HEXAGON_ODD_COLUMNS: [DirItem; 6] = [(0, -1), (-1, 0), (0, 1), (1, 1), (1, 0), (1, -1)];
+static DIR_HEXAGON_EVEN_COLUMNS: [Pos; 6] =
+    dir![[!0, !0], [!0, 0], [!0, 1], [0, 1], [1, 0], [0, !0]];
 
-static DIR_HEXAGON_EVEN_COLUMNS: [DirItem; 6] =
-    [(-1, -1), (-1, 0), (-1, 1), (0, 1), (1, 0), (0, -1)];
-
-static DIR_SQUARE: [DirItem; 4] = [(1, 0), (0, 1), (-1, 0), (0, -1)];
+static DIR_SQUARE: [Pos; 4] = dir![[1, 0], [0, 1], [!0, 0], [0, !0]];
 
 impl Map {
-    /// Checks whether the position is in the [`Map`].
+    /// Checks whether the [`Pos`] is in the [`Map`].
     #[inline]
-    pub fn check_pos(&self, (x, y): DirItem) -> bool {
-        x >= 0 && (x as usize) < self.height && y >= 0 && (y as usize) < self.width
+    pub fn check_pos(&self, pos: Pos) -> bool {
+        pos[0] < self.height && pos[1] < self.width
     }
 
     /// Tests whether the [`Index`] is accessible.
@@ -69,11 +60,11 @@ impl Map {
         !matches!(self[index].get_type(), Mountain | Obstacle)
     }
 
-    /// Gets the [`DirItem`] slice of the given [`Index`].
-    pub fn dir(&self, index: Index) -> &[DirItem] {
+    /// Gets the dir slice of the given [`Index`].
+    pub fn dir(&self, index: Index) -> &[Pos] {
         match self.mode {
             Hexagon => {
-                let (_, y) = index.to_pos(self.width);
+                let y = index.to_pos(self.width)[1];
 
                 if (y & 1) == 0 {
                     DIR_HEXAGON_EVEN_COLUMNS.as_slice()
@@ -83,6 +74,19 @@ impl Map {
             }
             Square => DIR_SQUARE.as_slice(),
         }
+    }
+
+    /// Gets **accessible** neighbors of the [`Index`].
+    pub fn neighbors(&self, index: Index) -> Vec<Index> {
+        let pos = index.to_pos(self.width);
+
+        self.dir(index)
+            .iter()
+            .map(|&delta| pos + delta)
+            .filter(|&pos| self.check_pos(pos))
+            .map(|pos| pos.to_index(self.width))
+            .filter(|&index| self.access(index))
+            .collect()
     }
 }
 

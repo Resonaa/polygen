@@ -14,7 +14,17 @@ import parser from "socket.io-msgpack-parser";
 import { install } from "source-map-support";
 
 import { setServer } from "~/core/server";
+import type { Server } from "~/core/types";
 import { MODE, PORT } from "~/env.server";
+
+declare module "fastify" {
+  /**
+   * Socket.IO server.
+   */
+  interface FastifyInstance {
+    io: Server;
+  }
+}
 
 const USERCONTENT_DIR = join(cwd(), "usercontent");
 const PUBLIC_DIR = join(cwd(), "public");

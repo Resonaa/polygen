@@ -15,8 +15,8 @@
     "start": "cross-env NODE_ENV=production npx pm2 start --name polygen build/server/index.js",
     "typecheck": "tsc -b",
     "wasm": "npm run wasm:server && npm run wasm:client",
-    "wasm:server": "wasm-pack build wasm --out-dir server --target nodejs --weak-refs",
-    "wasm:client": "wasm-pack build wasm --out-dir client --target web --weak-refs -- --no-default-features --features client"
+    "wasm:server": "cross-env RUSTFLAGS=\"-C target-feature=+simd128\" wasm-pack build wasm --out-dir server --target nodejs --weak-refs",
+    "wasm:client": "cross-env RUSTFLAGS=\"-C target-feature=+simd128\" wasm-pack build wasm --out-dir client --target web --weak-refs -- --no-default-features --features client"
   },
   "eslintIgnore": [
     "/node_modules",

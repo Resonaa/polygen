@@ -1,3 +1,5 @@
+//! Map land utilities.
+
 use std::mem;
 
 /// Land types.
@@ -35,10 +37,12 @@ impl From<u8> for Type {
 ///
 /// # Layout
 ///
-/// Bits     0        3         8          32
-///          +--------+---------+----------+
-/// Layout   |  Type  |  Color  |  Amount  |
-///          +--------+---------+----------+
+/// ```plaintext
+/// Bits        0        3         8          32
+///             +--------+---------+----------+
+/// Properties  |  Type  |  Color  |  Amount  |
+///             +--------+---------+----------+
+/// ```
 pub type Land = u32;
 
 /// Helper trait to manipulate [`Land`] properties.
