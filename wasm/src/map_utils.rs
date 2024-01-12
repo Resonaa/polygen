@@ -1,11 +1,15 @@
 //! High-level map utilities including distancing.
 
-use crate::land::{LandProperties, Type::City};
-use crate::{map::Map, pos::Index};
-use highway::HighwayHasher;
 use std::collections::{HashSet, VecDeque};
 use std::hash::BuildHasherDefault;
 use std::ops::RangeInclusive;
+
+use highway::HighwayHasher;
+
+use crate::land::LandProperties;
+use crate::land::Type::City;
+use crate::map::Map;
+use crate::pos::Index;
 
 impl Map {
     /// Calculates the distance between two [`Index`]s.
@@ -15,6 +19,22 @@ impl Map {
     /// With `strict` set to `true`, the path cannot pass cities.
     ///
     /// Returns [`None`] if the path is not found.
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use wasm::{map::{Map, Mode}, land::{Type, LandProperties}};
+    ///
+    /// let mut map = Map::new(Mode::Square, 3, 3);
+    /// map[1].set_type(Type::Mountain);
+    /// map[4].set_type(Type::Mountain);
+    ///
+    /// // _ M _
+    /// // ↓ M ↑
+    /// // → → ↑
+    ///
+    /// assert_eq!(map.dist(0, 2, false), Some(6));
+    /// ```
     pub fn dist(&self, from: Index, to: Index, strict: bool) -> Option<usize> {
         let mut vis = HashSet::with_hasher(BuildHasherDefault::<HighwayHasher>::default());
 
@@ -43,12 +63,28 @@ impl Map {
     /// enforce some distance constraints, for it tends to resolve in a shorter time.
     ///
     /// With `strict` set to `true`, the path cannot pass cities.
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use wasm::{map::{Map, Mode}, land::{Type, LandProperties}};
+    ///
+    /// let mut map = Map::new(Mode::Square, 3, 3);
+    /// map[1].set_type(Type::Mountain);
+    /// map[4].set_type(Type::Mountain);
+    ///
+    /// // _ M _
+    /// // ↓ M ↑
+    /// // → → ↑
+    ///
+    /// assert_eq!(map.require_dist(0, 2, 1..=3, false), false);
+    /// ```
     pub fn require_dist(
         &self,
         from: Index,
         to: Index,
         range: RangeInclusive<Index>,
-        strict: bool,
+        strict: bool
     ) -> bool {
         let mut vis = HashSet::with_hasher(BuildHasherDefault::<HighwayHasher>::default());
 

@@ -1,17 +1,12 @@
 //! Basic indexing methods for [`Map`].
 
-use crate::{
-    land::{
-        Land, LandProperties,
-        Type::{Mountain, Obstacle},
-    },
-    map::{
-        Map,
-        Mode::{Hexagon, Square},
-    },
-    pos::{Index, Pos, ToIndex, ToPos},
-};
 use std::{ops, slice};
+
+use crate::land::Type::{Mountain, Obstacle};
+use crate::land::{Land, LandProperties};
+use crate::map::Map;
+use crate::map::Mode::{Hexagon, Square};
+use crate::pos::{Index, Pos, ToIndex, ToPos};
 
 impl ops::Index<Index> for Map {
     type Output = Land;
@@ -72,7 +67,7 @@ impl Map {
                     DIR_HEXAGON_ODD_COLUMNS.as_slice()
                 }
             }
-            Square => DIR_SQUARE.as_slice(),
+            Square => DIR_SQUARE.as_slice()
         }
     }
 

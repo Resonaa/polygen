@@ -13,7 +13,7 @@ pub enum Type {
     Mountain,
     Obstacle,
     Fog,
-    Swamp,
+    Swamp
 }
 
 impl From<u8> for Type {

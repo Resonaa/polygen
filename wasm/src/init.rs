@@ -2,7 +2,7 @@
 
 use wasm_bindgen::prelude::wasm_bindgen;
 
-/// Init the WebAssembly instance.
+/// Inits the WebAssembly instance.
 #[wasm_bindgen(start)]
 pub fn init() {
     #[cfg(feature = "console_log")]

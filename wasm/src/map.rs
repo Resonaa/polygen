@@ -1,12 +1,12 @@
 //! Map operations.
 
-use crate::land::Land;
-use std::{
-    alloc::{alloc, Layout},
-    iter,
-    mem::{align_of, size_of},
-};
+use std::alloc::{alloc, Layout};
+use std::iter;
+use std::mem::{align_of, size_of};
+
 use wasm_bindgen::prelude::wasm_bindgen;
+
+use crate::land::Land;
 
 /// Map modes.
 #[wasm_bindgen]
@@ -14,7 +14,7 @@ use wasm_bindgen::prelude::wasm_bindgen;
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum Mode {
     Hexagon,
-    Square,
+    Square
 }
 
 /// Game map.
@@ -35,7 +35,7 @@ pub struct Map {
     pub size: usize,
 
     #[wasm_bindgen(skip)]
-    pub lands: Vec<Land>,
+    pub lands: Vec<Land>
 }
 
 /// Public methods, exported to JavaScript.
@@ -51,7 +51,7 @@ impl Map {
             width,
             height,
             size,
-            lands: iter::repeat(Default::default()).take(size).collect(),
+            lands: iter::repeat(Default::default()).take(size).collect()
         }
     }
 
@@ -78,7 +78,7 @@ impl Map {
             width,
             height,
             size,
-            lands: Vec::from_raw_parts(ptr, size, size),
+            lands: Vec::from_raw_parts(ptr, size, size)
         }
     }
 
@@ -91,7 +91,7 @@ impl Map {
             width,
             height,
             size,
-            lands,
+            lands
         }
     }
 
