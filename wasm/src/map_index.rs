@@ -44,12 +44,38 @@ static DIR_SQUARE: [Pos; 4] = dir![[1, 0], [0, 1], [!0, 0], [0, !0]];
 
 impl Map {
     /// Checks whether the [`Pos`] is in the [`Map`].
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use wasm::map_testing::*;
+    ///
+    /// let map = Map::new(Mode::Hexagon, 3, 3);
+    ///
+    /// assert_eq!(map.check_pos([1, 2].into()), true);
+    /// assert_eq!(map.check_pos([3, 2].into()), false);
+    /// ```
     #[inline]
     pub fn check_pos(&self, pos: Pos) -> bool {
         pos[0] < self.height && pos[1] < self.width
     }
 
     /// Tests whether the [`Index`] is accessible.
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use wasm::map_testing::*;
+    ///
+    /// let map = square![
+    ///     _ # _
+    ///     _ # _
+    ///     _ _ _
+    /// ];
+    ///
+    /// assert_eq!(map.access(0), true);
+    /// assert_eq!(map.access(1), false);
+    /// ```
     #[inline]
     pub fn access(&self, index: Index) -> bool {
         !matches!(self[index].get_type(), Mountain | Obstacle)
@@ -72,7 +98,27 @@ impl Map {
     }
 
     /// Gets **accessible** neighbors of the [`Index`].
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use wasm::map_testing::*;
+    ///
+    /// let map = square![
+    ///     _ # _
+    ///     _ # _
+    ///     _ _ _
+    /// ];
+    ///
+    /// assert_eq!(map.neighbors(0), vec![3]);
+    /// assert_eq!(map.neighbors(1), vec![]);
+    /// ```
     pub fn neighbors(&self, index: Index) -> Vec<Index> {
+        // The index itself is not accessible.
+        if !self.access(index) {
+            return Vec::new();
+        }
+
         let pos = index.to_pos(self.width);
 
         self.dir(index)

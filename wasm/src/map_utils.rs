@@ -23,17 +23,18 @@ impl Map {
     /// # Example
     ///
     /// ```rust
-    /// use wasm::{map::{Map, Mode}, land::{Type, LandProperties}};
+    /// use wasm::map_testing::*;
     ///
-    /// let mut map = Map::new(Mode::Square, 3, 3);
-    /// map[1].set_type(Type::Mountain);
-    /// map[4].set_type(Type::Mountain);
+    /// let map = square![
+    ///     _ # _ _
+    ///     _ C _ _
+    ///     _ # _ _
+    ///     _ _ _ _
+    /// ];
     ///
-    /// // _ M _
-    /// // ↓ M ↑
-    /// // → → ↑
-    ///
-    /// assert_eq!(map.dist(0, 2, false), Some(6));
+    /// assert_eq!(map.dist(0, 2, false), Some(4));
+    /// assert_eq!(map.dist(0, 2, true), Some(8));
+    /// assert_eq!(map.dist(1, 3, false), None);
     /// ```
     pub fn dist(&self, from: Index, to: Index, strict: bool) -> Option<usize> {
         let mut vis = HashSet::with_hasher(BuildHasherDefault::<HighwayHasher>::default());
@@ -67,17 +68,18 @@ impl Map {
     /// # Example
     ///
     /// ```rust
-    /// use wasm::{map::{Map, Mode}, land::{Type, LandProperties}};
+    /// use wasm::map_testing::*;
     ///
-    /// let mut map = Map::new(Mode::Square, 3, 3);
-    /// map[1].set_type(Type::Mountain);
-    /// map[4].set_type(Type::Mountain);
+    ///  let map = square![
+    ///     _ # _ _
+    ///     _ C _ _
+    ///     _ # _ _
+    ///     _ _ _ _
+    ///  ];
     ///
-    /// // _ M _
-    /// // ↓ M ↑
-    /// // → → ↑
     ///
-    /// assert_eq!(map.require_dist(0, 2, 1..=3, false), false);
+    /// assert_eq!(map.require_dist(0, 2, 1..=4, false), true);
+    /// assert_eq!(map.require_dist(0, 2, 1..=4, true), false);
     /// ```
     pub fn require_dist(
         &self,

@@ -59,3 +59,11 @@ pub mod map_index;
 pub mod map_utils;
 
 pub mod pos;
+
+#[cfg(any(not(feature = "client"), doc))]
+#[doc(cfg(not(feature = "client")))]
+pub mod map_view;
+
+#[cfg(any(not(feature = "client"), doc))]
+#[doc(cfg(not(feature = "client")))]
+pub mod map_testing;
