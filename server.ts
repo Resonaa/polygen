@@ -5,7 +5,7 @@ import { cwd } from "node:process";
 import fastifyEarlyHints from "@fastify/early-hints";
 import { fastifyStatic } from "@fastify/static";
 import { createRequestHandler, getEarlyHintLinks } from "@mcansh/remix-fastify";
-import * as _build from "@remix-run/dev/server-build";
+import * as build from "@remix-run/dev/server-build";
 import { broadcastDevReady } from "@remix-run/node";
 import fastify from "fastify";
 import type { FastifyContentTypeParser } from "fastify/types/content-type-parser";
@@ -29,11 +29,6 @@ declare module "fastify" {
 const USERCONTENT_DIR = join(cwd(), "usercontent");
 const PUBLIC_DIR = join(cwd(), "public");
 const ASSET_DIR = join(cwd(), "build");
-
-const build = {
-  ..._build,
-  isSpaMode: false
-};
 
 (async () => {
   // Install source map support.
