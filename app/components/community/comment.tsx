@@ -10,7 +10,6 @@ import {
   Button,
   Flex,
   IconButton,
-  Text,
   Tooltip,
   useDisclosure
 } from "@chakra-ui/react";
@@ -60,9 +59,9 @@ export default function Comment({
           <Box>
             <UserLink username={username} />
             <Tooltip label={formatDate(createdAt)} openDelay={500}>
-              <Text color="gray.400" fontSize="xs">
+              <Box color="gray.400" fontSize="xs">
                 {relativeDate(createdAt)}
-              </Text>
+              </Box>
             </Tooltip>
           </Box>
         </Flex>
