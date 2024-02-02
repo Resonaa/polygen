@@ -6,7 +6,7 @@ export default function Fireworks() {
   const canvas = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    new FireworksJs(canvas.current!, {
+    const fireworks = new FireworksJs(canvas.current!, {
       explosion: 2,
       intensity: 20,
       particles: 40,
@@ -16,15 +16,19 @@ export default function Fireworks() {
         max: 0.04
       },
       delay: {
-        min: 50,
-        max: 80
+        min: 25,
+        max: 40
       },
       lineWidth: {
         trace: {
           min: 0.5
         }
       }
-    }).start();
+    });
+
+    fireworks.start();
+
+    return () => fireworks.stop();
   }, []);
 
   return (
