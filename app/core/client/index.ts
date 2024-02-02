@@ -1,6 +1,6 @@
 import LZString from "lz-string";
 
-import { Renderer } from "~/core/client/renderer";
+import { RendererClient } from "~/core/client/renderer.client";
 import { LandType } from "~/core/server/map/land";
 import { Map } from "~/core/server/map/map";
 import type { Pos } from "~/core/server/map/utils";
@@ -22,7 +22,7 @@ export function registerClientSocket(
     return;
   }
 
-  const renderer = new Renderer(canvas, backgroundColor);
+  const renderer = new RendererClient(canvas, backgroundColor);
 
   let halfTag = false;
 

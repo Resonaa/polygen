@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Menu, Table, Grid, Button } from "semantic-ui-react";
 
 import Access from "~/access";
-import { Renderer } from "~/core/client/renderer";
+import { RendererClient } from "~/core/client/renderer.client";
 import { getSettings, saveSettings, Settings } from "~/core/client/settings";
 import { LandType } from "~/core/server/map/land";
 import { Map, MapMode } from "~/core/server/map/map";
@@ -28,7 +28,7 @@ export default function Keys() {
     const canvas = document.createElement("canvas");
     document.querySelector(".equal > .column")?.appendChild(canvas);
 
-    const renderer = new Renderer(canvas);
+    const renderer = new RendererClient(canvas);
 
     const size = 7;
     const gm = new Map(size, size, mode);

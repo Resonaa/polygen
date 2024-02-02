@@ -46,7 +46,7 @@ impl From<u8> for Type {
 pub type Land = u32;
 
 /// Helper trait to manipulate [`Land`] properties.
-pub trait LandProperties {
+pub trait LandProperties: Sized + Copy {
     /// Gets the [`Type`] of the [`Land`].
     ///
     /// # Example

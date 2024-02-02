@@ -15,6 +15,7 @@
 //! - Positioning with [`pos::Index`] and [`pos::Pos`], and their conversion in [`pos`].
 //! - Indexing in and iterating through [`map::Map`], provided by [`map_index`].
 //! - High-level utilities such as [`map::Map::dist`] defined in [`map_utils`].
+//! - Viewing and masking support in [`map_view`].
 //!
 //! ### Setup hooks
 //!

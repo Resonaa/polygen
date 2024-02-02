@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Button, Form, Grid } from "semantic-ui-react";
 
 import Access from "~/access";
-import { Renderer } from "~/core/client/renderer";
+import { RendererClient } from "~/core/client/renderer.client";
 import { saveSettings, Settings } from "~/core/client/settings";
 import { LandType } from "~/core/server/map/land";
 import { Map } from "~/core/server/map/map";
@@ -17,7 +17,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export default function Colors() {
   const [curColor, setCurColor] = useState<number>();
   const [curId, setCurId] = useState<number>();
-  const [renderer, setRenderer] = useState<Renderer>();
+  const [renderer, setRenderer] = useState<RendererClient>();
 
   const size = 4;
 
@@ -27,7 +27,7 @@ export default function Colors() {
       return;
     }
 
-    const renderer = new Renderer(canvas);
+    const renderer = new RendererClient(canvas);
 
     setRenderer(renderer);
 

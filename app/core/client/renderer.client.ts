@@ -17,7 +17,7 @@ import type { Pos } from "~/core/server/map/utils";
 
 const MIN_PILE_SIZE = 50;
 
-export class Renderer {
+export class RendererClient {
   gm: Map = new Map();
 
   private app: PIXI.Application;
