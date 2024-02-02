@@ -1,0 +1,13 @@
+diff --git a/node_modules/fireworks-js/package.json b/node_modules/fireworks-js/package.json
+index 68507ea..8dfcd87 100644
+--- a/node_modules/fireworks-js/package.json
++++ b/node_modules/fireworks-js/package.json
+@@ -1,7 +1,7 @@
+ {
+   "name": "fireworks-js",
+   "version": "2.10.7",
+-  "type": "module",
++  "type": "commonjs",
+   "description": "A simple fireworks library!",
+   "homepage": "https://fireworks.js.org",
+   "types": "./dist/index.d.ts",

@@ -2,6 +2,7 @@ import { Box, Stack } from "@chakra-ui/react";
 import type { ReactNode } from "react";
 
 import BackToTop from "./backToTop";
+import Firework from "./firework";
 import Footer from "./footer";
 import Navbar from "./navbar";
 
@@ -22,6 +23,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         {children}
       </Stack>
       <Footer />
+      <Firework />
     </Box>
   );
 }
