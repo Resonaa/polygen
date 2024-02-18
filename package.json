@@ -55,7 +55,6 @@
     "dotenv": "latest",
     "fastify": "latest",
     "fastify-socket.io": "latest",
-    "fireworks-js": "latest",
     "framer-motion": "latest",
     "fs-extra": "latest",
     "i18next": "latest",

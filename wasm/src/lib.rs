@@ -67,4 +67,8 @@ pub mod map_view;
 
 #[cfg(any(not(feature = "client"), doc))]
 #[doc(cfg(not(feature = "client")))]
+pub mod map_patch;
+
+#[cfg(any(not(feature = "client"), doc))]
+#[doc(cfg(not(feature = "client")))]
 pub mod map_testing;

@@ -1,3 +1,6 @@
+/**
+ * Access to use in polygen.
+ */
 export default class Access {
   static Basic = 0;
 
@@ -16,10 +19,16 @@ export default class Access {
   static ManageDb = 4;
 }
 
+/**
+ * Something that has access. Maybe a user.
+ */
 interface HasAccess {
   access: number;
 }
 
+/**
+ * Whether a user reaches a particular access level.
+ */
 export function access(user: HasAccess | undefined | null, access: number) {
   return (user?.access ?? 0) >= access;
 }

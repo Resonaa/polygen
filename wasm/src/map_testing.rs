@@ -68,7 +68,7 @@ macro_rules! square {
     [$($land: tt)*] => {
         {
             let vec = vec![$(lands!(> $land)),*];
-            let size = (vec.len() as f64).sqrt() as usize;
+            let size = (vec.len() as f64).sqrt() as u32;
 
             Map::with_lands(Mode::Square, size, size, vec)
         }

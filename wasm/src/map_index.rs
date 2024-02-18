@@ -14,7 +14,7 @@ impl ops::Index<Index> for Map {
     #[inline]
     fn index(&self, index: Index) -> &Self::Output {
         // Safety: Bounds checking should be done by `Map::check`.
-        unsafe { self.lands.get_unchecked(index) }
+        unsafe { self.lands.get_unchecked(index as usize) }
     }
 }
 
@@ -22,7 +22,7 @@ impl ops::IndexMut<Index> for Map {
     #[inline]
     fn index_mut(&mut self, index: Index) -> &mut Self::Output {
         // Safety: Bounds checking should be done by `Map::check`.
-        unsafe { self.lands.get_unchecked_mut(index) }
+        unsafe { self.lands.get_unchecked_mut(index as usize) }
     }
 }
 

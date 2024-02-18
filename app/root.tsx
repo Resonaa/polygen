@@ -1,5 +1,3 @@
-// noinspection HtmlRequiredTitleElement
-
 import {
   ChakraProvider,
   cookieStorageManagerSSR,
@@ -22,7 +20,7 @@ import {
   useRouteError
 } from "@remix-run/react";
 import "katex/dist/katex.min.css";
-import "nprogress/nprogress.css";
+import "~/theme/nprogress.css";
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -39,10 +37,25 @@ import theme from "~/theme/theme";
 
 import { requireOptionalUser } from "./session.server";
 
+/**
+ * Includes the CSS Bundle in links.
+ *
+ * Safe for non-null assertion because CSS Bundle href always exists.
+ */
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: cssBundleHref! }
 ];
 
+/**
+ * Root loader.
+ *
+ * Loads:
+ *
+ * - User data without password
+ * - Current server time
+ * - Client cookie without session
+ * - Locale to use in translation
+ */
 export async function loader({ request }: LoaderFunctionArgs) {
   return json({
     user: await requireOptionalUser(request, Access.Basic),
@@ -52,12 +65,15 @@ export async function loader({ request }: LoaderFunctionArgs) {
   });
 }
 
+/**
+ * Whether a route loader should revalidates its data.
+ */
 export function shouldRevalidate({
   defaultShouldRevalidate,
   formAction,
   currentUrl
 }: ShouldRevalidateFunctionArgs) {
-  // fetching room data
+  // No revalidation when fetching room data.
   if (currentUrl.pathname === "/game" && !formAction) {
     return false;
   }
@@ -65,12 +81,16 @@ export function shouldRevalidate({
   return defaultShouldRevalidate;
 }
 
-function Document({ children }: { children: ReactNode }) {
+/**
+ * Entry component.
+ */
+export default function App() {
   useNProgress();
 
   const loaderData = useLoaderData<typeof loader>();
   const defaultColorMode = useColorModePreference() ?? DEFAULT_COLOR_MODE;
 
+  // Get cookie from loader data when rendering on the server.
   const cookie =
     typeof document === "undefined" ? loaderData.cookie : document.cookie;
 
@@ -88,17 +108,22 @@ function Document({ children }: { children: ReactNode }) {
     >
       <head>
         <meta charSet="utf-8" />
+
         <meta
           name="viewport"
           content="width=device-width, initial-scale=1, shrink-to-fit=no"
         />
+
         <meta
           name="description"
           content="polygen is a polygon-based web game inspired by generals.io."
         />
+
         <Meta />
+
         <Links />
       </head>
+
       <body
         style={{ height: "100%" }}
         {...(colorMode && { className: `chakra-ui-${colorMode}` })}
@@ -112,31 +137,44 @@ function Document({ children }: { children: ReactNode }) {
             }
           }}
         >
-          {children}
+          <Layout>
+            <Outlet />
+          </Layout>
         </ChakraProvider>
+
         <ScrollRestoration />
+
         <Scripts />
       </body>
     </html>
   );
 }
 
+/**
+ * Convenient wrapper for displaying errors.
+ */
 function ErrorWrapper({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <head>
         <meta charSet="utf-8" />
+
         <meta
           name="viewport"
           content="width=device-width, initial-scale=1, shrink-to-fit=no"
         />
+
         <title>Error - polygen</title>
       </head>
+
       <body style={{ textAlign: "center" }}>{children}</body>
     </html>
   );
 }
 
+/**
+ * Catches and handles route errors.
+ */
 export function ErrorBoundary() {
   const error = useRouteError();
 
@@ -146,6 +184,7 @@ export function ErrorBoundary() {
         <h1>
           {error.status} {error.statusText}
         </h1>
+
         {error.data}
       </ErrorWrapper>
     );
@@ -162,15 +201,5 @@ export function ErrorBoundary() {
           : "Unknown Error"}
       </h1>
     </ErrorWrapper>
-  );
-}
-
-export default function App() {
-  return (
-    <Document>
-      <Layout>
-        <Outlet />
-      </Layout>
-    </Document>
   );
 }

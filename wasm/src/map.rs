@@ -25,14 +25,14 @@ pub struct Map {
     pub mode: Mode,
 
     #[wasm_bindgen(readonly)]
-    pub width: usize,
+    pub width: u32,
 
     #[wasm_bindgen(readonly)]
-    pub height: usize,
+    pub height: u32,
 
     /// Equals to [`Self::width`] * [`Self::height`].
     #[wasm_bindgen(readonly)]
-    pub size: usize,
+    pub size: u32,
 
     #[wasm_bindgen(skip)]
     pub lands: Vec<Land>
@@ -43,7 +43,7 @@ pub struct Map {
 impl Map {
     /// Creates a new [`Map`].
     #[wasm_bindgen(constructor)]
-    pub fn new(mode: Mode, width: usize, height: usize) -> Self {
+    pub fn new(mode: Mode, width: u32, height: u32) -> Self {
         let size = width * height;
 
         Self {
@@ -51,7 +51,9 @@ impl Map {
             width,
             height,
             size,
-            lands: iter::repeat(Default::default()).take(size).collect()
+            lands: iter::repeat(Default::default())
+                .take(size as usize)
+                .collect()
         }
     }
 
@@ -62,12 +64,14 @@ impl Map {
     /// This function is unsafe because the map contains uninitialized data.
     /// Do not use the map before calling generators.
     #[cold]
-    pub unsafe fn alloc(mode: Mode, width: usize, height: usize) -> Self {
+    pub unsafe fn alloc(mode: Mode, width: u32, height: u32) -> Self {
         let size = width * height;
 
         // Safety: Alignment of `Land` is power of two.
-        let layout =
-            Layout::from_size_align_unchecked(size * size_of::<Land>(), align_of::<Land>());
+        let layout = Layout::from_size_align_unchecked(
+            (size as usize) * size_of::<Land>(),
+            align_of::<Land>()
+        );
 
         // Safety: `layout` is not zero-sized.
         let ptr = alloc(layout) as *mut Land;
@@ -78,12 +82,12 @@ impl Map {
             width,
             height,
             size,
-            lands: Vec::from_raw_parts(ptr, size, size)
+            lands: Vec::from_raw_parts(ptr, size as usize, size as usize)
         }
     }
 
     /// Creates a new [`Map`] with lands.
-    pub fn with_lands(mode: Mode, width: usize, height: usize, lands: Vec<Land>) -> Self {
+    pub fn with_lands(mode: Mode, width: u32, height: u32, lands: Vec<Land>) -> Self {
         let size = width * height;
 
         Self {
