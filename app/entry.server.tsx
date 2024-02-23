@@ -16,6 +16,8 @@ import { isbot } from "isbot";
 import { renderToPipeableStream } from "react-dom/server";
 import { I18nextProvider, initReactI18next } from "react-i18next";
 
+import { notModified } from "~/reponses.server";
+
 import i18n from "./i18n/i18n";
 import { getLocale } from "./i18n/i18next.server";
 import { hash } from "./wasm/server";
@@ -115,7 +117,7 @@ export async function handleDataRequest(
 
   if (request.headers.get("If-None-Match") === etag) {
     // Cache hits.
-    return new Response(null, { status: 304 });
+    return notModified;
   } else {
     // Cache misses.
     return new Response(body, {

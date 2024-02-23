@@ -111,6 +111,7 @@ export default function Comment({
             aria-label="delete"
             icon={<DeleteIcon />}
             onClick={onOpen}
+            size="sm"
             variant="ghost"
           />
         ) : null}

@@ -9,7 +9,7 @@ use crate::map::Map;
 
 /// [`Map`] mask.
 ///
-/// The bits are stored in the same order as [`Map::lands`], 1 means masked and 0 means unmasked.
+/// The bits are stored in the same order as [`Map::lands`], 1 for masked and 0 for unmasked.
 pub type Mask = BitVec<usize, Lsb0>;
 
 /// Helper trait to mask a [`Land`].

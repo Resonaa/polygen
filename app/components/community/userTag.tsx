@@ -12,6 +12,7 @@ export default function UserTag({ username, ...props }: UserTagProps) {
       <Tag verticalAlign="middle" {...props}>
         <Avatar
           mr={1}
+          name={username}
           size="2xs"
           src={`/usercontent/avatar/${username}.avif`}
         />

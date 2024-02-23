@@ -65,7 +65,8 @@
     "placeholder": "Markdown & KaTeX supported",
     "save": "Save",
     "publish": "Publish",
-    "title": "Title"
+    "title": "Title",
+    "copied": "Copied"
   },
   "utils": {
     "plurals_one": "",

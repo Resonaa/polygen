@@ -1,4 +1,9 @@
 /**
+ * A 304 response with empty body.
+ */
+export const notModified = new Response(null, { status: 304 });
+
+/**
  * A 400 response with empty body.
  */
 export const badRequest = new Response(null, {

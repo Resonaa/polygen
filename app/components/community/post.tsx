@@ -24,6 +24,7 @@ import { formatDate, useRelativeDateFormatter } from "~/hooks/datetime";
 import { useOptionalUser } from "~/hooks/loader";
 import type { Post as PostType } from "~/models/post.server";
 
+import CopyLink from "./copyLink";
 import Editor from "./editor";
 import TextRenderer from "./textRenderer";
 import UserAvatar from "./userAvatar";
@@ -106,43 +107,45 @@ export default function Post({
           </Box>
         </Flex>
 
-        {editable ? (
-          <>
-            {editing ? (
-              <ButtonGroup
-                as={editFetcher.Form}
-                gap={1}
-                m={0}
-                action="/api/post/edit"
-                method="post"
-                variant="ghost"
-              >
-                <IconButton
-                  aria-label="save"
-                  colorScheme="green"
-                  icon={<CheckIcon />}
-                  isDisabled={disabled}
-                  isLoading={submitting}
-                  type="submit"
-                />
-                <IconButton
-                  aria-label="cancel"
-                  colorScheme="red"
-                  icon={<CloseIcon />}
-                  onClick={onCancelClick}
-                />
+        {editing ? (
+          <ButtonGroup
+            as={editFetcher.Form}
+            gap={2}
+            m={0}
+            action="/api/post/edit"
+            method="post"
+            size="sm"
+            variant="ghost"
+          >
+            <IconButton
+              aria-label="save"
+              colorScheme="green"
+              icon={<CheckIcon />}
+              isDisabled={disabled}
+              isLoading={submitting}
+              type="submit"
+            />
+            <IconButton
+              aria-label="cancel"
+              colorScheme="red"
+              icon={<CloseIcon />}
+              onClick={onCancelClick}
+            />
 
-                <input type="hidden" name="content" value={value} />
-                <input type="hidden" name="id" value={id} />
-              </ButtonGroup>
-            ) : (
-              <ButtonGroup
-                gap={1}
-                opacity={0}
-                _groupHover={{ opacity: "100%" }}
-                transition="opacity .25s ease-in-out"
-                variant="ghost"
-              >
+            <input type="hidden" name="content" value={value} />
+            <input type="hidden" name="id" value={id} />
+          </ButtonGroup>
+        ) : (
+          <ButtonGroup
+            gap={2}
+            opacity={0}
+            _groupHover={{ opacity: "100%" }}
+            transition="opacity .25s ease-in-out"
+            size="sm"
+            variant="ghost"
+          >
+            {editable ? (
+              <>
                 <IconButton
                   aria-label="edit"
                   icon={<EditIcon />}
@@ -153,46 +156,48 @@ export default function Post({
                   icon={<DeleteIcon />}
                   onClick={onOpen}
                 />
-              </ButtonGroup>
-            )}
+              </>
+            ) : null}
 
-            <AlertDialog
-              isCentered
-              isOpen={isOpen}
-              leastDestructiveRef={cancelRef}
-              onClose={onClose}
-            >
-              <AlertDialogOverlay>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    {t("community.confirm-title")}
-                  </AlertDialogHeader>
-                  <AlertDialogBody>
-                    {t("community.confirm-body")}
-                  </AlertDialogBody>
-                  <AlertDialogFooter
-                    as={Form}
-                    m={0}
-                    action="/api/post/delete"
-                    method="post"
+            <CopyLink link={postUrl} />
+          </ButtonGroup>
+        )}
+
+        {editable ? (
+          <AlertDialog
+            isCentered
+            isOpen={isOpen}
+            leastDestructiveRef={cancelRef}
+            onClose={onClose}
+          >
+            <AlertDialogOverlay>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  {t("community.confirm-title")}
+                </AlertDialogHeader>
+                <AlertDialogBody>{t("community.confirm-body")}</AlertDialogBody>
+                <AlertDialogFooter
+                  as={Form}
+                  m={0}
+                  action="/api/post/delete"
+                  method="post"
+                >
+                  <Button ref={cancelRef} onClick={onClose}>
+                    {t("community.cancel")}
+                  </Button>
+                  <Button
+                    ml={3}
+                    colorScheme="red"
+                    onClick={onClose}
+                    type="submit"
                   >
-                    <Button ref={cancelRef} onClick={onClose}>
-                      {t("community.cancel")}
-                    </Button>
-                    <Button
-                      ml={3}
-                      colorScheme="red"
-                      onClick={onClose}
-                      type="submit"
-                    >
-                      {t("community.delete")}
-                    </Button>
-                    <input type="hidden" name="id" value={id} />
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialogOverlay>
-            </AlertDialog>
-          </>
+                    {t("community.delete")}
+                  </Button>
+                  <input type="hidden" name="id" value={id} />
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialogOverlay>
+          </AlertDialog>
         ) : null}
       </Flex>
 

@@ -65,7 +65,8 @@
     "placeholder": "支持 Markdown 与 KaTeX 语法",
     "save": "保存",
     "publish": "发布",
-    "title": "标题"
+    "title": "标题",
+    "copied": "已复制"
   },
   "utils": {
     "plurals_one": "",

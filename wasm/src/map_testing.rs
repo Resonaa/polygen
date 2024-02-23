@@ -4,6 +4,7 @@
 
 pub use crate::land::*;
 pub use crate::map::*;
+pub use crate::map_patch::*;
 pub use crate::map_view::*;
 pub use crate::pos::*;
 pub use crate::{lands, square};
@@ -68,7 +69,7 @@ macro_rules! square {
     [$($land: tt)*] => {
         {
             let vec = vec![$(lands!(> $land)),*];
-            let size = (vec.len() as f64).sqrt() as u32;
+            let size = (vec.len() as f64).sqrt().round() as u32;
 
             Map::with_lands(Mode::Square, size, size, vec)
         }
@@ -97,7 +98,7 @@ fn it_creates_lands() {
 #[test]
 fn it_creates_square_map() {
     let map = square![
-        _ _ _
+        # _ _
         _ # _
         _ _ _
     ];
