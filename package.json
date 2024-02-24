@@ -1,10 +1,12 @@
 {
   "name": "polygen",
   "sideEffects": false,
+  "type": "module",
   "scripts": {
     "bench": "run-s bench:*",
-    "bench:hash": "ts-node benches/hash.ts",
-    "bench:map": "ts-node benches/map.ts",
+    "bench:cuid": "npx tsx benches/cuid.ts",
+    "bench:hash": "npx tsx benches/hash.ts",
+    "bench:map": "npx tsx benches/map.ts",
     "build": "remix build",
     "dev": "remix dev -c \"node build/server/index.js\"",
     "format": "prettier --write . && npm run lint -- --fix",
@@ -43,6 +45,7 @@
     "@fontsource-variable/fira-code": "latest",
     "@fontsource-variable/noto-sans-sc": "latest",
     "@mcansh/remix-fastify": "latest",
+    "@paralleldrive/cuid2": "latest",
     "@prisma/client": "latest",
     "@remix-run/css-bundle": "latest",
     "@remix-run/node": "latest",
@@ -89,7 +92,6 @@
     "source-map-support": "latest",
     "svg-captcha": "latest",
     "tiny-invariant": "latest",
-    "ts-node": "latest",
     "typescript": "latest",
     "wasm-server": "file:wasm/server",
     "zod": "latest"
@@ -126,14 +128,14 @@
     "prettier-plugin-prisma": "latest",
     "prisma": "latest",
     "tinybench": "latest",
-    "tsconfig-paths": "latest",
+    "tsx": "latest",
     "types-fastify-socket.io": "latest"
   },
   "engines": {
     "node": ">=20"
   },
   "prisma": {
-    "seed": "ts-node prisma/seed.ts"
+    "seed": "npx tsx prisma/seed.ts"
   },
   "optionalDependencies": {
     "bufferutil": "latest",

@@ -24,7 +24,7 @@ CREATE TABLE "Announcement" (
 
 -- CreateTable
 CREATE TABLE "Post" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "cuid" TEXT NOT NULL PRIMARY KEY,
     "content" TEXT NOT NULL,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "username" TEXT NOT NULL,
@@ -37,9 +37,9 @@ CREATE TABLE "Comment" (
     "content" TEXT NOT NULL,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "username" TEXT NOT NULL,
-    "parentId" INTEGER NOT NULL,
+    "parentCuid" TEXT NOT NULL,
     CONSTRAINT "Comment_username_fkey" FOREIGN KEY ("username") REFERENCES "User" ("username") ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT "Comment_parentId_fkey" FOREIGN KEY ("parentId") REFERENCES "Post" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+    CONSTRAINT "Comment_parentCuid_fkey" FOREIGN KEY ("parentCuid") REFERENCES "Post" ("cuid") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateTable

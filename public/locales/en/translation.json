@@ -11,7 +11,8 @@
     "profile": "Profile",
     "settings": "Settings",
     "logout": "Logout",
-    "theme-editor": "Theme Editor"
+    "theme-editor": "Theme Editor",
+    "switch-languages": "Switch Languages"
   },
   "auth": {
     "login": "Login",

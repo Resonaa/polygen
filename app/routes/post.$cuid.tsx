@@ -30,14 +30,14 @@ export async function loader({ params }: LoaderFunctionArgs) {
     throw badRequest;
   }
 
-  const { id } = res.data;
+  const { cuid } = res.data;
 
-  const post = await getPost(id);
+  const post = await getPost(cuid);
   if (!post) {
     throw notFound;
   }
 
-  const comments = await getComments(1, id);
+  const comments = await getComments(1, cuid);
 
   return json({ post, comments });
 }
@@ -60,8 +60,8 @@ export async function action({ request }: ActionFunctionArgs) {
   const res = validateAddCommentFormData(data);
 
   if (res.success) {
-    const { content, parentId } = res.data;
-    await createComment(username, content, parentId);
+    const { content, parentCuid } = res.data;
+    await createComment(username, content, parentCuid);
   }
 
   return null;
@@ -71,7 +71,7 @@ export default function PostId() {
   const { post, comments } = useLoaderData<typeof loader>();
   const user = useOptionalUser();
 
-  const parentId = post.id;
+  const parentCuid = post.cuid;
 
   useRevalidationInterval(1000 * 60);
 
@@ -81,9 +81,9 @@ export default function PostId() {
 
       <Divider />
 
-      {user ? <AddComment parentId={parentId} /> : null}
+      {user ? <AddComment parentCuid={parentCuid} /> : null}
 
-      <Comments comments={comments} parentId={parentId} />
+      <Comments comments={comments} parentCuid={parentCuid} />
     </VStack>
   );
 }

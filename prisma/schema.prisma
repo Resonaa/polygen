@@ -40,7 +40,7 @@ model Announcement {
 }
 
 model Post {
-  id      Int    @id @default(autoincrement())
+  cuid    String @id
   content String
 
   createdAt DateTime @default(now())
@@ -60,8 +60,8 @@ model Comment {
   user     User   @relation(fields: [username], references: [username], onDelete: Cascade, onUpdate: Cascade)
   username String
 
-  parent   Post @relation(fields: [parentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  parentId Int
+  parent     Post   @relation(fields: [parentCuid], references: [cuid], onDelete: Cascade, onUpdate: Cascade)
+  parentCuid String
 }
 
 model Star {

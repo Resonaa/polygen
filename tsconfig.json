@@ -8,7 +8,7 @@
     "isolatedModules": true,
     "jsx": "react-jsx",
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
-    "module": "CommonJS",
+    "module": "ESNext",
     "moduleResolution": "node",
     "noEmit": true,
     "paths": { "~/*": ["./app/*"] },
@@ -17,10 +17,5 @@
     "strict": true,
     "target": "ESNext",
     "types": ["@remix-run/dev", "@remix-run/node"]
-  },
-  "ts-node": {
-    "files": true,
-    "require": ["tsconfig-paths/register"],
-    "transpileOnly": true
   }
 }

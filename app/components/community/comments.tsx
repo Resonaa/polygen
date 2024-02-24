@@ -10,17 +10,17 @@ import LoadMore from "./loadMore";
 
 export default function Comments({
   comments,
-  parentId
+  parentCuid
 }: {
   comments: CommentProps[];
-  parentId: number;
+  parentCuid: string;
 }) {
   const [extraComments, setExtraComments] = useState<CommentProps[]>([]);
 
   const loader = async (page: number) => {
     const data = await load<typeof action>("/api/post/comment", {
       page,
-      parentId
+      parentCuid
     });
     setExtraComments(extraComments => extraComments.concat(data));
     return data.length === 10;

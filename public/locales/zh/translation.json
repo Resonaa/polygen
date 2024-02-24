@@ -11,7 +11,8 @@
     "profile": "主页",
     "settings": "设置",
     "logout": "登出",
-    "theme-editor": "主题编辑器"
+    "theme-editor": "主题编辑器",
+    "switch-languages": "切换语言"
   },
   "auth": {
     "login": "登录",

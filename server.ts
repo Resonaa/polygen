@@ -30,57 +30,55 @@ const USERCONTENT_DIR = join(cwd(), "usercontent");
 const PUBLIC_DIR = join(cwd(), "public");
 const ASSET_DIR = join(cwd(), "build");
 
-(async () => {
-  // Install source map support.
-  install();
+// Install source map support.
+install();
 
-  // Create usercontent directory.
-  await mkdir(join(USERCONTENT_DIR, "avatar"), { recursive: true });
+// Create usercontent directory.
+await mkdir(join(USERCONTENT_DIR, "avatar"), { recursive: true });
 
-  // Construct Fastify app.
-  const app = fastify({
-    logger: { transport: { target: "@fastify/one-line-logger" } }
-  });
+// Construct Fastify app.
+const app = fastify({
+  logger: { transport: { target: "@fastify/one-line-logger" } }
+});
 
-  // Add no-op content parser to fix Content-Type problems.
-  const noopContentParser: FastifyContentTypeParser = (_, payload, done) => {
-    done(null, payload);
-  };
+// Add no-op content parser to fix Content-Type problems.
+const noopContentParser: FastifyContentTypeParser = (_, payload, done) => {
+  done(null, payload);
+};
 
-  app.addContentTypeParser("application/json", noopContentParser);
-  app.addContentTypeParser("*", noopContentParser);
+app.addContentTypeParser("application/json", noopContentParser);
+app.addContentTypeParser("*", noopContentParser);
 
-  // Create request handler for incoming requests.
-  const requestHandler = createRequestHandler({ build, mode: build.mode });
+// Create request handler for incoming requests.
+const requestHandler = createRequestHandler({ build, mode: build.mode });
 
-  // Register Socket.IO server.
-  await app.register(fastifySocketIO, { transports: ["websocket"], parser });
-  setServer(app.io);
+// Register Socket.IO server.
+await app.register(fastifySocketIO, { transports: ["websocket"], parser });
+setServer(app.io);
 
-  await app
-    .register(fastifyEarlyHints, { warn: true })
-    .register(fastifyStatic, {
-      root: PUBLIC_DIR,
-      wildcard: false,
-      maxAge: "1h"
-    })
-    .register(fastifyStatic, {
-      root: ASSET_DIR,
-      prefix: "/build",
-      wildcard: false,
-      decorateReply: false,
-      maxAge: "1y",
-      immutable: true
-    })
-    .all("*", async (request, reply) => {
-      const links = getEarlyHintLinks(request, build);
-      await reply.writeEarlyHintsLinks(links);
-      return requestHandler(request, reply);
-    })
-    .listen({ port: PORT });
+await app
+  .register(fastifyEarlyHints, { warn: true })
+  .register(fastifyStatic, {
+    root: PUBLIC_DIR,
+    wildcard: false,
+    maxAge: "1h"
+  })
+  .register(fastifyStatic, {
+    root: ASSET_DIR,
+    prefix: "/build",
+    wildcard: false,
+    decorateReply: false,
+    maxAge: "1y",
+    immutable: true
+  })
+  .all("*", async (request, reply) => {
+    const links = getEarlyHintLinks(request, build);
+    await reply.writeEarlyHintsLinks(links);
+    return requestHandler(request, reply);
+  })
+  .listen({ port: PORT });
 
-  // Tell Remix dev server is ready.
-  if (MODE === "development") {
-    await broadcastDevReady(build);
-  }
-})();
+// Tell Remix dev server is ready.
+if (MODE === "development") {
+  await broadcastDevReady(build);
+}

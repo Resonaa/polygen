@@ -1,10 +1,14 @@
 import type { Params } from "@remix-run/react";
 import { z } from "zod";
 
+import { CUID_LENGTH } from "~/models/cuid.server";
+
 import { usernameSchema } from "./auth.server";
 import { safeParseAndFlatten } from "./utils.server";
 
 const idSchema = z.coerce.number().int().finite().safe().min(1);
+
+const cuidSchema = z.string().length(CUID_LENGTH).cuid2();
 
 const pageSchema = idSchema;
 
@@ -24,33 +28,37 @@ const addPostSchema = z
 
 const getPostSchema = z
   .object({
-    id: idSchema
+    cuid: cuidSchema
   })
   .strict();
 
 const addCommentSchema = z
   .object({
     content: commentContentSchema,
-    parentId: idSchema
+    parentCuid: cuidSchema
   })
   .strict();
 
 const editPostSchema = z
   .object({
-    id: idSchema,
+    cuid: cuidSchema,
     content: postContentSchema
   })
   .strict();
 
 const deletePostSchema = z
   .object({
+    cuid: cuidSchema
+  })
+  .strict();
+
+const deleteCommentSchema = z
+  .object({
     id: idSchema
   })
   .strict();
 
-const deleteCommentSchema = deletePostSchema;
-
-const deleteAnnouncementSchema = deletePostSchema;
+const deleteAnnouncementSchema = deleteCommentSchema;
 
 const editAnnouncementSchema = z
   .object({
@@ -77,7 +85,7 @@ const getPostPageSchema = z
 const getCommentPageSchema = z
   .object({
     page: pageSchema,
-    parentId: idSchema
+    parentCuid: cuidSchema
   })
   .strict();
 

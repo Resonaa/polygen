@@ -17,9 +17,9 @@ export async function action({ request }: ActionFunctionArgs) {
   const res = validateEditPostFormData(data);
 
   if (res.success) {
-    const { id, content } = res.data;
+    const { cuid, content } = res.data;
 
-    const post = await getPost(id);
+    const post = await getPost(cuid);
     if (!post) {
       return null;
     }
@@ -28,7 +28,7 @@ export async function action({ request }: ActionFunctionArgs) {
       await requireUser(request, Access.ManageCommunity);
     }
 
-    await updatePost(content, id);
+    await updatePost(content, cuid);
   }
 
   return null;

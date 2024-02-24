@@ -31,7 +31,7 @@ function Rank({ createdAt, username, id }: Rank & { id: number }) {
       </Td>
 
       <Td>
-        <Tooltip title={formatDate(createdAt)}>
+        <Tooltip label={formatDate(createdAt)} openDelay={500}>
           {relativeDate(createdAt)}
         </Tooltip>
       </Td>

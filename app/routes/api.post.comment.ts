@@ -18,9 +18,9 @@ export async function action({ request }: ActionFunctionArgs) {
   const res = validateGetCommentPageFormData(data);
 
   if (res.success) {
-    const { parentId, page } = res.data;
+    const { parentCuid, page } = res.data;
 
-    const comments = await getComments(page, parentId);
+    const comments = await getComments(page, parentCuid);
 
     return json(comments);
   }

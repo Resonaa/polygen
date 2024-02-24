@@ -2,13 +2,14 @@ import type { Post } from "@prisma/client";
 
 import prisma from "~/db.server";
 
+import { cuid } from "./cuid.server";
 import type { User } from "./user.server";
 
 export type { Post } from "@prisma/client";
 
-export async function getPost(id: Post["id"]) {
+export async function getPost(cuid: Post["cuid"]) {
   return prisma.post.findUnique({
-    where: { id },
+    where: { cuid },
     include: {
       _count: { select: { comments: true } }
     }
@@ -17,7 +18,7 @@ export async function getPost(id: Post["id"]) {
 
 export async function getPosts(page: number) {
   return prisma.post.findMany({
-    orderBy: { id: "desc" },
+    orderBy: { createdAt: "desc" },
     skip: (page - 1) * 10,
     take: 10,
     include: {
@@ -32,7 +33,7 @@ export async function getPostsByUsername(
 ) {
   return prisma.post.findMany({
     where: { username },
-    orderBy: { id: "desc" },
+    orderBy: { createdAt: "desc" },
     skip: (page - 1) * 10,
     take: 10,
     include: {
@@ -46,16 +47,16 @@ export async function createPost(
   content: Post["content"]
 ) {
   return prisma.post.create({
-    data: { content, user: { connect: { username } } }
+    data: { content, user: { connect: { username } }, cuid: cuid() }
   });
 }
 
-export async function updatePost(content: Post["content"], id: Post["id"]) {
-  return prisma.post.update({ data: { content }, where: { id } });
+export async function updatePost(content: Post["content"], cuid: Post["cuid"]) {
+  return prisma.post.update({ data: { content }, where: { cuid } });
 }
 
-export function deletePost(id: Post["id"]) {
-  return prisma.post.delete({ where: { id } });
+export function deletePost(cuid: Post["cuid"]) {
+  return prisma.post.delete({ where: { cuid } });
 }
 
 export async function rankList() {

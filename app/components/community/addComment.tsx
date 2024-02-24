@@ -6,7 +6,7 @@ import { BsFillSendFill } from "react-icons/bs";
 
 import Editor from "./editor";
 
-export default function AddComment({ parentId }: { parentId: number }) {
+export default function AddComment({ parentCuid }: { parentCuid: string }) {
   const { state, Form } = useFetcher();
   const [value, setValue] = useState("");
   const { t } = useTranslation();
@@ -20,7 +20,7 @@ export default function AddComment({ parentId }: { parentId: number }) {
   return (
     <Form method="post" style={{ width: "100%" }}>
       <Editor value={value} setValue={setValue} mb={4} />
-      <input type="hidden" name="parentId" value={parentId} />
+      <input type="hidden" name="parentCuid" value={parentCuid} />
       <Button
         float="right"
         colorScheme="blue"

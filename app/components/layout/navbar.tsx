@@ -26,7 +26,6 @@ import type { TFunctionArg } from "~/i18n/i18next";
 
 import Auth from "./auth";
 import ColorModeToggle from "./colorModeToggle";
-import LocaleToggle from "./localeToggle";
 import UserDropdown, { DropdownRightIcon } from "./userDropdown";
 
 export default function Navbar() {
@@ -76,7 +75,6 @@ export default function Navbar() {
         </Flex>
 
         <ButtonGroup spacing="13px">
-          <LocaleToggle />
           <ColorModeToggle />
           {user ? <UserDropdown /> : <Auth />}
         </ButtonGroup>

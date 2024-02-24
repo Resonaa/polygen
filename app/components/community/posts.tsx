@@ -23,7 +23,7 @@ export default function Posts({ posts }: { posts: PostProps[] }) {
   return (
     <VStack w="100%" spacing={5}>
       {posts.concat(extraPosts).map(data => (
-        <Post key={data.id} linked {...data} />
+        <Post key={data.cuid} linked {...data} />
       ))}
       {posts.length === 10 ? <LoadMore loader={loader} /> : null}
     </VStack>

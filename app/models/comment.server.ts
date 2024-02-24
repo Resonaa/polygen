@@ -10,10 +10,10 @@ export async function getComment(id: Comment["id"]) {
 
 export async function getComments(
   page: number,
-  parentId?: Comment["parentId"]
+  parentCuid?: Comment["parentCuid"]
 ) {
   return prisma.comment.findMany({
-    where: { parentId },
+    where: { parentCuid },
     orderBy: { id: "desc" },
     skip: (page - 1) * 10,
     take: 10
@@ -23,13 +23,13 @@ export async function getComments(
 export async function createComment(
   username: Comment["username"],
   content: Comment["content"],
-  parentId: Comment["parentId"]
+  parentCuid: Comment["parentCuid"]
 ) {
   return prisma.comment.create({
     data: {
       content,
       user: { connect: { username } },
-      parent: { connect: { id: parentId } }
+      parent: { connect: { cuid: parentCuid } }
     }
   });
 }

@@ -1,5 +1,5 @@
 import { useColorModeValue, Center, Spinner } from "@chakra-ui/react";
-import { start, done } from "nprogress";
+import nprogress from "nprogress";
 import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -14,13 +14,13 @@ export default function LoadMore({
   const { t } = useTranslation();
 
   const loadMore = useCallback(() => {
-    start();
+    nprogress.start();
     setLoading(true);
 
     loader(page).then(visible => {
       setLoading(false);
       setPage(page => (visible ? page + 1 : -1));
-      done();
+      nprogress.done();
     });
   }, [loader, page]);
 

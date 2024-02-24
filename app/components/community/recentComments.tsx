@@ -9,13 +9,13 @@ import type { CommentProps } from "./comment";
 import TextRenderer from "./textRenderer";
 import UserLink from "./userLink";
 
-type RecentCommentProps = CommentProps & Pick<Comment, "parentId">;
+type RecentCommentProps = CommentProps & Pick<Comment, "parentCuid">;
 
 function RecentComment({
   username,
   createdAt,
   content,
-  parentId
+  parentCuid
 }: RecentCommentProps) {
   const relativeDate = useRelativeDateFormatter();
 
@@ -29,7 +29,7 @@ function RecentComment({
       </HStack>
 
       <Box overflowY="auto" maxH="100px">
-        <Link to={`/post/${parentId}`}>
+        <Link to={`/post/${parentCuid}`}>
           <object>
             <TextRenderer>{content}</TextRenderer>
           </object>

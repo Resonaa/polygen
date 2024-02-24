@@ -9,7 +9,12 @@ import remarkMath from "remark-math";
 import remarkMention from "./remarkMention";
 import UserTag from "./userTag";
 
-const renderer = ChakraUIRenderer();
+// Workaround for buggy upstream package.
+const renderer = (
+  typeof ChakraUIRenderer === "function" // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    ? ChakraUIRenderer // @ts-ignore
+    : ChakraUIRenderer.default
+)();
 
 export default function TextRenderer({
   children,

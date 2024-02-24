@@ -1,5 +1,6 @@
 import { extendTheme } from "@chakra-ui/react";
 
+import Avatar from "./avatar";
 import Button from "./button";
 import Code from "./code";
 import global from "./global";
@@ -16,6 +17,7 @@ export default extendTheme({
     global
   },
   components: {
+    Avatar,
     Modal,
     Input,
     Button,

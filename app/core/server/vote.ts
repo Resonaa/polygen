@@ -1,4 +1,4 @@
-import { sample as sampleFrom } from "lodash";
+import _ from "lodash";
 
 import { MapMode } from "./map/map";
 
@@ -143,7 +143,7 @@ export class VoteManager {
     const sample: Partial<SampleMaxVotedItems> = {};
 
     for (const [key, value] of Object.entries(this.ans)) {
-      const item = sampleFrom(value) as ArrElement<typeof value>;
+      const item = _.sample(value) as ArrElement<typeof value>;
       (sample[key as keyof SampleMaxVotedItems]! as typeof item) = item;
     }
 

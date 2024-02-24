@@ -5,6 +5,7 @@ import { cwd, exit } from "node:process";
 import { PrismaClient } from "@prisma/client";
 
 import { SESSION_SECRET } from "~/env.server";
+import { cuid } from "~/models/cuid.server";
 import { hashPassword } from "~/session.server";
 
 const prisma = new PrismaClient();
@@ -57,6 +58,7 @@ async function seed() {
 
   await prisma.post.create({
     data: {
+      cuid: cuid(),
       content: `
 ### Test
       
@@ -71,6 +73,7 @@ async function seed() {
 
   const post = await prisma.post.create({
     data: {
+      cuid: cuid(),
       content: `\`\`\`tsx\n${longPost.toString()}\n\`\`\``,
       user: { connect: { username: "user" } }
     }
@@ -80,7 +83,7 @@ async function seed() {
     data: {
       content: "**Test**",
       user: { connect: { username: "user" } },
-      parent: { connect: { id: post.id } }
+      parent: { connect: { cuid: post.cuid } }
     }
   });
 

@@ -45,6 +45,7 @@ export default function UserDropdown() {
             <Flex align="center" h="100%">
               <Avatar
                 mr="6px"
+                name={user.username}
                 size="xs"
                 src={`/usercontent/avatar/${user.username}.avif`}
               />

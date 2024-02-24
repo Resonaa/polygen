@@ -31,7 +31,7 @@ import UserAvatar from "./userAvatar";
 import UserLink from "./userLink";
 import { formatLargeNumber } from "./utils";
 
-export type PostProps = Pick<PostType, "id" | "username" | "content"> & {
+export type PostProps = Pick<PostType, "cuid" | "username" | "content"> & {
   _count: {
     comments: number;
   };
@@ -39,7 +39,7 @@ export type PostProps = Pick<PostType, "id" | "username" | "content"> & {
 };
 
 export default function Post({
-  id,
+  cuid,
   username,
   createdAt,
   content,
@@ -48,7 +48,7 @@ export default function Post({
 }: PostProps & {
   linked: boolean;
 }) {
-  const postUrl = `/post/${id}`;
+  const postUrl = `/post/${cuid}`;
 
   const relativeDate = useRelativeDateFormatter();
 
@@ -86,7 +86,7 @@ export default function Post({
 
   return (
     <Flex direction="column" w="100%" role="group">
-      <Flex mb={2}>
+      <Flex mb="10px">
         <Flex align="center" wrap="wrap" flex={1} gap={3}>
           <UserAvatar username={username} />
 
@@ -133,7 +133,7 @@ export default function Post({
             />
 
             <input type="hidden" name="content" value={value} />
-            <input type="hidden" name="id" value={id} />
+            <input type="hidden" name="cuid" value={cuid} />
           </ButtonGroup>
         ) : (
           <ButtonGroup
@@ -193,7 +193,7 @@ export default function Post({
                   >
                     {t("community.delete")}
                   </Button>
-                  <input type="hidden" name="id" value={id} />
+                  <input type="hidden" name="cuid" value={cuid} />
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialogOverlay>
@@ -210,7 +210,9 @@ export default function Post({
           </object>
         </chakra.a>
       ) : (
-        <TextRenderer>{content}</TextRenderer>
+        <div>
+          <TextRenderer>{content}</TextRenderer>
+        </div>
       )}
     </Flex>
   );
