@@ -6,8 +6,6 @@
     "apps": "Apps",
     "casual-games": "Casual Games",
     "description-casual-games": "Click the circles to catch the cat",
-    "wasm-test": "WebAssembly Test",
-    "description-wasm-test": "Tests usability of WebAssembly",
     "profile": "Profile",
     "settings": "Settings",
     "logout": "Logout",

@@ -19,7 +19,6 @@ import { Link } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
 import type { IconType } from "react-icons";
 import { FaCrown, FaHome, FaTrophy, FaFlask, FaCat } from "react-icons/fa";
-import { SiWebassembly } from "react-icons/si";
 
 import { useOptionalUser } from "~/hooks/loader";
 import type { TFunctionArg } from "~/i18n/i18next";
@@ -293,12 +292,6 @@ const NAV_ITEMS: NavItem[] = [
         icon: FaCat,
         to: "/catch-the-cat",
         description: "nav.description-casual-games"
-      },
-      {
-        label: "nav.wasm-test",
-        icon: SiWebassembly,
-        to: "/wasm",
-        description: "nav.description-wasm-test"
       }
     ]
   }

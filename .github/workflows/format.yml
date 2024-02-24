@@ -5,9 +5,6 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-env:
-  CARGO_TERM_COLOR: always
-
 jobs:
   format:
     runs-on: ubuntu-latest
@@ -22,30 +19,11 @@ jobs:
           cache-dependency-path: ./package.json
           node-version: 20
 
-      - name: 🦀 Install wasm-pack
-        run: cargo install wasm-pack
-
-      - name: 🌙 Install Nightly toolchain
-        run: rustup install nightly
-
-      - name: 🕸️ Add wasm target
-        run: rustup +nightly target add wasm32-unknown-unknown
-
-      - name: 🛠️ Install Rustfmt
-        run: rustup +nightly component add rustfmt
-
-      - name: ⚙️ Build wasm target
-        run: npm run wasm
-
       - name: 📥 Install deps
         run: npm install
 
       - name: 👔 Format
         run: npm run format
-
-      - name: 👔 Rustfmt
-        working-directory: wasm/
-        run: cargo fmt
 
       - name: 💪 Commit
         run: |

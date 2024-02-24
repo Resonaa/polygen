@@ -5,8 +5,7 @@ import {
 } from "@chakra-ui/react";
 import "@fontsource-variable/fira-code/index.css";
 import "@fontsource-variable/noto-sans-sc/index.css";
-import { cssBundleHref } from "@remix-run/css-bundle";
-import type { LinksFunction, LoaderFunctionArgs } from "@remix-run/node";
+import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import type { ShouldRevalidateFunctionArgs } from "@remix-run/react";
 import {
@@ -36,15 +35,6 @@ import { getLocale } from "~/i18n/i18next.server";
 import theme from "~/theme/theme";
 
 import { requireOptionalUser } from "./session.server";
-
-/**
- * Includes the CSS Bundle in links.
- *
- * Safe for non-null assertion because CSS Bundle href always exists.
- */
-export const links: LinksFunction = () => [
-  { rel: "stylesheet", href: cssBundleHref! }
-];
 
 /**
  * Root loader.

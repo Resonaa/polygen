@@ -9,13 +9,13 @@
     "jsx": "react-jsx",
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "module": "ESNext",
-    "moduleResolution": "node",
+    "moduleResolution": "Bundler",
     "noEmit": true,
     "paths": { "~/*": ["./app/*"] },
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true,
     "target": "ESNext",
-    "types": ["@remix-run/dev", "@remix-run/node"]
+    "types": ["vite/client", "@remix-run/node"]
   }
 }

@@ -20,7 +20,21 @@ import { notModified } from "~/reponses.server";
 
 import i18n from "./i18n/i18n";
 import { getLocale } from "./i18n/i18next.server";
-import { hash } from "./wasm/server";
+
+/**
+ * Hashes the given data.
+ */
+export function hash(data: Uint8Array) {
+  let hash = 0x811c9dc5;
+
+  data.forEach(i => {
+    hash ^= i;
+    hash +=
+      (hash << 1) + (hash << 4) + (hash << 7) + (hash << 8) + (hash << 24);
+  });
+
+  return hash >>> 0;
+}
 
 /**
  * Maximum time before aborting the connection.
@@ -110,7 +124,7 @@ export async function handleDataRequest(
     return response;
   }
 
-  // Compute and set the ETag.
+  // Compute and set ETag.
   const body = await response.arrayBuffer();
   const etag = hash(new Uint8Array(body)).toString(36);
   response.headers.set("ETag", etag);

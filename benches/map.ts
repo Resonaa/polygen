@@ -1,17 +1,12 @@
 import { Bench } from "tinybench";
 
-import { Map as NodeMap, MapMode as NodeMode } from "~/core/server/map/map";
-import { Map, Mode } from "~/wasm/server";
+import { Map, MapMode } from "~/core/server/map/map";
 
 const bench = new Bench();
 
 for (const size of [20, 50, 100]) {
-  bench.add(`Node init map ${size}*${size}`, () => {
-    new NodeMap(size, size, NodeMode.Hexagon);
-  });
-
-  bench.add(`WASM init map ${size}*${size}`, () => {
-    new Map(Mode.Hexagon, size, size).free();
+  bench.add(`init map ${size}*${size}`, () => {
+    new Map(size, size, MapMode.Hexagon);
   });
 }
 

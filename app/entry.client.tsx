@@ -3,9 +3,7 @@ import { CacheProvider } from "@emotion/react";
 import { RemixBrowser } from "@remix-run/react";
 import i18next from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
-import Backend from "i18next-chained-backend";
-import HttpBackend from "i18next-http-backend";
-import LocalStorageBackend from "i18next-localstorage-backend";
+import Backend from "i18next-http-backend";
 import { startTransition, StrictMode } from "react";
 import { hydrateRoot } from "react-dom/client";
 import { I18nextProvider, initReactI18next } from "react-i18next";
@@ -15,7 +13,7 @@ import i18n from "./i18n/i18n";
 // Create Emotion cache for each render.
 const cache = createCache({ key: "-", stylisPlugins: [] });
 
-// Setup i18next client-side backends.
+// Setup i18next client-side backend.
 i18next
   .use(initReactI18next)
   .use(LanguageDetector)
@@ -23,15 +21,7 @@ i18next
   .init({
     ...i18n,
     backend: {
-      backends: [LocalStorageBackend, HttpBackend],
-      backendOptions: [
-        {
-          expirationTime: 1000 * 60 * 60 * 24 // 24 hours
-        },
-        {
-          loadPath: "/locales/{{lng}}/{{ns}}.json"
-        }
-      ]
+      loadPath: "/locales/{{lng}}/{{ns}}.json"
     },
     detection: {
       order: ["cookie", "htmlTag"],

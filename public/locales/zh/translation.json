@@ -6,8 +6,6 @@
     "apps": "应用",
     "casual-games": "休闲游戏",
     "description-casual-games": "点击小圆点，围住小猫",
-    "wasm-test": "WebAssembly 测试",
-    "description-wasm-test": "测试 WebAssembly 可用性",
     "profile": "主页",
     "settings": "设置",
     "logout": "登出",

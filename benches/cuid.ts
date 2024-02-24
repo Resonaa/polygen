@@ -6,7 +6,7 @@ const bench = new Bench({
   time: 3000
 });
 
-bench.add("Node CUID", () => cuid());
+bench.add("CUID", () => cuid());
 
 await bench.warmup();
 await bench.run();

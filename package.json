@@ -7,23 +7,19 @@
     "bench:cuid": "npx tsx benches/cuid.ts",
     "bench:hash": "npx tsx benches/hash.ts",
     "bench:map": "npx tsx benches/map.ts",
-    "build": "remix build",
-    "dev": "remix dev -c \"node build/server/index.js\"",
+    "build": "remix vite:build",
+    "dev": "cross-env NODE_ENV=development npx tsx server.ts",
     "format": "prettier --write . && npm run lint -- --fix",
     "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint .",
     "migrate": "npx prisma migrate dev",
     "postinstall": "patch-package",
     "setup": "prisma generate && prisma migrate deploy && prisma db seed",
-    "start": "cross-env NODE_ENV=production npx pm2 start --name polygen build/server/index.js",
-    "typecheck": "tsc -b",
-    "wasm": "npm run wasm:server && npm run wasm:client",
-    "wasm:server": "wasm-pack build wasm --out-dir server --target nodejs --weak-refs",
-    "wasm:client": "wasm-pack build wasm --out-dir client --target web --weak-refs -- --no-default-features --features client"
+    "start": "cross-env NODE_ENV=production npx pm2 start --interpreter node --interpreter-args \"--import tsx\" --name polygen server.ts",
+    "typecheck": "tsc -b"
   },
   "eslintIgnore": [
     "/node_modules",
     "/build",
-    "/wasm",
     "**/*.js"
   ],
   "prettier": {
@@ -40,6 +36,7 @@
     "@emotion/react": "latest",
     "@emotion/styled": "latest",
     "@fastify/early-hints": "latest",
+    "@fastify/middie": "latest",
     "@fastify/one-line-logger": "latest",
     "@fastify/static": "latest",
     "@fontsource-variable/fira-code": "latest",
@@ -47,7 +44,6 @@
     "@mcansh/remix-fastify": "latest",
     "@paralleldrive/cuid2": "latest",
     "@prisma/client": "latest",
-    "@remix-run/css-bundle": "latest",
     "@remix-run/node": "latest",
     "@remix-run/react": "latest",
     "bcryptjs": "latest",
@@ -62,10 +58,8 @@
     "fs-extra": "latest",
     "i18next": "latest",
     "i18next-browser-languagedetector": "latest",
-    "i18next-chained-backend": "latest",
     "i18next-fs-backend": "latest",
     "i18next-http-backend": "latest",
-    "i18next-localstorage-backend": "latest",
     "isbot": "latest",
     "katex": "latest",
     "lodash": "latest",
@@ -93,7 +87,6 @@
     "svg-captcha": "latest",
     "tiny-invariant": "latest",
     "typescript": "latest",
-    "wasm-server": "file:wasm/server",
     "zod": "latest"
   },
   "devDependencies": {
@@ -129,7 +122,9 @@
     "prisma": "latest",
     "tinybench": "latest",
     "tsx": "latest",
-    "types-fastify-socket.io": "latest"
+    "types-fastify-socket.io": "latest",
+    "vite": "latest",
+    "vite-tsconfig-paths": "latest"
   },
   "engines": {
     "node": ">=20"

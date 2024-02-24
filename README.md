@@ -17,15 +17,6 @@ Polygon-based web game inspired by [generals.io](https://generals.io).
 ## Prerequisites
 
 - [Node 20+](https://nodejs.org/)
-- [Rust (+Nightly)](https://www.rust-lang.org/)
-- [wasm-pack](https://rustwasm.github.io/wasm-pack/)
-
-The Nightly toolchain and `wasm32-unknown-unknown` target are required for building the WebAssembly package.
-
-```sh
-rustup install nightly
-rustup +nightly target add wasm32-unknown-unknown
-```
 
 ## Development
 
@@ -33,12 +24,6 @@ rustup +nightly target add wasm32-unknown-unknown
 
 ```sh
 cp .env.example .env
-```
-
-- Build WebAssembly target:
-
-```sh
-npm run wasm
 ```
 
 - Install dependencies:
@@ -98,20 +83,6 @@ npm run build
 npm run lint
 npm run typecheck
 npm run format
-```
-
-For Rust code in `/wasm`:
-
-```sh
-cargo test
-cargo clippy
-cargo fmt
-```
-
-It's also recommended to view the generated documentation:
-
-```sh
-cargo doc --no-deps --open --target wasm32-unknown-unknown
 ```
 
 ## License

@@ -1,6 +1,9 @@
 import { Flex } from "@chakra-ui/react";
 import { useEffect } from "react";
 
+import catchTheCat from "~/../static/catchTheCat.min.js?raw";
+import phaser from "~/../static/phaser.min.js?raw";
+
 declare class CatchTheCatGame {
   constructor(_: {
     w: number;
@@ -25,8 +28,8 @@ const w = 15,
 
 export default function CatchTheCat() {
   useEffect(() => {
-    require("~/../static/phaser.min");
-    require("~/../static/catchTheCat.min");
+    eval(phaser);
+    eval(catchTheCat);
 
     const game = new CatchTheCatGame({
       w,
