@@ -65,7 +65,10 @@
     "save": "Save",
     "publish": "Publish",
     "title": "Title",
-    "copied": "Copied"
+    "copied": "Copied",
+    "private": "Private",
+    "private-mode": "Private Mode",
+    "description-private": "Not shown in public"
   },
   "utils": {
     "plurals_one": "",

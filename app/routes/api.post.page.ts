@@ -1,7 +1,7 @@
 import type { ActionFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 
-import Access from "~/access";
+import Access, { access } from "~/access";
 import { getPosts } from "~/models/post.server";
 import { badRequest } from "~/reponses.server";
 import { requireOptionalUser } from "~/session.server";
@@ -12,7 +12,12 @@ export function loader() {
 }
 
 export async function action({ request }: ActionFunctionArgs) {
-  await requireOptionalUser(request, Access.Basic);
+  const user = await requireOptionalUser(request, Access.Basic);
+  const getPrivate = user
+    ? access(user, Access.ManageCommunity)
+      ? true
+      : user.username
+    : false;
 
   const data = await request.formData();
   const res = validateGetPostPageFormData(data);
@@ -20,7 +25,7 @@ export async function action({ request }: ActionFunctionArgs) {
   if (res.success) {
     const { page } = res.data;
 
-    return json(await getPosts(page));
+    return json(await getPosts(page, getPrivate));
   }
 
   return badRequest;

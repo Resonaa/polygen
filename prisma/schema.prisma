@@ -49,6 +49,8 @@ model Post {
   username String
 
   comments Comment[]
+
+  isPrivate Boolean @default(false)
 }
 
 model Comment {
@@ -62,6 +64,8 @@ model Comment {
 
   parent     Post   @relation(fields: [parentCuid], references: [cuid], onDelete: Cascade, onUpdate: Cascade)
   parentCuid String
+
+  isPrivate Boolean @default(false)
 }
 
 model Star {

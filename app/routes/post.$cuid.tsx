@@ -61,7 +61,13 @@ export async function action({ request }: ActionFunctionArgs) {
 
   if (res.success) {
     const { content, parentCuid } = res.data;
-    await createComment(username, content, parentCuid);
+    const post = await getPost(parentCuid);
+
+    if (!post) {
+      return null;
+    }
+
+    await createComment(username, content, parentCuid, post.isPrivate);
   }
 
   return null;

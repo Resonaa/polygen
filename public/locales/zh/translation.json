@@ -65,7 +65,10 @@
     "save": "保存",
     "publish": "发布",
     "title": "标题",
-    "copied": "已复制"
+    "copied": "已复制",
+    "private": "私密",
+    "private-mode": "私密模式",
+    "description-private": "不公开发布"
   },
   "utils": {
     "plurals_one": "",

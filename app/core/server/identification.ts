@@ -1,6 +1,6 @@
 import { SESSION_SECRET } from "~/env.server";
 import { getUser } from "~/models/user.server";
-import { sessionStorage, USER_SESSION_KEY } from "~/session.server";
+import { sessionStorage } from "~/session.server";
 
 import type { ServerSocket } from "../types";
 
@@ -21,9 +21,7 @@ export async function identify(socket: ServerSocket) {
   }
 
   // Get the username from Session.
-  const username = (await sessionStorage.getSession(cookie)).get(
-    USER_SESSION_KEY
-  );
+  const username = (await sessionStorage.getSession(cookie)).get("username");
 
   // Invalid or non-existent username.
   if (typeof username !== "string" || !(await getUser(username))) {

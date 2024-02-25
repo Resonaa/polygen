@@ -1,16 +1,14 @@
 import { createCookieSessionStorage } from "@remix-run/node";
 import bcrypt from "bcryptjs";
+import { createTypedSessionStorage } from "remix-utils/typed-session";
 
 import { access } from "~/access";
 import { SESSION_SECRET } from "~/env.server";
-import type { User } from "~/models/user.server";
 import { getUser as getUserFromDb } from "~/models/user.server";
 import { forbidden } from "~/reponses.server";
+import { sessionSchema } from "~/validators/session.server";
 
-/**
- * Stores session data in cookie.
- */
-export const sessionStorage = createCookieSessionStorage({
+const untypedSessionStorage = createCookieSessionStorage({
   cookie: {
     name: "__session",
     httpOnly: true,
@@ -20,8 +18,13 @@ export const sessionStorage = createCookieSessionStorage({
   }
 });
 
-export const USER_SESSION_KEY = "username";
-export const CAPTCHA_SESSION_KEY = "captcha";
+/**
+ * Stores typed session data in cookie.
+ */
+export const sessionStorage = createTypedSessionStorage({
+  sessionStorage: untypedSessionStorage,
+  schema: sessionSchema
+});
 
 /**
  * Gets or creates the associated session for a request.
@@ -34,17 +37,9 @@ export async function getSession(request: Request) {
 /**
  * Tries to get username from a request. Returns undefined if not exists.
  */
-export async function getUsername(request: Request) {
+async function getUsername(request: Request) {
   const session = await getSession(request);
-  return (await session.get(USER_SESSION_KEY)) as User["username"] | undefined;
-}
-
-/**
- * Tries to get captcha from a request. Returns undefined if not exists.
- */
-export async function getCaptcha(request: Request) {
-  const session = await getSession(request);
-  return (await session.get(CAPTCHA_SESSION_KEY)) as string | undefined;
+  return session.get("username");
 }
 
 /**
@@ -55,7 +50,7 @@ export async function getCaptcha(request: Request) {
  */
 export async function getUser(request: Request) {
   const username = await getUsername(request);
-  if (username === undefined) {
+  if (!username) {
     return null;
   }
 
@@ -99,8 +94,8 @@ export async function requireOptionalUser(request: Request, required: number) {
  */
 export async function createUserSession(request: Request, username: string) {
   const session = await getSession(request);
-  session.set(USER_SESSION_KEY, username);
-  session.unset(CAPTCHA_SESSION_KEY);
+  session.set("username", username);
+  session.unset("captcha");
 
   return new Response(null, {
     headers: {
@@ -120,7 +115,7 @@ export async function createCaptchaSession(
   data: string
 ) {
   const session = await getSession(request);
-  session.flash(CAPTCHA_SESSION_KEY, captcha);
+  session.set("captcha", captcha);
   return new Response(data, {
     headers: {
       "Set-Cookie": await sessionStorage.commitSession(session),
@@ -130,11 +125,13 @@ export async function createCaptchaSession(
 }
 
 /**
- * Verifies captcha for the request.
+ * Verifies and then removes captcha of the request.
  */
 export async function verifyCaptcha(request: Request, captcha: string) {
-  const realCaptcha = await getCaptcha(request);
-  return realCaptcha && realCaptcha.toUpperCase() === captcha.toUpperCase();
+  const session = await getSession(request);
+  const realCaptcha = session.get("captcha");
+  session.unset("captcha");
+  return !!realCaptcha && realCaptcha.toUpperCase() === captcha.toUpperCase();
 }
 
 /**

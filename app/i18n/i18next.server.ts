@@ -1,9 +1,6 @@
 import { resolve } from "node:path";
 
 import Backend from "i18next-fs-backend";
-// Workaround for buggy upstream package.
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { RemixI18Next } from "remix-i18next/server";
 
 import { getCookieValue } from "~/hooks/cookie";

@@ -1,4 +1,5 @@
 import type { Post } from "@prisma/client";
+import _ from "lodash";
 
 import prisma from "~/db.server";
 
@@ -16,8 +17,20 @@ export async function getPost(cuid: Post["cuid"]) {
   });
 }
 
-export async function getPosts(page: number) {
+export async function getPosts(page: number, getPrivate: string | boolean) {
+  const where =
+    typeof getPrivate === "string"
+      ? {
+          OR: [{ username: getPrivate }, { isPrivate: false }]
+        }
+      : getPrivate
+        ? undefined
+        : {
+            isPrivate: false
+          };
+
   return prisma.post.findMany({
+    where,
     orderBy: { createdAt: "desc" },
     skip: (page - 1) * 10,
     take: 10,
@@ -32,7 +45,7 @@ export async function getPostsByUsername(
   page: number
 ) {
   return prisma.post.findMany({
-    where: { username },
+    where: { username, isPrivate: false },
     orderBy: { createdAt: "desc" },
     skip: (page - 1) * 10,
     take: 10,
@@ -44,10 +57,11 @@ export async function getPostsByUsername(
 
 export async function createPost(
   username: Post["username"],
-  content: Post["content"]
+  content: Post["content"],
+  isPrivate: Post["isPrivate"]
 ) {
   return prisma.post.create({
-    data: { content, user: { connect: { username } }, cuid: cuid() }
+    data: { content, user: { connect: { username } }, cuid: cuid(), isPrivate }
   });
 }
 
@@ -61,11 +75,15 @@ export function deletePost(cuid: Post["cuid"]) {
 
 export async function rankList() {
   const ranks = await prisma.user.findMany({
-    orderBy: { posts: { _count: "desc" } },
-    select: { _count: { select: { posts: true } }, username: true }
+    select: {
+      _count: { select: { posts: { where: { isPrivate: false } } } },
+      username: true
+    }
   });
 
-  return ranks.filter(({ _count: { posts } }) => posts > 0);
+  const filtered = ranks.filter(({ _count: { posts } }) => posts > 0);
+
+  return _.sortBy(filtered, user => -user._count.posts);
 }
 
 export async function getRank(cur: User["username"]) {

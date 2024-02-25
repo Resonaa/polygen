@@ -26,12 +26,16 @@ import type { Post as PostType } from "~/models/post.server";
 
 import CopyLink from "./copyLink";
 import Editor from "./editor";
+import PrivateIndicator from "./privateIndicator";
 import TextRenderer from "./textRenderer";
 import UserAvatar from "./userAvatar";
 import UserLink from "./userLink";
 import { formatLargeNumber } from "./utils";
 
-export type PostProps = Pick<PostType, "cuid" | "username" | "content"> & {
+export type PostProps = Pick<
+  PostType,
+  "cuid" | "username" | "content" | "isPrivate"
+> & {
   _count: {
     comments: number;
   };
@@ -44,7 +48,8 @@ export default function Post({
   createdAt,
   content,
   _count: { comments },
-  linked
+  linked,
+  isPrivate
 }: PostProps & {
   linked: boolean;
 }) {
@@ -93,9 +98,12 @@ export default function Post({
           <Box>
             <UserLink username={username} />
             <Box color="gray.400" fontSize="xs">
+              <PrivateIndicator isPrivate={isPrivate} />
+
               <Tooltip label={formatDate(createdAt)} openDelay={500}>
                 {relativeDate(createdAt)}
               </Tooltip>
+
               {comments ? (
                 <span>
                   {" · "}

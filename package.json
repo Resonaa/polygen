@@ -35,7 +35,6 @@
     "@emotion/cache": "latest",
     "@emotion/react": "latest",
     "@emotion/styled": "latest",
-    "@fastify/early-hints": "latest",
     "@fastify/middie": "latest",
     "@fastify/one-line-logger": "latest",
     "@fastify/static": "latest",

@@ -14,6 +14,8 @@ const pageSchema = idSchema;
 
 const postContentSchema = z.string().trim().min(1).max(1e5);
 
+const isPrivateSchema = z.literal("true").or(z.literal("false"));
+
 const commentContentSchema = z.string().trim().min(1).max(1e4);
 
 const langSchema = z.literal("zh").or(z.literal("en"));
@@ -22,7 +24,8 @@ const titleSchema = z.string().trim().min(1).max(50);
 
 const addPostSchema = z
   .object({
-    content: postContentSchema
+    content: postContentSchema,
+    isPrivate: isPrivateSchema
   })
   .strict();
 

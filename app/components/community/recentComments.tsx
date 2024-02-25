@@ -1,7 +1,8 @@
-import { Box, Center, Heading, HStack, Text, VStack } from "@chakra-ui/react";
+import { Box, Center, Flex, Heading, HStack, VStack } from "@chakra-ui/react";
 import { Link } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
 
+import PrivateIndicator from "~/components/community/privateIndicator";
 import { useRelativeDateFormatter } from "~/hooks/datetime";
 import type { Comment } from "~/models/comment.server";
 
@@ -15,7 +16,8 @@ function RecentComment({
   username,
   createdAt,
   content,
-  parentCuid
+  parentCuid,
+  isPrivate
 }: RecentCommentProps) {
   const relativeDate = useRelativeDateFormatter();
 
@@ -23,9 +25,12 @@ function RecentComment({
     <VStack align="normal" w="100%" spacing={1}>
       <HStack justifyContent="space-between">
         <UserLink username={username} />
-        <Text color="gray.400" fontSize="xs">
-          {relativeDate(createdAt)}
-        </Text>
+
+        <Flex color="gray.400" fontSize="xs">
+          <PrivateIndicator isPrivate={isPrivate} />
+
+          <span>{relativeDate(createdAt)}</span>
+        </Flex>
       </HStack>
 
       <Box overflowY="auto" maxH="100px">

@@ -1,9 +1,13 @@
 import { Divider, VStack } from "@chakra-ui/react";
-import type { ActionFunctionArgs, MetaFunction } from "@remix-run/node";
+import type {
+  ActionFunctionArgs,
+  LoaderFunctionArgs,
+  MetaFunction
+} from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 
-import Access from "~/access";
+import Access, { access } from "~/access";
 import AddPost from "~/components/community/addPost";
 import Announcements from "~/components/community/announcements";
 import Countdowns from "~/components/community/countdowns";
@@ -15,13 +19,20 @@ import { getT } from "~/i18n/i18n";
 import { getAnnouncements } from "~/models/announcement.server";
 import { getComments } from "~/models/comment.server";
 import { createPost, getPosts } from "~/models/post.server";
-import { requireUser } from "~/session.server";
+import { requireOptionalUser, requireUser } from "~/session.server";
 import { validateAddPostFormData } from "~/validators/community.server";
 
-export async function loader() {
+export async function loader({ request }: LoaderFunctionArgs) {
+  const user = await requireOptionalUser(request, Access.Basic);
+  const getPrivate = user
+    ? access(user, Access.ManageCommunity)
+      ? true
+      : user.username
+    : false;
+
   const announcements = await getAnnouncements();
-  const posts = await getPosts(1);
-  const recentComments = await getComments(1);
+  const posts = await getPosts(1, getPrivate);
+  const recentComments = await getComments(1, undefined, getPrivate === true);
 
   return json({ announcements, posts, recentComments });
 }
@@ -38,9 +49,9 @@ export async function action({ request }: ActionFunctionArgs) {
   const res = validateAddPostFormData(data);
 
   if (res.success) {
-    const { content } = res.data;
+    const { content, isPrivate } = res.data;
 
-    await createPost(username, content);
+    await createPost(username, content, isPrivate === "true");
   }
 
   return null;
@@ -56,7 +67,7 @@ export default function Index() {
 
   return (
     <>
-      <VStack w={{ base: "100%", md: "75%" }} spacing={4}>
+      <VStack w={{ base: "100%", md: "75%" }} spacing={5}>
         {user ? <AddPost /> : null}
 
         <Posts posts={posts} />

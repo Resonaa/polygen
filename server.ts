@@ -7,7 +7,7 @@ import { createRequestHandler } from "@mcansh/remix-fastify";
 import fastify from "fastify";
 import fastifySocketIO from "fastify-socket.io";
 import parser from "socket.io-msgpack-parser";
-import { install } from "source-map-support";
+import "source-map-support/register";
 
 import { setServer } from "~/core/server";
 import type { Server } from "~/core/types";
@@ -25,14 +25,11 @@ declare module "fastify" {
 const USERCONTENT_DIR = join(cwd(), "usercontent");
 const PUBLIC_DIR = join(cwd(), "build", "client");
 
-// Install source map support.
-install();
-
 // Create usercontent directory.
 await mkdir(join(USERCONTENT_DIR, "avatar"), { recursive: true });
 
 // Create Vite dev server.
-const viteDevServer =
+const vite =
   MODE === "production"
     ? undefined
     : await import("vite").then(vite =>
@@ -47,9 +44,9 @@ const app = fastify({
 });
 
 // Handle asset requests.
-if (viteDevServer) {
-  await app.register(await import("@fastify/middie"));
-  await app.use(viteDevServer.middlewares);
+if (vite) {
+  await app.register(import("@fastify/middie"));
+  await app.use(vite.middlewares);
 } else {
   await app.register(fastifyStatic, {
     root: PUBLIC_DIR,
@@ -74,13 +71,15 @@ await app.register(fastifySocketIO, {
 });
 setServer(app.io);
 
-const build = viteDevServer
-  ? () => viteDevServer.ssrLoadModule("virtual:remix/server-build")
+const build = vite
+  ? () => vite.ssrLoadModule("virtual:remix/server-build")
   : // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     // eslint-disable-next-line import/no-unresolved
     await import("./build/server/index.js");
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 app.all("*", createRequestHandler({ build }));
 
 await app.listen({ port: PORT });

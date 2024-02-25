@@ -22,11 +22,15 @@ import { formatDate, useRelativeDateFormatter } from "~/hooks/datetime";
 import { useOptionalUser } from "~/hooks/loader";
 import type { Comment as CommentType } from "~/models/comment.server";
 
+import PrivateIndicator from "./privateIndicator";
 import TextRenderer from "./textRenderer";
 import UserAvatar from "./userAvatar";
 import UserLink from "./userLink";
 
-export type CommentProps = Pick<CommentType, "id" | "username" | "content"> & {
+export type CommentProps = Pick<
+  CommentType,
+  "id" | "username" | "content" | "isPrivate"
+> & {
   createdAt: string;
 };
 
@@ -34,7 +38,8 @@ export default function Comment({
   id,
   username,
   createdAt,
-  content
+  content,
+  isPrivate
 }: CommentProps) {
   const relativeDate = useRelativeDateFormatter();
 
@@ -58,11 +63,14 @@ export default function Comment({
 
           <Box>
             <UserLink username={username} />
-            <Tooltip label={formatDate(createdAt)} openDelay={500}>
-              <Box color="gray.400" fontSize="xs">
+
+            <Box color="gray.400" fontSize="xs">
+              <PrivateIndicator isPrivate={isPrivate} />
+
+              <Tooltip label={formatDate(createdAt)} openDelay={500}>
                 {relativeDate(createdAt)}
-              </Box>
-            </Tooltip>
+              </Tooltip>
+            </Box>
           </Box>
         </Flex>
 

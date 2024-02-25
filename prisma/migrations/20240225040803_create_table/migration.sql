@@ -28,6 +28,7 @@ CREATE TABLE "Post" (
     "content" TEXT NOT NULL,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "username" TEXT NOT NULL,
+    "isPrivate" BOOLEAN NOT NULL DEFAULT false,
     CONSTRAINT "Post_username_fkey" FOREIGN KEY ("username") REFERENCES "User" ("username") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -38,6 +39,7 @@ CREATE TABLE "Comment" (
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "username" TEXT NOT NULL,
     "parentCuid" TEXT NOT NULL,
+    "isPrivate" BOOLEAN NOT NULL DEFAULT false,
     CONSTRAINT "Comment_username_fkey" FOREIGN KEY ("username") REFERENCES "User" ("username") ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT "Comment_parentCuid_fkey" FOREIGN KEY ("parentCuid") REFERENCES "Post" ("cuid") ON DELETE CASCADE ON UPDATE CASCADE
 );

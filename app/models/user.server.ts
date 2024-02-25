@@ -23,7 +23,14 @@ export async function getPassword(username: User["username"]) {
 export async function getStats(username: User["username"]) {
   const data = await prisma.user.findUnique({
     where: { username },
-    include: { _count: { select: { comments: true, posts: true } } }
+    include: {
+      _count: {
+        select: {
+          comments: { where: { isPrivate: false } },
+          posts: { where: { isPrivate: false } }
+        }
+      }
+    }
   });
   const rank = await getStarRank(username);
 
