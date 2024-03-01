@@ -6,8 +6,9 @@ import rehypeKatex from "rehype-katex";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 
+import UserTag from "../user/userTag";
+
 import remarkMention from "./remarkMention";
-import UserTag from "./userTag";
 
 // Workaround for buggy upstream package.
 const renderer = (

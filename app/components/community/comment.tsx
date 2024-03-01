@@ -22,10 +22,11 @@ import { formatDate, useRelativeDateFormatter } from "~/hooks/datetime";
 import { useOptionalUser } from "~/hooks/loader";
 import type { Comment as CommentType } from "~/models/comment.server";
 
+import UserAvatar from "../user/userAvatar";
+import UserLink from "../user/userLink";
+
 import PrivateIndicator from "./privateIndicator";
 import TextRenderer from "./textRenderer";
-import UserAvatar from "./userAvatar";
-import UserLink from "./userLink";
 
 export type CommentProps = Pick<
   CommentType,

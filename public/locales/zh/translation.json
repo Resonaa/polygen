@@ -6,10 +6,9 @@
     "apps": "应用",
     "casual-games": "休闲游戏",
     "description-casual-games": "点击小圆点，围住小猫",
-    "profile": "主页",
-    "settings": "设置",
-    "logout": "登出",
-    "theme-editor": "主题编辑器",
+    "profile": "个人主页",
+    "preference": "偏好设置",
+    "logout": "退出登录",
     "switch-languages": "切换语言"
   },
   "auth": {
@@ -68,7 +67,8 @@
     "copied": "已复制",
     "private": "私密",
     "private-mode": "私密模式",
-    "description-private": "不公开发布"
+    "description-private": "不公开发布",
+    "add-announcement": "创建公告"
   },
   "utils": {
     "plurals_one": "",

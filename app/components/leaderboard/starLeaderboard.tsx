@@ -13,7 +13,7 @@ import { useTranslation } from "react-i18next";
 import { formatStar } from "~/core/client/utils";
 import { formatDate, useRelativeDateFormatter } from "~/hooks/datetime";
 
-import UserTag from "../community/userTag";
+import UserTag from "../user/userTag";
 
 interface Rank {
   star: number;

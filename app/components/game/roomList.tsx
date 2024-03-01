@@ -25,7 +25,7 @@ import type { MaxVotedItems, VoteItem } from "~/core/server/vote";
 import { useOptionalUser } from "~/hooks/loader";
 import type { TFunctionArg } from "~/i18n/i18next";
 
-import UserTag from "../community/userTag";
+import UserTag from "../user/userTag";
 
 interface RoomProps {
   id: string;

@@ -1,7 +1,7 @@
 import type { Params } from "@remix-run/react";
 import { z } from "zod";
 
-import { CUID_LENGTH } from "~/models/cuid.server";
+import { CUID_LENGTH } from "~/utils/cuid";
 
 import { usernameSchema } from "./auth.server";
 import { safeParseAndFlatten } from "./utils.server";

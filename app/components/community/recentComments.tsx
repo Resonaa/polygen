@@ -1,30 +1,43 @@
-import { Box, Center, Flex, Heading, HStack, VStack } from "@chakra-ui/react";
+import { ChevronRightIcon } from "@chakra-ui/icons";
+import { Box, Flex, HStack, VStack } from "@chakra-ui/react";
 import { Link } from "@remix-run/react";
-import { useTranslation } from "react-i18next";
 
 import PrivateIndicator from "~/components/community/privateIndicator";
 import { useRelativeDateFormatter } from "~/hooks/datetime";
 import type { Comment } from "~/models/comment.server";
 
+import UserLink from "../user/userLink";
+
 import type { CommentProps } from "./comment";
 import TextRenderer from "./textRenderer";
-import UserLink from "./userLink";
 
-type RecentCommentProps = CommentProps & Pick<Comment, "parentCuid">;
+type RecentCommentProps = CommentProps &
+  Pick<Comment, "parentCuid"> & {
+    parent: {
+      username: string;
+    };
+  };
 
 function RecentComment({
   username,
   createdAt,
   content,
   parentCuid,
-  isPrivate
+  isPrivate,
+  parent: { username: to }
 }: RecentCommentProps) {
   const relativeDate = useRelativeDateFormatter();
 
   return (
     <VStack align="normal" w="100%" spacing={1}>
       <HStack justifyContent="space-between">
-        <UserLink username={username} />
+        <Flex align="center" gap={1}>
+          <UserLink username={username} />
+
+          <ChevronRightIcon />
+
+          <UserLink fontWeight="normal" username={to} />
+        </Flex>
 
         <Flex color="gray.400" fontSize="xs">
           <PrivateIndicator isPrivate={isPrivate} />
@@ -49,18 +62,11 @@ export default function RecentComments({
 }: {
   comments: RecentCommentProps[];
 }) {
-  const { t } = useTranslation();
-
   return (
-    <Center flexDir="column" w="100%">
-      <Heading mb={2} size="sm">
-        {t("community.recent-comments")}
-      </Heading>
-      <VStack w="100%" spacing={1}>
-        {comments.map(data => (
-          <RecentComment key={data.id} {...data} />
-        ))}
-      </VStack>
-    </Center>
+    <VStack w="100%" spacing={2}>
+      {comments.map(data => (
+        <RecentComment key={data.id} {...data} />
+      ))}
+    </VStack>
   );
 }

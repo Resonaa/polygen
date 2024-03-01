@@ -39,13 +39,3 @@ export const COLOR_MODE_KEY = "chakra-ui-color-mode";
  * Default color mode.
  */
 export const DEFAULT_COLOR_MODE = "light";
-
-/**
- * Key for dove id in cookies.
- */
-export const DOVE_KEY = "dove";
-
-/**
- * Default dove id.
- */
-export const DEFAULT_DOVE = "0";

@@ -19,7 +19,8 @@ import {
   useRouteError
 } from "@remix-run/react";
 import "katex/dist/katex.min.css";
-import "~/theme/nprogress.css";
+import "~/theme/nprogress.less";
+import "~/theme/global.less";
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -114,10 +115,7 @@ export default function App() {
         <Links />
       </head>
 
-      <body
-        style={{ height: "100%" }}
-        {...(colorMode && { className: `chakra-ui-${colorMode}` })}
-      >
+      <body style={{ height: "100%" }}>
         <ChakraProvider
           colorModeManager={cookieStorageManagerSSR(cookie)}
           theme={theme}

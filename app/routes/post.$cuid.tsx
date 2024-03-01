@@ -12,7 +12,6 @@ import AddComment from "~/components/community/addComment";
 import Comments from "~/components/community/comments";
 import Post from "~/components/community/post";
 import { useOptionalUser } from "~/hooks/loader";
-import { useRevalidationInterval } from "~/hooks/revalidator";
 import { getT } from "~/i18n/i18n";
 import { createComment, getComments } from "~/models/comment.server";
 import { getPost } from "~/models/post.server";
@@ -78,8 +77,6 @@ export default function PostId() {
   const user = useOptionalUser();
 
   const parentCuid = post.cuid;
-
-  useRevalidationInterval(1000 * 60);
 
   return (
     <VStack w="100%" spacing={4}>

@@ -5,8 +5,8 @@ import createCache from "@emotion/cache";
 import { CacheProvider } from "@emotion/react";
 import type {
   ActionFunctionArgs,
-  LoaderFunctionArgs,
-  EntryContext
+  EntryContext,
+  LoaderFunctionArgs
 } from "@remix-run/node";
 import { createReadableStreamFromReadable } from "@remix-run/node";
 import { RemixServer } from "@remix-run/react";
@@ -17,24 +17,10 @@ import { renderToPipeableStream } from "react-dom/server";
 import { I18nextProvider, initReactI18next } from "react-i18next";
 
 import { notModified } from "~/reponses.server";
+import { hash } from "~/utils/hash";
 
 import i18n from "./i18n/i18n";
 import { getLocale } from "./i18n/i18next.server";
-
-/**
- * Hashes the given data.
- */
-export function hash(data: Uint8Array) {
-  let hash = 0x811c9dc5;
-
-  data.forEach(i => {
-    hash ^= i;
-    hash +=
-      (hash << 1) + (hash << 4) + (hash << 7) + (hash << 8) + (hash << 24);
-  });
-
-  return hash >>> 0;
-}
 
 /**
  * Maximum time before aborting the connection.
@@ -42,7 +28,7 @@ export function hash(data: Uint8Array) {
 const ABORT_DELAY = 6590;
 
 // Set up i18next server backend.
-void i18next
+await i18next
   .use(initReactI18next)
   .use(Backend)
   .init({

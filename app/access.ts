@@ -23,7 +23,7 @@ export default class Access {
  * Something that has access. Maybe a user.
  */
 interface HasAccess {
-  access: number;
+  readonly access: number;
 }
 
 /**

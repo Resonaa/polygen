@@ -12,7 +12,7 @@ import { useTranslation } from "react-i18next";
 
 import { formatDate, useRelativeDateFormatter } from "~/hooks/datetime";
 
-import UserTag from "../community/userTag";
+import UserTag from "../user/userTag";
 
 interface Rank {
   username: string;

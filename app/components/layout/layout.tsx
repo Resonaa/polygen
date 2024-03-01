@@ -16,8 +16,8 @@ export default function Layout({ children }: { children: ReactNode }) {
         mx="auto"
         px="14px"
         pt="82px"
-        pb={{ base: "calc(40px + 104px)", md: "calc(40px + 64px)" }} // Padding-bottom + footer height.
-        spacing={7}
+        pb="calc(40px + 64px)" // Padding-bottom + footer height.
+        spacing={{ base: 7, md: 9 }}
       >
         {children}
       </Stack>

@@ -52,14 +52,18 @@ export default function UserDropdown() {
               {user.username}
             </Flex>
           </MenuButton>
+
           <MenuList>
             <MenuItem as={Link} icon={<FaUser />} to={`/user/${user.username}`}>
               {t("nav.profile")}
             </MenuItem>
+
             <MenuItem as={Link} icon={<SettingsIcon />} to="/settings">
-              {t("nav.settings")}
+              {t("nav.preference")}
             </MenuItem>
+
             <MenuDivider />
+
             <chakra.form as={Form} action="/auth/logout" method="post" mb={0}>
               <MenuItem icon={<FaSignOutAlt />} type="submit">
                 {t("nav.logout")}

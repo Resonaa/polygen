@@ -1,7 +1,9 @@
 import { VStack } from "@chakra-ui/react";
+import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 
 import { load } from "~/hooks/loader";
+import { COMMENTS_PER_PAGE } from "~/models/common";
 import type { action } from "~/routes/api.post.comment";
 
 import type { CommentProps } from "./comment";
@@ -23,15 +25,30 @@ export default function Comments({
       parentCuid
     });
     setExtraComments(extraComments => extraComments.concat(data));
-    return data.length === 10;
+    return data.length === COMMENTS_PER_PAGE;
   };
 
   return (
     <VStack w="100%" spacing={3}>
-      {comments.concat(extraComments).map(data => (
-        <Comment key={data.id} {...data} />
-      ))}
-      {comments.length === 10 ? <LoadMore loader={loader} /> : null}
+      <AnimatePresence initial={false} mode="popLayout">
+        {comments.concat(extraComments).map(data => (
+          <motion.div
+            transition={{ type: "spring" }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.8, opacity: 0 }}
+            initial={{ scale: 0.8, opacity: 0 }}
+            key={data.id}
+            style={{ width: "100%" }}
+            layout
+          >
+            <Comment {...data} />
+          </motion.div>
+        ))}
+      </AnimatePresence>
+
+      {comments.length === COMMENTS_PER_PAGE ? (
+        <LoadMore loader={loader} />
+      ) : null}
     </VStack>
   );
 }

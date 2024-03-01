@@ -3,10 +3,7 @@
   "sideEffects": false,
   "type": "module",
   "scripts": {
-    "bench": "run-s bench:*",
-    "bench:cuid": "npx tsx benches/cuid.ts",
-    "bench:hash": "npx tsx benches/hash.ts",
-    "bench:map": "npx tsx benches/map.ts",
+    "bench": "vitest bench",
     "build": "remix vite:build",
     "dev": "cross-env NODE_ENV=development npx tsx server.ts",
     "format": "prettier --write . && npm run lint -- --fix",
@@ -15,6 +12,7 @@
     "postinstall": "patch-package",
     "setup": "prisma generate && prisma migrate deploy && prisma db seed",
     "start": "cross-env NODE_ENV=production npx pm2 start --interpreter node --interpreter-args \"--import tsx\" --name polygen server.ts",
+    "test": "vitest",
     "typecheck": "tsc -b"
   },
   "eslintIgnore": [
@@ -35,6 +33,7 @@
     "@emotion/cache": "latest",
     "@emotion/react": "latest",
     "@emotion/styled": "latest",
+    "@fastify/deepmerge": "latest",
     "@fastify/middie": "latest",
     "@fastify/one-line-logger": "latest",
     "@fastify/static": "latest",
@@ -85,6 +84,7 @@
     "source-map-support": "latest",
     "svg-captcha": "latest",
     "tiny-invariant": "latest",
+    "type-fest": "latest",
     "typescript": "latest",
     "zod": "latest"
   },
@@ -113,17 +113,17 @@
     "eslint-plugin-markdown": "latest",
     "eslint-plugin-react": "latest",
     "eslint-plugin-react-hooks": "latest",
-    "npm-run-all": "latest",
+    "less": "latest",
     "patch-package": "latest",
     "pm2": "latest",
     "prettier": "latest",
     "prettier-plugin-prisma": "latest",
     "prisma": "latest",
-    "tinybench": "latest",
     "tsx": "latest",
     "types-fastify-socket.io": "latest",
     "vite": "latest",
-    "vite-tsconfig-paths": "latest"
+    "vite-tsconfig-paths": "latest",
+    "vitest": "latest"
   },
   "engines": {
     "node": ">=20"

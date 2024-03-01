@@ -1,7 +1,9 @@
 import { VStack } from "@chakra-ui/react";
+import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 
 import { load } from "~/hooks/loader";
+import { POSTS_PER_PAGE } from "~/models/common";
 import type { action } from "~/routes/api.post.page";
 
 import LoadMore from "./loadMore";
@@ -17,15 +19,28 @@ export default function Posts({ posts }: { posts: PostProps[] }) {
     });
 
     setExtraPosts(extraPosts => extraPosts.concat(data));
-    return data.length === 10;
+    return data.length === POSTS_PER_PAGE;
   };
 
   return (
-    <VStack w="100%" spacing={5}>
-      {posts.concat(extraPosts).map(data => (
-        <Post key={data.cuid} linked {...data} />
-      ))}
-      {posts.length === 10 ? <LoadMore loader={loader} /> : null}
+    <VStack w="100%" spacing={6}>
+      <AnimatePresence initial={false} mode="popLayout">
+        {posts.concat(extraPosts).map(data => (
+          <motion.div
+            transition={{ type: "spring" }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.8, opacity: 0 }}
+            initial={{ scale: 0.8, opacity: 0 }}
+            key={data.cuid}
+            style={{ width: "100%" }}
+            layout
+          >
+            <Post linked {...data} />
+          </motion.div>
+        ))}
+      </AnimatePresence>
+
+      {posts.length === POSTS_PER_PAGE ? <LoadMore loader={loader} /> : null}
     </VStack>
   );
 }

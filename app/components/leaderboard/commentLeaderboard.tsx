@@ -9,7 +9,7 @@ import {
 } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
 
-import UserTag from "../community/userTag";
+import UserTag from "../user/userTag";
 
 interface Rank {
   username: string;

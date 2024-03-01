@@ -12,7 +12,7 @@ export default function BackToTop() {
 
     const listener = () => {
       const newScrollTop = document.documentElement.scrollTop;
-      setIsVisible(newScrollTop > 100 && newScrollTop < preScrollTop);
+      setIsVisible(newScrollTop > 161 && newScrollTop < preScrollTop);
       preScrollTop = newScrollTop;
     };
 

@@ -13,11 +13,11 @@ import Announcements from "~/components/community/announcements";
 import Countdowns from "~/components/community/countdowns";
 import Posts from "~/components/community/posts";
 import RecentComments from "~/components/community/recentComments";
+import Module from "~/components/layout/module";
 import { useOptionalUser } from "~/hooks/loader";
-import { useRevalidationInterval } from "~/hooks/revalidator";
 import { getT } from "~/i18n/i18n";
 import { getAnnouncements } from "~/models/announcement.server";
-import { getComments } from "~/models/comment.server";
+import { getRecentComments } from "~/models/comment.server";
 import { createPost, getPosts } from "~/models/post.server";
 import { requireOptionalUser, requireUser } from "~/session.server";
 import { validateAddPostFormData } from "~/validators/community.server";
@@ -32,7 +32,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const announcements = await getAnnouncements();
   const posts = await getPosts(1, getPrivate);
-  const recentComments = await getComments(1, undefined, getPrivate === true);
+  const recentComments = await getRecentComments(!!getPrivate);
 
   return json({ announcements, posts, recentComments });
 }
@@ -63,21 +63,26 @@ export default function Index() {
 
   const user = useOptionalUser();
 
-  useRevalidationInterval(1000 * 60);
-
   return (
     <>
-      <VStack w={{ base: "100%", md: "75%" }} spacing={5}>
+      <VStack w={{ base: "100%", md: "75%" }} spacing={6}>
         {user ? <AddPost /> : null}
 
         <Posts posts={posts} />
       </VStack>
 
       <VStack w={{ base: "100%", md: "25%" }} spacing={4}>
+        <Module title="community.announcements" />
         <Announcements announcements={announcements} />
+
         <Divider />
+
+        <Module title="community.countdowns" />
         <Countdowns />
+
         <Divider />
+
+        <Module title="community.recent-comments" />
         <RecentComments comments={recentComments} />
       </VStack>
     </>

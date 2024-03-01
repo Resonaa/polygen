@@ -3,7 +3,6 @@ import { extendTheme } from "@chakra-ui/react";
 import Avatar from "./avatar";
 import Button from "./button";
 import Code from "./code";
-import global from "./global";
 import Input from "./input";
 import Menu from "./menu";
 import Modal from "./modal";
@@ -13,9 +12,6 @@ import Textarea from "./textarea";
 import Tooltip from "./tooltip";
 
 export default extendTheme({
-  styles: {
-    global
-  },
   components: {
     Avatar,
     Modal,

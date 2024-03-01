@@ -1,4 +1,4 @@
-import { Center, Heading, VStack } from "@chakra-ui/react";
+import { VStack } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
 
 import Access, { access } from "~/access";
@@ -13,26 +13,20 @@ export default function Announcements({
 }: {
   announcements: AnnouncementProps[];
 }) {
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
   const user = useOptionalUser();
 
   const editable = access(user, Access.ManageAnnouncement);
 
   return (
-    <Center flexDir="column">
-      <Heading mb={1} size="sm">
-        {t("community.announcements")}
-      </Heading>
+    <VStack w="100%" spacing={2}>
+      {announcements.map(data =>
+        i18n.language === data.lang ? (
+          <Announcement key={data.id} editable={editable} {...data} />
+        ) : null
+      )}
 
-      <VStack spacing={0}>
-        {announcements.map(data =>
-          i18n.language === data.lang ? (
-            <Announcement key={data.id} editable={editable} {...data} />
-          ) : null
-        )}
-
-        {editable ? <AddAnnouncement /> : null}
-      </VStack>
-    </Center>
+      {editable ? <AddAnnouncement /> : null}
+    </VStack>
   );
 }

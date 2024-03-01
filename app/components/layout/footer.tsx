@@ -1,12 +1,10 @@
 import type { IconButtonProps } from "@chakra-ui/react";
 import {
-  Box,
+  ButtonGroup,
+  Center,
   chakra,
-  Container,
-  Stack,
   IconButton,
   Text,
-  Tooltip,
   useColorModeValue
 } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
@@ -21,17 +19,13 @@ interface SocialButtonProps extends Omit<IconButtonProps, "aria-label"> {
 
 function SocialButton({ label, ...props }: SocialButtonProps) {
   return (
-    <Tooltip closeOnClick={!props.onClick} label={label} placement="top">
-      <IconButton
-        bg={useColorModeValue("blackAlpha.100", "whiteAlpha.100")}
-        _hover={{
-          bg: useColorModeValue("blackAlpha.300", "whiteAlpha.300")
-        }}
-        aria-label="Social"
-        size="sm"
-        {...props}
-      />
-    </Tooltip>
+    <IconButton
+      display="inline-flex"
+      _hover={{ color: useColorModeValue("black", "white") }}
+      aria-label="Social"
+      title={label}
+      {...props}
+    />
   );
 }
 
@@ -53,48 +47,40 @@ function LocaleToggle() {
 
 export default function Footer() {
   return (
-    <Box
+    <Center
       pos="absolute"
       bottom={0}
+      flexDir="column"
+      gap={1}
       w="100%"
-      color={useColorModeValue("gray.700", "gray.200")}
-      bg={useColorModeValue("gray.50", "gray.900")}
+      py={3}
+      color={useColorModeValue("#888", "#777")}
     >
-      <Container
-        as={Stack}
-        align={{ base: "center", md: "center" }}
-        justify={{ base: "center", md: "space-between" }}
-        direction={{ base: "column", md: "row" }}
-        maxW="6xl"
-        py={4}
-        spacing={4}
-      >
-        <Text>
-          Copyleft{" "}
-          <chakra.span transform="scale(-1,1)" display="inline-block">
-            ©
-          </chakra.span>{" "}
-          2022-2024 polygen
-        </Text>
+      <Text>
+        Copyleft{" "}
+        <chakra.span transform="scale(-1,1)" display="inline-block">
+          ©
+        </chakra.span>{" "}
+        2022-2024 polygen
+      </Text>
 
-        <Stack direction="row" spacing={6}>
-          <LocaleToggle />
+      <ButtonGroup alignItems="center" gap={1} size="sm" variant="unstyled">
+        <LocaleToggle />
 
-          <SocialButton
-            as="a"
-            label="GitHub"
-            href="https://github.com/jwcub/polygen"
-            icon={<FaGithub />}
-          />
+        <SocialButton
+          as="a"
+          label="GitHub"
+          href="https://github.com/jwcub/polygen"
+          icon={<FaGithub />}
+        />
 
-          <SocialButton
-            as="a"
-            label="QQ"
-            href="https://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=xv13f9IlvpIEKb7Wm0hCO2SGTVrvclkd&authKey=%2FRq0HGhEmqbfUeXovz%2B1BZBNPh4XlQtC%2Bbpz8YjL%2BD3p%2FSZvjoYmy8KZk0G%2BhyzD&noverify=0&group_code=452808481"
-            icon={<FaQq />}
-          />
-        </Stack>
-      </Container>
-    </Box>
+        <SocialButton
+          as="a"
+          label="QQ"
+          href="https://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=xv13f9IlvpIEKb7Wm0hCO2SGTVrvclkd&authKey=%2FRq0HGhEmqbfUeXovz%2B1BZBNPh4XlQtC%2Bbpz8YjL%2BD3p%2FSZvjoYmy8KZk0G%2BhyzD&noverify=0&group_code=452808481"
+          icon={<FaQq />}
+        />
+      </ButtonGroup>
+    </Center>
   );
 }

@@ -1,4 +1,4 @@
-import { merge } from "../client/settings";
+import { merge } from "~/utils/merge";
 
 /**
  * Interface that describes a player.
@@ -104,7 +104,7 @@ export class Players extends Array<Player> {
    */
   insert(data: Data, at: number = this.length) {
     // Merge the missing fields.
-    const player = merge(defaultPlayer, data);
+    const player = merge<Player>(defaultPlayer, data);
 
     this.splice(at, 0, player);
 
@@ -138,7 +138,7 @@ export class Players extends Array<Player> {
     const players = this.select(key);
 
     for (let player of players) {
-      player = merge(player, value);
+      player = merge<Player>(player, value);
     }
 
     return players;

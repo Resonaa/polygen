@@ -131,7 +131,7 @@ export default function Announcement({
 
   return (
     <>
-      <Button fontWeight="normal" onClick={onOpen} variant="ghost">
+      <Button w="100%" fontWeight="normal" onClick={onOpen} variant="link">
         {title}
       </Button>
 

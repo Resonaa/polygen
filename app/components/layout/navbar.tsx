@@ -1,4 +1,4 @@
-import { ChevronRightIcon, CloseIcon, HamburgerIcon } from "@chakra-ui/icons";
+import { ChevronRightIcon } from "@chakra-ui/icons";
 import {
   Box,
   ButtonGroup,
@@ -23,9 +23,11 @@ import { FaCrown, FaHome, FaTrophy, FaFlask, FaCat } from "react-icons/fa";
 import { useOptionalUser } from "~/hooks/loader";
 import type { TFunctionArg } from "~/i18n/i18next";
 
+import UserDropdown, { DropdownRightIcon } from "../user/userDropdown";
+
 import Auth from "./auth";
 import ColorModeToggle from "./colorModeToggle";
-import UserDropdown, { DropdownRightIcon } from "./userDropdown";
+import HamburgerIcon from "./hamburgerIcon";
 
 export default function Navbar() {
   const { isOpen, onToggle } = useDisclosure();
@@ -42,15 +44,13 @@ export default function Navbar() {
       borderBottomWidth="1px"
       borderBottomStyle="solid"
       borderBottomColor={useColorModeValue("gray.200", "gray.700")}
-      backdropFilter="blur(14px)"
+      backdropFilter="blur(12px)"
     >
       <Flex align="center" maxW="6xl" mx="auto" px={4} py={2}>
         <Flex display={{ base: "flex", md: "none" }} ml={-2}>
           <IconButton
             aria-label="Toggle Navigation"
-            icon={
-              isOpen ? <CloseIcon w={3} h={3} /> : <HamburgerIcon w={5} h={5} />
-            }
+            icon={<HamburgerIcon isOpen={isOpen} />}
             onClick={onToggle}
             variant="ghost"
           />

@@ -1,6 +1,8 @@
 import LZString from "lz-string";
+import type { PartialDeep } from "type-fest";
 
 import { MapMode } from "~/core/server/map/map";
+import { merge } from "~/utils/merge";
 
 export type IKey = string;
 
@@ -38,38 +40,8 @@ export interface ISettings {
   };
 }
 
-type DeepPartial<T> = {
-  [P in keyof T]?: DeepPartial<T[P]>;
-};
-
-type AsObject<T> = T extends object ? T : never;
-
-export function merge<Schema extends object>(
-  from: Schema,
-  to: DeepPartial<Schema>
-) {
-  const target: DeepPartial<Schema> = {};
-
-  for (const key of Object.keys(from)) {
-    const prop = key as keyof Schema;
-
-    if (!Object.hasOwn(to, prop)) {
-      target[prop] = from[prop];
-    } else if (typeof from[prop] === "object") {
-      target[prop] = merge<AsObject<Schema[typeof prop]>>(
-        from[prop] as AsObject<Schema[typeof prop]>,
-        to[prop] as AsObject<Schema[typeof prop]>
-      );
-    } else {
-      target[prop] = to[prop];
-    }
-  }
-
-  return target as Schema;
-}
-
 export class Settings {
-  private readonly settings: DeepPartial<ISettings>;
+  private readonly settings: PartialDeep<ISettings>;
   static defaultSettings: ISettings = {
     game: {
       keys: {
@@ -107,12 +79,12 @@ export class Settings {
     }
   };
 
-  constructor(settings: DeepPartial<ISettings>) {
+  constructor(settings: PartialDeep<ISettings>) {
     this.settings = settings;
   }
 
   merge() {
-    return merge(Settings.defaultSettings, this.settings);
+    return merge<ISettings>(Settings.defaultSettings, this.settings);
   }
 }
 
@@ -124,7 +96,7 @@ export function getSettings() {
   try {
     const partial = JSON.parse(
       LZString.decompressFromUTF16(s)
-    ) as DeepPartial<ISettings>;
+    ) as PartialDeep<ISettings>;
 
     return new Settings(partial).merge();
   } catch {

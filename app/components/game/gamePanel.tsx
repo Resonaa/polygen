@@ -15,7 +15,7 @@ import { getMinReadyPlayerCount } from "~/core/server/map/utils";
 import type { ClientSocket } from "~/core/types";
 import { useUser } from "~/hooks/loader";
 
-import UserTag from "../community/userTag";
+import UserTag from "../user/userTag";
 
 function PlayerList({
   players,

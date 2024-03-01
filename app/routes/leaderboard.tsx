@@ -15,7 +15,6 @@ import CommentLeaderboard from "~/components/leaderboard/commentLeaderboard";
 import PostLeaderboard from "~/components/leaderboard/postLeaderboard";
 import RegistrationTimeLeaderboard from "~/components/leaderboard/registrationTimeLeaderboard";
 import StarLeaderboard from "~/components/leaderboard/starLeaderboard";
-import { useRevalidationInterval } from "~/hooks/revalidator";
 import { getT } from "~/i18n/i18n";
 import { rankList as commentRankList } from "~/models/comment.server";
 import { rankList as postRankLink } from "~/models/post.server";
@@ -40,8 +39,6 @@ export default function Leaderboard() {
   const { star, posts, comments, registrationTime } =
     useLoaderData<typeof loader>();
   const { t } = useTranslation();
-
-  useRevalidationInterval(60 * 1000);
 
   return (
     <VStack w="100%">

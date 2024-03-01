@@ -5,23 +5,40 @@ import prisma from "~/db.server";
 
 export type { Comment } from "@prisma/client";
 
+import { COMMENTS_PER_PAGE, RECENT_COMMENTS_COUNT } from "./common";
+
 export async function getComment(id: Comment["id"]) {
   return prisma.comment.findUnique({ where: { id } });
 }
 
 export async function getComments(
   page: number,
-  parentCuid?: Comment["parentCuid"],
-  getPrivate?: Comment["isPrivate"]
+  parentCuid: Comment["parentCuid"]
 ) {
   return prisma.comment.findMany({
     where: {
-      parentCuid,
-      isPrivate: parentCuid ?? getPrivate ? undefined : false
+      parentCuid
     },
     orderBy: { id: "desc" },
-    skip: (page - 1) * 10,
-    take: 10
+    skip: (page - 1) * COMMENTS_PER_PAGE,
+    take: COMMENTS_PER_PAGE
+  });
+}
+
+export async function getRecentComments(getPrivate: Comment["isPrivate"]) {
+  return prisma.comment.findMany({
+    where: {
+      isPrivate: getPrivate ? undefined : false
+    },
+    orderBy: { id: "desc" },
+    take: RECENT_COMMENTS_COUNT,
+    include: {
+      parent: {
+        select: {
+          username: true
+        }
+      }
+    }
   });
 }
 

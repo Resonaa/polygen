@@ -1,3 +1,4 @@
+import { SmallAddIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
@@ -5,7 +6,6 @@ import {
   Editable,
   EditableInput,
   EditablePreview,
-  IconButton,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -18,7 +18,6 @@ import {
 import { useFetcher } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { FaFileCirclePlus } from "react-icons/fa6";
 
 import Editor from "./editor";
 
@@ -52,12 +51,14 @@ export default function AddAnnouncement() {
 
   return (
     <>
-      <IconButton
-        aria-label="Create announcement"
-        icon={<FaFileCirclePlus />}
+      <Button
+        w="100%"
+        leftIcon={<SmallAddIcon />}
         onClick={onOpen}
-        variant="ghost"
-      />
+        variant="link"
+      >
+        {t("community.add-announcement")}
+      </Button>
 
       <Modal
         isCentered

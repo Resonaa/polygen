@@ -1,9 +1,10 @@
 import type { Post } from "@prisma/client";
-import _ from "lodash";
+import sortBy from "lodash/sortBy";
 
 import prisma from "~/db.server";
+import { cuid } from "~/utils/cuid";
 
-import { cuid } from "./cuid.server";
+import { POSTS_PER_PAGE } from "./common";
 import type { User } from "./user.server";
 
 export type { Post } from "@prisma/client";
@@ -32,8 +33,8 @@ export async function getPosts(page: number, getPrivate: string | boolean) {
   return prisma.post.findMany({
     where,
     orderBy: { createdAt: "desc" },
-    skip: (page - 1) * 10,
-    take: 10,
+    skip: (page - 1) * POSTS_PER_PAGE,
+    take: POSTS_PER_PAGE,
     include: {
       _count: { select: { comments: true } }
     }
@@ -47,8 +48,8 @@ export async function getPostsByUsername(
   return prisma.post.findMany({
     where: { username, isPrivate: false },
     orderBy: { createdAt: "desc" },
-    skip: (page - 1) * 10,
-    take: 10,
+    skip: (page - 1) * POSTS_PER_PAGE,
+    take: POSTS_PER_PAGE,
     include: {
       _count: { select: { comments: true } }
     }
@@ -83,7 +84,7 @@ export async function rankList() {
 
   const filtered = ranks.filter(({ _count: { posts } }) => posts > 0);
 
-  return _.sortBy(filtered, user => -user._count.posts);
+  return sortBy(filtered, user => -user._count.posts);
 }
 
 export async function getRank(cur: User["username"]) {

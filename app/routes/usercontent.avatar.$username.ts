@@ -11,7 +11,7 @@ const headers = new Headers({
   "Content-Type": "image/avif"
 });
 
-const baseDir = join(cwd(), "usercontent", "avatar");
+const baseDir = join(cwd(), "static", "usercontent", "avatar");
 
 export function loader({ params }: LoaderFunctionArgs) {
   const path = join(baseDir, params.username ?? "");

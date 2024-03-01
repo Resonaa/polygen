@@ -6,10 +6,9 @@
     "apps": "Apps",
     "casual-games": "Casual Games",
     "description-casual-games": "Click the circles to catch the cat",
-    "profile": "Profile",
-    "settings": "Settings",
+    "profile": "My Profile",
+    "preference": "Preference",
     "logout": "Logout",
-    "theme-editor": "Theme Editor",
     "switch-languages": "Switch Languages"
   },
   "auth": {
@@ -68,7 +67,8 @@
     "copied": "Copied",
     "private": "Private",
     "private-mode": "Private Mode",
-    "description-private": "Not shown in public"
+    "description-private": "Not shown in public",
+    "add-announcement": "New Announcement"
   },
   "utils": {
     "plurals_one": "",

@@ -97,7 +97,7 @@ export async function updateAvatar(
   }
 
   return await writeFile(
-    join(cwd(), `usercontent/avatar/${username}.avif`),
+    join(cwd(), "static", "usercontent", "avatar", `${username}.avif`),
     await img.toBuffer()
   );
 }

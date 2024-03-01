@@ -1,4 +1,4 @@
-import { Center, Heading, Text, Tooltip, VStack } from "@chakra-ui/react";
+import { Text, Tooltip, VStack } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
 
 import { useServerTime } from "~/hooks/loader";
@@ -35,18 +35,11 @@ function Countdown({ date, name }: { date: string; name: string }) {
 }
 
 export default function Countdowns() {
-  const { t } = useTranslation();
-
   return (
-    <Center flexDir="column">
-      <Heading mb={2} size="sm">
-        {t("community.countdowns")}
-      </Heading>
-      <VStack textAlign="center">
-        {countDowns.map(({ date, name }) => (
-          <Countdown key={name} date={date} name={name} />
-        ))}
-      </VStack>
-    </Center>
+    <VStack textAlign="center">
+      {countDowns.map(({ date, name }) => (
+        <Countdown key={name} date={date} name={name} />
+      ))}
+    </VStack>
   );
 }

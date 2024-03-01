@@ -24,13 +24,13 @@ import { formatDate, useRelativeDateFormatter } from "~/hooks/datetime";
 import { useOptionalUser } from "~/hooks/loader";
 import type { Post as PostType } from "~/models/post.server";
 
+import UserAvatar from "../user/userAvatar";
+import UserLink from "../user/userLink";
+
 import CopyLink from "./copyLink";
 import Editor from "./editor";
 import PrivateIndicator from "./privateIndicator";
 import TextRenderer from "./textRenderer";
-import UserAvatar from "./userAvatar";
-import UserLink from "./userLink";
-import { formatLargeNumber } from "./utils";
 
 export type PostProps = Pick<
   PostType,
@@ -107,8 +107,7 @@ export default function Post({
               {comments ? (
                 <span>
                   {" · "}
-                  {formatLargeNumber(comments)}{" "}
-                  {t("community.comment", { count: comments })}
+                  {comments} {t("community.comment", { count: comments })}
                 </span>
               ) : null}
             </Box>

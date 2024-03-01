@@ -22,7 +22,7 @@ declare module "fastify" {
   }
 }
 
-const USERCONTENT_DIR = join(cwd(), "usercontent");
+const USERCONTENT_DIR = join(cwd(), "static", "usercontent");
 const PUBLIC_DIR = join(cwd(), "build", "client");
 
 // Create usercontent directory.
