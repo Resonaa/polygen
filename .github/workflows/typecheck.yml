@@ -15,9 +15,10 @@ jobs:
       - name: ⎔ Setup node
         uses: actions/setup-node@v4
         with:
-          cache: pnpm
-          cache-dependency-path: ./pnpm-lock.yml
           node-version: 20
+
+      - name: ✅ Enable Corepack
+        run: corepack enable
 
       - name: 📥 Install deps
         run: pnpm install
