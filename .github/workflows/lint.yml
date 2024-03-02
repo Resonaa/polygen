@@ -1,4 +1,4 @@
-name: ⬣ Lint
+name: 🔬 Lint
 on: [push]
 
 concurrency:
@@ -15,12 +15,12 @@ jobs:
       - name: ⎔ Setup node
         uses: actions/setup-node@v4
         with:
-          cache: npm
-          cache-dependency-path: ./package.json
+          cache: pnpm
+          cache-dependency-path: ./pnpm-lock.yml
           node-version: 20
 
       - name: 📥 Install deps
-        run: npm install
+        run: pnpm install
 
       - name: 🔬 Lint
-        run: npm run lint
+        run: pnpm lint

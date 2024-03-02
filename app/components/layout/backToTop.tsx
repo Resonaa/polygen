@@ -1,4 +1,4 @@
-import { IconButton } from "@chakra-ui/button";
+import { IconButton } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { FiArrowUp } from "react-icons/fi";
 
@@ -26,16 +26,16 @@ export default function BackToTop() {
 
   return (
     <IconButton
-      aria-label="Back to top"
-      icon={<FiArrowUp />}
       pos="fixed"
-      bottom={6}
-      right={6}
       zIndex={387}
+      right={6}
+      bottom={6}
       shadow="xl"
-      colorScheme="blue"
-      onClick={scrollToTop}
       transform={isVisible ? undefined : "translateX(64px)"}
+      aria-label="Back to top"
+      colorScheme="blue"
+      icon={<FiArrowUp />}
+      onClick={scrollToTop}
     />
   );
 }

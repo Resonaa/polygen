@@ -17,6 +17,7 @@ Polygon-based web game inspired by [generals.io](https://generals.io).
 ## Prerequisites
 
 - [Node 20+](https://nodejs.org/)
+- [pnpm](https://pnpm.io/)
 
 ## Development
 
@@ -29,19 +30,19 @@ cp .env.example .env
 - Install dependencies:
 
 ```sh
-npm install
+pnpm install
 ```
 
 - Setup database:
 
 ```sh
-npm run setup
+pnpm db
 ```
 
 - Start dev server:
 
 ```sh
-npm run dev
+pnpm dev
 ```
 
 ## Deployment
@@ -49,8 +50,8 @@ npm run dev
 We use [PM2](https://pm2.keymetrics.io/) for deployment.
 
 ```sh
-npm run build
-npm run start # Spawns a PM2 daemon named "polygen"
+pnpm build
+pnpm start # Spawns a PM2 daemon named "polygen"
 ```
 
 The HTTP server listens on port 1606 by default, which can be configured through .env file.
@@ -60,12 +61,12 @@ The HTTP server listens on port 1606 by default, which can be configured through
 Before pushing your commits, be sure to run through all the checks:
 
 ```sh
-npm run build
-npm run lint
-npm run typecheck
-npm run test
-npm run bench
-npm run format
+pnpm build
+pnpm lint
+pnpm typecheck
+pnpm test
+pnpm bench
+pnpm format
 ```
 
 ## License

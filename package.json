@@ -5,13 +5,13 @@
   "scripts": {
     "bench": "vitest bench",
     "build": "remix vite:build",
-    "dev": "cross-env NODE_ENV=development npx tsx server.ts",
-    "format": "prettier --write . && npm run lint -- --fix",
+    "db": "prisma generate && prisma migrate deploy && prisma db seed",
+    "dev": "cross-env NODE_ENV=development tsx server.ts",
+    "format": "prettier --write .",
     "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint .",
-    "migrate": "npx prisma migrate dev",
-    "postinstall": "patch-package",
-    "setup": "prisma generate && prisma migrate deploy && prisma db seed",
-    "start": "cross-env NODE_ENV=production npx pm2 start --interpreter node --interpreter-args \"--import tsx\" --name polygen server.ts",
+    "migrate": "prisma migrate dev",
+    "seed": "tsx prisma/seed.ts",
+    "start": "cross-env NODE_ENV=production pm2 start --interpreter node --interpreter-args \"--import tsx\" --name polygen server.ts",
     "test": "vitest",
     "typecheck": "tsc -b"
   },
@@ -28,6 +28,7 @@
     ]
   },
   "dependencies": {
+    "@chakra-ui/anatomy": "latest",
     "@chakra-ui/icons": "latest",
     "@chakra-ui/react": "latest",
     "@emotion/cache": "latest",
@@ -60,6 +61,7 @@
     "katex": "latest",
     "lodash": "latest",
     "lz-string": "latest",
+    "mdast-util-find-and-replace": "latest",
     "nprogress": "latest",
     "openskill": "latest",
     "pixi.js": "latest",
@@ -67,11 +69,11 @@
     "react-dom": "latest",
     "react-i18next": "latest",
     "react-icons": "latest",
-    "react-markdown": "8",
+    "react-markdown": "^8.0.7",
     "react-textarea-autosize": "latest",
-    "rehype-katex": "6",
-    "remark-gfm": "3",
-    "remark-math": "5",
+    "rehype-katex": "^6.0.3",
+    "remark-gfm": "^3.0.1",
+    "remark-math": "^5.1.1",
     "remix-i18next": "latest",
     "remix-utils": "latest",
     "semantic-ui-react": "latest",
@@ -90,6 +92,7 @@
     "@cspell/eslint-plugin": "latest",
     "@remix-run/dev": "latest",
     "@remix-run/eslint-config": "latest",
+    "@remix-run/server-runtime": "latest",
     "@types/bcryptjs": "latest",
     "@types/eslint": "latest",
     "@types/fs-extra": "latest",
@@ -112,7 +115,6 @@
     "eslint-plugin-react": "latest",
     "eslint-plugin-react-hooks": "latest",
     "less": "latest",
-    "patch-package": "latest",
     "pm2": "latest",
     "prettier": "latest",
     "prettier-plugin-prisma": "latest",
@@ -120,6 +122,7 @@
     "tsx": "latest",
     "types-fastify-socket.io": "latest",
     "vite": "latest",
+    "vite-plugin-pwa": "latest",
     "vite-tsconfig-paths": "latest",
     "vitest": "latest"
   },
@@ -127,10 +130,26 @@
     "node": ">=20"
   },
   "prisma": {
-    "seed": "npx tsx prisma/seed.ts"
+    "seed": "pnpm seed"
   },
   "optionalDependencies": {
     "bufferutil": "latest",
     "utf-8-validate": "latest"
+  },
+  "packageManager": "pnpm@8.15.4",
+  "pnpm": {
+    "supportedArchitectures": {
+      "os": [
+        "win32",
+        "darwin",
+        "linux",
+        "current"
+      ],
+      "cpu": [
+        "x64",
+        "arm64",
+        "current"
+      ]
+    }
   }
 }

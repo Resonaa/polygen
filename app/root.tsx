@@ -110,6 +110,20 @@ export default function App() {
           content="polygen is a polygon-based web game inspired by generals.io."
         />
 
+        <link rel="icon" href="/favicon.ico" sizes="48x48" />
+
+        <link rel="icon" href="/favicon.svg" sizes="any" type="image/svg+xml" />
+
+        <link
+          rel="apple-touch-icon"
+          href="/apple-touch-icon-180x180.png"
+          sizes="180x180"
+        />
+
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="manifest" href="/manifest.webmanifest" />
+
         <Meta />
 
         <Links />
