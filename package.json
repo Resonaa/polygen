@@ -56,8 +56,6 @@
     "fs-extra": "latest",
     "i18next": "latest",
     "i18next-browser-languagedetector": "latest",
-    "i18next-fs-backend": "latest",
-    "i18next-http-backend": "latest",
     "isbot": "latest",
     "katex": "latest",
     "lodash": "latest",

@@ -1,4 +1,3 @@
-import { resolve } from "node:path";
 import { PassThrough } from "node:stream";
 
 import createCache from "@emotion/cache";
@@ -11,7 +10,6 @@ import type {
 import { createReadableStreamFromReadable } from "@remix-run/node";
 import { RemixServer } from "@remix-run/react";
 import i18next from "i18next";
-import Backend from "i18next-fs-backend";
 import { isbot } from "isbot";
 import { renderToPipeableStream } from "react-dom/server";
 import { I18nextProvider, initReactI18next } from "react-i18next";
@@ -28,13 +26,7 @@ import { getLocale } from "./i18n/i18next.server";
 const ABORT_DELAY = 6590;
 
 // Set up i18next server backend.
-await i18next
-  .use(initReactI18next)
-  .use(Backend)
-  .init({
-    ...i18n,
-    backend: { loadPath: resolve("./public/locales/{{lng}}/{{ns}}.json") }
-  });
+await i18next.use(initReactI18next).init(i18n);
 
 /**
  * Handles incoming requests.

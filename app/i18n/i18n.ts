@@ -1,10 +1,25 @@
 import type { ServerRuntimeMetaArgs } from "@remix-run/server-runtime";
+import type { InitOptions } from "i18next";
 import { getFixedT } from "i18next";
+
+import en from "@/static/locales/en.json";
+import zh from "@/static/locales/zh.json";
+
+const ns = "translations";
 
 export default {
   supportedLngs: ["zh", "en"],
-  fallbackLng: "en"
-};
+  fallbackLng: "en",
+  ns,
+  resources: {
+    en: {
+      [ns]: en
+    },
+    zh: {
+      [ns]: zh
+    }
+  }
+} satisfies InitOptions;
 
 export function getT<MatchLoaders>(
   matches: ServerRuntimeMetaArgs<MatchLoaders>["matches"]

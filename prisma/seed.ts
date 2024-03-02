@@ -85,7 +85,7 @@ await prisma.comment.create({
 });
 
 for (const lang of i18n.supportedLngs) {
-  const dir = join(cwd(), "articles", lang);
+  const dir = join(cwd(), "static", "articles", lang);
 
   for (const entry of await readdir(dir)) {
     await prisma.announcement.create({

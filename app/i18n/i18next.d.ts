@@ -1,14 +1,16 @@
 import type { ParseKeys } from "i18next";
 
-import type translation from "@/public/locales/en/translation.json";
+import type translation from "@/static/locales/en.json";
+
+import type i18n from "./i18n";
 
 declare module "i18next" {
   interface CustomTypeOptions {
-    defaultNS: "translation";
+    defaultNS: i18n.ns;
     resources: {
       translation: typeof translation;
     };
   }
 }
 
-type TFunctionArg = ParseKeys<"translation">;
+type TFunctionArg = ParseKeys<i18n.ns>;
