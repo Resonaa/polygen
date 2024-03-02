@@ -19,7 +19,6 @@ import {
   ModalOverlay,
   Stack,
   Text,
-  useColorModeValue,
   useDisclosure
 } from "@chakra-ui/react";
 import { useFetcher } from "@remix-run/react";
@@ -190,7 +189,10 @@ export default function Auth() {
                     ? t("auth.no-account")
                     : t("auth.have-account")}
                   <Link
-                    color={useColorModeValue("blue.500", "blue.200")}
+                    color="blue.500"
+                    _dark={{
+                      color: "blue.200"
+                    }}
                     onClick={() =>
                       setType(type === "login" ? "register" : "login")
                     }

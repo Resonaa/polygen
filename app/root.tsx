@@ -93,7 +93,7 @@ export default function App() {
   return (
     <html
       lang={locale}
-      style={{ height: "100%", colorScheme: colorMode }}
+      style={{ colorScheme: colorMode }}
       dir={i18n.dir()}
       data-theme={colorMode}
     >
@@ -115,7 +115,7 @@ export default function App() {
         <Links />
       </head>
 
-      <body style={{ height: "100%" }}>
+      <body>
         <ChakraProvider
           colorModeManager={cookieStorageManagerSSR(cookie)}
           theme={theme}

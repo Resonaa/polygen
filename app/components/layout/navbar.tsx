@@ -11,7 +11,6 @@ import {
   PopoverContent,
   PopoverTrigger,
   Text,
-  useColorModeValue,
   useDisclosure,
   VStack
 } from "@chakra-ui/react";
@@ -39,12 +38,17 @@ export default function Navbar() {
       zIndex={161}
       top={0}
       w="100vw"
-      color={useColorModeValue("gray.600", "white")}
-      bg={useColorModeValue("whiteAlpha.800", "rgba(26, 32, 44, .8)")}
+      color="gray.600"
       borderBottomWidth="1px"
       borderBottomStyle="solid"
-      borderBottomColor={useColorModeValue("gray.200", "gray.700")}
+      borderBottomColor="gray.200"
+      _dark={{
+        bgColor: "rgba(26, 32, 44, .8)",
+        color: "white",
+        borderBottomColor: "gray.700"
+      }}
       backdropFilter="blur(12px)"
+      bgColor="whiteAlpha.800"
     >
       <Flex align="center" maxW="6xl" mx="auto" px={4} py={2}>
         <Flex display={{ base: "flex", md: "none" }} ml={-2}>
@@ -59,11 +63,14 @@ export default function Navbar() {
           <Box
             display={{ base: "none", sm: "block" }}
             pl={{ base: 3, md: 0 }}
-            color={useColorModeValue("gray.800", "white")}
+            color="gray.800"
             fontFamily="heading"
             fontSize="xl"
             fontWeight={600}
             textAlign="center"
+            _dark={{
+              color: "white"
+            }}
           >
             polygen
           </Box>
@@ -87,11 +94,6 @@ export default function Navbar() {
 }
 
 function DesktopNav() {
-  const linkColor = useColorModeValue("gray.600", "gray.200");
-  const linkHoverColor = useColorModeValue("gray.800", "white");
-  const linkTransition = "color .1s ease";
-  const popoverContentBgColor = useColorModeValue("white", "gray.800");
-
   const { t } = useTranslation();
 
   return (
@@ -104,15 +106,21 @@ function DesktopNav() {
                 as={to ? Link : undefined}
                 align="center"
                 p={2}
-                color={linkColor}
+                color="gray.600"
                 fontSize=".9rem"
                 fontWeight={500}
                 _hover={{
                   textDecoration: "none",
-                  color: linkHoverColor
+                  color: "gray.800"
+                }}
+                _dark={{
+                  color: "gray.200",
+                  _hover: {
+                    color: "white"
+                  }
                 }}
                 cursor="pointer"
-                transition={linkTransition}
+                transition="color .1s ease"
                 to={to}
               >
                 <Icon as={icon} mr="5px" />
@@ -125,9 +133,12 @@ function DesktopNav() {
             <PopoverContent
               minW="xs"
               p={4}
-              bg={popoverContentBgColor}
+              bg="white"
               border={0}
               shadow="xl"
+              _dark={{
+                bg: "gray.800"
+              }}
               rounded="xl"
             >
               <VStack>
@@ -144,9 +155,6 @@ function DesktopNav() {
 }
 
 function DesktopSubNav({ label, to, icon, description }: NavItem) {
-  const linkHoverBg = useColorModeValue("gray.50", "gray.900");
-  const groupColor = useColorModeValue("gray.600", "gray.200");
-  const groupHoverColor = useColorModeValue("gray.800", "white");
   const transition = "all .2s ease";
 
   const { t } = useTranslation();
@@ -157,28 +165,29 @@ function DesktopSubNav({ label, to, icon, description }: NavItem) {
       display="block"
       w="100%"
       p={2}
-      _hover={{ bg: linkHoverBg }}
+      _hover={{ bg: "gray.50" }}
+      _dark={{
+        _hover: { bg: "gray.900" }
+      }}
       transition={transition}
       role="group"
       rounded="lg"
       to={to}
     >
       <HStack align="center">
-        <Box>
+        <Box color="gray.600" _dark={{ color: "gray.200" }}>
           <Text
             alignItems="center"
             display="flex"
-            color={groupColor}
             fontWeight={500}
-            _groupHover={{ color: groupHoverColor }}
+            _groupHover={{ color: "gray.800", _dark: { color: "white" } }}
             transition={transition}
           >
             <Icon as={icon} mr="5px" />
             {t(label)}
           </Text>
-          <Text color={groupColor} fontSize="sm">
-            {t(description!)}
-          </Text>
+
+          <Text fontSize="sm">{t(description!)}</Text>
         </Box>
         <Flex
           align="center"
@@ -189,7 +198,15 @@ function DesktopSubNav({ label, to, icon, description }: NavItem) {
           transform="translateX(-10px)"
           transition={transition}
         >
-          <Icon as={ChevronRightIcon} w={5} h={5} color={groupHoverColor} />
+          <Icon
+            as={ChevronRightIcon}
+            w={5}
+            h={5}
+            color={"gray.800"}
+            _dark={{
+              color: "white"
+            }}
+          />
         </Flex>
       </HStack>
     </Box>
@@ -236,9 +253,10 @@ function MobileNavItem({
         align="center"
         justify="space-between"
         w="100%"
-        color={useColorModeValue("gray.600", "gray.200")}
+        color="gray.600"
         fontWeight={500}
         _hover={{ textDecoration: "none" }}
+        _dark={{ color: "gray.200" }}
         to={to}
       >
         <Flex align="center">

@@ -4,7 +4,5 @@ node_modules
 
 /static
 
-/wasm
-
 .env
 package-lock.json

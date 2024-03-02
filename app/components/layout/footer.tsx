@@ -4,8 +4,7 @@ import {
   Center,
   chakra,
   IconButton,
-  Text,
-  useColorModeValue
+  Text
 } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
 import { FaGithub, FaQq, FaGlobe } from "react-icons/fa6";
@@ -21,7 +20,8 @@ function SocialButton({ label, ...props }: SocialButtonProps) {
   return (
     <IconButton
       display="inline-flex"
-      _hover={{ color: useColorModeValue("black", "white") }}
+      _hover={{ color: "black" }}
+      _dark={{ _hover: { color: "white" } }}
       aria-label="Social"
       title={label}
       {...props}
@@ -54,7 +54,10 @@ export default function Footer() {
       gap={1}
       w="100%"
       py={3}
-      color={useColorModeValue("#888", "#777")}
+      color="#888"
+      _dark={{
+        color: "#777"
+      }}
     >
       <Text>
         Copyleft{" "}

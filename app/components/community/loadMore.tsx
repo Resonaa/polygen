@@ -1,4 +1,4 @@
-import { useColorModeValue, Center, Spinner } from "@chakra-ui/react";
+import { Center, Spinner } from "@chakra-ui/react";
 import nprogress from "nprogress";
 import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -24,15 +24,17 @@ export default function LoadMore({
     });
   }, [loader, page]);
 
-  const hoverColor = useColorModeValue("gray.700", "gray.100");
-
   return (
     page !== -1 && (
       <Center
         w="100%"
         color="gray.400"
         fontSize="sm"
-        _hover={loading ? undefined : { color: hoverColor }}
+        _hover={
+          loading
+            ? undefined
+            : { color: "gray.700", _dark: { color: "gray.100" } }
+        }
         cursor={loading ? undefined : "pointer"}
         transition="color .1s ease"
         onClick={loadMore}
