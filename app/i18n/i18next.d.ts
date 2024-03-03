@@ -1,7 +1,6 @@
 import type { ParseKeys } from "i18next";
 
-import type translation from "@/static/locales/en.json";
-
+import type translation from "./en";
 import type i18n from "./i18n";
 
 declare module "i18next" {

@@ -20,9 +20,6 @@ jobs:
       - name: ✅ Enable Corepack
         run: corepack enable
 
-      - name: 🏄 Copy test env vars
-        run: cp .env.example .env
-
       - name: 📥 Install deps
         run: pnpm install
 

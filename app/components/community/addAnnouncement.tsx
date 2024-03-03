@@ -57,7 +57,7 @@ export default function AddAnnouncement() {
         onClick={onOpen}
         variant="link"
       >
-        {t("community.add-announcement")}
+        {t("community.addAnnouncement")}
       </Button>
 
       <Modal

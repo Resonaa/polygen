@@ -306,10 +306,10 @@ const NAV_ITEMS: NavItem[] = [
     icon: FaFlask,
     children: [
       {
-        label: "nav.casual-games",
+        label: "nav.casualGames",
         icon: FaCat,
         to: "/catch-the-cat",
-        description: "nav.description-casual-games"
+        description: "nav.casualGamesDescription"
       }
     ]
   }

@@ -58,7 +58,7 @@ export default function StarLeaderboard({ ranks }: { ranks: Rank[] }) {
             <Th>#</Th>
             <Th>{t("leaderboard.player")}</Th>
             <Th color="star">★</Th>
-            <Th>{t("leaderboard.updated-at")}</Th>
+            <Th>{t("leaderboard.updatedAt")}</Th>
           </Tr>
         </Thead>
 

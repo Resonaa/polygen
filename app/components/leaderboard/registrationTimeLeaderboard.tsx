@@ -53,7 +53,7 @@ export default function RegistrationTimeLeaderboard({
           <Tr>
             <Th>#</Th>
             <Th>{t("leaderboard.player")}</Th>
-            <Th>{t("leaderboard.registration-time")}</Th>
+            <Th>{t("leaderboard.registrationTime")}</Th>
           </Tr>
         </Thead>
 

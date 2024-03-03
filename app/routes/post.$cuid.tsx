@@ -45,7 +45,7 @@ export const meta: MetaFunction<typeof loader> = ({ matches, data }) => {
   const t = getT(matches);
   return [
     {
-      title: `${t("community.post-of", {
+      title: `${t("community.postOf", {
         username: data?.post.username
       })} - polygen`
     }

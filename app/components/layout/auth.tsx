@@ -94,7 +94,7 @@ export default function Auth() {
                       maxLength={18}
                       minLength={3}
                       name="username"
-                      placeholder={t("auth.username-placeholder")}
+                      placeholder={t("auth.usernamePlaceholder")}
                       required
                     />
                   </InputGroup>
@@ -112,7 +112,7 @@ export default function Auth() {
                     maxLength={161}
                     minLength={6}
                     name="password"
-                    placeholder={t("auth.password-placeholder")}
+                    placeholder={t("auth.passwordPlaceholder")}
                     required
                   />
                   {data?.password ? (
@@ -123,13 +123,13 @@ export default function Auth() {
                 {type === "register" ? (
                   <>
                     <FormControl isInvalid={!!data?.retypePassword}>
-                      <FormLabel>{t("auth.retype-password")}</FormLabel>
+                      <FormLabel>{t("auth.retypePassword")}</FormLabel>
                       <PasswordInputGroup
                         autoComplete="new-password"
                         maxLength={161}
                         minLength={6}
                         name="retypePassword"
-                        placeholder={t("auth.retype-password-placeholder")}
+                        placeholder={t("auth.retypePasswordPlaceholder")}
                         required
                       />
                       {data?.retypePassword ? (
@@ -151,7 +151,7 @@ export default function Auth() {
                               maxLength={4}
                               minLength={4}
                               name="captcha"
-                              placeholder={t("auth.captcha-placeholder")}
+                              placeholder={t("auth.captchaPlaceholder")}
                               required
                             />
                           </InputGroup>
@@ -186,8 +186,8 @@ export default function Auth() {
 
                 <Text align="center">
                   {type === "login"
-                    ? t("auth.no-account")
-                    : t("auth.have-account")}
+                    ? t("auth.noAccount")
+                    : t("auth.haveAccount")}
                   <Link
                     color="blue.500"
                     _dark={{

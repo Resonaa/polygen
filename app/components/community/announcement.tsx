@@ -59,11 +59,9 @@ function DeleteButton({ id }: { id: number }) {
       >
         <AlertDialogOverlay>
           <AlertDialogContent>
-            <AlertDialogHeader>
-              {t("community.confirm-title")}
-            </AlertDialogHeader>
+            <AlertDialogHeader>{t("community.confirmTitle")}</AlertDialogHeader>
 
-            <AlertDialogBody>{t("community.confirm-body")}</AlertDialogBody>
+            <AlertDialogBody>{t("community.confirmBody")}</AlertDialogBody>
 
             <AlertDialogFooter
               as={Form}

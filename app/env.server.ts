@@ -1,7 +1,11 @@
 import { env } from "node:process";
 
-import "dotenv/config";
+import { config } from "dotenv";
 import invariant from "tiny-invariant";
+
+config({
+  path: [".env.local", ".env"]
+});
 
 // Ensure that SESSION_SECRET is set.
 invariant(env.SESSION_SECRET, "SESSION_SECRET must be set");

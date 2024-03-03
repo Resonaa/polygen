@@ -21,12 +21,6 @@ Polygon-based web game inspired by [generals.io](https://generals.io).
 
 ## Development
 
-- Copy .env file:
-
-```sh
-cp .env.example .env
-```
-
 - Install dependencies:
 
 ```sh
@@ -54,7 +48,13 @@ pnpm build
 pnpm start # Spawns a PM2 daemon named "polygen"
 ```
 
-The HTTP server listens on port 1606 by default, which can be configured through .env file.
+The HTTP server listens on port 1606 by default, which can be configured through environment variables.
+
+It's strongly recommended to use your own `.env.local` file for production:
+
+```sh
+cp .env .env.local
+```
 
 ## Contributing
 

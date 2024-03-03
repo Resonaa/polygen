@@ -122,7 +122,7 @@ export default function App() {
 
         <meta name="theme-color" content="#ffffff" />
 
-        <link rel="manifest" href="/manifest.webmanifest" />
+        <link rel="manifest" href="/manifest.json" />
 
         <Meta />
 

@@ -47,7 +47,7 @@ export default function Leaderboard() {
           <Tab>★</Tab>
           <Tab>{t("leaderboard.posts")}</Tab>
           <Tab>{t("leaderboard.comments")}</Tab>
-          <Tab>{t("leaderboard.registration-time")}</Tab>
+          <Tab>{t("leaderboard.registrationTime")}</Tab>
         </TabList>
 
         <TabPanels>

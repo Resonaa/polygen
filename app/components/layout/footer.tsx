@@ -35,7 +35,7 @@ function LocaleToggle() {
   return (
     <SocialButton
       icon={<FaGlobe />}
-      label={t("nav.switch-languages")}
+      label={t("nav.switchLanguages")}
       onClick={() =>
         i18n.changeLanguage(
           i18nConfig.supportedLngs.find(lang => lang !== i18n.language)

@@ -5,7 +5,7 @@ import { getT } from "~/i18n/i18n";
 
 export const meta: MetaFunction = ({ matches }) => {
   const t = getT(matches);
-  return [{ title: `${t("nav.casual-games")} - polygen` }];
+  return [{ title: `${t("nav.casualGames")} - polygen` }];
 };
 
 export default CatchTheCat;

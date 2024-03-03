@@ -12,7 +12,7 @@ import i18n from "./i18n/i18n";
 // Create Emotion cache for each render.
 const cache = createCache({ key: "-", stylisPlugins: [] });
 
-// Setup i18next client-side backend.
+// Setup i18next.
 i18next
   .use(initReactI18next)
   .use(LanguageDetector)

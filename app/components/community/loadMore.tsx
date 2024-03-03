@@ -39,7 +39,7 @@ export default function LoadMore({
         transition="color .1s ease"
         onClick={loadMore}
       >
-        {loading ? <Spinner /> : t("community.load-more")}
+        {loading ? <Spinner /> : t("community.showMore")}
       </Center>
     )
   );

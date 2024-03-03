@@ -36,10 +36,10 @@ export default function AddPost() {
         >
           <Tooltip
             closeOnClick={false}
-            label={t("community.description-private")}
+            label={t("community.privateModeDescription")}
             openDelay={500}
           >
-            {t("community.private-mode")}
+            {t("community.privateMode")}
           </Tooltip>
         </Checkbox>
 
@@ -50,7 +50,7 @@ export default function AddPost() {
           leftIcon={<BsFillSendFill />}
           type="submit"
         >
-          {t("community.add-post")}
+          {t("community.addPost")}
         </Button>
       </Flex>
 

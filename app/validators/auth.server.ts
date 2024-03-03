@@ -8,13 +8,10 @@ export const usernameSchema = z
   .max(18)
   .regex(
     /^[\u4e00-\u9fa5a-zA-Z0-9_\-\\!$%^&*()=+[\]{}|:;'",.<>`~ ]+$/,
-    "auth.username-invalid-chars"
+    "auth.usernameInvalidChars"
   )
-  .regex(/^[^ ].*[^ ]$/, "auth.username-starts-or-ends-with-space")
-  .refine(
-    username => !/ {2,}/.test(username),
-    "auth.username-successive-spaces"
-  );
+  .regex(/^[^ ].*[^ ]$/, "auth.usernameStartsOrEndsWithSpace")
+  .refine(username => !/ {2,}/.test(username), "auth.usernameSuccessiveSpaces");
 
 const passwordSchema = z.string().min(6);
 

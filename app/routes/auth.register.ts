@@ -27,15 +27,15 @@ export async function action({ request }: ActionFunctionArgs): R {
     const { username, password, retypePassword, captcha } = res.data;
 
     if (!(await verifyCaptcha(request, captcha))) {
-      return json({ captcha: "auth.captcha-incorrect" });
+      return json({ captcha: "auth.captchaIncorrect" });
     }
 
     if (password !== retypePassword) {
-      return json({ retypePassword: "auth.passwords-dont-match" });
+      return json({ retypePassword: "auth.passwordsNotMatch" });
     }
 
     if (await getUser(username)) {
-      return json({ username: "auth.username-already-exists" });
+      return json({ username: "auth.usernameAlreadyExists" });
     }
 
     await createUser(username, password);

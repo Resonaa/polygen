@@ -82,7 +82,7 @@ export default function Index() {
 
         <Divider />
 
-        <Module title="community.recent-comments" />
+        <Module title="community.recentComments" />
         <RecentComments comments={recentComments} />
       </VStack>
     </>

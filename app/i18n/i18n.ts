@@ -2,8 +2,8 @@ import type { ServerRuntimeMetaArgs } from "@remix-run/server-runtime";
 import type { InitOptions } from "i18next";
 import { getFixedT } from "i18next";
 
-import en from "@/static/locales/en.json";
-import zh from "@/static/locales/zh.json";
+import en from "./en";
+import zh from "./zh";
 
 const ns = "translations";
 

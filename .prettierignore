@@ -2,7 +2,7 @@ node_modules
 
 /build
 
-/static
+/static/**/*.js
 
-.env
+.env.local
 pnpm-lock.yaml

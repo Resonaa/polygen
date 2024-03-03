@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useServerTime } from "~/hooks/loader";
 import type { TFunctionArg } from "~/i18n/i18next";
 
-const countDowns = [{ date: "2024-08-01", name: "public-preview" }];
+const countDowns = [{ date: "2024-08-01", name: "publicPreview" }];
 
 function Countdown({ date, name }: { date: string; name: string }) {
   const now = useServerTime().getTime();

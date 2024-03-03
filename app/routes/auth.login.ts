@@ -17,7 +17,7 @@ export async function action({ request }: ActionFunctionArgs) {
     const { username, password } = res.data;
 
     if (!(await verifyLogin(username, password))) {
-      return json({ username: "auth.username-or-password-incorrect" });
+      return json({ username: "auth.usernameOrPasswordIncorrect" });
     }
 
     return createUserSession(request, username);

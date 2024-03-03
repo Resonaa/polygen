@@ -85,9 +85,9 @@ export default function Comment({
             <AlertDialogOverlay>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  {t("community.confirm-title")}
+                  {t("community.confirmTitle")}
                 </AlertDialogHeader>
-                <AlertDialogBody>{t("community.confirm-body")}</AlertDialogBody>
+                <AlertDialogBody>{t("community.confirmBody")}</AlertDialogBody>
                 <AlertDialogFooter
                   as={Form}
                   m={0}

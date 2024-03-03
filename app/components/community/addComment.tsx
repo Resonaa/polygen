@@ -29,7 +29,7 @@ export default function AddComment({ parentCuid }: { parentCuid: string }) {
         leftIcon={<BsFillSendFill />}
         type="submit"
       >
-        {t("community.add-comment")}
+        {t("community.addComment")}
       </Button>
     </Form>
   );

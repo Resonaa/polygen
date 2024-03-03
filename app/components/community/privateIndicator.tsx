@@ -9,7 +9,7 @@ export default function PrivateIndicator({
   const { t } = useTranslation();
 
   return isPrivate ? (
-    <Tooltip label={t("community.description-private")} openDelay={500}>
+    <Tooltip label={t("community.privateModeDescription")} openDelay={500}>
       <chakra.strong mr={2}>{t("community.private")}</chakra.strong>
     </Tooltip>
   ) : null;
