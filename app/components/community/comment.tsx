@@ -116,7 +116,7 @@ export default function Comment({
           <IconButton
             opacity={0}
             _groupHover={{ opacity: "100%" }}
-            transition="opacity .25s ease-in-out"
+            transition="opacity .2s ease"
             aria-label="delete"
             icon={<DeleteIcon />}
             onClick={onOpen}

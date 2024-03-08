@@ -1,4 +1,13 @@
-import * as PIXI from "pixi.js";
+import type { ColorSource } from "pixi.js";
+import {
+  Application,
+  Sprite,
+  Graphics,
+  Texture,
+  BitmapFont,
+  BitmapText,
+  Polygon
+} from "pixi.js";
 
 import city from "static/city.png";
 import crown from "static/crown.png";
@@ -20,16 +29,16 @@ const MIN_PILE_SIZE = 50;
 export class RendererClient {
   gm: Map = new Map();
 
-  private app: PIXI.Application;
-  private readonly graphics: PIXI.Graphics = new PIXI.Graphics();
+  private app: Application;
+  private readonly graphics: Graphics = new Graphics();
 
   private readonly textures = [
-    PIXI.Texture.EMPTY,
-    PIXI.Texture.from(crown),
-    PIXI.Texture.from(city),
-    PIXI.Texture.from(mountain),
-    PIXI.Texture.from(obstacle),
-    PIXI.Texture.EMPTY
+    Texture.EMPTY,
+    Texture.from(crown),
+    Texture.from(city),
+    Texture.from(mountain),
+    Texture.from(obstacle),
+    Texture.EMPTY
   ];
 
   selected: Pos | null = null;
@@ -38,9 +47,9 @@ export class RendererClient {
   private startX = 0;
   private startY = 0;
 
-  private images: PIXI.Sprite[][] = [[]];
-  private texts: PIXI.BitmapText[][] = [[]];
-  private hitAreas: PIXI.Sprite[][] = [[]];
+  private images: Sprite[][] = [[]];
+  private texts: BitmapText[][] = [[]];
+  private hitAreas: Sprite[][] = [[]];
 
   private scale = 1;
 
@@ -61,8 +70,10 @@ export class RendererClient {
 
   isTouch = false;
 
-  constructor(canvas: HTMLCanvasElement, backgroundColor?: PIXI.ColorSource) {
-    this.app = new PIXI.Application({
+  constructor(canvas: HTMLCanvasElement, backgroundColor?: ColorSource) {
+    this.app = new Application();
+
+    void this.app.init({
       antialias: true,
       powerPreference: "high-performance",
       view: canvas,
@@ -76,15 +87,14 @@ export class RendererClient {
     const settings = getSettings();
     this.settings = settings;
 
-    PIXI.BitmapFont.from(
-      "LandAmount",
-      {
+    BitmapFont.install({
+      style: {
+        fontWeight: "bold",
         fontSize: 16,
-        fill: this.settings.game.colors.selectedBorder,
-        fontWeight: "bold"
+        fill: this.settings.game.colors.selectedBorder
       },
-      { chars: PIXI.BitmapFont.ASCII }
-    );
+      name: "LandAmount"
+    });
 
     this.isTouch =
       settings.game.controls === Controls.Touch ||
@@ -227,8 +237,8 @@ export class RendererClient {
     }
 
     [this.startX, this.startY] = [
-      (this.app.view.width - realWidth) / 2,
-      (this.app.view.height - realHeight) / 2
+      (this.app.canvas.width - realWidth) / 2,
+      (this.app.canvas.height - realHeight) / 2
     ];
 
     if (this.pileSize <= MIN_PILE_SIZE + 0.1) {
@@ -239,8 +249,8 @@ export class RendererClient {
             this.gm.get([i, j]).type === LandType.General
           ) {
             const [gx, gy] = this.getPileCenterPos([i, j]);
-            this.startX += this.app.view.width / 2 - gx;
-            this.startY += this.app.view.height / 2 - gy;
+            this.startX += this.app.canvas.width / 2 - gx;
+            this.startY += this.app.canvas.height / 2 - gy;
             i = this.gm.height;
             break;
           }
@@ -250,8 +260,8 @@ export class RendererClient {
   }
 
   private setDefaultScale() {
-    const width = this.app.view.width,
-      height = this.app.view.height;
+    const width = this.app.canvas.width,
+      height = this.app.canvas.height;
     let maxXWidth, maxYWidth;
 
     switch (this.gm.mode) {
@@ -280,8 +290,8 @@ export class RendererClient {
     this.pileSize = getPileSizeByScale(this.scale);
     const rate = this.pileSize / previousPileSize;
 
-    const width = this.app.view.width,
-      height = this.app.view.height;
+    const width = this.app.canvas.width,
+      height = this.app.canvas.height;
 
     this.startX = width / 2 - rate * (width / 2 - this.startX);
     this.startY = height / 2 - rate * (height / 2 - this.startY);
@@ -357,10 +367,10 @@ export class RendererClient {
     this.images = [[]];
 
     for (let i = 1; i <= this.gm.height; i++) {
-      this.images.push([new PIXI.Sprite()]);
+      this.images.push([new Sprite()]);
 
       for (let j = 1; j <= this.gm.width; j++) {
-        const image = new PIXI.Sprite();
+        const image = new Sprite();
         this.images[i].push(image);
         this.app.stage.addChild(image);
       }
@@ -403,10 +413,18 @@ export class RendererClient {
     this.texts = [[]];
 
     for (let i = 1; i <= this.gm.height; i++) {
-      this.texts.push([new PIXI.BitmapText("", { fontName: "LandAmount" })]);
+      this.texts.push([
+        new BitmapText({
+          text: "",
+          style: { fontFamily: "LandAmount" }
+        })
+      ]);
 
       for (let j = 1; j <= this.gm.width; j++) {
-        const text = new PIXI.BitmapText("", { fontName: "LandAmount" });
+        const text = new BitmapText({
+          text: "",
+          style: { fontFamily: "LandAmount" }
+        });
         this.texts[i].push(text);
         this.app.stage.addChild(text);
       }
@@ -477,11 +495,10 @@ export class RendererClient {
 
     const lineWidth = selected ? (this.pileSize <= 25 ? 3 : 4) : 0;
 
-    this.graphics
-      .lineStyle(lineWidth, this.settings.game.colors.selectedBorder, 1, 0)
-      .beginFill(fillColor)
-      .drawPolygon(this.getPilePath(pos))
-      .endFill();
+    this.graphics.poly(this.getPilePath(pos)).fill(fillColor).stroke({
+      width: lineWidth,
+      color: this.settings.game.colors.selectedBorder
+    });
   }
 
   updateLand(pos: Pos) {
@@ -526,10 +543,10 @@ export class RendererClient {
     this.hitAreas = [[]];
 
     for (let i = 1; i <= this.gm.height; i++) {
-      this.hitAreas.push([new PIXI.Sprite()]);
+      this.hitAreas.push([new Sprite()]);
 
       for (let j = 1; j <= this.gm.width; j++) {
-        const hit = new PIXI.Sprite();
+        const hit = new Sprite();
         hit.interactiveChildren = false;
         this.app.stage.addChild(hit);
         this.hitAreas[i].push(hit);
@@ -570,7 +587,7 @@ export class RendererClient {
       path[p + 1] -= y;
     }
 
-    const polygon = new PIXI.Polygon(path);
+    const polygon = new Polygon(path);
 
     for (let i = 1; i <= this.gm.height; i++) {
       for (let j = 1; j <= this.gm.width; j++) {

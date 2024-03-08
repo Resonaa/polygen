@@ -22,17 +22,19 @@ export default function AddPost() {
   const isDisabled = value.trim().length === 0;
 
   return (
-    <Form method="post" role="group" style={{ width: "100%" }}>
+    <Form method="post" style={{ width: "100%" }}>
       <Editor value={value} setValue={setValue} mb={4} />
 
       <Flex justify="flex-end" gap={4}>
         <Checkbox
-          opacity={isPrivate ? 1 : 0}
-          _groupHover={{ opacity: 1 }}
-          transition="opacity .25s ease-in-out"
+          opacity={isDisabled ? 0 : 1}
+          transform="auto"
           isChecked={isPrivate}
-          isDisabled={isDisabled}
           onChange={setPrivate.toggle}
+          transitionDuration=".5s"
+          transitionProperty="opacity, transform"
+          transitionTimingFunction="ease-in-out"
+          translateX={isDisabled ? 90 : 0}
         >
           <Tooltip
             closeOnClick={false}

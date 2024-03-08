@@ -16,6 +16,8 @@ import {
   useDisclosure
 } from "@chakra-ui/react";
 import { Form, Link, useFetcher } from "@remix-run/react";
+import { AnimatePresence, motion } from "framer-motion";
+import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -31,6 +33,26 @@ import CopyLink from "./copyLink";
 import Editor from "./editor";
 import PrivateIndicator from "./privateIndicator";
 import TextRenderer from "./textRenderer";
+
+function MotionWrapper({
+  children,
+  _key
+}: {
+  children: ReactNode;
+  _key: string;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      key={_key}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.4 }}
+    >
+      {children}
+    </motion.div>
+  );
+}
 
 export type PostProps = Pick<
   PostType,
@@ -114,61 +136,67 @@ export default function Post({
           </Box>
         </Flex>
 
-        {editing ? (
-          <ButtonGroup
-            as={editFetcher.Form}
-            gap={2}
-            m={0}
-            action="/api/post/edit"
-            method="post"
-            size="sm"
-            variant="ghost"
-          >
-            <IconButton
-              aria-label="save"
-              colorScheme="green"
-              icon={<CheckIcon />}
-              isDisabled={disabled}
-              isLoading={submitting}
-              type="submit"
-            />
-            <IconButton
-              aria-label="cancel"
-              colorScheme="red"
-              icon={<CloseIcon />}
-              onClick={onCancelClick}
-            />
-
-            <input type="hidden" name="content" value={value} />
-            <input type="hidden" name="cuid" value={cuid} />
-          </ButtonGroup>
-        ) : (
-          <ButtonGroup
-            gap={2}
-            opacity={0}
-            _groupHover={{ opacity: "100%" }}
-            transition="opacity .25s ease-in-out"
-            size="sm"
-            variant="ghost"
-          >
-            {editable ? (
-              <>
+        <AnimatePresence mode="wait" initial={false}>
+          {editing ? (
+            <MotionWrapper _key="edit">
+              <ButtonGroup
+                as={editFetcher.Form}
+                gap={3}
+                m={0}
+                action="/api/post/edit"
+                method="post"
+                size="sm"
+                variant="ghost"
+              >
                 <IconButton
-                  aria-label="edit"
-                  icon={<EditIcon />}
-                  onClick={onEditClick}
+                  aria-label="save"
+                  colorScheme="green"
+                  icon={<CheckIcon />}
+                  isDisabled={disabled}
+                  isLoading={submitting}
+                  type="submit"
                 />
                 <IconButton
-                  aria-label="delete"
-                  icon={<DeleteIcon />}
-                  onClick={onOpen}
+                  aria-label="cancel"
+                  colorScheme="red"
+                  icon={<CloseIcon />}
+                  onClick={onCancelClick}
                 />
-              </>
-            ) : null}
 
-            <CopyLink link={postUrl} />
-          </ButtonGroup>
-        )}
+                <input type="hidden" name="content" value={value} />
+                <input type="hidden" name="cuid" value={cuid} />
+              </ButtonGroup>
+            </MotionWrapper>
+          ) : (
+            <MotionWrapper _key="normal">
+              <ButtonGroup
+                gap={3}
+                opacity={0}
+                _groupHover={{ opacity: "100%" }}
+                transition="opacity .2s ease"
+                size="sm"
+                variant="ghost"
+              >
+                {editable ? (
+                  <>
+                    <IconButton
+                      aria-label="edit"
+                      icon={<EditIcon />}
+                      onClick={onEditClick}
+                    />
+                    <IconButton
+                      aria-label="delete"
+                      icon={<DeleteIcon />}
+                      onClick={onOpen}
+                    />
+                  </>
+                ) : null}
+
+                <CopyLink link={postUrl} />
+              </ButtonGroup>
+            </MotionWrapper>
+          )}
+        </AnimatePresence>
 
         {editable ? (
           <AlertDialog
