@@ -9,7 +9,8 @@ export default {
     profile: "My Profile",
     preference: "Preference",
     logout: "Logout",
-    switchLanguages: "Switch Languages"
+    switchLanguages: "Switch Languages",
+    room: "Room"
   },
   auth: {
     login: "Login",
@@ -79,8 +80,7 @@ export default {
     status: "Status",
     waiting: "Waiting",
     playing: "Playing",
-    joinAfterLogin: "You must have an account to join the room",
-    rated: "Included in Ranking",
+    rated: "Stars are updated every game",
     "vote-item-mode": "Mode",
     "vote-value-hexagon": "Hexagon",
     "vote-value-square": "Square",

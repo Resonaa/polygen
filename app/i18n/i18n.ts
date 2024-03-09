@@ -28,5 +28,5 @@ export function getT<MatchLoaders>(
     matches.find(({ id }) => id === "root")?.data as { locale: string }
   ).locale;
 
-  return getFixedT(locale);
+  return getFixedT<typeof ns>(locale);
 }

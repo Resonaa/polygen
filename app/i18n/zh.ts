@@ -9,7 +9,8 @@ export default {
     profile: "个人主页",
     preference: "偏好设置",
     logout: "退出登录",
-    switchLanguages: "切换语言"
+    switchLanguages: "切换语言",
+    room: "房间"
   },
   auth: {
     login: "登录",
@@ -79,7 +80,6 @@ export default {
     status: "状态",
     waiting: "等待中",
     playing: "游戏中",
-    joinAfterLogin: "登录后才可加入房间",
     rated: "计入排名",
     "vote-item-mode": "模式",
     "vote-value-hexagon": "六边形",

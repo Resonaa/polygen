@@ -4,12 +4,14 @@ import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 
 import RoomList from "~/components/game/roomList";
-import { roomData } from "~/core/server/room";
+import { Room } from "~/core/server/room";
 import { useRevalidationInterval } from "~/hooks/revalidator";
 import { getT } from "~/i18n/i18n";
 
 export function loader() {
-  return json(Array.from(roomData.values()).map(room => room.export()));
+  const rooms = [new Room("161").export()];
+
+  return json(rooms);
 }
 
 export const meta: MetaFunction = ({ matches }) => {

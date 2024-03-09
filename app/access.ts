@@ -5,7 +5,6 @@ export default class Access {
   static Basic = 0;
 
   static Community = 1;
-  static Gaming = 1;
   static Settings = 1;
 
   static ManageCommunity = 2;

@@ -22,7 +22,6 @@ import { FaTachometerAlt } from "react-icons/fa";
 import { FaCrown, FaMap } from "react-icons/fa6";
 
 import type { MaxVotedItems, VoteItem } from "~/core/server/vote";
-import { useOptionalUser } from "~/hooks/loader";
 import type { TFunctionArg } from "~/i18n/i18next";
 
 import UserTag from "../user/userTag";
@@ -96,7 +95,6 @@ function VotedRoomProperty<T extends VoteItem>({
 }
 
 function Room({ id, ongoing, players, rated, votes }: RoomProps) {
-  const user = useOptionalUser();
   const { t } = useTranslation();
 
   return (
@@ -104,40 +102,43 @@ function Room({ id, ongoing, players, rated, votes }: RoomProps) {
       as={Tr}
       display="table-row"
       fontWeight="normal"
-      cursor={user ? "pointer" : undefined}
-      onClick={user ? () => open(`/game/${encodeURIComponent(id)}`) : undefined}
-      title={user ? undefined : t("game.joinAfterLogin")}
+      cursor="pointer"
+      onClick={() => open(`/game/${encodeURIComponent(id)}`)}
       variant="ghost"
     >
       <Td>{id}</Td>
-      <Td gap={2} display="inline-flex">
-        {rated ? (
-          <RoomProperty
-            icon={StarIcon}
-            color="green"
-            label="Rated"
-            description={t("game.rated")}
+
+      <Td>
+        <Box gap={2} display="inline-flex">
+          {rated ? (
+            <RoomProperty
+              icon={StarIcon}
+              color="green"
+              label="Rated"
+              description={t("game.rated")}
+            />
+          ) : null}
+          <VotedRoomProperty
+            icon={FaCrown}
+            color="orange"
+            data={votes.mode}
+            item="mode"
           />
-        ) : null}
-        <VotedRoomProperty
-          icon={FaCrown}
-          color="orange"
-          data={votes.mode}
-          item="mode"
-        />
-        <VotedRoomProperty
-          icon={FaMap}
-          color="cyan"
-          data={votes.map}
-          item="map"
-        />
-        <VotedRoomProperty
-          icon={FaTachometerAlt}
-          color="yellow"
-          data={votes.speed}
-          item="speed"
-        />
+          <VotedRoomProperty
+            icon={FaMap}
+            color="cyan"
+            data={votes.map}
+            item="map"
+          />
+          <VotedRoomProperty
+            icon={FaTachometerAlt}
+            color="yellow"
+            data={votes.speed}
+            item="speed"
+          />
+        </Box>
       </Td>
+
       <Td>
         <Box gap={2} display="inline-flex">
           {players.map(username => (
@@ -145,6 +146,7 @@ function Room({ id, ongoing, players, rated, votes }: RoomProps) {
           ))}
         </Box>
       </Td>
+
       <Td color={ongoing ? "blue.400" : "green.400"}>
         {ongoing ? t("game.playing") : t("game.waiting")}
       </Td>

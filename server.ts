@@ -9,9 +9,9 @@ import fastifySocketIO from "fastify-socket.io";
 import parser from "socket.io-msgpack-parser";
 import "source-map-support/register";
 
-import { setServer } from "~/core/server";
-import type { Server } from "~/core/types";
 import { MODE, PORT } from "~/env.server";
+import setServer from "~/game/socket/server/index";
+import type { Server } from "~/game/socket/types";
 
 declare module "fastify" {
   /**
