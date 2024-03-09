@@ -26,7 +26,7 @@ export function loader({ params }: LoaderFunctionArgs) {
 }
 
 export default function Rid() {
-  const rid = useLoaderData<typeof loader>();
+  useLoaderData<typeof loader>();
 
   return (
     <ClientProvider>
