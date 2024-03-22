@@ -9,7 +9,7 @@ import type { User } from "./user.server";
 
 export type { Post } from "@prisma/client";
 
-export async function getPost(cuid: Post["cuid"]) {
+export function getPost(cuid: Post["cuid"]) {
   return prisma.post.findUnique({
     where: { cuid },
     include: {
@@ -18,7 +18,7 @@ export async function getPost(cuid: Post["cuid"]) {
   });
 }
 
-export async function getPosts(page: number, getPrivate: string | boolean) {
+export function getPosts(page: number, getPrivate: string | boolean) {
   const where =
     typeof getPrivate === "string"
       ? {
@@ -41,10 +41,7 @@ export async function getPosts(page: number, getPrivate: string | boolean) {
   });
 }
 
-export async function getPostsByUsername(
-  username: User["username"],
-  page: number
-) {
+export function getPostsByUsername(username: User["username"], page: number) {
   return prisma.post.findMany({
     where: { username, isPrivate: false },
     orderBy: { createdAt: "desc" },
@@ -56,7 +53,7 @@ export async function getPostsByUsername(
   });
 }
 
-export async function createPost(
+export function createPost(
   username: Post["username"],
   content: Post["content"],
   isPrivate: Post["isPrivate"]
@@ -66,7 +63,7 @@ export async function createPost(
   });
 }
 
-export async function updatePost(content: Post["content"], cuid: Post["cuid"]) {
+export function updatePost(content: Post["content"], cuid: Post["cuid"]) {
   return prisma.post.update({ data: { content }, where: { cuid } });
 }
 

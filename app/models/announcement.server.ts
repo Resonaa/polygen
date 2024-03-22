@@ -4,21 +4,21 @@ import prisma from "~/db.server";
 
 export type { Announcement } from "@prisma/client";
 
-export async function getAnnouncement(id: Announcement["id"]) {
+export function getAnnouncement(id: Announcement["id"]) {
   return prisma.announcement.findUnique({ where: { id } });
 }
 
-export async function getAnnouncements() {
+export function getAnnouncements() {
   return prisma.announcement.findMany({
     orderBy: { id: "desc" }
   });
 }
 
-export async function deleteAnnouncement(id: Announcement["id"]) {
+export function deleteAnnouncement(id: Announcement["id"]) {
   return prisma.announcement.delete({ where: { id } });
 }
 
-export async function updateAnnouncement(
+export function updateAnnouncement(
   id: Announcement["id"],
   title: Announcement["title"],
   content: Announcement["content"]
@@ -29,7 +29,7 @@ export async function updateAnnouncement(
   });
 }
 
-export async function createAnnouncement(
+export function createAnnouncement(
   lang: Announcement["lang"],
   title: Announcement["title"],
   content: Announcement["content"]

@@ -16,7 +16,7 @@ export async function getStarOrCreate(username: Star["username"]) {
   return res;
 }
 
-export async function updateStar(
+export function updateStar(
   username: Star["username"],
   mu: Star["mu"],
   sigma: Star["sigma"]
@@ -27,7 +27,7 @@ export async function updateStar(
   });
 }
 
-export async function rankList() {
+export function rankList() {
   return prisma.star.findMany({ orderBy: { star: "desc" } });
 }
 

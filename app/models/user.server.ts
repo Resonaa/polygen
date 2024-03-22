@@ -12,11 +12,11 @@ import { comparePassword, hashPassword } from "~/session.server";
 
 export type { User } from "@prisma/client";
 
-export async function getUser(username: User["username"]) {
+export function getUser(username: User["username"]) {
   return prisma.user.findUnique({ where: { username } });
 }
 
-export async function getPassword(username: User["username"]) {
+export function getPassword(username: User["username"]) {
   return prisma.password.findUnique({ where: { username } });
 }
 
@@ -63,7 +63,7 @@ export async function updatePassword(
   });
 }
 
-export async function updateBio(username: User["username"], bio: string) {
+export function updateBio(username: User["username"], bio: string) {
   return prisma.user.update({
     data: { bio },
     where: { username }
@@ -102,7 +102,7 @@ export async function updateAvatar(
   );
 }
 
-export async function rankList() {
+export function rankList() {
   return prisma.user.findMany({
     orderBy: { createdAt: "desc" },
     select: { username: true, createdAt: true }

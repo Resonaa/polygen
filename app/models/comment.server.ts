@@ -7,14 +7,11 @@ export type { Comment } from "@prisma/client";
 
 import { COMMENTS_PER_PAGE, RECENT_COMMENTS_COUNT } from "./common";
 
-export async function getComment(id: Comment["id"]) {
+export function getComment(id: Comment["id"]) {
   return prisma.comment.findUnique({ where: { id } });
 }
 
-export async function getComments(
-  page: number,
-  parentCuid: Comment["parentCuid"]
-) {
+export function getComments(page: number, parentCuid: Comment["parentCuid"]) {
   return prisma.comment.findMany({
     where: {
       parentCuid
@@ -25,7 +22,7 @@ export async function getComments(
   });
 }
 
-export async function getRecentComments(getPrivate: Comment["isPrivate"]) {
+export function getRecentComments(getPrivate: Comment["isPrivate"]) {
   return prisma.comment.findMany({
     where: {
       isPrivate: getPrivate ? undefined : false
@@ -42,7 +39,7 @@ export async function getRecentComments(getPrivate: Comment["isPrivate"]) {
   });
 }
 
-export async function createComment(
+export function createComment(
   username: Comment["username"],
   content: Comment["content"],
   parentCuid: Comment["parentCuid"],
@@ -58,7 +55,7 @@ export async function createComment(
   });
 }
 
-export async function deleteComment(id: Comment["id"]) {
+export function deleteComment(id: Comment["id"]) {
   return prisma.comment.delete({ where: { id } });
 }
 

@@ -48,6 +48,7 @@ function LocaleToggle() {
 export default function Footer() {
   return (
     <Center
+      as="footer"
       pos="absolute"
       bottom={0}
       flexDir="column"

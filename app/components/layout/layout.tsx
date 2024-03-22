@@ -9,8 +9,11 @@ export default function Layout({ children }: { children: ReactNode }) {
   return (
     <Box pos="relative" minH="100%">
       <BackToTop />
+
       <Navbar />
+
       <Stack
+        as="main"
         direction={{ base: "column", md: "row" }}
         maxW="calc(72rem + 28px)"
         mx="auto"

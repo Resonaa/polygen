@@ -15,7 +15,7 @@ export default function Ping() {
       client?.volatile.emit("ping", () => {
         setPing(Date.now() - start);
       });
-    }, 1000);
+    }, 2000);
 
     return () => clearInterval(interval);
   }, [client]);

@@ -34,6 +34,7 @@ export default function Navbar() {
 
   return (
     <Box
+      as="nav"
       pos="fixed"
       zIndex={161}
       top={0}
