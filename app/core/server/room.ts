@@ -757,7 +757,7 @@ export class RoomManager {
   checkTeamDeath(deadPlayer: string) {
     const room = this.room;
 
-    if (!room || !room.ongoing) {
+    if (!room?.ongoing) {
       return;
     }
 
@@ -783,7 +783,7 @@ export class RoomManager {
   async game() {
     const room = this.room;
 
-    if (!room || !room.ongoing) {
+    if (!room?.ongoing) {
       return;
     }
 
@@ -869,7 +869,7 @@ export class RoomManager {
   async endGame(winner: TeamId) {
     const room = this.room;
 
-    if (!room || !room.ongoing) {
+    if (!room?.ongoing) {
       return;
     }
 

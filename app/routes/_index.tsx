@@ -32,7 +32,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const announcements = await getAnnouncements();
   const posts = await getPosts(1, getPrivate);
-  const recentComments = await getRecentComments(!!getPrivate);
+  const recentComments = await getRecentComments(getPrivate === true);
 
   return json({ announcements, posts, recentComments });
 }

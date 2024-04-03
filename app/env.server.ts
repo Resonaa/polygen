@@ -4,7 +4,8 @@ import { config } from "dotenv";
 import invariant from "tiny-invariant";
 
 config({
-  path: [".env.local", ".env"]
+  path: [".env", ".env.local"],
+  override: true
 });
 
 // Ensure that SESSION_SECRET is set.
