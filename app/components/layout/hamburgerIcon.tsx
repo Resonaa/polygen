@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
+import type { ComponentPropsWithRef } from "react";
 
-function Path(props: typeof motion.path.defaultProps) {
+function Path(props: ComponentPropsWithRef<typeof motion.path>) {
   return (
     <motion.path
       fill="transparent"
@@ -12,7 +13,7 @@ function Path(props: typeof motion.path.defaultProps) {
   );
 }
 
-type HamburgerButtonProps = typeof motion.svg.defaultProps & {
+type HamburgerButtonProps = ComponentPropsWithRef<typeof motion.svg> & {
   isOpen: boolean;
 };
 

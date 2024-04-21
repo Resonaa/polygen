@@ -16,6 +16,7 @@ import {
   Tooltip,
   Tr
 } from "@chakra-ui/react";
+import { useNavigate } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
 import type { IconType } from "react-icons";
 import { FaTachometerAlt } from "react-icons/fa";
@@ -96,6 +97,7 @@ function VotedRoomProperty<T extends VoteItem>({
 
 function Room({ id, ongoing, players, rated, votes }: RoomProps) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   return (
     <Button
@@ -103,7 +105,7 @@ function Room({ id, ongoing, players, rated, votes }: RoomProps) {
       display="table-row"
       fontWeight="normal"
       cursor="pointer"
-      onClick={() => open(`/game/${encodeURIComponent(id)}`)}
+      onClick={() => navigate(id)}
       variant="ghost"
     >
       <Td>{id}</Td>

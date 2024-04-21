@@ -102,7 +102,7 @@
     "@types/source-map-support": "latest",
     "@typescript-eslint/eslint-plugin": "latest",
     "@typescript-eslint/parser": "latest",
-    "eslint": "latest",
+    "eslint": "^8.57.0",
     "eslint-config-prettier": "latest",
     "eslint-import-resolver-typescript": "latest",
     "eslint-plugin-chakra-ui": "latest",
@@ -132,7 +132,7 @@
     "bufferutil": "latest",
     "utf-8-validate": "latest"
   },
-  "packageManager": "pnpm@8.15.4",
+  "packageManager": "pnpm@8.15.6",
   "pnpm": {
     "supportedArchitectures": {
       "os": [
