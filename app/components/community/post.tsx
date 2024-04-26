@@ -54,14 +54,10 @@ function MotionWrapper({
   );
 }
 
-export type PostProps = Pick<
-  PostType,
-  "cuid" | "username" | "content" | "isPrivate"
-> & {
+export type PostProps = PostType & {
   _count: {
     comments: number;
   };
-  createdAt: string;
 };
 
 export default function Post({

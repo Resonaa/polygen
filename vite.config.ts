@@ -3,7 +3,14 @@ import type { UserConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 export default {
-  plugins: [remix(), tsconfigPaths()],
+  plugins: [
+    remix({
+      future: {
+        unstable_singleFetch: true
+      }
+    }),
+    tsconfigPaths()
+  ],
   build: {
     target: "ESNext"
   },

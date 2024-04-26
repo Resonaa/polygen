@@ -1,9 +1,9 @@
 import type { ActionFunctionArgs } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 
 import Access, { access } from "~/access";
 import { getPosts } from "~/models/post.server";
-import { badRequest } from "~/reponses.server";
+import { badRequest, turbo } from "~/reponses.server";
 import { requireOptionalUser } from "~/session.server";
 import { validateGetPostPageFormData } from "~/validators/community.server";
 
@@ -25,7 +25,7 @@ export async function action({ request }: ActionFunctionArgs) {
   if (res.success) {
     const { page } = res.data;
 
-    return json(await getPosts(page, getPrivate));
+    return turbo(await getPosts(page, getPrivate));
   }
 
   return badRequest;

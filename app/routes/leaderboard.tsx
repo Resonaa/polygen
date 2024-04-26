@@ -7,7 +7,6 @@ import {
   TabPanel
 } from "@chakra-ui/react";
 import type { MetaFunction } from "@remix-run/node";
-import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
 
@@ -27,7 +26,7 @@ export async function loader() {
   const comments = await commentRankList();
   const registrationTime = await registrationTimeRankList();
 
-  return json({ star, posts, comments, registrationTime });
+  return { star, posts, comments, registrationTime };
 }
 
 export const meta: MetaFunction = ({ matches }) => {

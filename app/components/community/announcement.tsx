@@ -27,17 +27,10 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { formatDate, useRelativeDateFormatter } from "~/hooks/datetime";
-import type { Announcement as AnnouncementType } from "~/models/announcement.server";
+import type { Announcement as AnnouncementProps } from "~/models/announcement.server";
 
 import Editor from "./editor";
 import TextRenderer from "./textRenderer";
-
-export type AnnouncementProps = Pick<
-  AnnouncementType,
-  "title" | "content" | "id" | "lang"
-> & {
-  createdAt: string;
-};
 
 function DeleteButton({ id }: { id: number }) {
   const { t } = useTranslation();

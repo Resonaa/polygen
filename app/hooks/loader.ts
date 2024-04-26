@@ -1,24 +1,14 @@
 import type { ActionFunction, SerializeFrom } from "@remix-run/node";
 import { useRouteLoaderData } from "@remix-run/react";
+import { decode } from "turbo-stream";
 
 import type { loader } from "~/root";
-
-/**
- * Checks if data is returned by the root loader.
- */
-function isLoaderData(data: unknown): data is SerializeFrom<typeof loader> {
-  return typeof data === "object" && !!data && "user" in data && "time" in data;
-}
 
 /**
  * Tries to get the current user from loader data. Returns undefined if not found.
  */
 export function useOptionalUser() {
-  const data = useRouteLoaderData("root");
-
-  if (isLoaderData(data)) {
-    return data.user;
-  }
+  return useRouteLoaderData<typeof loader>("root").user;
 }
 
 /**
@@ -35,16 +25,10 @@ export function useUser() {
 }
 
 /**
- * Gets current server time from loader data. Throws an error if not found.
+ * Gets current server time from loader data.
  */
 export function useServerTime() {
-  const data = useRouteLoaderData("root");
-
-  if (isLoaderData(data)) {
-    return new Date(data.time);
-  }
-
-  throw new Error();
+  return useRouteLoaderData<typeof loader>("root").time;
 }
 
 /**
@@ -62,5 +46,6 @@ export async function load<Action extends ActionFunction>(
 
   const options = { method: "post", body };
 
-  return (await (await fetch(url, options)).json()) as SerializeFrom<Action>;
+  return (await decode((await fetch(url, options)).body!))
+    .value as SerializeFrom<Action>;
 }

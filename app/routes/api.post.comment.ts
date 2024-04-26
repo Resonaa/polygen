@@ -1,9 +1,9 @@
 import type { ActionFunctionArgs } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 
 import Access from "~/access";
 import { getComments } from "~/models/comment.server";
-import { badRequest } from "~/reponses.server";
+import { badRequest, turbo } from "~/reponses.server";
 import { requireOptionalUser } from "~/session.server";
 import { validateGetCommentPageFormData } from "~/validators/community.server";
 
@@ -20,9 +20,7 @@ export async function action({ request }: ActionFunctionArgs) {
   if (res.success) {
     const { parentCuid, page } = res.data;
 
-    const comments = await getComments(page, parentCuid);
-
-    return json(comments);
+    return turbo(await getComments(page, parentCuid));
   }
 
   return badRequest;

@@ -6,12 +6,12 @@ import type { TFunctionArg } from "~/i18n/i18next";
 
 import { useServerTime } from "./loader";
 
-export function formatDate(date: string) {
+export function formatDate(date: Parameters<typeof dayjs>[0]) {
   return dayjs(date).format("YYYY-MM-DD HH:mm:ss");
 }
 
-export function relativeDate(date: string, now: Date) {
-  const interval = now.getTime() - new Date(date).getTime();
+export function relativeDate(date: Date, now: Date) {
+  const interval = now.getTime() - date.getTime();
 
   const years = Math.floor(interval / (365 * 24 * 3600 * 1000));
   if (years !== 0) {
@@ -50,7 +50,7 @@ export function useRelativeDateFormatter() {
   const now = useServerTime();
 
   return useCallback(
-    (date: string) => {
+    (date: Date) => {
       const { count, unit } = relativeDate(date, now);
       return `${count} ${t(("community." + unit) as TFunctionArg)}${t(
         "utils.plurals",

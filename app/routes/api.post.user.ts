@@ -1,5 +1,5 @@
 import type { ActionFunctionArgs } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 
 import Access from "~/access";
 import { getPostsByUsername } from "~/models/post.server";
@@ -19,7 +19,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
   if (res.success) {
     const { username, page } = res.data;
-    return json(await getPostsByUsername(username, page));
+    return getPostsByUsername(username, page);
   }
 
   return badRequest;

@@ -16,7 +16,7 @@ import UserTag from "../user/userTag";
 
 interface Rank {
   username: string;
-  createdAt: string;
+  createdAt: Date;
 }
 
 function Rank({ createdAt, username, id }: Rank & { id: number }) {

@@ -1,5 +1,5 @@
 import type { ActionFunctionArgs } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 
 import { verifyLogin } from "~/models/user.server";
 import { createUserSession } from "~/session.server";
@@ -17,11 +17,11 @@ export async function action({ request }: ActionFunctionArgs) {
     const { username, password } = res.data;
 
     if (!(await verifyLogin(username, password))) {
-      return json({ username: "auth.usernameOrPasswordIncorrect" });
+      return { username: "auth.usernameOrPasswordIncorrect" };
     }
 
     return createUserSession(request, username);
   } else {
-    return json(res.error);
+    return res.error;
   }
 }

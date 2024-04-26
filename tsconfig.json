@@ -1,5 +1,9 @@
 {
-  "include": ["**/*.ts", "**/*.tsx"],
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "node_modules/@remix-run/react/future/single-fetch.d.ts"
+  ],
   "compilerOptions": {
     "allowJs": true,
     "baseUrl": ".",

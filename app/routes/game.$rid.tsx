@@ -1,5 +1,4 @@
 import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
-import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 
 import { ClientProvider } from "~/components/game/clientProvider";
@@ -22,7 +21,7 @@ export function loader({ params }: LoaderFunctionArgs) {
 
   const { rid } = res.data;
 
-  return json(rid);
+  return rid;
 }
 
 export default function Rid() {

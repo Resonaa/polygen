@@ -17,7 +17,7 @@ import UserTag from "../user/userTag";
 
 interface Rank {
   star: number;
-  updatedAt: string;
+  updatedAt: Date;
   username: string;
 }
 

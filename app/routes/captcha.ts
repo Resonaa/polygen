@@ -12,5 +12,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
     width: 100,
     fontSize: 45
   });
+
   return await createCaptchaSession(request, captcha.text, captcha.data);
 }

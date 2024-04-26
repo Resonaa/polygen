@@ -28,12 +28,7 @@ import UserLink from "../user/userLink";
 import PrivateIndicator from "./privateIndicator";
 import TextRenderer from "./textRenderer";
 
-export type CommentProps = Pick<
-  CommentType,
-  "id" | "username" | "content" | "isPrivate"
-> & {
-  createdAt: string;
-};
+export type CommentProps = Omit<CommentType, "parentCuid">;
 
 export default function Comment({
   id,

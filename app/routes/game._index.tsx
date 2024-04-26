@@ -1,6 +1,5 @@
 import { VStack } from "@chakra-ui/react";
 import type { MetaFunction } from "@remix-run/node";
-import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 
 import RoomList from "~/components/game/roomList";
@@ -9,9 +8,7 @@ import { useRevalidationInterval } from "~/hooks/revalidator";
 import { getT } from "~/i18n/i18n";
 
 export function loader() {
-  const rooms = [new Room("161").export()];
-
-  return json(rooms);
+  return [new Room("161").export()];
 }
 
 export const meta: MetaFunction = ({ matches }) => {

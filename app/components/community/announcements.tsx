@@ -3,9 +3,9 @@ import { useTranslation } from "react-i18next";
 
 import Access, { access } from "~/access";
 import { useOptionalUser } from "~/hooks/loader";
+import type { Announcement as AnnouncementProps } from "~/models/announcement.server";
 
 import AddAnnouncement from "./addAnnouncement";
-import type { AnnouncementProps } from "./announcement";
 import Announcement from "./announcement";
 
 export default function Announcements({

@@ -1,11 +1,10 @@
-import type { ActionFunctionArgs, TypedResponse } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import type { ActionFunctionArgs } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 
 import type { TFunctionArg } from "~/i18n/i18next";
 import { createUser, getUser } from "~/models/user.server";
 import { createUserSession, verifyCaptcha } from "~/session.server";
 import { validateRegisterFormData } from "~/validators/auth.server";
-import type { ErrorType } from "~/validators/utils.server";
 
 export function loader() {
   return redirect("/");
@@ -15,11 +14,7 @@ type AsTFunctionArg<T> = {
   [K in keyof T]: TFunctionArg;
 };
 
-type R = Promise<
-  TypedResponse<AsTFunctionArg<ErrorType<typeof validateRegisterFormData>>>
->;
-
-export async function action({ request }: ActionFunctionArgs): R {
+export async function action({ request }: ActionFunctionArgs) {
   const data = await request.formData();
   const res = validateRegisterFormData(data);
 
@@ -27,21 +22,21 @@ export async function action({ request }: ActionFunctionArgs): R {
     const { username, password, retypePassword, captcha } = res.data;
 
     if (!(await verifyCaptcha(request, captcha))) {
-      return json({ captcha: "auth.captchaIncorrect" });
+      return { captcha: "auth.captchaIncorrect" };
     }
 
     if (password !== retypePassword) {
-      return json({ retypePassword: "auth.passwordsNotMatch" });
+      return { retypePassword: "auth.passwordsNotMatch" };
     }
 
     if (await getUser(username)) {
-      return json({ username: "auth.usernameAlreadyExists" });
+      return { username: "auth.usernameAlreadyExists" };
     }
 
     await createUser(username, password);
 
     return createUserSession(request, username);
   } else {
-    return json(res.error as AsTFunctionArg<typeof res.error>);
+    return res.error as AsTFunctionArg<typeof res.error>;
   }
 }

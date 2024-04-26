@@ -6,7 +6,6 @@ import {
 import "@fontsource-variable/fira-code/index.css";
 import "@fontsource-variable/noto-sans-sc/index.css";
 import type { LoaderFunctionArgs } from "@remix-run/node";
-import { json } from "@remix-run/node";
 import type { ShouldRevalidateFunctionArgs } from "@remix-run/react";
 import {
   isRouteErrorResponse,
@@ -48,12 +47,12 @@ import { requireOptionalUser } from "./session.server";
  * - Locale to use in translation
  */
 export async function loader({ request }: LoaderFunctionArgs) {
-  return json({
+  return {
     user: await requireOptionalUser(request, Access.Basic),
-    time: Date.now(),
+    time: new Date(),
     cookie: request.headers.get("Cookie")?.replace(/__session.*?;/, "") ?? "",
     locale: await getLocale(request)
-  });
+  };
 }
 
 /**

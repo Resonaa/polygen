@@ -82,6 +82,7 @@
     "source-map-support": "latest",
     "svg-captcha": "latest",
     "tiny-invariant": "latest",
+    "turbo-stream": "latest",
     "type-fest": "latest",
     "typescript": "latest",
     "zod": "latest"
@@ -132,7 +133,7 @@
     "bufferutil": "latest",
     "utf-8-validate": "latest"
   },
-  "packageManager": "pnpm@8.15.6",
+  "packageManager": "pnpm@9.0.6",
   "pnpm": {
     "supportedArchitectures": {
       "os": [

@@ -4,7 +4,6 @@ import type {
   LoaderFunctionArgs,
   MetaFunction
 } from "@remix-run/node";
-import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 
 import Access, { access } from "~/access";
@@ -34,7 +33,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const posts = await getPosts(1, getPrivate);
   const recentComments = await getRecentComments(getPrivate === true);
 
-  return json({ announcements, posts, recentComments });
+  return { announcements, posts, recentComments };
 }
 
 export const meta: MetaFunction = ({ matches }) => {
