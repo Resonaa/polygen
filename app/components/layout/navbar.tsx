@@ -17,7 +17,14 @@ import {
 import { Link } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
 import type { IconType } from "react-icons";
-import { FaCrown, FaHome, FaTrophy, FaFlask, FaCat } from "react-icons/fa";
+import {
+  FaCrown,
+  FaHome,
+  FaTrophy,
+  FaFlask,
+  FaCat,
+  FaLightbulb
+} from "react-icons/fa";
 
 import { useOptionalUser } from "~/hooks/loader";
 import type { TFunctionArg } from "~/i18n/i18next";
@@ -306,6 +313,12 @@ const NAV_ITEMS: NavItem[] = [
     label: "nav.apps",
     icon: FaFlask,
     children: [
+      {
+        label: "nav.map",
+        icon: FaLightbulb,
+        to: "/map",
+        description: "nav.mapDescription"
+      },
       {
         label: "nav.casualGames",
         icon: FaCat,

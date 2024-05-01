@@ -39,3 +39,23 @@ it("diffs two matrices", () => {
   expect(a.diff(b)).toEqual(aDiffB);
   expect(b.diff(a)).toEqual(bDiffA);
 });
+
+it("patches a matrix", () => {
+  const a = Matrix.from([
+    [0, 0, 0],
+    [0, 1, 0],
+    [0, 0, 2]
+  ]);
+
+  const res = Matrix.from([
+    [0, 0, 0],
+    [0, 2, 0],
+    [0, 1, 3]
+  ]);
+
+  const patches = a.diff(res);
+
+  a.patch(patches);
+
+  expect(a).toEqual(res);
+});

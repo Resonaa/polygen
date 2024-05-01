@@ -1,4 +1,4 @@
-import { isEqual } from "lodash";
+import _ from "lodash";
 
 import { Patch } from "./patch";
 
@@ -30,7 +30,7 @@ export class Matrix<Item> extends Array<Item[]> {
   /**
    * Not meant to be called directly.
    */
-  private constructor(...args: ConstructorParameters<typeof Array<Item[]>>) {
+  constructor(...args: ConstructorParameters<typeof Array<Item[]>>) {
     super(...args);
   }
 
@@ -116,7 +116,16 @@ export class Matrix<Item> extends Array<Item[]> {
    */
   diff(other: Matrix<Item>) {
     return this.positions()
-      .filter(pos => !isEqual(this.get(pos), other.get(pos)))
+      .filter(pos => !_.isEqual(this.get(pos), other.get(pos)))
       .map(pos => new Patch(pos, other.get(pos)));
+  }
+
+  /**
+   * Updates the Matrix with patch data.
+   */
+  patch(patches: Patch<Item>[]) {
+    for (const patch of patches) {
+      this.set(patch.pos, patch.item);
+    }
   }
 }

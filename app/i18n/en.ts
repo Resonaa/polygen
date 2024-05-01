@@ -10,7 +10,9 @@ export default {
     preference: "Preference",
     logout: "Logout",
     switchLanguages: "Switch Languages",
-    room: "Room"
+    room: "Room",
+    map: "Creation Center",
+    mapDescription: "Create and share custom maps"
   },
   auth: {
     login: "Login",

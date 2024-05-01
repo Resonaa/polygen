@@ -10,7 +10,9 @@ export default {
     preference: "偏好设置",
     logout: "退出登录",
     switchLanguages: "切换语言",
-    room: "房间"
+    room: "房间",
+    map: "创作中心",
+    mapDescription: "创作并分享自定义地图"
   },
   auth: {
     login: "登录",
