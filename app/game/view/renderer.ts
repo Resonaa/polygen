@@ -51,23 +51,23 @@ export default class Renderer extends BaseRenderer {
     switch (this.gm.mode) {
       case Gm.Mode.Hexagon: {
         return {
-          x: (j - 1) * 1.5 * this.radius,
+          x: (j - 1) * 1.5,
           y:
             j % 2 === 0
-              ? (Math.sqrt(3) / 2 + (i - 1) * Math.sqrt(3)) * this.radius
-              : (i - 1) * Math.sqrt(3) * this.radius
+              ? Math.sqrt(3) / 2 + (i - 1) * Math.sqrt(3)
+              : (i - 1) * Math.sqrt(3)
         };
       }
       case Gm.Mode.Square: {
         return {
-          x: (j - 1) * Math.sqrt(2) * this.radius,
-          y: (i - 1) * Math.sqrt(2) * this.radius
+          x: (j - 1) * Math.sqrt(2),
+          y: (i - 1) * Math.sqrt(2)
         };
       }
       case Gm.Mode.Triangle: {
         return {
-          x: (Math.sqrt(3) / 2) * (j - 1) * this.radius,
-          y: 1.5 * (i - 1) * this.radius
+          x: (Math.sqrt(3) / 2) * (j - 1),
+          y: 1.5 * (i - 1)
         };
       }
     }

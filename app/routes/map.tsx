@@ -20,8 +20,8 @@ export default function Map() {
   function generateGm() {
     return Gm.empty(
       _.sample(Object.values(Gm.Mode))!,
-      _.random(4, 6),
-      _.random(8, 10)
+      _.random(2, 5) * 10,
+      _.random(2, 5) * 10
     );
   }
 
@@ -38,7 +38,7 @@ export default function Map() {
 
     return () => {
       try {
-        _renderer.app.destroy(false, true);
+        _renderer.destroy();
       } catch {
         return;
       }
@@ -47,7 +47,7 @@ export default function Map() {
 
   return (
     <Center flexDir="column" gap={2} w="100%">
-      <Box w="500px" h="300px">
+      <Box w="60vw" h="70vh">
         <chakra.canvas ref={canvas} />
       </Box>
 
