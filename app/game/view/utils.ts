@@ -22,7 +22,7 @@ export function formatLargeNumber(n: number): string {
   } else if (n < 100000000) {
     text = String(Math.round(n / 1000000)) + "m";
   } else {
-    const power = Math.round(Math.log10(n));
+    const power = Math.floor(Math.log10(n));
     text = `${Math.round(n / Math.pow(10, power))}e${power}`;
   }
 

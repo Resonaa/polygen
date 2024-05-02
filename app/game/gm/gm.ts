@@ -65,7 +65,7 @@ export class Gm extends Matrix<Land> {
           new Land(
             _.random(0, 20),
             _.sample(Object.values(Land.Type))!,
-            _.random(1, 9) * Math.pow(10, _.random(0, 6))
+            _.random(1, 9) * Math.pow(10, _.random(0, 9))
           )
       )
     );

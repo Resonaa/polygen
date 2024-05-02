@@ -1,6 +1,13 @@
 import _ from "lodash";
 import type { PointData } from "pixi.js";
-import { BitmapText, BitmapFont, Application, Graphics } from "pixi.js";
+import {
+  BitmapText,
+  BitmapFont,
+  Application,
+  Graphics,
+  Sprite,
+  Polygon
+} from "pixi.js";
 
 import type { Gm } from "../gm/gm";
 import type { Pos } from "../gm/matrix";
@@ -21,6 +28,11 @@ export default abstract class BaseRenderer {
    * Land amounts.
    */
   texts = new Matrix<BitmapText>();
+
+  /**
+   * Land hit areas.
+   */
+  hitAreas = new Matrix<Sprite>();
 
   protected constructor(gm: Gm) {
     this.gm = gm;
@@ -46,7 +58,7 @@ export default abstract class BaseRenderer {
     BitmapFont.install({
       style: {
         fontWeight: "bold",
-        fontSize: TEXT_SIZE,
+        fontSize: TEXT_SIZE * 1.5,
         fill: TEXT_COLOR
       },
       name: "text",
@@ -68,8 +80,10 @@ export default abstract class BaseRenderer {
         const width = this.app.canvas.width,
           height = this.app.canvas.height;
 
-        this.app.stage.x = width / 2 - rate * (width / 2 - this.app.stage.x);
-        this.app.stage.y = height / 2 - rate * (height / 2 - this.app.stage.y);
+        this.app.stage.position.set(
+          width / 2 - rate * (width / 2 - this.app.stage.x),
+          height / 2 - rate * (height / 2 - this.app.stage.y)
+        );
       }
     };
 
@@ -96,8 +110,10 @@ export default abstract class BaseRenderer {
           return;
         }
 
-        this.app.stage.x = initialStartX + deltaX;
-        this.app.stage.y = initialStartY + deltaY;
+        this.app.stage.position.set(
+          initialStartX + deltaX,
+          initialStartY + deltaY
+        );
       };
 
       document.onpointerup = event => {
@@ -161,7 +177,7 @@ export default abstract class BaseRenderer {
   /**
    * Updates the text of the polygon at the given pos.
    */
-  updateText(pos: Pos) {
+  updateText(pos: Pos, hover = false) {
     const text = this.texts.get(pos);
     const land = this.gm.get(pos);
 
@@ -169,16 +185,23 @@ export default abstract class BaseRenderer {
 
     const maxWidth = this.maxTextWidth() * R;
 
-    if (text.width > maxWidth) {
-      text.text = formatLargeNumber(land.amount);
+    if (hover) {
+      while (text.width > maxWidth && text.style.fontSize > TEXT_SIZE / 3) {
+        text.style.fontSize--;
+      }
+    } else {
+      text.style.fontSize = TEXT_SIZE;
+
+      if (text.width > maxWidth) {
+        text.text = formatLargeNumber(land.amount);
+      }
     }
 
     const { x, y } = this.center(pos);
     const width = text.width;
     const height = text.height;
 
-    text.x = x * R - width / 2;
-    text.y = y * R - height / 2;
+    text.position.set(x * R - width / 2, y * R - height / 2);
   }
 
   /**
@@ -189,6 +212,20 @@ export default abstract class BaseRenderer {
       this.updateGraphics(pos);
       this.updateText(pos);
     });
+  }
+
+  /**
+   * Displays full text.
+   */
+  handlePointerEnter(pos: Pos) {
+    this.updateText(pos, true);
+  }
+
+  /**
+   * Removes special text style.
+   */
+  handlePointerLeave(pos: Pos) {
+    this.updateText(pos);
   }
 
   /**
@@ -217,6 +254,38 @@ export default abstract class BaseRenderer {
 
     for (const text of this.texts.flat()) {
       this.app.stage.addChild(text);
+    }
+
+    // Remove hit areas.
+    for (const hitArea of this.hitAreas.flat()) {
+      this.app.stage.removeChild(hitArea);
+      hitArea.destroy();
+    }
+
+    // Add hit areas.
+    this.hitAreas = Matrix.defaultWith(
+      this.gm.height,
+      this.gm.width,
+      () => new Sprite()
+    );
+
+    for (const pos of this.hitAreas.positions()) {
+      const hitArea = this.hitAreas.get(pos);
+      hitArea.interactiveChildren = false;
+
+      const { x, y } = this.topLeft(pos);
+      hitArea.position.set(x * R, y * R);
+
+      hitArea.hitArea = new Polygon(
+        this.shape(pos).map(({ x, y }) => ({ x: x * R, y: y * R }))
+      );
+
+      this.app.stage.addChild(hitArea);
+
+      hitArea.on("pointerenter", () => this.handlePointerEnter(pos));
+      hitArea.on("pointerleave", () => this.handlePointerLeave(pos));
+
+      hitArea.eventMode = "static";
     }
 
     // Redraw everything.

@@ -18,11 +18,7 @@ export default function Map() {
   const renderer = useRef<Renderer | null>(null);
 
   function generateGm() {
-    return Gm.random(
-      _.sample(Object.values(Gm.Mode))!,
-      _.random(2, 5) * 10,
-      _.random(2, 5) * 10
-    );
+    return Gm.random(_.sample(Object.values(Gm.Mode))!, 100, 100);
   }
 
   useEffect(() => {
