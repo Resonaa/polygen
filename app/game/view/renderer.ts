@@ -72,4 +72,41 @@ export default class Renderer extends BaseRenderer {
       }
     }
   }
+
+  center([i, j]: Pos) {
+    switch (this.gm.mode) {
+      case Gm.Mode.Hexagon: {
+        return {
+          x: 1 + 1.5 * (j - 1),
+          y: j % 2 === 0 ? Math.sqrt(3) * i : Math.sqrt(3) * (i - 0.5)
+        };
+      }
+      case Gm.Mode.Square: {
+        return {
+          x: Math.sqrt(2) * (j - 0.5),
+          y: Math.sqrt(2) * (i - 0.5)
+        };
+      }
+      case Gm.Mode.Triangle: {
+        return {
+          x: (Math.sqrt(3) / 2) * j,
+          y: 1.5 * (i - 1) + ((i + j) % 2 === 0 ? 1 : 0.5)
+        };
+      }
+    }
+  }
+
+  maxTextWidth() {
+    switch (this.gm.mode) {
+      case Gm.Mode.Hexagon: {
+        return 2;
+      }
+      case Gm.Mode.Square: {
+        return Math.sqrt(2);
+      }
+      case Gm.Mode.Triangle: {
+        return Math.sqrt(3) / 2;
+      }
+    }
+  }
 }

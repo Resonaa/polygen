@@ -69,6 +69,7 @@ export default function Navbar() {
         </Flex>
         <Flex align="center" justify="start" flex={1}>
           <Box
+            as={Link}
             display={{ base: "none", sm: "block" }}
             pl={{ base: 3, md: 0 }}
             color="gray.800"
@@ -79,6 +80,7 @@ export default function Navbar() {
             _dark={{
               color: "white"
             }}
+            to="/"
           >
             polygen
           </Box>

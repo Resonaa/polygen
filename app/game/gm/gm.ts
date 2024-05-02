@@ -1,3 +1,5 @@
+import _ from "lodash";
+
 import { Land } from "./land";
 import { Matrix } from "./matrix";
 import type { Pos } from "./matrix";
@@ -48,6 +50,25 @@ export class Gm extends Matrix<Land> {
    */
   static empty(mode: Gm["mode"], height: number, width: number) {
     return new this(mode, Matrix.default(height, width, new Land()));
+  }
+
+  /**
+   * Creates a random gm with given height and width.
+   */
+  static random(mode: Gm["mode"], height: number, width: number) {
+    return new this(
+      mode,
+      Matrix.defaultWith(
+        height,
+        width,
+        () =>
+          new Land(
+            _.random(0, 20),
+            _.sample(Object.values(Land.Type))!,
+            _.random(1, 9) * Math.pow(10, _.random(0, 6))
+          )
+      )
+    );
   }
 
   /**

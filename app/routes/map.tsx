@@ -18,7 +18,7 @@ export default function Map() {
   const renderer = useRef<Renderer | null>(null);
 
   function generateGm() {
-    return Gm.empty(
+    return Gm.random(
       _.sample(Object.values(Gm.Mode))!,
       _.random(2, 5) * 10,
       _.random(2, 5) * 10
@@ -30,9 +30,7 @@ export default function Map() {
 
     const _renderer = new Renderer(gm);
 
-    _renderer.init(canvas.current!).then(() => {
-      _renderer.updateGraphicsAll();
-    });
+    void _renderer.init(canvas.current!);
 
     renderer.current = _renderer;
 
@@ -59,9 +57,8 @@ export default function Map() {
             return;
           }
 
-          renderer.current.graphics.clear();
           renderer.current.gm = generateGm();
-          renderer.current.updateGraphicsAll();
+          renderer.current.reset();
         }}
       />
     </Center>
