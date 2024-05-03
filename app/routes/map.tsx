@@ -41,7 +41,7 @@ export default function Map() {
 
   return (
     <Center flexDir="column" gap={2} w="100%">
-      <Box w="60vw" h="70vh">
+      <Box w="100%" h="70vh">
         <chakra.canvas ref={canvas} />
       </Box>
 

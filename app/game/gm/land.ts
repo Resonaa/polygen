@@ -7,13 +7,13 @@ export class Land extends Array<number> {
    */
   static Type = {
     Land: 0,
-    General: 1,
+    Crown: 1,
     City: 2,
     Mountain: 3,
-    UnknownCity: 4,
-    Unknown: 5,
-    UnknownMountain: 6,
-    Swamp: 7
+    Obstacle: 4,
+    Fog: 5,
+    Swamp: 6,
+    UnknownSwamp: 7
   } as const;
 
   /**
@@ -35,6 +35,24 @@ export class Land extends Array<number> {
    */
   get amount() {
     return this[2];
+  }
+
+  /**
+   * Tests whether this Land is accessible.
+   */
+  accessible() {
+    return this.type !== Land.Type.Mountain;
+  }
+
+  /**
+   * Tests whether this Land is visible.
+   */
+  visible() {
+    return (
+      this.type !== Land.Type.Obstacle &&
+      this.type !== Land.Type.Fog &&
+      this.type !== Land.Type.UnknownSwamp
+    );
   }
 
   /**

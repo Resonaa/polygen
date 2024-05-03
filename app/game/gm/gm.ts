@@ -1,5 +1,7 @@
 import _ from "lodash";
 
+import { STANDARD_COLOR } from "../view/constants";
+
 import { Land } from "./land";
 import { Matrix } from "./matrix";
 import type { Pos } from "./matrix";
@@ -63,7 +65,7 @@ export class Gm extends Matrix<Land> {
         width,
         () =>
           new Land(
-            _.random(0, 20),
+            _.random(0, STANDARD_COLOR.length - 1),
             _.sample(Object.values(Land.Type))!,
             _.random(1, 9) * Math.pow(10, _.random(0, 9))
           )

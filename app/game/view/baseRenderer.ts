@@ -1,38 +1,86 @@
 import _ from "lodash";
 import type { PointData } from "pixi.js";
 import {
+  Texture,
   BitmapText,
   BitmapFont,
   Application,
   Graphics,
   Sprite,
-  Polygon
+  Polygon,
+  Container,
+  Assets
 } from "pixi.js";
 
+import city from "@/static/city.png";
+import crown from "@/static/crown.png";
+import mountain from "@/static/mountain.png";
+import obstacle from "@/static/obstacle.png";
+import swamp from "@/static/swamp.png";
+
 import type { Gm } from "../gm/gm";
+import { Land } from "../gm/land";
 import type { Pos } from "../gm/matrix";
 import { Matrix } from "../gm/matrix";
 
-import { R, TEXT_COLOR, TEXT_SIZE } from "./constants";
+import {
+  BORDER_COLOR,
+  DELTA_SCALE_PER_ZOOM,
+  EMPTY_COLOR,
+  MAX_SCALE,
+  MIN_DELTA_POS,
+  MIN_SCALE,
+  MIN_TEXT_SIZE,
+  MOUNTAIN_COLOR,
+  R,
+  STANDARD_COLOR,
+  TEXT_COLOR,
+  TEXT_SIZE,
+  UNKNOWN_COLOR
+} from "./constants";
 import { formatLargeNumber } from "./utils";
 
 /**
- * Basic renderer without mode support.
+ * Basic renderer without mode support and interaction.
  */
 export default abstract class BaseRenderer {
+  textures: Texture[] = [];
+
   app = new Application();
   graphics = new Graphics();
   gm: Gm;
+
+  /**
+   * Land types.
+   */
+  images = new Matrix<Sprite>();
+
+  imageContainer = new Container({
+    isRenderGroup: true
+  });
 
   /**
    * Land amounts.
    */
   texts = new Matrix<BitmapText>();
 
+  textContainer = new Container({
+    isRenderGroup: true
+  });
+
   /**
    * Land hit areas.
    */
   hitAreas = new Matrix<Sprite>();
+
+  hitAreaContainer = new Container({
+    isRenderGroup: true
+  });
+
+  /**
+   * Currently selected position.
+   */
+  selected?: Pos;
 
   protected constructor(gm: Gm) {
     this.gm = gm;
@@ -55,65 +103,68 @@ export default abstract class BaseRenderer {
 
     this.app.stage.addChild(this.graphics);
 
+    this.textures = [
+      Texture.EMPTY,
+      await Assets.load(crown),
+      await Assets.load(city),
+      await Assets.load(mountain),
+      await Assets.load(obstacle),
+      Texture.EMPTY,
+      await Assets.load(swamp),
+      await Assets.load(swamp)
+    ];
+
     BitmapFont.install({
       style: {
-        fontWeight: "bold",
+        fontWeight: "500",
         fontSize: TEXT_SIZE * 1.5,
-        fill: TEXT_COLOR
+        fill: TEXT_COLOR,
+        fontFamily: "Noto Sans SC Variable"
       },
       name: "text",
       chars: [["0", "9"], "kme.- "]
     });
 
+    let deltaScale = 0,
+      deltaX = 0,
+      deltaY = 0;
+
     // Zoom support.
     canvas.onwheel = event => {
       event.preventDefault();
-
-      const oldScale = this.app.stage.scale.x;
-      const newScale = oldScale + (event.deltaY > 0 ? -0.1 : 0.1);
-
-      if (newScale >= 0.5 && newScale <= 2) {
-        this.app.stage.scale.set(newScale);
-
-        const rate = newScale / oldScale;
-
-        const width = this.app.canvas.width,
-          height = this.app.canvas.height;
-
-        this.app.stage.position.set(
-          width / 2 - rate * (width / 2 - this.app.stage.x),
-          height / 2 - rate * (height / 2 - this.app.stage.y)
-        );
-      }
+      deltaScale +=
+        event.deltaY > 0 ? -DELTA_SCALE_PER_ZOOM : DELTA_SCALE_PER_ZOOM;
     };
 
     // Move support.
     canvas.onpointerdown = event => {
-      const startX = event.pageX,
-        startY = event.pageY;
+      const initialPageX = event.pageX,
+        initialPageY = event.pageY;
 
-      const initialStartX = this.app.stage.x,
-        initialStartY = this.app.stage.y;
+      let lastPageX = initialPageX,
+        lastPageY = initialPageY;
 
-      let flag = false;
+      let shouldMove = false;
 
-      document.onpointermove = event => {
-        const deltaX = event.pageX - startX;
-        const deltaY = event.pageY - startY;
-
-        if (!flag && (Math.abs(deltaX) > 20 || Math.abs(deltaY) > 20)) {
-          flag = true;
+      document.onpointermove = ({ pageX, pageY }) => {
+        if (
+          !shouldMove &&
+          (Math.abs(pageX - initialPageX) > MIN_DELTA_POS ||
+            Math.abs(pageY - initialPageY) > MIN_DELTA_POS)
+        ) {
+          shouldMove = true;
           document.body.setAttribute("style", "user-select: none");
         }
 
-        if (!flag) {
+        if (!shouldMove) {
           return;
         }
 
-        this.app.stage.position.set(
-          initialStartX + deltaX,
-          initialStartY + deltaY
-        );
+        deltaX += pageX - lastPageX;
+        deltaY += pageY - lastPageY;
+
+        lastPageX = pageX;
+        lastPageY = pageY;
       };
 
       document.onpointerup = event => {
@@ -124,6 +175,52 @@ export default abstract class BaseRenderer {
     };
 
     this.reset();
+
+    // Handle scale and position update.
+    this.app.ticker.add(({ deltaMS }) => {
+      if (Math.abs(deltaScale) < 0.01) {
+        deltaScale = 0;
+      }
+
+      if (Math.abs(deltaX) < 0.2) {
+        deltaX = 0;
+      }
+
+      if (Math.abs(deltaY) < 0.2) {
+        deltaY = 0;
+      }
+
+      if (deltaScale === 0 && deltaX === 0 && deltaY === 0) {
+        return;
+      }
+
+      const updateScale = (deltaMS / 150) * deltaScale;
+      deltaScale -= updateScale;
+
+      const updateX = (deltaMS / 120) * deltaX;
+      deltaX -= updateX;
+
+      const updateY = (deltaMS / 120) * deltaY;
+      deltaY -= updateY;
+
+      const oldScale = this.app.stage.scale.x;
+      const newScale = Math.min(
+        MAX_SCALE,
+        Math.max(MIN_SCALE, oldScale + updateScale)
+      );
+
+      this.app.stage.scale.set(newScale);
+
+      const rate = newScale / oldScale;
+
+      const centerWidth = this.app.canvas.width / 2;
+      const centerHeight = this.app.canvas.height / 2;
+
+      this.app.stage.position.set(
+        centerWidth - rate * (centerWidth - this.app.stage.x) + updateX,
+        centerHeight - rate * (centerHeight - this.app.stage.y) + updateY
+      );
+    });
   }
 
   /**
@@ -145,6 +242,11 @@ export default abstract class BaseRenderer {
    * Gets the maximum width of a text. (R = 1)
    */
   abstract maxTextWidth(): number;
+
+  /**
+   * Gets the maximum size of an image. (R = 1)
+   */
+  abstract maxImageSize(): number;
 
   /**
    * Destroys the renderer and its resources.
@@ -169,15 +271,35 @@ export default abstract class BaseRenderer {
    * Updates the graphics of the polygon at the given pos.
    */
   updateGraphics(pos: Pos) {
-    const fillColor = _.random(0, 0xffffff);
+    const land = this.gm.get(pos);
 
-    this.graphics.poly(this.poly(pos)).fill(fillColor);
+    let fillColor = STANDARD_COLOR[land.color];
+
+    if (!land.visible()) {
+      fillColor = UNKNOWN_COLOR;
+    } else if (land.type === Land.Type.Mountain) {
+      fillColor = MOUNTAIN_COLOR;
+    } else if (land.type === Land.Type.Land) {
+      fillColor = EMPTY_COLOR;
+    }
+
+    const selected = _.isEqual(this.selected, pos);
+
+    const fill = this.graphics.poly(this.poly(pos)).fill(fillColor);
+
+    if (selected) {
+      fill.stroke({
+        width: 3,
+        color: BORDER_COLOR,
+        alignment: 1
+      });
+    }
   }
 
   /**
    * Updates the text of the polygon at the given pos.
    */
-  updateText(pos: Pos, hover = false) {
+  updateText(pos: Pos) {
     const text = this.texts.get(pos);
     const land = this.gm.get(pos);
 
@@ -185,16 +307,18 @@ export default abstract class BaseRenderer {
 
     const maxWidth = this.maxTextWidth() * R;
 
-    if (hover) {
-      while (text.width > maxWidth && text.style.fontSize > TEXT_SIZE / 3) {
-        text.style.fontSize--;
-      }
-    } else {
+    for (
       text.style.fontSize = TEXT_SIZE;
+      text.width > maxWidth && text.style.fontSize >= MIN_TEXT_SIZE;
+      text.style.fontSize--
+    ) {
+      // Adjust text size.
+    }
 
-      if (text.width > maxWidth) {
-        text.text = formatLargeNumber(land.amount);
-      }
+    // Size exceeds limit even after adjustment.
+    if (text.width > maxWidth) {
+      text.style.fontSize = TEXT_SIZE;
+      text.text = formatLargeNumber(land.amount);
     }
 
     const { x, y } = this.center(pos);
@@ -205,62 +329,92 @@ export default abstract class BaseRenderer {
   }
 
   /**
+   * Updates the image of the polygon at the given pos.
+   */
+  updateImage(pos: Pos) {
+    const image = this.images.get(pos);
+    const land = this.gm.get(pos);
+
+    image.texture = this.textures[land.type];
+
+    const size = this.maxImageSize() * R;
+    image.width = image.height = size;
+
+    const { x, y } = this.center(pos);
+    image.position.set(x * R - size / 2, y * R - size / 2);
+  }
+
+  /**
    * Updates all polygons.
    */
   updateAll() {
     this.gm.positions().forEach(pos => {
       this.updateGraphics(pos);
+    });
+
+    this.gm.positions().forEach(pos => {
+      this.updateImage(pos);
+    });
+
+    this.gm.positions().forEach(pos => {
       this.updateText(pos);
     });
   }
 
   /**
-   * Displays full text.
+   * Clears the renderer.
    */
-  handlePointerEnter(pos: Pos) {
-    this.updateText(pos, true);
-  }
+  clear() {
+    // Clear selected position.
+    this.selected = undefined;
 
-  /**
-   * Removes special text style.
-   */
-  handlePointerLeave(pos: Pos) {
-    this.updateText(pos);
+    // Clear graphics.
+    this.graphics.clear();
+
+    // Remove images.
+    this.imageContainer.destroy({ children: true });
+    this.imageContainer = new Container({ isRenderGroup: true });
+    this.app.stage.addChild(this.imageContainer);
+
+    // Remove texts.
+    this.textContainer.destroy(true);
+    this.textContainer = new Container({ isRenderGroup: true });
+    this.textContainer.interactiveChildren = false;
+    this.textContainer.eventMode = "none";
+    this.app.stage.addChild(this.textContainer);
+
+    // Remove hit areas.
+    this.hitAreaContainer.destroy(true);
+    this.hitAreaContainer = new Container({ isRenderGroup: true });
+    this.app.stage.addChild(this.hitAreaContainer);
   }
 
   /**
    * Resets the renderer to its initial state.
    */
   reset() {
-    // Clear graphics.
-    this.graphics.clear();
+    this.clear();
 
-    // Remove texts.
-    for (const text of this.texts.flat()) {
-      this.app.stage.removeChild(text);
-      text.destroy();
-    }
+    // Add images.
+    this.images = Matrix.defaultWith(this.gm.height, this.gm.width, () => {
+      const image = new Sprite();
+      image.interactiveChildren = false;
+      image.eventMode = "none";
+      this.imageContainer.addChild(image);
+      return image;
+    });
 
     // Add texts.
-    this.texts = Matrix.defaultWith(
-      this.gm.height,
-      this.gm.width,
-      () =>
-        new BitmapText({
-          text: "",
-          style: { fontFamily: "text", fontSize: TEXT_SIZE }
-        })
-    );
-
-    for (const text of this.texts.flat()) {
-      this.app.stage.addChild(text);
-    }
-
-    // Remove hit areas.
-    for (const hitArea of this.hitAreas.flat()) {
-      this.app.stage.removeChild(hitArea);
-      hitArea.destroy();
-    }
+    this.texts = Matrix.defaultWith(this.gm.height, this.gm.width, () => {
+      const text = new BitmapText({
+        text: "",
+        style: { fontFamily: "text", fontSize: TEXT_SIZE }
+      });
+      text.interactiveChildren = false;
+      text.eventMode = "none";
+      this.textContainer.addChild(text);
+      return text;
+    });
 
     // Add hit areas.
     this.hitAreas = Matrix.defaultWith(
@@ -280,10 +434,7 @@ export default abstract class BaseRenderer {
         this.shape(pos).map(({ x, y }) => ({ x: x * R, y: y * R }))
       );
 
-      this.app.stage.addChild(hitArea);
-
-      hitArea.on("pointerenter", () => this.handlePointerEnter(pos));
-      hitArea.on("pointerleave", () => this.handlePointerLeave(pos));
+      this.hitAreaContainer.addChild(hitArea);
 
       hitArea.eventMode = "static";
     }

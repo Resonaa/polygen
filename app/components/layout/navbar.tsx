@@ -230,6 +230,8 @@ function MobileNav({ onClick }: { onClick: () => void }) {
       gap={3}
       display={{ base: "flex", md: "none" }}
       p={4}
+      fontWeight={500}
+      userSelect="none"
     >
       {NAV_ITEMS.map(navItem => (
         <MobileNavItem key={navItem.label} onClick={onClick} {...navItem} />
@@ -247,7 +249,9 @@ function MobileNavItem({
 }: NavItem & {
   onClick: () => void;
 }) {
-  const { isOpen, onToggle } = useDisclosure();
+  const { isOpen, onToggle } = useDisclosure({
+    defaultIsOpen: true
+  });
 
   const { t } = useTranslation();
 
@@ -264,7 +268,6 @@ function MobileNavItem({
         justify="space-between"
         w="100%"
         color="gray.600"
-        fontWeight={500}
         _hover={{ textDecoration: "none" }}
         _dark={{ color: "gray.200" }}
         to={to}
@@ -276,15 +279,14 @@ function MobileNavItem({
         {children ? <DropdownRightIcon isOpen={isOpen} /> : null}
       </Flex>
 
-      <Collapse in={isOpen} style={{ marginTop: "0!important" }}>
-        <VStack alignItems="normal" pl={4} borderLeftWidth="2px">
+      <Box as={Collapse} w="100%" mt={0} in={isOpen}>
+        <VStack alignItems="normal" gap={3} pl={4} borderLeftWidth="2px">
           {children
             ? children.map(child => (
                 <Flex
                   key={child.label}
                   as={Link}
                   align="center"
-                  py={2}
                   onClick={onClick}
                   to={child.to}
                 >
@@ -294,7 +296,7 @@ function MobileNavItem({
               ))
             : null}
         </VStack>
-      </Collapse>
+      </Box>
     </VStack>
   );
 }

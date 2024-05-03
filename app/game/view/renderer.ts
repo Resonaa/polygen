@@ -4,7 +4,7 @@ import type { Pos } from "../gm/matrix";
 import BaseRenderer from "./baseRenderer";
 
 /**
- * Full-featured renderer with mode support.
+ * Full-featured renderer with mode support and interaction.
  */
 export default class Renderer extends BaseRenderer {
   constructor(gm: Gm) {
@@ -99,13 +99,27 @@ export default class Renderer extends BaseRenderer {
   maxTextWidth() {
     switch (this.gm.mode) {
       case Gm.Mode.Hexagon: {
-        return 2;
+        return 1.8;
       }
       case Gm.Mode.Square: {
         return Math.sqrt(2);
       }
       case Gm.Mode.Triangle: {
         return Math.sqrt(3) / 2;
+      }
+    }
+  }
+
+  maxImageSize() {
+    switch (this.gm.mode) {
+      case Gm.Mode.Hexagon: {
+        return 1.26;
+      }
+      case Gm.Mode.Square: {
+        return 1.1;
+      }
+      case Gm.Mode.Triangle: {
+        return 0.8;
       }
     }
   }
