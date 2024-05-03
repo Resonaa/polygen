@@ -11,6 +11,9 @@ export const MIN_DELTA_POS = 15;
 
 export const DELTA_SCALE_PER_ZOOM = 0.15;
 
+export const MOBILE_MOVE_RATE = 1.5;
+export const MOBILE_ZOOM_RATE = 0.007;
+
 export const BORDER_COLOR = 0xffffff;
 
 export const STANDARD_COLOR = [

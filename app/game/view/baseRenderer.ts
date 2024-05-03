@@ -31,6 +31,8 @@ import {
   MIN_DELTA_POS,
   MIN_SCALE,
   MIN_TEXT_SIZE,
+  MOBILE_MOVE_RATE,
+  MOBILE_ZOOM_RATE,
   MOUNTAIN_COLOR,
   R,
   STANDARD_COLOR,
@@ -137,7 +139,7 @@ export default abstract class BaseRenderer {
     };
 
     // Move support.
-    canvas.onpointerdown = event => {
+    canvas.onmousedown = event => {
       const initialPageX = event.pageX,
         initialPageY = event.pageY;
 
@@ -146,7 +148,7 @@ export default abstract class BaseRenderer {
 
       let shouldMove = false;
 
-      document.onpointermove = ({ pageX, pageY }) => {
+      document.onmousemove = ({ pageX, pageY }) => {
         if (
           !shouldMove &&
           (Math.abs(pageX - initialPageX) > MIN_DELTA_POS ||
@@ -167,11 +169,95 @@ export default abstract class BaseRenderer {
         lastPageY = pageY;
       };
 
-      document.onpointerup = event => {
+      document.onmouseup = event => {
         event.preventDefault();
         document.body.removeAttribute("style");
-        document.onpointermove = document.onpointerup = null;
+        document.onmousemove = document.onmouseup = null;
       };
+    };
+
+    // Zoom and move support on mobile devices.
+    canvas.ontouchstart = event => {
+      // Mobile move support.
+      if (event.touches.length === 1) {
+        let lastPageX = event.touches[0].pageX,
+          lastPageY = event.touches[0].pageY;
+
+        const stopMove = () => {
+          document.ontouchmove = document.ontouchend = null;
+        };
+
+        document.ontouchmove = event => {
+          event.preventDefault();
+
+          if (event.touches.length !== 1) {
+            stopMove();
+            return;
+          }
+
+          const { pageX, pageY } = event.touches[0];
+
+          deltaX += (pageX - lastPageX) * MOBILE_MOVE_RATE;
+          deltaY += (pageY - lastPageY) * MOBILE_MOVE_RATE;
+
+          lastPageX = pageX;
+          lastPageY = pageY;
+        };
+
+        document.ontouchend = event => {
+          event.preventDefault();
+          stopMove();
+        };
+      }
+
+      // Mobile zoom & move support.
+      if (event.touches.length === 2) {
+        event.preventDefault();
+
+        const [touch1, touch2] = event.touches;
+
+        let lastDist = Math.sqrt(
+          Math.pow(touch1.clientX - touch2.clientX, 2) +
+            Math.pow(touch1.clientY - touch2.clientY, 2)
+        );
+        let lastMidX = (touch1.clientX + touch2.clientX) / 2;
+        let lastMidY = (touch1.clientY + touch2.clientY) / 2;
+
+        const stopZoom = () => {
+          document.ontouchmove = document.ontouchend = null;
+        };
+
+        document.ontouchmove = event => {
+          event.preventDefault();
+
+          if (event.touches.length !== 2) {
+            stopZoom();
+            return;
+          }
+
+          const [touch1, touch2] = event.touches;
+
+          const dist = Math.sqrt(
+            Math.pow(touch1.clientX - touch2.clientX, 2) +
+              Math.pow(touch1.clientY - touch2.clientY, 2)
+          );
+          const midX = (touch1.clientX + touch2.clientX) / 2;
+          const midY = (touch1.clientY + touch2.clientY) / 2;
+
+          deltaScale += (dist - lastDist) * MOBILE_ZOOM_RATE;
+          deltaX += (midX - lastMidX) * MOBILE_MOVE_RATE;
+          deltaY += (midY - lastMidY) * MOBILE_MOVE_RATE;
+
+          lastDist = dist;
+          lastMidX = midX;
+          lastMidY = midY;
+        };
+
+        document.ontouchend = event => {
+          event.preventDefault();
+          stopZoom();
+        };
+      }
     };
 
     this.reset();
