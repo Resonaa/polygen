@@ -22,6 +22,7 @@ import type { Gm } from "../gm/gm";
 import { Land } from "../gm/land";
 import type { Pos } from "../gm/matrix";
 import { Matrix } from "../gm/matrix";
+import type { Palette } from "../gm/palette";
 
 import {
   BORDER_COLOR,
@@ -35,7 +36,6 @@ import {
   MOBILE_ZOOM_RATE,
   MOUNTAIN_COLOR,
   R,
-  STANDARD_COLOR,
   TEXT_COLOR,
   TEXT_SIZE,
   UNKNOWN_COLOR
@@ -51,6 +51,7 @@ export default abstract class BaseRenderer {
   app = new Application();
   graphics = new Graphics();
   gm: Gm;
+  palette: Palette;
 
   /**
    * Land types.
@@ -84,8 +85,9 @@ export default abstract class BaseRenderer {
    */
   selected?: Pos;
 
-  protected constructor(gm: Gm) {
+  protected constructor(gm: Gm, palette: Palette) {
     this.gm = gm;
+    this.palette = palette;
   }
 
   /**
@@ -100,7 +102,13 @@ export default abstract class BaseRenderer {
       powerPreference: "high-performance",
       canvas,
       height,
-      width
+      width,
+      eventFeatures: {
+        move: false,
+        globalMove: false,
+        click: false,
+        wheel: false
+      }
     });
 
     this.app.stage.addChild(this.graphics);
@@ -359,7 +367,7 @@ export default abstract class BaseRenderer {
   updateGraphics(pos: Pos) {
     const land = this.gm.get(pos);
 
-    let fillColor = STANDARD_COLOR[land.color];
+    let fillColor = this.palette[land.color];
 
     if (!land.visible()) {
       fillColor = UNKNOWN_COLOR;
@@ -456,10 +464,14 @@ export default abstract class BaseRenderer {
 
     // Clear graphics.
     this.graphics.clear();
+    this.graphics.interactiveChildren = false;
+    this.graphics.eventMode = "none";
 
     // Remove images.
     this.imageContainer.destroy({ children: true });
     this.imageContainer = new Container({ isRenderGroup: true });
+    this.imageContainer.interactiveChildren = false;
+    this.imageContainer.eventMode = "none";
     this.app.stage.addChild(this.imageContainer);
 
     // Remove texts.
@@ -493,7 +505,6 @@ export default abstract class BaseRenderer {
     // Add texts.
     this.texts = Matrix.defaultWith(this.gm.height, this.gm.width, () => {
       const text = new BitmapText({
-        text: "",
         style: { fontFamily: "text", fontSize: TEXT_SIZE }
       });
       text.interactiveChildren = false;
@@ -512,6 +523,7 @@ export default abstract class BaseRenderer {
     for (const pos of this.hitAreas.positions()) {
       const hitArea = this.hitAreas.get(pos);
       hitArea.interactiveChildren = false;
+      hitArea.eventMode = "static";
 
       const { x, y } = this.topLeft(pos);
       hitArea.position.set(x * R, y * R);
@@ -521,8 +533,6 @@ export default abstract class BaseRenderer {
       );
 
       this.hitAreaContainer.addChild(hitArea);
-
-      hitArea.eventMode = "static";
     }
 
     // Redraw everything.

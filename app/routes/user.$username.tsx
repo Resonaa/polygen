@@ -111,7 +111,7 @@ export default function User() {
   const anchor = useRef<HTMLDivElement>(null);
   const currentUser = useOptionalUser();
   const [edit, setEdit] = useState(false);
-  const actionData: string = useActionData<typeof action>();
+  const actionData = useActionData<typeof action>();
 
   useEffect(() => {
     canScroll &&

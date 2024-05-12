@@ -57,6 +57,7 @@
     "i18next": "latest",
     "i18next-browser-languagedetector": "latest",
     "isbot": "latest",
+    "iwanthue": "latest",
     "katex": "latest",
     "lodash": "latest",
     "lz-string": "latest",
@@ -133,7 +134,7 @@
     "bufferutil": "latest",
     "utf-8-validate": "latest"
   },
-  "packageManager": "pnpm@9.0.6",
+  "packageManager": "pnpm@9.1.0",
   "pnpm": {
     "supportedArchitectures": {
       "os": [

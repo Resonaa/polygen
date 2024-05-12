@@ -22,9 +22,9 @@ export default function Map() {
   }
 
   useEffect(() => {
-    const gm = generateGm();
+    const { gm, palette } = generateGm();
 
-    const _renderer = new Renderer(gm);
+    const _renderer = new Renderer(gm, palette);
 
     void _renderer.init(canvas.current!);
 
@@ -53,7 +53,9 @@ export default function Map() {
             return;
           }
 
-          renderer.current.gm = generateGm();
+          const { gm, palette } = generateGm();
+          renderer.current.gm = gm;
+          renderer.current.palette = palette;
           renderer.current.reset();
         }}
       />

@@ -1,5 +1,6 @@
 import { Gm } from "../gm/gm";
 import type { Pos } from "../gm/matrix";
+import type { Palette } from "../gm/palette";
 
 import BaseRenderer from "./baseRenderer";
 
@@ -7,8 +8,8 @@ import BaseRenderer from "./baseRenderer";
  * Full-featured renderer with mode support and interaction.
  */
 export default class Renderer extends BaseRenderer {
-  constructor(gm: Gm) {
-    super(gm);
+  constructor(gm: Gm, palette: Palette) {
+    super(gm, palette);
   }
 
   shape([i, j]: Pos) {
