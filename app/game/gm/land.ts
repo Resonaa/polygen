@@ -23,6 +23,10 @@ export class Land extends Array<number> {
     return this[0];
   }
 
+  set color(color: number) {
+    this[0] = color;
+  }
+
   /**
    * Land type.
    */
@@ -30,11 +34,19 @@ export class Land extends Array<number> {
     return this[1];
   }
 
+  set type(type: number) {
+    this[1] = type;
+  }
+
   /**
    * Land amount.
    */
   get amount() {
     return this[2];
+  }
+
+  set amount(amount: number) {
+    this[2] = amount;
   }
 
   /**

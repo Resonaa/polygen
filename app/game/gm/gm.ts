@@ -1,9 +1,6 @@
-import _ from "lodash";
-
 import { Land } from "./land";
 import { Matrix } from "./matrix";
 import type { Pos } from "./matrix";
-import { Palette } from "./palette";
 
 /**
  * Gm extended from a Matrix of Lands, which knows its mode and
@@ -50,30 +47,10 @@ export class Gm extends Matrix<Land> {
    * Creates an empty gm with given height and width.
    */
   static empty(mode: Gm["mode"], height: number, width: number) {
-    return new this(mode, Matrix.default(height, width, new Land()));
-  }
-
-  /**
-   * Creates a random gm and a palette with given height and width.
-   */
-  static random(mode: Gm["mode"], height: number, width: number) {
-    const n = _.random(10, 50);
-    const palette = Palette.colors(n);
-    const gm = new this(
+    return new this(
       mode,
-      Matrix.defaultWith(
-        height,
-        width,
-        () =>
-          new Land(
-            _.random(0, n),
-            _.sample(Object.values(Land.Type))!,
-            _.random(1, 9) * Math.pow(10, _.random(0, 9))
-          )
-      )
+      Matrix.defaultWith(height, width, () => new Land())
     );
-
-    return { gm, palette };
   }
 
   /**

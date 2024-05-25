@@ -5,7 +5,7 @@ import {
 } from "@chakra-ui/react";
 import "@fontsource-variable/fira-code/index.css";
 import "@fontsource-variable/noto-sans-sc/index.css";
-import type { LoaderFunctionArgs } from "@remix-run/node";
+import { unstable_defineLoader as defineLoader } from "@remix-run/node";
 import type { ShouldRevalidateFunctionArgs } from "@remix-run/react";
 import {
   isRouteErrorResponse,
@@ -46,14 +46,14 @@ import { requireOptionalUser } from "./session.server";
  * - Client cookie without session
  * - Locale to use in translation
  */
-export async function loader({ request }: LoaderFunctionArgs) {
+export const loader = defineLoader(async ({ request }) => {
   return {
     user: await requireOptionalUser(request, Access.Basic),
     time: new Date(),
     cookie: request.headers.get("Cookie")?.replace(/__session.*?;/, "") ?? "",
     locale: await getLocale(request)
   };
-}
+});
 
 /**
  * Whether a route loader should revalidates its data.

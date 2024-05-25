@@ -291,10 +291,10 @@ export default abstract class BaseRenderer {
       const updateScale = (deltaMS / 150) * deltaScale;
       deltaScale -= updateScale;
 
-      const updateX = (deltaMS / 120) * deltaX;
+      const updateX = (deltaMS / 80) * deltaX;
       deltaX -= updateX;
 
-      const updateY = (deltaMS / 120) * deltaY;
+      const updateY = (deltaMS / 80) * deltaY;
       deltaY -= updateY;
 
       const oldScale = this.app.stage.scale.x;
@@ -397,7 +397,7 @@ export default abstract class BaseRenderer {
     const text = this.texts.get(pos);
     const land = this.gm.get(pos);
 
-    text.text = land.amount.toString();
+    text.text = land.amount === 0 ? "" : land.amount.toString();
 
     const maxWidth = this.maxTextWidth() * R;
 

@@ -4,7 +4,9 @@ import _ from "lodash";
 import { useEffect, useRef } from "react";
 import { FaSync } from "react-icons/fa";
 
+import { generateMap } from "~/game/generator/common";
 import { Gm } from "~/game/gm/gm";
+import { Palette } from "~/game/gm/palette";
 import Renderer from "~/game/view/renderer";
 import { getT } from "~/i18n/i18n";
 
@@ -17,12 +19,26 @@ export default function Map() {
   const canvas = useRef<HTMLCanvasElement>(null);
   const renderer = useRef<Renderer | null>(null);
 
-  function generateGm() {
-    return Gm.random(_.sample(Object.values(Gm.Mode))!, 100, 100);
+  function generate() {
+    const players = _.random(2, 30);
+    const mode = _.sample(Object.values(Gm.Mode))!;
+
+    const gm = generateMap({
+      players,
+      mode,
+      namespace: "@",
+      title: "random",
+      width: 0.5,
+      height: 0.5
+    });
+
+    const palette = Palette.colors(players);
+
+    return { gm, palette };
   }
 
   useEffect(() => {
-    const { gm, palette } = generateGm();
+    const { gm, palette } = generate();
 
     const _renderer = new Renderer(gm, palette);
 
@@ -53,7 +69,7 @@ export default function Map() {
             return;
           }
 
-          const { gm, palette } = generateGm();
+          const { gm, palette } = generate();
           renderer.current.gm = gm;
           renderer.current.palette = palette;
           renderer.current.reset();
