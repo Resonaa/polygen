@@ -14,6 +14,8 @@ Polygon-based web game inspired by [generals.io](https://generals.io).
 
 </div>
 
+**Note: This repository is temporarily archived and will not be reopened in a short time.**
+
 ## Prerequisites
 
 - [Node 20+](https://nodejs.org/)

@@ -7,7 +7,6 @@ import { createRequestHandler } from "@mcansh/remix-fastify";
 import fastify from "fastify";
 import fastifySocketIO from "fastify-socket.io";
 import parser from "socket.io-msgpack-parser";
-import "source-map-support/register";
 
 import { MODE, PORT } from "~/env.server";
 import setServer from "~/game/socket/server/index";
@@ -67,7 +66,8 @@ app.addContentTypeParser("*", (_request, payload, done) => {
 // Register Socket.IO server.
 await app.register(fastifySocketIO, {
   transports: ["websocket"],
-  parser
+  parser,
+  serveClient: false
 });
 setServer(app.io);
 

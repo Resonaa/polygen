@@ -1,4 +1,4 @@
-import { Gm } from "../gm/gm";
+import { Map } from "../map";
 
 import { generateRandomMap } from "./random";
 
@@ -31,23 +31,13 @@ export interface MapConfig {
   /**
    * Map mode.
    */
-  mode: keyof typeof Gm.Mode;
-
-  /**
-   * A 0-1 integer determining the width of the map.
-   */
-  width: number;
-
-  /**
-   * A 0-1 integer determining the height of the map.
-   */
-  height: number;
+  mode: keyof typeof Map.Mode;
 }
 
 export function generateMap(config: MapConfig) {
   if (config.namespace !== "@") {
     // Unimplemented.
-    return new Gm(config.mode, []);
+    return new Map(config.mode, []);
   }
 
   switch (config.title) {
@@ -56,5 +46,5 @@ export function generateMap(config: MapConfig) {
     }
   }
 
-  return new Gm(config.mode, []);
+  return new Map(config.mode, []);
 }

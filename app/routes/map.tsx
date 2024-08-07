@@ -1,13 +1,13 @@
-import { Box, chakra, Center, IconButton } from "@chakra-ui/react";
+import { chakra, Center, IconButton } from "@chakra-ui/react";
 import type { MetaFunction } from "@remix-run/node";
 import _ from "lodash";
 import { useEffect, useRef } from "react";
 import { FaSync } from "react-icons/fa";
 
 import { generateMap } from "~/game/generator/common";
-import { Gm } from "~/game/gm/gm";
 import { Palette } from "~/game/gm/palette";
-import Renderer from "~/game/view/renderer";
+import { Map } from "~/game/map";
+import RendererNew from "~/game/view/rendererNew";
 import { getT } from "~/i18n/i18n";
 
 export const meta: MetaFunction = ({ matches }) => {
@@ -15,51 +15,42 @@ export const meta: MetaFunction = ({ matches }) => {
   return [{ title: `${t("nav.map")} - polygen` }];
 };
 
-export default function Map() {
+export default function MapElement() {
   const canvas = useRef<HTMLCanvasElement>(null);
-  const renderer = useRef<Renderer | null>(null);
+  const renderer = useRef<RendererNew | null>(null);
 
   function generate() {
-    const players = _.random(2, 30);
-    const mode = _.sample(Object.values(Gm.Mode))!;
+    const players = _.random(2, 20);
+    const mode = _.sample(Object.values(Map.Mode))!;
 
-    const gm = generateMap({
+    const map = generateMap({
       players,
       mode,
       namespace: "@",
-      title: "random",
-      width: 0.5,
-      height: 0.5
+      title: "random"
     });
 
     const palette = Palette.colors(players);
 
-    return { gm, palette };
+    return { map, palette };
   }
 
   useEffect(() => {
-    const { gm, palette } = generate();
+    const { map, palette } = generate();
 
-    const _renderer = new Renderer(gm, palette);
-
-    void _renderer.init(canvas.current!);
+    const _renderer = new RendererNew(canvas.current!, map, palette);
 
     renderer.current = _renderer;
 
     return () => {
-      try {
-        _renderer.destroy();
-      } catch {
-        return;
-      }
+      _renderer.dispose();
+      renderer.current = null;
     };
   }, []);
 
   return (
     <Center flexDir="column" gap={2} w="100%">
-      <Box w="100%" h="70vh">
-        <chakra.canvas ref={canvas} />
-      </Box>
+      <chakra.canvas w="100%" h="70vh" ref={canvas} />
 
       <IconButton
         aria-label="refresh"
@@ -69,10 +60,12 @@ export default function Map() {
             return;
           }
 
-          const { gm, palette } = generate();
-          renderer.current.gm = gm;
-          renderer.current.palette = palette;
           renderer.current.reset();
+          const { map, palette } = generate();
+          renderer.current.map = map;
+          renderer.current.palette = palette;
+          renderer.current.setup();
+          renderer.current.render();
         }}
       />
     </Center>

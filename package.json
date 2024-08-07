@@ -81,8 +81,8 @@
     "socket.io": "latest",
     "socket.io-client": "latest",
     "socket.io-msgpack-parser": "latest",
-    "source-map-support": "latest",
     "svg-captcha": "latest",
+    "three": "latest",
     "tiny-invariant": "latest",
     "turbo-stream": "latest",
     "type-fest": "latest",
@@ -103,6 +103,7 @@
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "@types/source-map-support": "latest",
+    "@types/three": "latest",
     "@typescript-eslint/eslint-plugin": "latest",
     "@typescript-eslint/parser": "latest",
     "eslint": "^8.57.0",
@@ -135,7 +136,7 @@
     "bufferutil": "latest",
     "utf-8-validate": "latest"
   },
-  "packageManager": "pnpm@9.1.0",
+  "packageManager": "pnpm@9.2.0",
   "pnpm": {
     "supportedArchitectures": {
       "os": [
