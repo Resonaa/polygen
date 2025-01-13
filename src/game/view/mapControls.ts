@@ -14,7 +14,7 @@ export default class MapControls extends OrbitControls {
 
     this.screenSpacePanning = false; // Pan orthogonal to world-space direction camera.up.
     this.enableDamping = true;
-    this.maxPolarAngle = Math.PI / 2;
+    //this.maxPolarAngle = Math.PI / 2;
 
     Object.assign(this, settings);
 

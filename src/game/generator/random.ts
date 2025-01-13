@@ -8,11 +8,7 @@ export function generateRandomGM({ mode, players }: GMConfig): GM {
   const faces: Face[] = [];
 
   for (let i = 0; i < 2500; i++) {
-    const normal = new Vector3(
-      _.random(-1, 1, true),
-      _.random(-1, 1, true),
-      _.random(-1, 0, true),
-    ).normalize();
+    const normal = new Vector3().randomDirection();
 
     faces.push({
       position: [

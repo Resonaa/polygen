@@ -8,7 +8,7 @@ import textureImage from "@/static/texture/texture.png";
 import textureJson from "@/static/texture/texture.json";
 import type { Palette } from "~/game/palette";
 
-import { FaceType, type Face } from "../gm";
+import type { Face } from "../gm";
 
 import MapControls from "./mapControls";
 import ResourceTracker from "./resourceTracker";
@@ -29,7 +29,8 @@ export class Renderer {
   textureMaterial: THREE.Material;
 
   metaContainer: THREE.Object3D;
-  geometry: THREE.BufferGeometry;
+  faceGeometry: THREE.BufferGeometry;
+  imageGeometry: THREE.BufferGeometry;
 
   faceColorStartingIndex: number[] = [];
 
@@ -160,7 +161,8 @@ export class Renderer {
     this.faces = faces;
     this.palette = palette;
 
-    this.geometry = new THREE.BufferGeometry();
+    this.faceGeometry = new THREE.BufferGeometry();
+    this.imageGeometry = new THREE.BufferGeometry();
 
     const metaContainer = new THREE.Object3D();
     metaContainer.matrixAutoUpdate = false;
@@ -172,7 +174,7 @@ export class Renderer {
     texture.flipY = false;
     this.textureMaterial = new THREE.MeshBasicMaterial({
       map: texture,
-      transparent: true
+      transparent: true,
     });
 
     this.setup();
@@ -230,7 +232,7 @@ export class Renderer {
   }
 
   updateColor(id: number) {
-    const attribute = this.geometry.getAttribute("colorIndex");
+    const attribute = this.faceGeometry.getAttribute("colorIndex");
     const colors = attribute.array;
     const start = this.faceColorStartingIndex[id];
     const end = this.faceColorStartingIndex[id + 1] - 1;
@@ -270,7 +272,7 @@ export class Renderer {
 
       if (subBoundingBox.x <= maxWidth) {
         subBoundingBox.multiplyScalar(-0.5);
-        geometry.translate(subBoundingBox.x, subBoundingBox.y, 0.2);
+        geometry.translate(subBoundingBox.x, subBoundingBox.y, 1);
         text.geometry = geometry;
         break;
       }
@@ -282,59 +284,28 @@ export class Renderer {
   updateImage(id: number) {
     const face = this.faces[id];
     const frame = textureJson.frames[face.type].frame;
-    const image = (this.metaContainer.children[id] as MetaLayer).image;
-
-    image.geometry.dispose();
-
-    if (face.type === FaceType.Empty) {
-      return;
-    }
-
-    const geometry = new THREE.PlaneGeometry(IMAGE_SIZE, IMAGE_SIZE);
-
-    // Calculate UV coordinates for each plane based on the atlas's metadata
-    const attribute = geometry.getAttribute("uv");
+    const attribute = this.imageGeometry.getAttribute("uv");
     const uvs = attribute.array;
-    const offsetX = frame.x / textureJson.meta.size.w;
-    const offsetY = frame.y / textureJson.meta.size.h;
-    const scaleX = frame.w / textureJson.meta.size.w;
-    const scaleY = frame.h / textureJson.meta.size.h;
+
+    const UVS_PER_IMAGE = 8;
+
+    const startingIndex = id * UVS_PER_IMAGE;
 
     // Update UVs for the plane
-    for (let i = 0; i < uvs.length; i += 2) {
-      uvs[i] = uvs[i] * scaleX + offsetX;
-      uvs[i + 1] = uvs[i + 1] * scaleY + offsetY;
+    for (let i = startingIndex; i < startingIndex + UVS_PER_IMAGE; i += 2) {
+      uvs[i] = (uvs[i] * frame.w + frame.x) / textureJson.meta.size.w;
+      uvs[i + 1] = (uvs[i + 1] * frame.h + frame.y) / textureJson.meta.size.h;
     }
-  
+
     attribute.needsUpdate = true;
-
-    geometry.rotateZ(Math.PI);
-    geometry.translate(0, 0, 0.1);
-
-    image.geometry = geometry;
   }
 
   getQuaternion(id: number) {
-    const up = new THREE.Vector3(0, 1, 0);
     const [x, y, z] = this.faces[id].normal;
-    return new THREE.Quaternion().setFromUnitVectors(up, { x, y, z });
-  }
-
-  createGeometry(id: number) {
-    const face = this.faces[id];
-
-    const geometry = new THREE.CircleGeometry(
-      face.radius * this.settings.view.map.radius,
-      face.sides,
+    return new THREE.Quaternion().setFromUnitVectors(
+      THREE.Object3D.DEFAULT_UP,
+      { x, y, z },
     );
-
-    geometry.rotateZ((Math.PI * (face.sides - 2)) / face.sides / 2);
-
-    geometry.applyQuaternion(this.getQuaternion(id));
-
-    geometry.translate(...face.position);
-
-    return geometry;
   }
 
   getMaxTextWidth(id: number) {
@@ -346,15 +317,26 @@ export class Renderer {
   }
 
   setup() {
-    const geometries = [];
+    const faceGeometries = [];
     this.faceColorStartingIndex = [];
 
     let startingIndex = 0;
 
+    const imageGeometries = [];
+
     for (const [id, face] of this.faces.entries()) {
+      const quaternion = this.getQuaternion(id);
+
       // Add geometry.
       {
-        const geometry = this.createGeometry(id);
+        const geometry = new THREE.CircleGeometry(
+          face.radius * this.settings.view.map.radius,
+          face.sides,
+        );
+
+        geometry.rotateZ((Math.PI * (face.sides - 2)) / face.sides / 2);
+        geometry.applyQuaternion(quaternion);
+        geometry.translate(...face.position);
 
         const vertexCount = geometry.getAttribute("position").count;
         this.faceColorStartingIndex.push(startingIndex);
@@ -364,45 +346,57 @@ export class Renderer {
         const attribute = new THREE.BufferAttribute(colors, 1);
 
         geometry.setAttribute("colorIndex", attribute);
-        geometries.push(geometry);
+        faceGeometries.push(geometry);
 
         startingIndex += colors.length;
       }
 
       // Add meta.
       {
-        const text = new THREE.Mesh(
-          undefined,
-          this.textMaterial,
-        );
+        const text = new THREE.Mesh(undefined, this.textMaterial);
         text.matrixAutoUpdate = false;
 
-        const image = new THREE.Mesh(undefined, this.textureMaterial);
-        image.matrixAutoUpdate = false;
-
-        const meta = new MetaLayer(text, image);
-
+        const meta = new MetaLayer(text);
         meta.position.fromArray(face.position);
-        meta.applyQuaternion(this.getQuaternion(id));
-
-        this.metaContainer.add(meta);
-
+        meta.applyQuaternion(quaternion);
         meta.matrixAutoUpdate = false;
-
+        this.metaContainer.add(meta);
         this.tracker.track(meta);
+
+        const image = new THREE.PlaneGeometry(IMAGE_SIZE, IMAGE_SIZE);
+        image.applyQuaternion(quaternion);
+        image.translate(
+          face.position[0],
+          face.position[1],
+          face.position[2] + 0.5,
+        );
+        imageGeometries.push(image);
       }
     }
 
     this.faceColorStartingIndex.push(startingIndex);
 
-    const mergedGeometry = BufferGeometryUtils.mergeGeometries(
-      geometries,
+    const mergedFaceGeometry = BufferGeometryUtils.mergeGeometries(
+      faceGeometries,
       false,
     );
-    const mesh = new THREE.Mesh(mergedGeometry, this.faceMaterial);
-    this.scene.add(mesh);
-    this.tracker.track(mesh);
-    this.geometry = mergedGeometry;
+    const faceMesh = new THREE.Mesh(mergedFaceGeometry, this.faceMaterial);
+    faceMesh.matrixAutoUpdate = false;
+    faceMesh.matrixWorldAutoUpdate = false;
+    this.scene.add(faceMesh);
+    this.tracker.track(faceMesh);
+    this.faceGeometry = mergedFaceGeometry;
+
+    const mergedImageGeometry = BufferGeometryUtils.mergeGeometries(
+      imageGeometries,
+      false,
+    );
+    const imageMesh = new THREE.Mesh(mergedImageGeometry, this.textureMaterial);
+    imageMesh.matrixAutoUpdate = false;
+    imageMesh.matrixWorldAutoUpdate = false;
+    this.scene.add(imageMesh);
+    this.tracker.track(imageMesh);
+    this.imageGeometry = mergedImageGeometry;
 
     for (let id = 0; id < this.faces.length; id++) {
       this.updateColor(id);

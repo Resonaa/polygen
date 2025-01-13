@@ -23,7 +23,9 @@ export default class ResourceTracker {
     // Handle children and when material is an array of materials or
     // uniform is array of textures.
     if (Array.isArray(resource)) {
-      resource.forEach((resource) => this.track(resource));
+      for (const item of resource) {
+        this.track(item);
+      }
       return;
     }
 
