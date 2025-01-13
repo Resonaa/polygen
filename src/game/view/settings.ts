@@ -13,7 +13,7 @@ export const Default = {
       camera: {
         fov: 60,
         near: 1,
-        far: 1200
+        far: 1200,
       },
       controls: {
         dampingFactor: 0.12,
@@ -21,20 +21,20 @@ export const Default = {
         maxDistance: 1000,
         zoomSpeed: 2.1,
         rotateSpeed: 0.8,
-        panSpeed: 1.1
+        panSpeed: 1.1,
       },
       fog: {
-        near: 1000
+        near: 1000,
       },
       antialias: true,
       background: 0,
       map: {
         radius: 20,
         maxTextSize: 7,
-        minTextSize: 1
-      }
-    }
-  }
+        minTextSize: 1,
+      },
+    },
+  },
 };
 
 /**
@@ -53,7 +53,7 @@ export function load() {
   // Try to use the settings from LocalStorage.
   try {
     const partial = JSON.parse(
-      LZString.decompressFromUTF16(s)
+      LZString.decompressFromUTF16(s),
     ) as PartialDeep<Type>;
 
     return merge(partial);

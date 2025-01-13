@@ -4,6 +4,8 @@ export const TEXT_SIZE = 15;
 export const MIN_TEXT_SIZE = 7;
 export const TEXT_COLOR = 0xffffff;
 
+export const IMAGE_SIZE = 20;
+
 export const MIN_SCALE = 0.3;
 export const MAX_SCALE = 2;
 

@@ -1,23 +1,27 @@
 import { LitElement, css, html } from "lit";
-import { customElement, property , query} from "lit/decorators.js";
-import {Map} from "~/game/map";
-import { generateMap } from "~/game/generator/common";
+import { customElement, query } from "lit/decorators.js";
 import _ from "lodash";
-import { Palette } from "./game/gm/palette";
-import RendererNew from "./game/view/rendererNew";
+import { generateGM } from "~/game/generator/common";
+import type { GM, GMMode } from "~/game/gm";
+import { Palette } from "./game/palette";
+import { Renderer } from "./game/view/renderer";
 
-let renderer, map, palette;
+let renderer: Renderer;
+let gm: GM;
+let palette: Palette;
 
 function generate() {
   const players = _.random(2, 20);
-  const mode = _.sample(Object.values(Map.Mode))!;
+  const mode = _.random(0, 2) as GMMode;
 
-  map = generateMap({
+  gm = generateGM({
     players,
     mode,
     namespace: "@",
-    title: "random"
+    title: "random",
   });
+
+  console.log(gm);
 
   palette = Palette.colors(players);
 }
@@ -52,15 +56,15 @@ export class MapViewer extends LitElement {
 
   private _onReset() {
     generate();
-    
+
     if (renderer) {
       renderer.reset();
-      renderer.map = map;
+      renderer.faces = gm.faces;
       renderer.palette = palette;
       renderer.setup();
       renderer.render();
     } else {
-      renderer = new RendererNew(this._canvas, map, palette);
+      renderer = new Renderer(this._canvas, gm.faces, palette);
     }
   }
 

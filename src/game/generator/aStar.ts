@@ -1,29 +1,25 @@
-import type { Gm } from "../gm/gm";
-import { Land } from "../gm/land";
-import type { Pos } from "../gm/matrix";
-import { Matrix } from "../gm/matrix";
+import { FaceType, type GM } from "../gm";
 
 /**
  * Calculates the distance between two lands on the map.
  */
-export function aStar(gm: Gm, from: Pos, to: Pos) {
-  const vis = Matrix.default(gm.height, gm.width, false);
+export function aStar(gm: GM, from: number, to: number) {
+  const vis = new Map<number, boolean>();
 
-  const q: [Pos, number][] = [[from, 0]];
+  const q: [number, number][] = [[from, 0]];
 
   vis.set(from, true);
 
-  while (q.length > 0) {
-    const front = q.shift()!;
+  while (true) {
+    const front = q.shift();
+    if (!front) {
+      break;
+    }
 
     const [cur, len] = front;
 
-    for (const nxt of gm.neighbors(cur)) {
-      if (
-        vis.get(nxt) ||
-        !gm.get(nxt).accessible() ||
-        gm.get(nxt).type === Land.Type.City
-      ) {
+    for (const nxt of gm.edges[cur]) {
+      if (vis.get(nxt) || gm.faces[nxt].type === FaceType.City) {
         continue;
       }
 

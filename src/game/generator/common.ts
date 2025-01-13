@@ -1,50 +1,38 @@
-import { Map } from "../map";
+import type { GMMode } from "../gm";
 
-import { generateRandomMap } from "./random";
+import { generateRandomGM } from "./random";
 
 /**
  * Currently-supported native maps.
  */
 export enum NativeMapVariant {
-  Random = "random"
+  Random = "random",
 }
 
 /**
- * Map config used by generators.
+ * GM config used by generators.
  */
-export interface MapConfig {
+export interface GMConfig {
   /**
-   * `@` for native maps, the others being the usernames of custom map creators.
+   * `@` for native maps, the others being usernames of custom map creators.
    */
   namespace: string;
 
-  /**
-   * Title of the map.
-   */
   title: string;
-
-  /**
-   * How many players are there in the map.
-   */
   players: number;
-
-  /**
-   * Map mode.
-   */
-  mode: keyof typeof Map.Mode;
+  mode: GMMode;
 }
 
-export function generateMap(config: MapConfig) {
+export function generateGM(config: GMConfig) {
   if (config.namespace !== "@") {
-    // Unimplemented.
-    return new Map(config.mode, []);
+    throw "unimplemented";
   }
 
   switch (config.title) {
     case NativeMapVariant.Random: {
-      return generateRandomMap(config);
+      return generateRandomGM(config);
     }
   }
 
-  return new Map(config.mode, []);
+  throw "unimplemented";
 }
