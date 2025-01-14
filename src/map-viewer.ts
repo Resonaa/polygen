@@ -83,6 +83,7 @@ export class MapViewer extends LitElement {
     canvas {
       width: 90vw;
       height: 80vh;
+      touch-action: none;
 
       &:focus {
         outline: none;
