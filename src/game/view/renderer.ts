@@ -20,6 +20,7 @@ const mouseEventHandler = makeSendPropertiesHandler([
   "shiftKey",
   "button",
   "pointerType",
+  "pointerId",
   "clientX",
   "clientY",
   "pageX",
