@@ -1,6 +1,6 @@
 import { LitElement, css, html } from "lit";
 import { customElement, query } from "lit/decorators.js";
-import _ from "lodash";
+import { random } from "lodash";
 import { generateGM } from "~/game/generator/common";
 import type { GM, GMMode } from "~/game/gm";
 import { Palette } from "./game/palette";
@@ -11,8 +11,8 @@ let gm: GM;
 let palette: Palette;
 
 function generate() {
-  const players = _.random(2, 20);
-  const mode = _.random(0, 2) as GMMode;
+  const players = random(2, 20);
+  const mode = random(0, 2) as GMMode;
 
   gm = generateGM({
     players,

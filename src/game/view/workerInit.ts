@@ -24,9 +24,6 @@ import type { Font, FontData } from "three/addons/loaders/FontLoader.js";
 import { FontLoader } from "three/addons/loaders/FontLoader.js";
 import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
 
-import fontObject from "@/static/Noto Sans SC Thin_Regular.json";
-import textureJson from "@/static/texture/texture.json";
-import textureImage from "@/static/texture/texture.png";
 import type { Palette } from "~/game/palette";
 
 import type { Face } from "../gm";
@@ -40,6 +37,8 @@ import type { State } from "./workerEvents";
 
 export class WorkerInit {
   settings: Settings.Type["game"];
+
+  state: State;
 
   scene: Scene;
   renderer: WebGLRenderer;
@@ -72,9 +71,10 @@ export class WorkerInit {
     faces: Face[],
     palette: Palette,
     settings: Settings.Type["game"],
-    { width, height }: State
+    state: State
   ) {
     this.settings = settings;
+    this.state = state;
 
     // Basic setups: Scene, Renderer, Camera, Helper.
     const scene = new Scene();
@@ -90,11 +90,11 @@ export class WorkerInit {
       canvas
     });
     this.renderer = renderer;
-    renderer.setSize(width, height, false);
+    renderer.setSize(state.width, state.height, false);
 
     const camera = new PerspectiveCamera(
       settings.view.camera.fov,
-      width / height,
+      state.width / state.height,
       settings.view.camera.near,
       settings.view.camera.far
     );
@@ -115,7 +115,7 @@ export class WorkerInit {
 
     // Load font.
     const loader = new FontLoader();
-    this.font = loader.parse(fontObject as unknown as FontData);
+    this.font = loader.parse(this.state.fontObject as unknown as FontData);
 
     // Create materials.
     this.faceMaterial = new MeshBasicMaterial({
@@ -205,7 +205,7 @@ export class WorkerInit {
       transparent: true
     });
 
-    new ImageBitmapLoader().load(textureImage, data => {
+    new ImageBitmapLoader().load(this.state.textureImage, data => {
       texture.image = data;
       texture.needsUpdate = true;
     });
@@ -316,7 +316,7 @@ export class WorkerInit {
 
   updateImage(id: number) {
     const face = this.faces[id];
-    const frame = textureJson.frames[face.type].frame;
+    const frame = this.state.textureJson.frames[face.type].frame;
     const attribute = this.imageGeometry.getAttribute("uv");
     const uvs = attribute.array;
 
@@ -326,8 +326,10 @@ export class WorkerInit {
 
     // Update UVs for the plane
     for (let i = startingIndex; i < startingIndex + UVS_PER_IMAGE; i += 2) {
-      uvs[i] = (uvs[i] * frame.w + frame.x) / textureJson.meta.size.w;
-      uvs[i + 1] = (uvs[i + 1] * frame.h + frame.y) / textureJson.meta.size.h;
+      uvs[i] =
+        (uvs[i] * frame.w + frame.x) / this.state.textureJson.meta.size.w;
+      uvs[i + 1] =
+        (uvs[i + 1] * frame.h + frame.y) / this.state.textureJson.meta.size.h;
     }
 
     attribute.needsUpdate = true;

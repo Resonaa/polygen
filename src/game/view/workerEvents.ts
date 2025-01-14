@@ -2,9 +2,16 @@ import type { Face } from "../gm";
 import type { Palette } from "../palette";
 import type * as Settings from "./settings";
 
+import type fontObject from "@/static/Noto Sans SC Thin_Regular.json";
+import type textureJson from "@/static/texture/texture.json";
+import type textureImage from "@/static/texture/texture.png";
+
 export interface State {
   width: number;
   height: number;
+  fontObject: typeof fontObject;
+  textureJson: typeof textureJson;
+  textureImage: typeof textureImage;
 }
 
 export interface StartEvent {

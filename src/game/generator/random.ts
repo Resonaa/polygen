@@ -1,4 +1,4 @@
-import _ from "lodash";
+import { random, sample } from "lodash";
 import { Vector3 } from "three";
 import type { Face, GM } from "../gm";
 
@@ -11,16 +11,12 @@ export function generateRandomGM({ mode, players }: GMConfig): GM {
     const normal = new Vector3().randomDirection();
 
     faces.push({
-      position: [
-        _.random(0, 50) * 20,
-        _.random(0, 30) * 20,
-        _.random(0, 50) * 20
-      ],
+      position: [random(0, 50) * 20, random(0, 30) * 20, random(0, 50) * 20],
       normal: normal.toArray(),
-      color: _.random(0, players),
-      amount: 10 ** _.random(0, 9) * _.random(1, 9),
-      type: _.random(0, 8),
-      sides: _.sample([3, 4, 6]),
+      color: random(0, players),
+      amount: 10 ** random(0, 9) * random(1, 9),
+      type: random(0, 8),
+      sides: sample([3, 4, 6]),
       radius: 1
     });
   }

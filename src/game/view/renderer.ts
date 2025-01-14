@@ -4,7 +4,12 @@ import type { Face } from "../gm";
 
 import * as Settings from "./settings";
 
+import fontObject from "@/static/Noto Sans SC Thin_Regular.json";
+import textureJson from "@/static/texture/texture.json";
+import textureImage from "@/static/texture/texture.png";
+
 import Worker from "./worker?worker";
+
 import type { MainToWorkerEvent, State } from "./workerEvents";
 
 type SendFn = (data: object) => void;
@@ -130,7 +135,10 @@ export class Renderer {
 
     const state = {
       height: Math.floor(canvas.clientHeight * devicePixelRatio),
-      width: Math.floor(canvas.clientWidth * devicePixelRatio)
+      width: Math.floor(canvas.clientWidth * devicePixelRatio),
+      fontObject,
+      textureImage,
+      textureJson
     } satisfies State;
 
     this.postMessage(
