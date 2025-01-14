@@ -6,7 +6,7 @@ import { generateRandomGM } from "./random";
  * Currently-supported native maps.
  */
 export enum NativeMapVariant {
-  Random = "random",
+  Random = "random"
 }
 
 /**

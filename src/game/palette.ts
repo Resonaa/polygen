@@ -14,8 +14,8 @@ export class Palette extends Array<number> {
       0x808080,
       ...generateColors(n, {
         colorSpace: [0, 360, 25, 85, 45, 70],
-        clustering: "force-vector",
-      }).map((color) => Number.parseInt(color.substring(1), 16)),
+        clustering: "force-vector"
+      }).map(color => Number.parseInt(color.substring(1), 16))
     );
   }
 }

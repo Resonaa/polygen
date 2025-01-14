@@ -28,7 +28,7 @@ export interface Face {
 export enum GMMode {
   Hexagon = 0,
   Square = 1,
-  Triangle = 2,
+  Triangle = 2
 }
 
 export interface GM {

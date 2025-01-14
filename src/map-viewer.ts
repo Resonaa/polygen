@@ -18,7 +18,7 @@ function generate() {
     players,
     mode,
     namespace: "@",
-    title: "random",
+    title: "random"
   });
 
   console.log(gm);
@@ -29,13 +29,13 @@ function generate() {
 @customElement("map-viewer")
 export class MapViewer extends LitElement {
   @query("canvas")
-  _canvas: HTMLCanvasElement;
+  _canvas!: HTMLCanvasElement;
 
   render() {
     return html`
       <div class="box">
         <div>
-          <canvas></canvas>
+          <canvas tabindex="0"></canvas>
         </div>
         
         <div>
@@ -81,8 +81,12 @@ export class MapViewer extends LitElement {
     }
 
     canvas {
-      width: 80vw;
+      width: 90vw;
       height: 80vh;
+
+      &:focus {
+        outline: none;
+      }
     }
   `;
 }

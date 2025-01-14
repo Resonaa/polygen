@@ -4,11 +4,11 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
 import type * as Settings from "./settings";
 
-export default class MapControls extends OrbitControls {
+export class MapControls extends OrbitControls {
   constructor(
     object: Camera,
     domElement: HTMLElement,
-    settings: Settings.Type["game"]["view"]["controls"],
+    settings: Settings.Type["game"]["view"]["controls"]
   ) {
     super(object, domElement);
 
@@ -21,7 +21,7 @@ export default class MapControls extends OrbitControls {
     this.mouseButtons = {
       LEFT: MOUSE.PAN,
       MIDDLE: MOUSE.DOLLY,
-      RIGHT: MOUSE.ROTATE,
+      RIGHT: MOUSE.ROTATE
     };
 
     this.touches = { ONE: TOUCH.PAN, TWO: TOUCH.DOLLY_ROTATE };

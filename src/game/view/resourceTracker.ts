@@ -1,18 +1,27 @@
-import * as THREE from "three";
+import {
+  type BufferGeometry,
+  type Group,
+  Material,
+  type Mesh,
+  Object3D,
+  type Scene,
+  Texture,
+  type Uniform
+} from "three";
 
 type SingleResource =
-  | THREE.Object3D
-  | THREE.Scene
-  | THREE.Uniform
-  | THREE.Group
-  | THREE.Material
-  | THREE.Texture
-  | THREE.Mesh
-  | THREE.BufferGeometry;
+  | Object3D
+  | Scene
+  | Uniform
+  | Group
+  | Material
+  | Texture
+  | Mesh
+  | BufferGeometry;
 
 type Resource = SingleResource | SingleResource[];
 
-export default class ResourceTracker {
+export class ResourceTracker {
   resources = new Set<Resource>();
 
   track(resource?: Resource) {
@@ -29,18 +38,18 @@ export default class ResourceTracker {
       return;
     }
 
-    if ("dispose" in resource || resource instanceof THREE.Object3D) {
+    if ("dispose" in resource || resource instanceof Object3D) {
       this.resources.add(resource);
     }
 
-    if (resource instanceof THREE.Object3D) {
+    if (resource instanceof Object3D) {
       "geometry" in resource && this.track(resource.geometry);
       "material" in resource && this.track(resource.material);
       this.track(resource.children);
-    } else if (resource instanceof THREE.Material) {
+    } else if (resource instanceof Material) {
       // We have to check if there are any textures on the material.
       for (const value of Object.values(resource)) {
-        if (value instanceof THREE.Texture) {
+        if (value instanceof Texture) {
           this.track(value);
         }
       }
@@ -49,7 +58,7 @@ export default class ResourceTracker {
 
   dispose() {
     for (const resource of this.resources) {
-      if (resource instanceof THREE.Object3D) {
+      if (resource instanceof Object3D) {
         if (resource.parent) {
           resource.parent.remove(resource);
         }

@@ -1,6 +1,6 @@
-import { FaceType, type GM, type Face } from "../gm";
 import _ from "lodash";
 import { Vector3 } from "three";
+import type { Face, GM } from "../gm";
 
 import type { GMConfig } from "./common";
 
@@ -14,21 +14,21 @@ export function generateRandomGM({ mode, players }: GMConfig): GM {
       position: [
         _.random(0, 50) * 20,
         _.random(0, 30) * 20,
-        _.random(0, 50) * 20,
+        _.random(0, 50) * 20
       ],
       normal: normal.toArray(),
       color: _.random(0, players),
       amount: 10 ** _.random(0, 9) * _.random(1, 9),
       type: _.random(0, 8),
       sides: _.sample([3, 4, 6]),
-      radius: 1,
+      radius: 1
     });
   }
 
   return {
     mode,
     edges: [],
-    faces,
+    faces
   };
 
   // const map = new Map(mode);
