@@ -8,9 +8,10 @@ import fontObject from "@/static/Noto Sans SC Thin_Regular.json";
 import textureJson from "@/static/texture/texture.json";
 import textureImage from "@/static/texture/texture.png";
 
-import Worker from "./worker?worker";
+import type { State } from "./workerState";
 
-import type { MainToWorkerEvent, State } from "./workerEvents";
+import { transfer, wrap } from "comlink";
+import Worker from "./worker?worker";
 
 type SendFn = (data: object) => void;
 
@@ -77,62 +78,14 @@ const eventHandlers = {
   wheel: wheelEventHandler
 };
 
-let nextProxyId = 0;
-class ElementProxy {
-  id = nextProxyId++;
-  worker: Worker;
-
-  constructor(element: HTMLElement, worker: Worker) {
-    this.worker = worker;
-
-    const sendEvent = (data: object) => {
-      this.worker.postMessage({
-        type: "event",
-        id: this.id,
-        data
-      });
-    };
-
-    // register an id
-    worker.postMessage({
-      type: "makeProxy",
-      id: this.id
-    });
-
-    const rect = element.getBoundingClientRect();
-    sendEvent({
-      type: "size",
-      left: rect.left,
-      top: rect.top,
-      width: element.clientWidth,
-      height: element.clientHeight
-    });
-
-    for (const [eventName, handler] of Object.entries(eventHandlers)) {
-      element.addEventListener(eventName, event => {
-        handler(event as TouchEvent, sendEvent);
-      });
-    }
-  }
-}
-
 export class Renderer {
-  worker = new Worker();
-
-  postMessage<E extends MainToWorkerEvent>(
-    message: E,
-    transfer?: Transferable[]
-  ) {
-    this.worker.postMessage(message, transfer ?? []);
-  }
+  worker = wrap<typeof import("./workerInit")>(new Worker());
 
   constructor(canvas: HTMLCanvasElement, faces: Face[], palette: Palette) {
     canvas.focus();
     const offscreen = canvas.transferControlToOffscreen();
 
     const settings = Settings.Default.game;
-
-    const proxy = new ElementProxy(canvas, this.worker);
 
     const state = {
       height: Math.floor(canvas.clientHeight * devicePixelRatio),
@@ -142,41 +95,51 @@ export class Renderer {
       textureJson
     } satisfies State;
 
-    this.postMessage(
-      {
-        type: "start",
-        canvas: offscreen,
-        canvasId: proxy.id,
-        settings,
-        faces,
-        palette,
-        state
-      },
-      [offscreen]
-    );
+    const sendEvent: SendFn = event => {
+      this.worker.handleEvent(event as Event);
+    };
+
+    for (const [eventName, handler] of Object.entries(eventHandlers)) {
+      canvas.addEventListener(eventName, event => {
+        handler(event as TouchEvent, sendEvent);
+      });
+    }
+
+    const rect = canvas.getBoundingClientRect();
+
+    (async () => {
+      await this.worker.setCanvasBounding({
+        left: rect.left,
+        top: rect.top,
+        width: canvas.clientWidth,
+        height: canvas.clientHeight
+      });
+      await this.worker.set({ settings, state, palette, faces });
+      await this.worker.start(transfer(offscreen, [offscreen]));
+    })();
   }
 
   render() {
-    this.postMessage({ type: "render" });
+    this.worker.render();
   }
 
   reset() {
-    this.postMessage({ type: "reset" });
+    this.worker.reset();
   }
 
   dispose() {
-    this.postMessage({ type: "dispose" });
+    this.worker.dispose();
   }
 
   set faces(faces: Face[]) {
-    this.postMessage({ type: "updateFaces", faces });
+    this.worker.set({ faces });
   }
 
   set palette(palette: Palette) {
-    this.postMessage({ type: "updatePalette", palette });
+    this.worker.set({ palette });
   }
 
   setup() {
-    this.postMessage({ type: "setup" });
+    this.worker.setup();
   }
 }

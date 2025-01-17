@@ -14,7 +14,8 @@ export default {
             "iwanthue",
             "lit",
             "lz-string",
-            "simplex-noise"
+            "simplex-noise",
+            "comlink"
           ]
         }
       }

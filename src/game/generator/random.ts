@@ -7,7 +7,7 @@ import type { GMConfig } from "./common";
 export function generateRandomGM({ mode, players }: GMConfig): GM {
   const faces: Face[] = [];
 
-  for (let i = 0; i < 2500; i++) {
+  for (let i = 0; i < 100; i++) {
     const normal = new Vector3().randomDirection();
 
     faces.push({

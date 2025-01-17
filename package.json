@@ -13,6 +13,7 @@
     "@fontsource-variable/noto-sans-sc": "^5.1.1",
     "@fontsource/roboto": "^5.1.1",
     "@material/web": "^2.2.0",
+    "comlink": "^4.4.2",
     "iwanthue": "^2.0.0",
     "lit": "^3.2.1",
     "lodash": "^4.17.21",
@@ -22,7 +23,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "@types/bun": "^1.1.16",
+    "@types/bun": "^1.1.17",
     "@types/lodash": "^4.17.14",
     "@types/three": "^0.172.0",
     "less": "^4.2.1",
