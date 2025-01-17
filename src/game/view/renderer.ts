@@ -12,6 +12,7 @@ import type { State } from "./workerState";
 
 import { transfer, wrap } from "comlink";
 import Worker from "./worker?worker";
+import type * as WorkerInit from "./workerInit";
 
 type SendFn = (data: object) => void;
 
@@ -79,7 +80,7 @@ const eventHandlers = {
 };
 
 export class Renderer {
-  worker = wrap<typeof import("./workerInit")>(new Worker());
+  worker = wrap<typeof WorkerInit>(new Worker());
 
   constructor(canvas: HTMLCanvasElement, faces: Face[], palette: Palette) {
     canvas.focus();
