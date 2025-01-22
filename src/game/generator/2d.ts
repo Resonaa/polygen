@@ -1,4 +1,4 @@
-import { Vector2 } from "three";
+import { Vector2 } from "three/webgpu";
 import { GMMode } from "./common";
 
 export interface Face2D {

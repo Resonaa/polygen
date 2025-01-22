@@ -1,6 +1,5 @@
-import type { Camera } from "three";
-import { MOUSE, TOUCH } from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { type Camera, MOUSE, TOUCH } from "three/webgpu";
 
 import type * as Settings from "./settings";
 
@@ -13,6 +12,8 @@ export class MapControls extends OrbitControls {
     super(object, domElement);
 
     this.screenSpacePanning = false; // Pan orthogonal to world-space direction camera.up.
+
+    this.enableDamping = true;
 
     Object.assign(this, settings);
 

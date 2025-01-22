@@ -80,17 +80,24 @@ const eventHandlers = {
 };
 
 export class Renderer {
+  canvas: HTMLCanvasElement;
   worker = wrap<typeof WorkerInit>(new Worker());
 
+  async resizeListener() {
+    await this.worker.setCanvasSize({
+      width: Math.floor(this.canvas.clientWidth * devicePixelRatio),
+      height: Math.floor(this.canvas.clientHeight * devicePixelRatio)
+    });
+  }
+
   constructor(canvas: HTMLCanvasElement, faces: Face[], palette: Palette) {
+    this.canvas = canvas;
     canvas.focus();
     const offscreen = canvas.transferControlToOffscreen();
 
     const settings = Settings.Default.game;
 
     const state = {
-      height: Math.floor(canvas.clientHeight * devicePixelRatio),
-      width: Math.floor(canvas.clientWidth * devicePixelRatio),
       fontObject,
       textureImage,
       textureJson
@@ -106,14 +113,14 @@ export class Renderer {
       });
     }
 
-    const rect = canvas.getBoundingClientRect();
+    window.addEventListener("resize", this.resizeListener.bind(this));
 
     (async () => {
+      await this.resizeListener();
+      const { left, top } = canvas.getBoundingClientRect();
       await this.worker.setCanvasBounding({
-        left: rect.left,
-        top: rect.top,
-        width: canvas.clientWidth,
-        height: canvas.clientHeight
+        left,
+        top
       });
       await this.worker.set({ settings, state, palette, faces });
       await this.worker.start(transfer(offscreen, [offscreen]));
@@ -130,6 +137,7 @@ export class Renderer {
 
   dispose() {
     this.worker.dispose();
+    window.removeEventListener("resize", this.resizeListener);
   }
 
   set faces(faces: Face[]) {

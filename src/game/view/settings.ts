@@ -16,22 +16,19 @@ export const Default = {
         far: 1200
       },
       controls: {
-        dampingFactor: 0.12,
+        dampingFactor: 0.2,
         minDistance: 200,
         maxDistance: 1000,
         zoomSpeed: 2.1,
         rotateSpeed: 0.8,
         panSpeed: 1.1
       },
-      fog: {
-        near: 1000
-      },
       antialias: true,
-      background: 0,
       map: {
         radius: 20,
         maxTextSize: 7,
-        minTextSize: 1
+        minTextSize: 1,
+        imageSize: 20
       }
     }
   }

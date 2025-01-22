@@ -7,7 +7,7 @@ import {
   type Scene,
   Texture,
   type Uniform
-} from "three";
+} from "three/webgpu";
 
 type SingleResource =
   | Object3D

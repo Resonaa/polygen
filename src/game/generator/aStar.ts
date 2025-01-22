@@ -4,11 +4,11 @@ import { FaceType, type GM } from "../gm";
  * Calculates the distance between two lands on the map.
  */
 export function aStar(gm: GM, from: number, to: number) {
-  const vis = new Map<number, boolean>();
+  const vis = new Set<number>();
 
   const q: [number, number][] = [[from, 0]];
 
-  vis.set(from, true);
+  vis.add(from);
 
   while (true) {
     const front = q.shift();
@@ -19,11 +19,11 @@ export function aStar(gm: GM, from: number, to: number) {
     const [cur, len] = front;
 
     for (const nxt of gm.edges[cur]) {
-      if (vis.get(nxt) || gm.faces[nxt].type === FaceType.City) {
+      if (vis.has(nxt) || gm.faces[nxt].type === FaceType.City) {
         continue;
       }
 
-      vis.set(nxt, true);
+      vis.add(nxt);
       q.push([nxt, len + 1]);
 
       if (nxt.toString() === to.toString()) {

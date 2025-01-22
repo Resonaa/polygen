@@ -1,5 +1,5 @@
 import { createNoise2D } from "simplex-noise";
-import { Vector2 } from "three";
+import { Vector2 } from "three/webgpu";
 import { GM } from "../gm";
 import { type Face2D, dir } from "./2d";
 import type { GMConfig } from "./common";
@@ -25,7 +25,7 @@ export function span({ players, mode }: GMConfig) {
     }
   }
 
-  const facesOnBlock = new Map<string, boolean>();
+  const facesOnBlock = new Set<string>();
 
   for (let i = 0; i < size; i++) {
     for (let j = 0; j < size; j++) {
@@ -55,7 +55,7 @@ export function span({ players, mode }: GMConfig) {
             dir
           };
           faces2D.push(face);
-          facesOnBlock.set(hashFace2D(face), true);
+          facesOnBlock.add(hashFace2D(face));
         }
       }
     }

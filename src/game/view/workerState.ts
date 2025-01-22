@@ -3,8 +3,6 @@ import type textureJson from "@/static/texture/texture.json";
 import type textureImage from "@/static/texture/texture.png";
 
 export interface State {
-  width: number;
-  height: number;
   fontObject: typeof fontObject;
   textureJson: typeof textureJson;
   textureImage: typeof textureImage;

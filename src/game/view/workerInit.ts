@@ -1,16 +1,11 @@
 import type { Font, FontData } from "three/addons/loaders/FontLoader.js";
 import { FontLoader } from "three/addons/loaders/FontLoader.js";
-import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
+import { mergeGeometries as mergeGeometriesLib } from "three/addons/utils/BufferGeometryUtils.js";
 import {
   AxesHelper,
-  BufferAttribute,
   type BufferGeometry,
-  CircleGeometry,
   Color,
-  DoubleSide,
   Euler,
-  EventDispatcher,
-  Fog,
   ImageBitmapLoader,
   Matrix4,
   Mesh,
@@ -30,7 +25,13 @@ import type { Palette } from "~/game/palette";
 
 import type { Face } from "../gm";
 
-import { IMAGE_SIZE } from "./constants";
+import { CanvasProxy } from "./canvasProxy";
+import {
+  addGeometry,
+  mergeGeometries,
+  resetGeometries,
+  updateGeometry
+} from "./geometryUtils";
 import { MapControls } from "./mapControls";
 import { MetaLayer } from "./metaLayer";
 import { ResourceTracker } from "./resourceTracker";
@@ -58,16 +59,11 @@ const scene = new Scene();
 const axesHelper = new AxesHelper(1000);
 scene.add(axesHelper);
 
-const faceMaterial = new MeshBasicMaterial({
-  vertexColors: true,
-  side: DoubleSide
-});
-
 const textMaterial = new MeshBasicMaterial();
 
 const tracker = new ResourceTracker();
 
-let faceGeometry: BufferGeometry;
+let geometry: Mesh;
 let imageGeometry: BufferGeometry;
 
 const metaContainer = new Object3D();
@@ -81,8 +77,6 @@ const textureMaterial = new MeshBasicMaterial({
 });
 
 let renderRequested = false;
-
-let faceColorStartingIndex: number[] = [];
 
 function requestRenderIfNotRequested() {
   if (!renderRequested) {
@@ -114,84 +108,39 @@ export function set(arg: {
   }
 }
 
-function noop() {}
+const canvasProxy = new CanvasProxy();
 
-class CanvasProxy extends EventDispatcher<Record<string, Event>> {
-  // OrbitControls try to set style.touchAction
-  style = {};
+export const handleEvent = canvasProxy.handleEvent.bind(canvasProxy);
 
-  left = 0;
-  top = 0;
-  width = 0;
-  height = 0;
-
-  getRootNode() {
-    return {
-      addEventListener: noop,
-      removeEventListener: noop
-    };
-  }
-
-  get clientWidth() {
-    return this.width;
-  }
-
-  get clientHeight() {
-    return this.height;
-  }
-
-  // OrbitControls call these as of r132. Maybe we should implement them
-  setPointerCapture = noop;
-  releasePointerCapture = noop;
-
-  getBoundingClientRect() {
-    return {
-      left: this.left,
-      top: this.top,
-      width: this.width,
-      height: this.height,
-      right: this.left + this.width,
-      bottom: this.top + this.height
-    };
-  }
-
-  handleEvent(data: Event) {
-    data.preventDefault = noop;
-    data.stopPropagation = noop;
-    this.dispatchEvent(data);
-  }
-
-  focus = noop;
-}
-
-export const canvasProxy = new CanvasProxy();
-
-export function handleEvent(data: Event) {
-  canvasProxy.handleEvent(data);
-}
-
-export function setCanvasBounding(
-  data: Pick<CanvasProxy, "top" | "left" | "width" | "height">
-) {
+export function setCanvasSize(data: Pick<CanvasProxy, "width" | "height">) {
   Object.assign(canvasProxy, data);
 }
 
-export function start(canvas: OffscreenCanvas) {
-  scene.fog = new Fog(
-    settings.view.background,
-    settings.view.fog.near,
-    settings.view.camera.far
-  );
+export function setCanvasBounding(data: Pick<CanvasProxy, "top" | "left">) {
+  Object.assign(canvasProxy, data);
+}
 
+function resizeRendererToDisplaySize() {
+  const canvas = renderer.domElement;
+  const width = canvasProxy.width;
+  const height = canvasProxy.height;
+  const needResize = canvas.width !== width || canvas.height !== height;
+  if (needResize) {
+    renderer.setSize(width, height, false);
+  }
+  return needResize;
+}
+
+export function start(canvas: OffscreenCanvas) {
   renderer = new WebGPURenderer({
     antialias: settings.view.antialias,
     canvas
   });
-  renderer.setSize(state.width, state.height, false);
+  renderer.setSize(canvas.width, canvas.height, false);
 
   camera = new PerspectiveCamera(
     settings.view.camera.fov,
-    state.width / state.height,
+    canvas.width / canvas.height,
     settings.view.camera.near,
     settings.view.camera.far
   );
@@ -263,26 +212,21 @@ export function render() {
     matrix.multiply(rotationMatrix);
   }
 
+  if (resizeRendererToDisplaySize()) {
+    camera.aspect = canvasProxy.clientWidth / canvasProxy.clientHeight;
+    camera.updateProjectionMatrix();
+  }
+
   renderer.render(scene, camera);
 }
 
 export function reset() {
+  resetGeometries();
   tracker.dispose();
 }
 
 function updateColor(id: number) {
-  const attribute = faceGeometry.getAttribute("color");
-  const colors = attribute.array;
-  const start = faceColorStartingIndex[id];
-  const end = faceColorStartingIndex[id + 1] - 1;
-
-  const targetColor = new Color(palette[faces[id].color]).toArray();
-
-  for (let i = start; i <= end; i++) {
-    colors[i] = targetColor[(i - start) % 3];
-  }
-
-  attribute.needsUpdate = true;
+  updateGeometry(geometry, id, new Color(palette[faces[id].color]));
 }
 
 function updateText(id: number) {
@@ -358,32 +302,17 @@ function getMaxTextWidth(id: number) {
 }
 
 export function setup() {
-  const faceGeometries = [];
-  faceColorStartingIndex = [];
-
-  let startingIndex = 0;
-
   const imageGeometries = [];
 
   for (const [id, face] of faces.entries()) {
     const quaternion = getQuaternion(id);
 
-    // // Add geometry.
-    {
-      const geometry = new CircleGeometry(
-        face.radius * settings.view.map.radius,
-        face.sides
-      );
-
-      geometry.rotateZ((Math.PI * (face.sides - 2)) / face.sides / 2);
-      geometry.applyQuaternion(quaternion);
-      geometry.translate(...face.position);
-
-      const vertexCount = geometry.getAttribute("position").count;
-      faceGeometries.push(geometry);
-      faceColorStartingIndex.push(startingIndex);
-      startingIndex += vertexCount * 3;
-    }
+    addGeometry(
+      face.radius * settings.view.map.radius,
+      face.sides,
+      face.position,
+      quaternion
+    );
 
     // Add meta.
     {
@@ -398,7 +327,10 @@ export function setup() {
       metaContainer.add(meta);
       tracker.track(meta);
 
-      const image = new PlaneGeometry(IMAGE_SIZE, IMAGE_SIZE);
+      const image = new PlaneGeometry(
+        settings.view.map.imageSize,
+        settings.view.map.imageSize
+      );
       image.applyQuaternion(quaternion);
       image.translate(
         face.position[0],
@@ -409,22 +341,11 @@ export function setup() {
     }
   }
 
-  faceColorStartingIndex.push(startingIndex);
+  geometry = mergeGeometries();
+  scene.add(geometry);
+  tracker.track(geometry);
 
-  const mergedFaceGeometry = mergeGeometries(faceGeometries, false);
-  const colors = new Float32Array(faceColorStartingIndex[faces.length - 1] * 3);
-  mergedFaceGeometry.setAttribute(
-    "color",
-    new BufferAttribute(colors, 3, false)
-  );
-  const faceMesh = new Mesh(mergedFaceGeometry, faceMaterial);
-  faceMesh.matrixAutoUpdate = false;
-  faceMesh.matrixWorldAutoUpdate = false;
-  scene.add(faceMesh);
-  tracker.track(faceMesh);
-  faceGeometry = mergedFaceGeometry;
-
-  const mergedImageGeometry = mergeGeometries(imageGeometries, false);
+  const mergedImageGeometry = mergeGeometriesLib(imageGeometries, false);
   const imageMesh = new Mesh(mergedImageGeometry, textureMaterial);
   imageMesh.matrixAutoUpdate = false;
   imageMesh.matrixWorldAutoUpdate = false;
