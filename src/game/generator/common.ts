@@ -1,5 +1,3 @@
-import type { GMMode } from "../gm";
-
 import { generateRandomGM } from "./random";
 
 /**
@@ -7,6 +5,12 @@ import { generateRandomGM } from "./random";
  */
 export enum NativeMapVariant {
   Random = "random"
+}
+
+export enum GMMode {
+  Hexagon = 0,
+  Square = 1,
+  Triangle = 2
 }
 
 /**

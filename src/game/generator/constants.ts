@@ -1,4 +1,4 @@
-const LANDS_PER_PLAYER = 100;
+const LANDS_PER_PLAYER = 40;
 
 /**
  * Gets the default size for a square map containing n players.

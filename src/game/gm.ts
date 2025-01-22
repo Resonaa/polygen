@@ -25,62 +25,7 @@ export interface Face {
   color: number;
 }
 
-export enum GMMode {
-  Hexagon = 0,
-  Square = 1,
-  Triangle = 2
-}
-
 export interface GM {
-  mode: GMMode;
   edges: Edges;
   faces: Face[];
-
-  // /**
-  //  * Returns the dir array of the given pos.
-  //  */
-  // dir([x, y]: Pos): [number, number][] {
-  //   switch (this.mode) {
-  //     case Gm.Mode.Hexagon: {
-  //       return y % 2 === 1
-  //         ? [
-  //             [-1, -1],
-  //             [-1, 0],
-  //             [-1, 1],
-  //             [0, 1],
-  //             [1, 0],
-  //             [0, -1]
-  //           ]
-  //         : [
-  //             [0, -1],
-  //             [-1, 0],
-  //             [0, 1],
-  //             [1, 1],
-  //             [1, 0],
-  //             [1, -1]
-  //           ];
-  //     }
-  //     case Gm.Mode.Square: {
-  //       return [
-  //         [-1, 0],
-  //         [0, -1],
-  //         [1, 0],
-  //         [0, 1]
-  //       ];
-  //     }
-  //     case Gm.Mode.Triangle: {
-  //       return (x + y) % 2 === 0
-  //         ? [
-  //             [1, 0],
-  //             [0, -1],
-  //             [0, 1]
-  //           ]
-  //         : [
-  //             [-1, 0],
-  //             [0, -1],
-  //             [0, 1]
-  //           ];
-  //     }
-  //   }
-  // }
 }

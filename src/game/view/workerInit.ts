@@ -1,3 +1,6 @@
+import type { Font, FontData } from "three/addons/loaders/FontLoader.js";
+import { FontLoader } from "three/addons/loaders/FontLoader.js";
+import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
 import {
   AxesHelper,
   BufferAttribute,
@@ -5,9 +8,11 @@ import {
   CircleGeometry,
   Color,
   DoubleSide,
+  Euler,
   EventDispatcher,
   Fog,
   ImageBitmapLoader,
+  Matrix4,
   Mesh,
   MeshBasicMaterial,
   Object3D,
@@ -18,11 +23,8 @@ import {
   ShapeGeometry,
   Texture,
   Vector3,
-  WebGLRenderer
-} from "three";
-import type { Font, FontData } from "three/addons/loaders/FontLoader.js";
-import { FontLoader } from "three/addons/loaders/FontLoader.js";
-import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
+  WebGPURenderer
+} from "three/webgpu";
 
 import type { Palette } from "~/game/palette";
 
@@ -39,7 +41,7 @@ let settings: Settings.Type["game"];
 
 let state: State;
 
-let renderer: WebGLRenderer;
+let renderer: WebGPURenderer;
 
 let camera: PerspectiveCamera;
 
@@ -181,7 +183,7 @@ export function start(canvas: OffscreenCanvas) {
     settings.view.camera.far
   );
 
-  renderer = new WebGLRenderer({
+  renderer = new WebGPURenderer({
     antialias: settings.view.antialias,
     canvas
   });
@@ -205,75 +207,19 @@ export function start(canvas: OffscreenCanvas) {
 
   font = new FontLoader().parse(state.fontObject as unknown as FontData);
 
-  faceMaterial.onBeforeCompile = shader => {
-    const colorTable = new Float32Array(palette.length * 3);
-
-    for (const [i, color] of palette.entries()) {
-      const [r, g, b] = new Color(color).toArray();
-
-      colorTable[i * 3] = r;
-      colorTable[i * 3 + 1] = g;
-      colorTable[i * 3 + 2] = b;
-    }
-
-    const vertexShaderReplacements = [
-      {
-        from: "#include <common>",
-        to: `
-      #include <common>
-      attribute float colorIndex;
-      varying float vColorIndex;
-      `
-      },
-      {
-        from: "void main() {",
-        to: `
-      void main() {
-      vColorIndex = colorIndex;
-      `
-      }
-    ];
-
-    const fragmentShaderReplacements = [
-      {
-        from: "#include <common>",
-        to: `
-      #include <common>
-      uniform vec3 colorTable[${colorTable.length}];
-      varying float vColorIndex;
-    `
-      },
-      {
-        from: "#include <color_fragment>",
-        to: `
-      {
-        diffuseColor.rgb = colorTable[int(vColorIndex)];
-      }
-    `
-      }
-    ];
-
-    for (const rep of vertexShaderReplacements) {
-      shader.vertexShader = shader.vertexShader.replace(rep.from, rep.to);
-    }
-
-    for (const rep of fragmentShaderReplacements) {
-      shader.fragmentShader = shader.fragmentShader.replace(rep.from, rep.to);
-    }
-
-    shader.uniforms.colorTable = { value: colorTable };
-  };
-
   new ImageBitmapLoader().load(state.textureImage, data => {
     texture.image = data;
+    texture.flipY = false;
     texture.needsUpdate = true;
   });
 
-  setup();
+  renderer.init().then(() => {
+    setup();
 
-  render();
+    render();
 
-  controls.addEventListener("change", requestRenderIfNotRequested);
+    controls.addEventListener("change", requestRenderIfNotRequested);
+  });
 }
 
 export function dispose() {
@@ -281,33 +227,40 @@ export function dispose() {
   reset();
 }
 
+const cameraDirection = new Vector3();
+const rotationMatrix = new Matrix4();
+const oldRotation = new Euler();
+const newRotation = new Euler();
+
 export function render() {
   renderRequested = false;
   controls.update();
 
-  const cameraDirection = new Vector3();
   camera.getWorldDirection(cameraDirection);
 
   let rotationAngle: number | undefined;
 
   for (const meta of metaContainer.children) {
+    const matrix = meta.matrix;
+
+    oldRotation.setFromRotationMatrix(matrix);
+
     if (rotationAngle !== undefined) {
-      meta.rotation.z = rotationAngle;
-      meta.updateMatrix();
+      rotationMatrix.makeRotationZ(rotationAngle - oldRotation.z);
+      matrix.multiply(rotationMatrix);
       continue;
     }
 
-    const rotation = meta.rotation.clone();
+    rotationMatrix.lookAt(new Vector3(), cameraDirection, Object3D.DEFAULT_UP);
+    newRotation.setFromRotationMatrix(rotationMatrix);
 
-    meta.lookAt(meta.position.clone().sub(cameraDirection));
-    rotationAngle = meta.rotation.z;
-
-    meta.rotation.set(rotation.x, rotation.y, rotationAngle);
-    meta.updateMatrix();
-
-    if (rotationAngle === rotation.z) {
+    rotationAngle = newRotation.z;
+    if (rotationAngle === oldRotation.z) {
       break;
     }
+
+    rotationMatrix.makeRotationZ(rotationAngle - oldRotation.z);
+    matrix.multiply(rotationMatrix);
   }
 
   renderer.render(scene, camera);
@@ -318,13 +271,15 @@ export function reset() {
 }
 
 function updateColor(id: number) {
-  const attribute = faceGeometry.getAttribute("colorIndex");
+  const attribute = faceGeometry.getAttribute("color");
   const colors = attribute.array;
   const start = faceColorStartingIndex[id];
   const end = faceColorStartingIndex[id + 1] - 1;
 
+  const targetColor = new Color(palette[faces[id].color]).toArray();
+
   for (let i = start; i <= end; i++) {
-    colors[i] = faces[id].color;
+    colors[i] = targetColor[(i - start) % 3];
   }
 
   attribute.needsUpdate = true;
@@ -413,7 +368,7 @@ export function setup() {
   for (const [id, face] of faces.entries()) {
     const quaternion = getQuaternion(id);
 
-    // Add geometry.
+    // // Add geometry.
     {
       const geometry = new CircleGeometry(
         face.radius * settings.view.map.radius,
@@ -425,16 +380,9 @@ export function setup() {
       geometry.translate(...face.position);
 
       const vertexCount = geometry.getAttribute("position").count;
-      faceColorStartingIndex.push(startingIndex);
-
-      const colors = new Uint8Array(vertexCount);
-      colors.fill(face.color);
-      const attribute = new BufferAttribute(colors, 1);
-
-      geometry.setAttribute("colorIndex", attribute);
       faceGeometries.push(geometry);
-
-      startingIndex += colors.length;
+      faceColorStartingIndex.push(startingIndex);
+      startingIndex += vertexCount * 3;
     }
 
     // Add meta.
@@ -446,6 +394,7 @@ export function setup() {
       meta.position.fromArray(face.position);
       meta.applyQuaternion(quaternion);
       meta.matrixAutoUpdate = false;
+      meta.updateMatrix();
       metaContainer.add(meta);
       tracker.track(meta);
 
@@ -463,6 +412,11 @@ export function setup() {
   faceColorStartingIndex.push(startingIndex);
 
   const mergedFaceGeometry = mergeGeometries(faceGeometries, false);
+  const colors = new Float32Array(faceColorStartingIndex[faces.length - 1] * 3);
+  mergedFaceGeometry.setAttribute(
+    "color",
+    new BufferAttribute(colors, 3, false)
+  );
   const faceMesh = new Mesh(mergedFaceGeometry, faceMaterial);
   faceMesh.matrixAutoUpdate = false;
   faceMesh.matrixWorldAutoUpdate = false;
