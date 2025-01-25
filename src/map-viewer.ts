@@ -1,8 +1,7 @@
+import { GM } from "@logenpy/gm";
 import { LitElement, css, html } from "lit";
 import { customElement, query } from "lit/decorators.js";
 import { random } from "lodash";
-import { generateGM } from "~/game/generator/common";
-import type { GM, GMMode } from "~/game/gm";
 import { Palette } from "./game/palette";
 import { Renderer } from "./game/view/renderer";
 
@@ -12,16 +11,9 @@ let palette: Palette;
 
 function generate() {
   const players = random(2, 20);
-  const mode = random(0, 2) as GMMode;
+  const size = 2500;
 
-  gm = generateGM({
-    players,
-    mode,
-    namespace: "@",
-    title: "random"
-  });
-
-  console.log(gm);
+  gm = GM.random(size, players);
 
   palette = Palette.colors(players);
 }
@@ -59,12 +51,12 @@ export class MapViewer extends LitElement {
 
     if (renderer) {
       renderer.reset();
-      renderer.faces = gm.faces;
+      renderer.gm = gm;
       renderer.palette = palette;
       renderer.setup();
       renderer.render();
     } else {
-      renderer = new Renderer(this._canvas, gm.faces, palette);
+      renderer = new Renderer(this._canvas, gm, palette);
     }
   }
 

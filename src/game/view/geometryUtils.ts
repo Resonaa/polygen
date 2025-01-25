@@ -5,9 +5,9 @@ import {
   DoubleSide,
   Mesh,
   MeshBasicMaterial,
-  type Quaternion
+  type Quaternion,
+  type Vector3
 } from "three/webgpu";
-import type { Face } from "../gm";
 
 import { mergeGeometries as mergeGeometriesLib } from "three/addons/utils/BufferGeometryUtils.js";
 
@@ -25,14 +25,14 @@ let nowIndex = 0;
 export function addGeometry(
   radius: number,
   sides: number,
-  position: Face["position"],
+  position: Vector3,
   quaternion: Quaternion
 ) {
   const geometry = new CircleGeometry(radius, sides);
 
   geometry.rotateZ((Math.PI * (sides - 2)) / sides / 2);
   geometry.applyQuaternion(quaternion);
-  geometry.translate(...position);
+  geometry.translate(...position.toArray());
 
   const vertexCount = geometry.getAttribute("position").count;
   geometries.push(geometry);

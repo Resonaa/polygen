@@ -1,18 +1,10 @@
 import type { Palette } from "~/game/palette";
 
-import type { Face } from "../gm";
+import type { GM } from "@logenpy/gm";
 
 import * as Settings from "./settings";
 
-import fontObject from "@/static/Noto Sans SC Thin_Regular.json";
-import textureJson from "@/static/texture/texture.json";
-import textureImage from "@/static/texture/texture.png";
-
-import type { State } from "./workerState";
-
-import { transfer, wrap } from "comlink";
-import Worker from "./worker?worker";
-import type * as WorkerInit from "./workerInit";
+import { type ProxyMarked, proxy, transfer } from "comlink";
 
 type SendFn = (data: object) => void;
 
@@ -81,7 +73,13 @@ const eventHandlers = {
 
 export class Renderer {
   canvas: HTMLCanvasElement;
-  worker = wrap<typeof WorkerInit>(new Worker());
+
+  // @ts-ignore
+  worker = new ComlinkWorker(new URL("./worker.ts", import.meta.url), {
+    module: true
+  });
+
+  private proxiedGM: GM & ProxyMarked;
 
   async resizeListener() {
     await this.worker.setCanvasSize({
@@ -90,18 +88,12 @@ export class Renderer {
     });
   }
 
-  constructor(canvas: HTMLCanvasElement, faces: Face[], palette: Palette) {
+  constructor(canvas: HTMLCanvasElement, gm: GM, palette: Palette) {
     this.canvas = canvas;
     canvas.focus();
     const offscreen = canvas.transferControlToOffscreen();
 
     const settings = Settings.Default.game;
-
-    const state = {
-      fontObject,
-      textureImage,
-      textureJson
-    } satisfies State;
 
     const sendEvent: SendFn = event => {
       this.worker.handleEvent(event as Event);
@@ -115,6 +107,8 @@ export class Renderer {
 
     window.addEventListener("resize", this.resizeListener.bind(this));
 
+    this.proxiedGM = proxy(gm);
+
     (async () => {
       await this.resizeListener();
       const { left, top } = canvas.getBoundingClientRect();
@@ -122,7 +116,9 @@ export class Renderer {
         left,
         top
       });
-      await this.worker.set({ settings, state, palette, faces });
+      await this.worker.setConfig({ settings, palette });
+      // @ts-ignore
+      await this.worker.setGM(this.proxiedGM);
       await this.worker.start(transfer(offscreen, [offscreen]));
     })();
   }
@@ -140,12 +136,18 @@ export class Renderer {
     window.removeEventListener("resize", this.resizeListener);
   }
 
-  set faces(faces: Face[]) {
-    this.worker.set({ faces });
+  get gm() {
+    return this.proxiedGM;
+  }
+
+  set gm(gm: GM) {
+    this.proxiedGM.free();
+    this.proxiedGM = proxy(gm);
+    this.worker.setGM(this.proxiedGM);
   }
 
   set palette(palette: Palette) {
-    this.worker.set({ palette });
+    this.worker.setConfig({ palette });
   }
 
   setup() {
