@@ -1,9 +1,9 @@
 name = "polygen"
 compatibility_date = "2025-06-13"
-route = "161.moe"
+route = "161.moe/*"
 
 [env.development]
-route = "dev.161.moe"
+route = "dev.161.moe/*"
 
 [assets]
 directory = "./packages/ui/dist/"
