@@ -1,7 +1,7 @@
-import { GM } from "@logenpy/gm";
+import { Config, GM } from "@polygen/gm";
 import { LitElement, css, html } from "lit";
 import { customElement, query } from "lit/decorators.js";
-import { random } from "lodash";
+import random from "lodash/random";
 import { Palette } from "./game/palette";
 import { Renderer } from "./game/view/renderer";
 
@@ -11,9 +11,11 @@ let palette: Palette;
 
 function generate() {
   const players = random(2, 20);
-  const size = 2500;
+  const size = 250;
 
-  gm = GM.random(size, players);
+  const config = new Config(size, players);
+
+  gm = GM.generate_pure_random(config);
 
   palette = Palette.colors(players);
 }
@@ -29,7 +31,7 @@ export class MapViewer extends LitElement {
         <div>
           <canvas tabindex="0"></canvas>
         </div>
-        
+
         <div>
           <md-filled-button @click=${this._onReset}>Reset</md-filled-button>
         </div>

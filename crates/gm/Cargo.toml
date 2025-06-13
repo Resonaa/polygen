@@ -1,0 +1,23 @@
+[package]
+name = "gm"
+version = "0.1.0"
+readme = "../../README.md"
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[package.metadata.wasm-pack.profile.release]
+# TODO: temporary workaround for network issues in downloading wasm-opt
+wasm-opt = false
+
+[dependencies]
+bitfield-struct.workspace = true
+glam.workspace = true
+rand.workspace = true
+wasm-bindgen.workspace = true
+getrandom.workspace = true
+rand_chacha.workspace = true

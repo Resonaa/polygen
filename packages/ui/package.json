@@ -1,0 +1,30 @@
+{
+  "name": "ui",
+  "version": "0.1.0",
+  "type": "module",
+  "dependencies": {
+    "@fastify/deepmerge": "catalog:utils",
+    "@fontsource-variable/noto-sans-sc": "catalog:resources",
+    "@material/web": "catalog:view",
+    "comlink": "catalog:view",
+    "iwanthue": "catalog:utils",
+    "lit": "catalog:view",
+    "lodash": "catalog:utils",
+    "lz-string": "catalog:utils",
+    "three": "catalog:view"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "catalog:ci",
+    "@types/bun": "catalog:typings",
+    "@types/lodash": "catalog:typings",
+    "@types/three": "catalog:typings",
+    "less": "catalog:build",
+    "type-fest": "catalog:typings",
+    "typescript": "catalog:typings",
+    "vite": "catalog:build",
+    "vite-plugin-comlink": "catalog:build",
+    "vite-plugin-top-level-await": "catalog:build",
+    "vite-plugin-wasm": "catalog:build",
+    "vite-tsconfig-paths": "catalog:build"
+  }
+}

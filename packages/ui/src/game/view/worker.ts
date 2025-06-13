@@ -23,7 +23,7 @@ import {
 
 import type { Palette } from "~/game/palette";
 
-import type { GM } from "@logenpy/gm";
+import type { GM } from "@polygen/gm";
 
 import { CanvasProxy } from "./canvasProxy";
 import {
