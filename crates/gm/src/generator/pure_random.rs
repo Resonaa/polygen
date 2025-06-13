@@ -62,7 +62,7 @@ impl Generator for Config {
     for land in &mut gm.lands {
       land.set_amount(10u32.pow(rng.gen_range(0..=6)) * rng.gen_range(1..=9));
       land.set_color(rng.gen_range(0..=self.players as u32));
-      land.set_type(rng.gen());
+      land.set_type(rng.r#gen());
     }
 
     gm

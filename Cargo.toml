@@ -3,7 +3,7 @@ members = ["crates/*"]
 resolver = "2"
 
 [workspace.package]
-edition = "2021"
+edition = "2024"
 license = "Unlicense"
 repository = "https://github.com/Resonaa/polygen"
 homepage = "https://161.moe"
