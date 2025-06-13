@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - dev
   workflow_dispatch:
 
 permissions:
@@ -52,7 +53,16 @@ jobs:
       - name: Build for production
         run: bun release
 
+      - name: Configure environment
+        run: |
+          if [ "${{ github.ref_name }}" == "main" ]; then
+            echo "CLOUDFLARE_ENV=production" >> $GITHUB_ENV
+          else
+            echo "CLOUDFLARE_ENV=development" >> $GITHUB_ENV
+          fi
+
       - name: Deploy
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          environment: ${{ env.CLOUDFLARE_ENV }}

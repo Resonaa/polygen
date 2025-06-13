@@ -1,5 +1,16 @@
 name = "polygen"
 compatibility_date = "2025-06-13"
+routes = [
+  { pattern = "161.moe", custom_domain = true },
+  { pattern = "161.moe/*", zone_name = "161.moe" }
+]
+workers_dev = false
+
+[env.development]
+routes = [
+  { pattern = "dev.161.moe", custom_domain = true },
+  { pattern = "dev.161.moe/*", zone_name = "161.moe" }
+]
 
 [assets]
 directory = "./packages/ui/dist/"
