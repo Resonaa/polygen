@@ -42,7 +42,7 @@
   },
   "scripts": {
     "format": "biome check --write",
-    "wasm": "wasm-pack build ./crates/gm --scope polygen --out-dir ../../node_modules/@polygen/gm",
+    "wasm": "wasm-pack build ./crates/wasm --scope polygen --out-dir ../../node_modules/@polygen/wasm",
     "dev": "cd ./packages/ui && vite dev",
     "release": "cd ./packages/ui && vite build",
     "preview": "cd ./packages/ui && vite preview"

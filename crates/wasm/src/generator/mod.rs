@@ -13,7 +13,7 @@ pub trait Generator {
 
 impl GM {
   pub fn generate_from_entropy(generator: impl Generator) -> GM {
-    let rng = rand_chacha::ChaCha20Rng::from_entropy();
+    let rng = rand_chacha::ChaCha20Rng::from_os_rng();
     generator.generate(rng)
   }
 }

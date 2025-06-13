@@ -1,4 +1,4 @@
-import { Config, GM } from "@polygen/gm";
+import { Config, GM } from "@polygen/wasm";
 import { LitElement, css, html } from "lit";
 import { customElement, query } from "lit/decorators.js";
 import random from "lodash/random";

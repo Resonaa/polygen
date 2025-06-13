@@ -1,0 +1,12 @@
+[package]
+name = "models"
+version = "0.1.0"
+readme = "../../README.md"
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+
+[dependencies]
+bitfield-struct.workspace = true
+glam.workspace = true

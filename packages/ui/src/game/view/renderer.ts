@@ -1,6 +1,6 @@
 import type { Palette } from "~/game/palette";
 
-import type { GM } from "@polygen/gm";
+import type { GM } from "@polygen/wasm";
 
 import * as Settings from "./settings";
 

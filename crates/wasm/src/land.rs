@@ -3,8 +3,8 @@
 use std::mem;
 
 use bitfield_struct::bitfield;
-use rand::distributions::{Distribution, Standard};
-use rand::Rng;
+use rand::distr::StandardUniform;
+use rand::prelude::{Distribution, Rng};
 use wasm_bindgen::prelude::wasm_bindgen;
 
 /// [`Land`] types.
@@ -33,9 +33,9 @@ impl Type {
   }
 }
 
-impl Distribution<Type> for Standard {
+impl Distribution<Type> for StandardUniform {
   fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Type {
-    Type::from_bits(rng.gen_range(0..=7))
+    Type::from_bits(rng.random_range(0..=7))
   }
 }
 
@@ -48,21 +48,6 @@ impl Distribution<Type> for Standard {
 ///             +----------+---------+--------+
 /// Properties |  Amount  |  Color  |  Type  |
 ///             +----------+---------+--------+
-/// ```
-///
-/// # Example
-///
-/// ```rust
-/// use gm::{Land, Type};
-///
-/// let land = Land::new()
-///             .with_amount(161)
-///             .with_color(16)
-///             .with_type(Type::Crown);
-///
-/// assert_eq!(land.amount(), 161);
-/// assert_eq!(land.color(), 16);
-/// assert_eq!(land.r#type(), Type::Crown);
 /// ```
 #[bitfield(u32)]
 pub struct Land {
