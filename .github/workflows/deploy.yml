@@ -37,6 +37,9 @@ jobs:
       - name: Rust cache
         uses: Swatinem/rust-cache@v2
 
+      - name: Install wasm-pack
+        run: cargo install wasm-pack
+
       - name: Install dependencies
         run: bun install
 

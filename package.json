@@ -36,8 +36,7 @@
         "vite-plugin-comlink": "^5.1.0",
         "vite-plugin-top-level-await": "^1.5.0",
         "vite-plugin-wasm": "^3.4.1",
-        "vite-tsconfig-paths": "^5.1.4",
-        "wasm-pack": "^0.13.1"
+        "vite-tsconfig-paths": "^5.1.4"
       }
     }
   },

@@ -6,6 +6,7 @@
 
 - [Rust](https://www.rust-lang.org/) 1.87+
 - [Bun](https://bun.sh/) 1.2+
+- [wasm-pack](https://rustwasm.github.io/wasm-pack/) 0.13+
 
 ## Building
 
