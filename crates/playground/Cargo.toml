@@ -1,0 +1,12 @@
+[package]
+name = "playground"
+version = "0.1.0"
+readme = "../../README.md"
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+
+[dependencies]
+model = { path = "../model" }
+generator = { path = "../generator" }

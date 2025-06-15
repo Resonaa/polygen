@@ -22,3 +22,5 @@ rand.workspace = true
 wasm-bindgen.workspace = true
 getrandom.workspace = true
 rand_chacha.workspace = true
+model = { path = "../model" }
+generator = { path = "../generator" }

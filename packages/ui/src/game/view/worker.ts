@@ -23,7 +23,7 @@ import {
 
 import type { Palette } from "~/game/palette";
 
-import type { GM } from "@polygen/gm";
+import type { GM, RP } from "@polygen/wasm";
 
 import { CanvasProxy } from "./canvasProxy";
 import {
@@ -53,6 +53,7 @@ let controls: MapControls;
 let font: Font;
 
 let gm: Remote<GM>;
+let rp: Remote<RP>;
 
 let palette: Palette;
 
@@ -71,6 +72,10 @@ let imageGeometry: BufferGeometry;
 const metaContainer = new Object3D();
 metaContainer.matrixAutoUpdate = false;
 scene.add(metaContainer);
+
+const helperContainer = new Object3D();
+helperContainer.matrixAutoUpdate = false;
+scene.add(helperContainer);
 
 const texture = new Texture();
 const textureMaterial = new MeshBasicMaterial({
@@ -102,6 +107,10 @@ export function setConfig(arg: {
 
 export function setGM(_gm: Remote<GM>) {
   gm = _gm;
+}
+
+export function setRP(_rp: Remote<RP>) {
+  rp = _rp;
 }
 
 const canvasProxy = new CanvasProxy();
@@ -186,7 +195,13 @@ export function render() {
 
   let rotationAngle: number | undefined;
 
-  for (const meta of metaContainer.children) {
+  for (const _meta of metaContainer.children) {
+    const meta = _meta as MetaLayer;
+
+    if (!meta.isTop) {
+      continue;
+    }
+
     const matrix = meta.matrix;
 
     oldRotation.setFromRotationMatrix(matrix);
@@ -280,18 +295,9 @@ async function updateImage(id: number) {
   attribute.needsUpdate = true;
 }
 
-async function getQuaternion(id: number) {
-  const [x, y, z] = await gm.normal(id);
-  return new Quaternion().setFromUnitVectors(Object3D.DEFAULT_UP, {
-    x,
-    y,
-    z
-  });
-}
-
 async function getMaxTextWidth(id: number) {
-  const sides = await gm.sides(id);
-  const radius = await gm.radius(id);
+  const sides = await rp.sides(id);
+  const radius = await rp.radius(id);
 
   const dict = { 6: 1.8, 4: 1.4, 3: 0.86 };
 
@@ -304,22 +310,38 @@ export async function setup() {
   const size = await gm.size;
 
   for (let id = 0; id < size; id++) {
-    const quaternion = await getQuaternion(id);
+    const normal = new Vector3(...(await rp.normal(id)));
+    const matrix = new Matrix4().lookAt(
+      normal,
+      new Vector3(),
+      Object3D.DEFAULT_UP
+    );
+    const quaternion = new Quaternion().setFromRotationMatrix(matrix);
 
-    const radius = (await gm.radius(id)) * settings.view.map.radius;
-    const sides = await gm.sides(id);
-    const position = new Vector3(...(await gm.position(id))).multiplyScalar(
+    const radius = (await rp.radius(id)) * settings.view.map.radius;
+    const sides = await rp.sides(id);
+    const position = new Vector3(...(await rp.position(id))).multiplyScalar(
       settings.view.map.radius
     );
 
     addGeometry(radius, sides, position, quaternion);
+
+    // const normal = new Vector3(...(await rp.normal(id)));
+    // const helper = new ArrowHelper(normal, position, 10, 0xff0000, 10, 5);
+    // helperContainer.add(helper);
+
+    // const axesHelper = new AxesHelper(15);
+    // axesHelper.position.copy(position);
+    // axesHelper.applyQuaternion(quaternion);
+    // helperContainer.add(axesHelper);
 
     // Add meta.
     {
       const text = new Mesh(undefined, textMaterial);
       text.matrixAutoUpdate = false;
 
-      const meta = new MetaLayer(text);
+      const isTop = normal.y !== 0;
+      const meta = new MetaLayer(text, isTop);
       meta.position.copy(position);
       meta.applyQuaternion(quaternion);
       meta.matrixAutoUpdate = false;
@@ -331,8 +353,11 @@ export async function setup() {
         settings.view.map.imageSize,
         settings.view.map.imageSize
       );
+      image.rotateZ(Math.PI);
+      image.translate(0, 0, 0.5);
       image.applyQuaternion(quaternion);
-      image.translate(position.x, position.y, position.z + 0.5);
+      image.translate(position.x, position.y, position.z);
+
       imageGeometries.push(image);
     }
   }
@@ -340,6 +365,7 @@ export async function setup() {
   geometry = mergeGeometries();
   scene.add(geometry);
   tracker.track(geometry);
+  tracker.track(helperContainer);
 
   const mergedImageGeometry = mergeGeometriesLib(imageGeometries, false);
   const imageMesh = new Mesh(mergedImageGeometry, textureMaterial);

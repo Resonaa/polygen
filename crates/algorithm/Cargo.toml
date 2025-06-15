@@ -1,5 +1,5 @@
 [package]
-name = "models"
+name = "algorithm"
 version = "0.1.0"
 readme = "../../README.md"
 edition.workspace = true
@@ -8,5 +8,7 @@ repository.workspace = true
 homepage.workspace = true
 
 [dependencies]
-bitfield-struct.workspace = true
-glam.workspace = true
+anyhow.workspace = true
+model = { path = "../model" }
+rand.workspace = true
+thiserror.workspace = true

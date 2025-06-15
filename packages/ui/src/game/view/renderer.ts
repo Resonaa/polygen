@@ -1,6 +1,6 @@
 import type { Palette } from "~/game/palette";
 
-import type { GM } from "@polygen/wasm";
+import type { GM, RP } from "@polygen/wasm";
 
 import * as Settings from "./settings";
 
@@ -80,6 +80,7 @@ export class Renderer {
   });
 
   private proxiedGM: GM & ProxyMarked;
+  private proxiedRP: RP & ProxyMarked;
 
   async resizeListener() {
     await this.worker.setCanvasSize({
@@ -88,7 +89,7 @@ export class Renderer {
     });
   }
 
-  constructor(canvas: HTMLCanvasElement, gm: GM, palette: Palette) {
+  constructor(canvas: HTMLCanvasElement, gm: GM, rp: RP, palette: Palette) {
     this.canvas = canvas;
     canvas.focus();
     const offscreen = canvas.transferControlToOffscreen();
@@ -108,6 +109,7 @@ export class Renderer {
     window.addEventListener("resize", this.resizeListener.bind(this));
 
     this.proxiedGM = proxy(gm);
+    this.proxiedRP = proxy(rp);
 
     (async () => {
       await this.resizeListener();
@@ -119,12 +121,14 @@ export class Renderer {
       await this.worker.setConfig({ settings, palette });
       // @ts-ignore
       await this.worker.setGM(this.proxiedGM);
+      // @ts-ignore
+      await this.worker.setRP(this.proxiedRP);
       await this.worker.start(transfer(offscreen, [offscreen]));
     })();
   }
 
-  render() {
-    this.worker.render();
+  async render() {
+    await this.worker.render();
   }
 
   reset() {
@@ -140,17 +144,27 @@ export class Renderer {
     return this.proxiedGM;
   }
 
+  get rp() {
+    return this.proxiedRP;
+  }
+
   set gm(gm: GM) {
     this.proxiedGM.free();
     this.proxiedGM = proxy(gm);
     this.worker.setGM(this.proxiedGM);
   }
 
+  set rp(rp: RP) {
+    this.proxiedRP.free();
+    this.proxiedRP = proxy(rp);
+    this.worker.setRP(this.proxiedRP);
+  }
+
   set palette(palette: Palette) {
     this.worker.setConfig({ palette });
   }
 
-  setup() {
-    this.worker.setup();
+  async setup() {
+    await this.worker.setup();
   }
 }

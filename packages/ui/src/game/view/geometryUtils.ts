@@ -13,7 +13,9 @@ import { mergeGeometries as mergeGeometriesLib } from "three/addons/utils/Buffer
 
 const material = new MeshBasicMaterial({
   vertexColors: true,
-  side: DoubleSide
+  side: DoubleSide,
+  transparent: true,
+  opacity: 0.7
 });
 
 let geometries: CircleGeometry[] = [];

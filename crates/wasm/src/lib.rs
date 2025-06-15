@@ -1,19 +1,40 @@
-//! # polygen GM library
-//!
-//! ## Overview
-//!
-//! The crate can be used as a regular Rust lib or be compiled into WebAssembly.
-//!
-//! ### GM manipulation
-//!
-//! - [`land::Land`], [`land::Type`] in [`land`].
-//! - [`gm::GM`] in [`gm`].
+use model::types::{GMConfigPlayerCount, GMConfigRatio, GMMode};
+pub use model::{GM, GMConfig, GMName, GMProfile, RP};
+use wasm_bindgen::prelude::wasm_bindgen;
 
-pub mod land;
+#[wasm_bindgen]
+pub struct Generation {
+  gm: GM,
+  rp: RP
+}
 
-pub mod gm;
+impl Generation {
+  pub fn new((gm, rp): (GM, RP)) -> Self {
+    Self { gm, rp }
+  }
+}
 
-pub mod generator;
+#[wasm_bindgen]
+impl Generation {
+  pub fn gm(&self) -> GM {
+    self.gm.clone()
+  }
 
-pub use gm::GM;
-pub use land::{Land, Type};
+  pub fn rp(&self) -> RP {
+    self.rp.clone()
+  }
+}
+
+#[wasm_bindgen]
+pub fn generate_random(
+  player_count: GMConfigPlayerCount,
+  mode: GMMode,
+  width: GMConfigRatio,
+  height: GMConfigRatio,
+  y_ratio: GMConfigRatio,
+  city_density: GMConfigRatio
+) -> Generation {
+  let config = GMConfig { player_count, mode, width, height, y_ratio, city_density };
+  let profile = GMProfile { name: GMName::PureRandom, config };
+  Generation::new(generator::generate(profile))
+}

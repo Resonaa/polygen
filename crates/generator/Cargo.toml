@@ -1,0 +1,16 @@
+[package]
+name = "generator"
+version = "0.1.0"
+readme = "../../README.md"
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+
+[dependencies]
+anyhow.workspace = true
+model = { path = "../model" }
+algorithm = { path = "../algorithm" }
+rand.workspace = true
+thiserror.workspace = true
+rand_chacha.workspace = true

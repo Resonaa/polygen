@@ -1,4 +1,4 @@
-import { Config, GM } from "@polygen/wasm";
+import { type GM, GMMode, type RP, generate_random } from "@polygen/wasm";
 import { LitElement, css, html } from "lit";
 import { customElement, query } from "lit/decorators.js";
 import random from "lodash/random";
@@ -7,17 +7,32 @@ import { Renderer } from "./game/view/renderer";
 
 let renderer: Renderer;
 let gm: GM;
+let rp: RP;
 let palette: Palette;
 
 function generate() {
-  const players = random(2, 20);
-  const size = 250;
+  const players = random(2, 2);
+  const widthRatio = random(0, 1, true);
+  const heightRatio = random(0, 1, true);
+  const mode = GMMode.Square;
+  //const yRatio = random(0, 1, true);
+  const yRatio = 0.5;
+  const cityDensity = random(0, 1, true);
 
-  const config = new Config(size, players);
+  const gen = generate_random(
+    players,
+    mode,
+    widthRatio,
+    heightRatio,
+    yRatio,
+    cityDensity
+  );
 
-  gm = GM.generate_pure_random(config);
-
+  gm = gen.gm();
+  rp = gen.rp();
+  console.log(gm.size);
   palette = Palette.colors(players);
+  gen.free();
 }
 
 @customElement("map-viewer")
@@ -54,11 +69,11 @@ export class MapViewer extends LitElement {
     if (renderer) {
       renderer.reset();
       renderer.gm = gm;
+      renderer.rp = rp;
       renderer.palette = palette;
-      renderer.setup();
-      renderer.render();
+      renderer.setup().then(() => renderer.render());
     } else {
-      renderer = new Renderer(this._canvas, gm, palette);
+      renderer = new Renderer(this._canvas, gm, rp, palette);
     }
   }
 
