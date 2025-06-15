@@ -5,12 +5,12 @@ import wasm from "vite-plugin-wasm";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 export default {
-  plugins: [wasm(), topLevelAwait(), comlink(), tsconfigPaths()],
-  worker: {
-    plugins: () => [wasm(), topLevelAwait(), comlink(), tsconfigPaths()],
-    format: "es"
-  },
   build: {
     target: "ESNext"
+  },
+  plugins: [wasm(), topLevelAwait(), comlink(), tsconfigPaths()],
+  worker: {
+    format: "es",
+    plugins: () => [wasm(), topLevelAwait(), comlink(), tsconfigPaths()]
   }
 } satisfies UserConfig;

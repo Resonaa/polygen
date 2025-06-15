@@ -1,7 +1,8 @@
-import { type GM, GMMode, type RP, generate_random } from "@polygen/wasm";
-import { LitElement, css, html } from "lit";
+import { type GM, GMMode, generate_random, type RP } from "@polygen/wasm";
+import { css, html, LitElement } from "lit";
 import { customElement, query } from "lit/decorators.js";
 import random from "lodash/random";
+
 import { Palette } from "./game/palette";
 import { Renderer } from "./game/view/renderer";
 

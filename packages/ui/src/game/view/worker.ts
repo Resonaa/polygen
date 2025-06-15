@@ -1,3 +1,5 @@
+import type { GM, RP } from "@polygen/wasm";
+import type { Remote } from "comlink";
 import type { Font, FontData } from "three/addons/loaders/FontLoader.js";
 import { FontLoader } from "three/addons/loaders/FontLoader.js";
 import { mergeGeometries as mergeGeometriesLib } from "three/addons/utils/BufferGeometryUtils.js";
@@ -21,9 +23,11 @@ import {
   WebGPURenderer
 } from "three/webgpu";
 
-import type { Palette } from "~/game/palette";
+import fontObject from "@/static/Noto Sans SC Thin_Regular.json";
+import textureJson from "@/static/texture/texture.json";
+import textureImage from "@/static/texture/texture.png";
 
-import type { GM, RP } from "@polygen/wasm";
+import type { Palette } from "~/game/palette";
 
 import { CanvasProxy } from "./canvasProxy";
 import {
@@ -36,11 +40,6 @@ import { MapControls } from "./mapControls";
 import { MetaLayer } from "./metaLayer";
 import { ResourceTracker } from "./resourceTracker";
 import type * as Settings from "./settings";
-
-import fontObject from "@/static/Noto Sans SC Thin_Regular.json";
-import textureJson from "@/static/texture/texture.json";
-import textureImage from "@/static/texture/texture.png";
-import type { Remote } from "comlink";
 
 let settings: Settings.Type["game"];
 
@@ -299,7 +298,7 @@ async function getMaxTextWidth(id: number) {
   const sides = await rp.sides(id);
   const radius = await rp.radius(id);
 
-  const dict = { 6: 1.8, 4: 1.4, 3: 0.86 };
+  const dict = { 3: 0.86, 4: 1.4, 6: 1.8 };
 
   return dict[sides as keyof typeof dict] * radius * settings.view.map.radius;
 }

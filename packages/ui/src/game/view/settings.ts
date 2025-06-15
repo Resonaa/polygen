@@ -10,25 +10,25 @@ const KEY = "settings";
 export const Default = {
   game: {
     view: {
+      antialias: true,
       camera: {
+        far: 1200,
         fov: 60,
-        near: 1,
-        far: 1200
+        near: 1
       },
       controls: {
         dampingFactor: 0.2,
-        minDistance: 200,
         maxDistance: 1000,
-        zoomSpeed: 2.1,
+        minDistance: 200,
+        panSpeed: 1.1,
         rotateSpeed: 0.8,
-        panSpeed: 1.1
+        zoomSpeed: 2.1
       },
-      antialias: true,
       map: {
-        radius: 20,
+        imageSize: 20,
         maxTextSize: 7,
         minTextSize: 1,
-        imageSize: 20
+        radius: 20
       }
     }
   }

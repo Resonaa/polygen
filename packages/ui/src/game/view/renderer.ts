@@ -1,10 +1,9 @@
+import type { GM, RP } from "@polygen/wasm";
+import { type ProxyMarked, proxy, transfer } from "comlink";
+
 import type { Palette } from "~/game/palette";
 
-import type { GM, RP } from "@polygen/wasm";
-
 import * as Settings from "./settings";
-
-import { type ProxyMarked, proxy, transfer } from "comlink";
 
 type SendFn = (data: object) => void;
 
@@ -34,8 +33,8 @@ function preventDefaultHandler(event: Event) {
 function copyProperties(src: object, properties: string[], dst: object) {
   for (const name of properties) {
     Object.defineProperty(dst, name, {
-      value: src[name as keyof typeof src],
-      enumerable: true
+      enumerable: true,
+      value: src[name as keyof typeof src]
     });
   }
 }
@@ -54,7 +53,7 @@ function touchEventHandler(event: TouchEvent, sendFn: SendFn) {
     const { pageX, pageY } = event.touches[i];
     touches.push({ pageX, pageY });
   }
-  sendFn({ type: event.type, touches });
+  sendFn({ touches, type: event.type });
 }
 
 const eventHandlers = {
@@ -65,9 +64,9 @@ const eventHandlers = {
   pointerdown: mouseEventHandler,
   pointermove: mouseEventHandler,
   pointerup: mouseEventHandler,
-  touchstart: touchEventHandler,
-  touchmove: touchEventHandler,
   touchend: touchEventHandler,
+  touchmove: touchEventHandler,
+  touchstart: touchEventHandler,
   wheel: wheelEventHandler
 };
 
@@ -84,8 +83,8 @@ export class Renderer {
 
   async resizeListener() {
     await this.worker.setCanvasSize({
-      width: Math.floor(this.canvas.clientWidth * devicePixelRatio),
-      height: Math.floor(this.canvas.clientHeight * devicePixelRatio)
+      height: Math.floor(this.canvas.clientHeight * devicePixelRatio),
+      width: Math.floor(this.canvas.clientWidth * devicePixelRatio)
     });
   }
 
@@ -118,7 +117,7 @@ export class Renderer {
         left,
         top
       });
-      await this.worker.setConfig({ settings, palette });
+      await this.worker.setConfig({ palette, settings });
       // @ts-ignore
       await this.worker.setGM(this.proxiedGM);
       // @ts-ignore

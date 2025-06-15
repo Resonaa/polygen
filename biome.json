@@ -1,32 +1,89 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
-  "vcs": {
-    "enabled": false,
-    "clientKind": "git",
-    "useIgnoreFile": false
+  "$schema": "https://biomejs.dev/schemas/2.0.0-beta.6/schema.json",
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": {
+          "level": "on",
+          "options": {
+            "groups": [
+              ":BUN:",
+              ":BLANK_LINE:",
+              ":NODE:",
+              ":BLANK_LINE:",
+              ["npm:*", "npm:*/**"],
+              ":BLANK_LINE:",
+              ":PACKAGE_WITH_PROTOCOL:",
+              ":BLANK_LINE:",
+              ":URL:",
+              ":BLANK_LINE:",
+              ":PACKAGE:",
+              ":BLANK_LINE:",
+              "/**",
+              ":BLANK_LINE:",
+              ["#*", "#*/**"],
+              ":BLANK_LINE:",
+              "@/**",
+              ":BLANK_LINE:",
+              "~/**",
+              ":BLANK_LINE:",
+              ":PATH:"
+            ]
+          }
+        },
+        "useSortedKeys": "on"
+      }
+    }
   },
   "files": {
     "ignoreUnknown": true,
-    "ignore": ["**/dist", "**/static", "crates", "**/node_modules", "**/target"]
+    "includes": [
+      "**",
+      "!**/dist",
+      "!**/static",
+      "!**/crates",
+      "!**/node_modules",
+      "!**/target",
+      "!bun.lock"
+    ]
   },
   "formatter": {
     "enabled": true,
     "indentStyle": "space"
   },
-  "organizeImports": {
-    "enabled": true
+  "javascript": {
+    "formatter": {
+      "arrowParentheses": "asNeeded",
+      "quoteStyle": "double",
+      "trailingCommas": "none"
+    }
+  },
+  "json": {
+    "formatter": {
+      "enabled": true
+    }
   },
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true
+      "recommended": true,
+      "style": {
+        "noInferrableTypes": "error",
+        "noParameterAssign": "error",
+        "noUnusedTemplateLiteral": "error",
+        "noUselessElse": "error",
+        "useAsConstAssertion": "error",
+        "useDefaultParameterLast": "error",
+        "useEnumInitializers": "error",
+        "useNumberNamespace": "error",
+        "useSelfClosingElements": "error",
+        "useSingleVarDeclarator": "error"
+      }
     }
   },
-  "javascript": {
-    "formatter": {
-      "quoteStyle": "double",
-      "trailingCommas": "none",
-      "arrowParentheses": "asNeeded"
-    }
+  "vcs": {
+    "clientKind": "git",
+    "enabled": false,
+    "useIgnoreFile": false
   }
 }

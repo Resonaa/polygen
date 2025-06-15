@@ -13,8 +13,8 @@ export class Palette extends Array<number> {
     return new Palette(
       0x808080,
       ...generateColors(n, {
-        colorSpace: [0, 360, 25, 85, 45, 70],
-        clustering: "force-vector"
+        clustering: "force-vector",
+        colorSpace: [0, 360, 25, 85, 45, 70]
       }).map(color => Number.parseInt(color.substring(1), 16))
     );
   }

@@ -40,7 +40,11 @@ impl Transform for BasicTransformer {
 
             // useless plane
             if matches!(dir, PlaneDir::Rotated(_))
-              && (!(next.pos.x > 0 && next.pos.x <= width && next.pos.y > 0 && next.pos.y <= height) || block.y_index == 1)
+              && (!(next.pos.x > 0
+                && next.pos.x <= width
+                && next.pos.y > 0
+                && next.pos.y <= height)
+                || block.y_index == 1)
             {
               return None;
             }

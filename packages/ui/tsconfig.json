@@ -1,5 +1,5 @@
 {
+  "compilerOptions": { "paths": { "@/*": ["./*"], "~/*": ["./src/*"] } },
   "extends": "../../tsconfig.json",
-  "include": ["src"],
-  "compilerOptions": { "paths": { "~/*": ["./src/*"], "@/*": ["./*"] } }
+  "include": ["src"]
 }

@@ -32,12 +32,12 @@ export class CanvasProxy extends EventDispatcher<Record<string, Event>> {
 
   getBoundingClientRect() {
     return {
-      left: this.left,
-      top: this.top,
-      width: this.width,
+      bottom: this.top + this.height,
       height: this.height,
+      left: this.left,
       right: this.left + this.width,
-      bottom: this.top + this.height
+      top: this.top,
+      width: this.width
     };
   }
 

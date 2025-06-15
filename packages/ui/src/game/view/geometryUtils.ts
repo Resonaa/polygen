@@ -1,3 +1,4 @@
+import { mergeGeometries as mergeGeometriesLib } from "three/addons/utils/BufferGeometryUtils.js";
 import {
   BufferAttribute,
   CircleGeometry,
@@ -9,13 +10,11 @@ import {
   type Vector3
 } from "three/webgpu";
 
-import { mergeGeometries as mergeGeometriesLib } from "three/addons/utils/BufferGeometryUtils.js";
-
 const material = new MeshBasicMaterial({
-  vertexColors: true,
+  opacity: 0.7,
   side: DoubleSide,
   transparent: true,
-  opacity: 0.7
+  vertexColors: true
 });
 
 let geometries: CircleGeometry[] = [];

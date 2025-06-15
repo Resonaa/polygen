@@ -1,7 +1,4 @@
 {
-  "name": "ui",
-  "version": "0.1.0",
-  "type": "module",
   "dependencies": {
     "@fastify/deepmerge": "catalog:utils",
     "@fontsource-variable/noto-sans-sc": "catalog:resources",
@@ -26,5 +23,8 @@
     "vite-plugin-top-level-await": "catalog:build",
     "vite-plugin-wasm": "catalog:build",
     "vite-tsconfig-paths": "catalog:build"
-  }
+  },
+  "name": "ui",
+  "type": "module",
+  "version": "0.1.0"
 }
