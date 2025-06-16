@@ -31,7 +31,7 @@ impl NextBlock for Plane {
     match self.dir {
       PlaneDir::Top => Block { pos, y_index: y_index + 1 },
       PlaneDir::Bottom => Block { pos, y_index: y_index - 1 },
-      PlaneDir::Rotated(d) => Block {
+      PlaneDir::Side(d) => Block {
         pos: self.block.pos.wrapping_add(dir(mode, pos).get(d as usize).copied().unwrap()),
         y_index
       }

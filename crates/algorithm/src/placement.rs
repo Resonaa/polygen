@@ -24,9 +24,8 @@ impl Placement for Plane {
       GMMode::Square => match self.dir {
         PlaneDir::Top => Vec3::new(0., 2_f64.sqrt() / 2., 0.),
         PlaneDir::Bottom => Vec3::new(0., 2_f64.sqrt() / -2., 0.),
-        PlaneDir::Rotated(r) => {
+        PlaneDir::Side(r) => {
           let angle = 2. * FaceVec::acos(-1.) / (mode.sides() as FaceVec) * (r as FaceVec);
-          println!("{}pi", angle / FaceVec::acos(-1.));
           Vec3::new(angle.cos(), 0., angle.sin()) * (2_f64.sqrt() / 2.)
         }
       },

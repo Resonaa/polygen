@@ -36,7 +36,6 @@ impl GM {
 
   pub fn add_edge(&mut self, u: LandId, v: LandId) {
     self.edges[u as usize].push(v);
-    self.edges[v as usize].push(u);
   }
 
   pub fn has_edge(&self, u: LandId, v: LandId) -> bool {

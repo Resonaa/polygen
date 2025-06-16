@@ -15,6 +15,6 @@ fn main() {
   let profile = GMProfile { name, config };
   let (gm, rp) = generate(profile);
 
-  // dbg!(gm);
-  // dbg!(rp);
+  dbg!(gm);
+  dbg!(rp);
 }

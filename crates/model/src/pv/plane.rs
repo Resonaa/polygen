@@ -1,15 +1,15 @@
 use crate::Block;
 use crate::types::FaceSides;
 
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum PlaneDir {
   #[default]
   Top,
   Bottom,
-  Rotated(FaceSides)
+  Side(FaceSides)
 }
 
-#[derive(Debug, Default, Clone, Copy)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Plane {
   pub block: Block,
   pub dir: PlaneDir

@@ -26,10 +26,8 @@ impl Transform for BasicTransformer {
 
     for block in &blocks {
       pv.extend(
-        (0..self.mode.sides())
-          .map(PlaneDir::Rotated)
-          .chain([PlaneDir::Top].into_iter())
-          .filter_map(|dir| {
+        (0..self.mode.sides()).map(PlaneDir::Side).chain([PlaneDir::Top].into_iter()).filter_map(
+          |dir| {
             let plane = Plane { dir, block: *block };
             let next = plane.next_block(self.mode);
 
@@ -39,7 +37,7 @@ impl Transform for BasicTransformer {
             }
 
             // useless plane
-            if matches!(dir, PlaneDir::Rotated(_))
+            if matches!(dir, PlaneDir::Side(_))
               && (!(next.pos.x > 0
                 && next.pos.x <= width
                 && next.pos.y > 0
@@ -50,7 +48,8 @@ impl Transform for BasicTransformer {
             }
 
             Some(plane)
-          })
+          }
+        )
       );
     }
 
