@@ -7,7 +7,7 @@ use crate::GMConfig;
 #[wasm_bindgen]
 pub enum GMName {
   #[default]
-  PureRandom
+  Random
 }
 
 #[derive(Clone, Copy, Debug, Default)]

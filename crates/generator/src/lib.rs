@@ -15,7 +15,7 @@ pub fn generate(profile: GMProfile) -> (GM, RP) {
   let mut rng = rand_chacha::ChaCha20Rng::from_os_rng();
 
   let bv = match profile.name {
-    GMName::PureRandom => builder::basic::BasicBuilder(profile.config).build(&mut rng),
+    GMName::Random => builder::basic::BasicBuilder(profile.config).build(&mut rng),
     _ => unimplemented!()
   };
 
@@ -24,8 +24,8 @@ pub fn generate(profile: GMProfile) -> (GM, RP) {
   let (mut gm, rp) = extractor::basic::BasicExtractor(profile.config).extract(pv);
 
   match profile.name {
-    GMName::PureRandom => {
-      designer::pure_random::PureRandomDesigner(profile.config).design(&mut gm, &mut rng);
+    GMName::Random => {
+      designer::random::RandomDesigner(profile.config).design(&mut gm, &mut rng);
     }
     _ => unimplemented!()
   }

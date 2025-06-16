@@ -9,7 +9,7 @@ fn main() {
   let height = 0.;
   let city_density = 0.5;
   let y_ratio = 0.5;
-  let name = GMName::PureRandom;
+  let name = GMName::Random;
 
   let config = GMConfig { player_count, mode, width, height, y_ratio, city_density };
   let profile = GMProfile { name, config };

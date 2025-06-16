@@ -35,6 +35,6 @@ pub fn generate_random(
   city_density: GMConfigRatio
 ) -> Generation {
   let config = GMConfig { player_count, mode, width, height, y_ratio, city_density };
-  let profile = GMProfile { name: GMName::PureRandom, config };
+  let profile = GMProfile { name: GMName::Random, config };
   Generation::new(generator::generate(profile))
 }

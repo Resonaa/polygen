@@ -13,12 +13,11 @@ let palette: Palette;
 
 function generate() {
   const players = random(2, 2);
-  const widthRatio = random(0, 1, true);
-  const heightRatio = random(0, 1, true);
+  const widthRatio = 0.5;
+  const heightRatio = 0.5;
   const mode = GMMode.Square;
-  //const yRatio = random(0, 1, true);
   const yRatio = 0.5;
-  const cityDensity = random(0, 1, true);
+  const cityDensity = 0.2;
 
   const gen = generate_random(
     players,
@@ -26,7 +25,7 @@ function generate() {
     widthRatio,
     heightRatio,
     yRatio,
-    cityDensity
+    cityDensity,
   );
 
   gm = gen.gm();

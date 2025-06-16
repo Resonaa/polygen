@@ -4,17 +4,16 @@ import {
   CircleGeometry,
   type Color,
   DoubleSide,
+  EdgesGeometry,
   Mesh,
   MeshBasicMaterial,
   type Quaternion,
-  type Vector3
+  type Vector3,
 } from "three/webgpu";
 
 const material = new MeshBasicMaterial({
-  opacity: 0.7,
   side: DoubleSide,
-  transparent: true,
-  vertexColors: true
+  vertexColors: true,
 });
 
 let geometries: CircleGeometry[] = [];
@@ -27,7 +26,7 @@ export function addGeometry(
   radius: number,
   sides: number,
   position: Vector3,
-  quaternion: Quaternion
+  quaternion: Quaternion,
 ) {
   const geometry = new CircleGeometry(radius, sides);
 
