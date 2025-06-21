@@ -5,7 +5,7 @@
     "format": "biome check --write",
     "preview": "cd ./packages/ui && vite preview",
     "release": "cd ./packages/ui && vite build",
-    "wasm": "wasm-pack build ./crates/wasm --scope polygen --out-dir ../../node_modules/@polygen/wasm && cd ./packages/ui/node_modules/.vite/deps && rm -rf @polygen_wasm*"
+    "wasm": "wasm-pack build ./crates/wasm --scope polygen --out-dir ../../node_modules/@polygen/wasm"
   },
   "type": "module",
   "version": "0.1.0",
