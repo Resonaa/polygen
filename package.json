@@ -5,7 +5,7 @@
     "format": "biome check --write",
     "preview": "cd ./packages/ui && vite preview",
     "release": "cd ./packages/ui && vite build",
-    "wasm": "wasm-pack build ./crates/wasm --scope polygen --out-dir ../../node_modules/@polygen/wasm && rm -rf ./packages/ui/node_modules"
+    "wasm": "wasm-pack build ./crates/wasm --scope polygen --out-dir ../../node_modules/@polygen/wasm && cd ./packages/ui/node_modules/.vite/deps && rm -rf @polygen_wasm*"
   },
   "type": "module",
   "version": "0.1.0",
@@ -20,7 +20,7 @@
         "vite-tsconfig-paths": "^5.1.4"
       },
       "ci": {
-        "@biomejs/biome": "2.0.0-beta.6"
+        "@biomejs/biome": "2.0.0"
       },
       "resources": {
         "@fontsource-variable/noto-sans-sc": "^5.2.6"

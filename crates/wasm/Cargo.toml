@@ -11,9 +11,7 @@ homepage.workspace = true
 crate-type = ["cdylib", "rlib"]
 
 [package.metadata.wasm-pack.profile.release]
-# TODO: temporary workaround for network issues in downloading wasm-opt
-wasm-opt = false
-# wasm-opt = ["-Os"]
+wasm-opt = ["-Os"]
 
 [dependencies]
 bitfield-struct.workspace = true

@@ -51,6 +51,11 @@
     "enabled": true,
     "indentStyle": "space"
   },
+  "html": {
+    "formatter": {
+      "enabled": true
+    }
+  },
   "javascript": {
     "formatter": {
       "arrowParentheses": "asNeeded",

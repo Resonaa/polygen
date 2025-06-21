@@ -25,7 +25,7 @@ function generate() {
     widthRatio,
     heightRatio,
     yRatio,
-    cityDensity,
+    cityDensity
   );
 
   gm = gen.gm();

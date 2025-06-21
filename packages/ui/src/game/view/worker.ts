@@ -12,7 +12,6 @@ import {
   ImageBitmapLoader,
   LineBasicMaterial,
   LineSegments,
-  Material,
   Matrix4,
   Mesh,
   MeshBasicMaterial,
@@ -24,7 +23,7 @@ import {
   ShapeGeometry,
   Texture,
   Vector3,
-  WebGPURenderer,
+  WebGPURenderer
 } from "three/webgpu";
 
 import fontObject from "@/static/Noto Sans SC Thin_Regular.json";
@@ -38,17 +37,12 @@ import {
   addGeometry,
   mergeGeometries,
   resetGeometries,
-  updateGeometry,
+  updateGeometry
 } from "./geometryUtils";
 import { MapControls } from "./mapControls";
 import { MetaLayer } from "./metaLayer";
 import { ResourceTracker } from "./resourceTracker";
 import type * as Settings from "./settings";
-import { LineSegments2 } from "three/examples/jsm/lines/webgpu/LineSegments2.js";
-import {
-  LineMaterial,
-  LineSegmentsGeometry,
-} from "three/examples/jsm/Addons.js";
 
 let settings: Settings.Type["game"];
 
@@ -88,7 +82,7 @@ scene.add(helperContainer);
 const texture = new Texture();
 const textureMaterial = new MeshBasicMaterial({
   map: texture,
-  transparent: true,
+  transparent: true
 });
 
 let renderRequested = false;
@@ -148,7 +142,7 @@ export async function start(canvas: OffscreenCanvas) {
   renderer = new WebGPURenderer({
     antialias: settings.view.antialias,
     // @ts-ignore
-    canvas,
+    canvas
   });
   renderer.setSize(canvas.width, canvas.height, false);
 
@@ -156,7 +150,7 @@ export async function start(canvas: OffscreenCanvas) {
     settings.view.camera.fov,
     canvas.width / canvas.height,
     settings.view.camera.near,
-    settings.view.camera.far,
+    settings.view.camera.far
   );
 
   camera.position.set(-100, 500, -100);
@@ -165,12 +159,12 @@ export async function start(canvas: OffscreenCanvas) {
   controls = new MapControls(
     camera,
     canvasProxy as unknown as HTMLElement,
-    settings.view.controls,
+    settings.view.controls
   );
 
   font = new FontLoader().parse(fontObject as unknown as FontData);
 
-  new ImageBitmapLoader().load(textureImage, (data) => {
+  new ImageBitmapLoader().load(textureImage, data => {
     texture.image = data;
     texture.flipY = false;
     texture.needsUpdate = true;
@@ -322,14 +316,14 @@ export async function setup() {
     const matrix = new Matrix4().lookAt(
       normal,
       new Vector3(),
-      Object3D.DEFAULT_UP,
+      Object3D.DEFAULT_UP
     );
     const quaternion = new Quaternion().setFromRotationMatrix(matrix);
 
     const radius = (await rp.radius(id)) * settings.view.map.radius;
     const sides = await rp.sides(id);
     const position = new Vector3(...(await rp.position(id))).multiplyScalar(
-      settings.view.map.radius,
+      settings.view.map.radius
     );
 
     addGeometry(radius, sides, position, quaternion);
@@ -359,7 +353,7 @@ export async function setup() {
 
       const image = new PlaneGeometry(
         settings.view.map.imageSize,
-        settings.view.map.imageSize,
+        settings.view.map.imageSize
       );
       image.rotateZ(Math.PI);
       image.translate(0, 0, 0.5);
@@ -377,8 +371,8 @@ export async function setup() {
     edges,
     new LineBasicMaterial({
       fog: false,
-      linewidth: 0.06,
-    }),
+      linewidth: 0.06
+    })
   );
 
   scene.add(line);
