@@ -34,31 +34,19 @@ impl GM {
     }
   }
 
-  pub fn add_edge(&mut self, u: LandId, v: LandId) {
-    self.edges[u as usize].push(v);
-  }
+  pub fn add_edge(&mut self, u: LandId, v: LandId) { self.edges[u as usize].push(v); }
 
-  pub fn has_edge(&self, u: LandId, v: LandId) -> bool {
-    self.edges[u as usize].contains(&v)
-  }
+  pub fn has_edge(&self, u: LandId, v: LandId) -> bool { self.edges[u as usize].contains(&v) }
 }
 
 #[wasm_bindgen]
 impl GM {
   #[wasm_bindgen(getter)]
-  pub fn size(&self) -> usize {
-    self.lands.len()
-  }
+  pub fn size(&self) -> usize { self.lands.len() }
 
-  pub fn r#type(&self, id: usize) -> LandType {
-    self.lands[id].r#type
-  }
+  pub fn r#type(&self, id: usize) -> LandType { self.lands[id].r#type }
 
-  pub fn amount(&self, id: usize) -> LandAmount {
-    self.lands[id].amount
-  }
+  pub fn amount(&self, id: usize) -> LandAmount { self.lands[id].amount }
 
-  pub fn color(&self, id: usize) -> LandColor {
-    self.lands[id].color
-  }
+  pub fn color(&self, id: usize) -> LandColor { self.lands[id].color }
 }

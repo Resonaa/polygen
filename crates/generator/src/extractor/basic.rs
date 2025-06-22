@@ -12,9 +12,7 @@ pub struct BasicExtractor(pub GMConfig);
 impl Deref for BasicExtractor {
   type Target = GMConfig;
 
-  fn deref(&self) -> &Self::Target {
-    &self.0
-  }
+  fn deref(&self) -> &Self::Target { &self.0 }
 }
 
 impl Extract for BasicExtractor {

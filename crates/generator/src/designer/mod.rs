@@ -11,9 +11,7 @@ struct Draft {
 }
 
 impl PartialEq for Draft {
-  fn eq(&self, other: &Self) -> bool {
-    self.score == other.score
-  }
+  fn eq(&self, other: &Self) -> bool { self.score == other.score }
 }
 
 impl Eq for Draft {}
@@ -25,16 +23,12 @@ impl PartialOrd for Draft {
 }
 
 impl Ord for Draft {
-  fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-    self.score.cmp(&other.score)
-  }
+  fn cmp(&self, other: &Self) -> std::cmp::Ordering { self.score.cmp(&other.score) }
 }
 
 pub trait Design {
   fn draft(&self, gm: &mut GM, rng: &mut impl Rng);
-  fn evalutate(&self, gm: &GM) -> Score {
-    0
-  }
+  fn evalutate(&self, gm: &GM) -> Score { 0 }
 
   fn design(&self, gm: &mut GM, rng: &mut impl Rng) {
     let mut drafts: Vec<_> = (0..100)

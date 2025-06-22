@@ -13,9 +13,7 @@ pub struct BasicBuilder(pub GMConfig);
 impl Deref for BasicBuilder {
   type Target = GMConfig;
 
-  fn deref(&self) -> &Self::Target {
-    &self.0
-  }
+  fn deref(&self) -> &Self::Target { &self.0 }
 }
 
 interpolate!(plane_size_per_sqrt_player, 2, 10, BlockYIndex);

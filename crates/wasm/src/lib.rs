@@ -9,30 +9,19 @@ pub struct Generation {
 }
 
 impl Generation {
-  pub fn new((gm, rp): (GM, RP)) -> Self {
-    Self { gm, rp }
-  }
+  pub fn new((gm, rp): (GM, RP)) -> Self { Self { gm, rp } }
 }
 
 #[wasm_bindgen]
 impl Generation {
-  pub fn gm(&self) -> GM {
-    self.gm.clone()
-  }
-
-  pub fn rp(&self) -> RP {
-    self.rp.clone()
-  }
+  pub fn gm(&self) -> GM { self.gm.clone() }
+  pub fn rp(&self) -> RP { self.rp.clone() }
 }
 
 #[wasm_bindgen]
 pub fn generate_random(
-  player_count: GMConfigPlayerCount,
-  mode: GMMode,
-  width: GMConfigRatio,
-  height: GMConfigRatio,
-  y_ratio: GMConfigRatio,
-  city_density: GMConfigRatio
+  player_count: GMConfigPlayerCount, mode: GMMode, width: GMConfigRatio, height: GMConfigRatio,
+  y_ratio: GMConfigRatio, city_density: GMConfigRatio
 ) -> Generation {
   let config = GMConfig { player_count, mode, width, height, y_ratio, city_density };
   let profile = GMProfile { name: GMName::Random, config };

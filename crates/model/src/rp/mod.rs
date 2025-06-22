@@ -15,26 +15,16 @@ pub struct RP(#[wasm_bindgen(skip)] pub Vec<Face>);
 impl Deref for RP {
   type Target = Vec<Face>;
 
-  fn deref(&self) -> &Self::Target {
-    &self.0
-  }
+  fn deref(&self) -> &Self::Target { &self.0 }
 }
 
 #[wasm_bindgen]
 impl RP {
-  pub fn position(&self, id: usize) -> Box<[FaceVec]> {
-    self[id].position.into()
-  }
+  pub fn position(&self, id: usize) -> Box<[FaceVec]> { self[id].position.into() }
 
-  pub fn normal(&mut self, id: usize) -> Box<[FaceVec]> {
-    self[id].normal.into()
-  }
+  pub fn normal(&mut self, id: usize) -> Box<[FaceVec]> { self[id].normal.into() }
 
-  pub fn sides(&mut self, id: usize) -> FaceSides {
-    self[id].sides
-  }
+  pub fn sides(&mut self, id: usize) -> FaceSides { self[id].sides }
 
-  pub fn radius(&mut self, id: usize) -> FaceRaduis {
-    self[id].radius
-  }
+  pub fn radius(&mut self, id: usize) -> FaceRaduis { self[id].radius }
 }

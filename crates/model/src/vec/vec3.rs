@@ -19,9 +19,7 @@ pub struct Vec3<T> {
 }
 
 impl<T> Vec3<T> {
-  pub const fn new(x: T, y: T, z: T) -> Self {
-    Self { x, y, z }
-  }
+  pub const fn new(x: T, y: T, z: T) -> Self { Self { x, y, z } }
 }
 
 impl<T: Add<Output = T>> Add for Vec3<T> {
@@ -43,29 +41,19 @@ impl<T: Sub<Output = T>> Sub for Vec3<T> {
 impl<T: Mul<Output = T> + Copy> Mul<T> for Vec3<T> {
   type Output = Self;
 
-  fn mul(self, rhs: T) -> Self::Output {
-    Self::new(self.x * rhs, self.y * rhs, self.z * rhs)
-  }
+  fn mul(self, rhs: T) -> Self::Output { Self::new(self.x * rhs, self.y * rhs, self.z * rhs) }
 }
 
 impl Vec3<f64> {
-  pub fn len(&self) -> f64 {
-    (self.x * self.x + self.y * self.y + self.z * self.z).sqrt()
-  }
+  pub fn len(&self) -> f64 { (self.x * self.x + self.y * self.y + self.z * self.z).sqrt() }
 
-  pub fn normalized(&self) -> Self {
-    *self * (1. / self.len())
-  }
+  pub fn normalized(&self) -> Self { *self * (1. / self.len()) }
 }
 
 impl<T> From<Vec3<T>> for [T; 3] {
-  fn from(value: Vec3<T>) -> Self {
-    [value.x, value.y, value.z]
-  }
+  fn from(value: Vec3<T>) -> Self { [value.x, value.y, value.z] }
 }
 
 impl<T> From<Vec3<T>> for Box<[T]> {
-  fn from(value: Vec3<T>) -> Self {
-    [value.x, value.y, value.z].into()
-  }
+  fn from(value: Vec3<T>) -> Self { [value.x, value.y, value.z].into() }
 }

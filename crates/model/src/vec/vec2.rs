@@ -25,33 +25,25 @@ macro_rules! vec2 {
 }
 
 impl<T> Vec2<T> {
-  pub const fn new(x: T, y: T) -> Self {
-    Self { x, y }
-  }
+  pub const fn new(x: T, y: T) -> Self { Self { x, y } }
 }
 
 impl<T: Add<Output = T>> Add for Vec2<T> {
   type Output = Self;
 
-  fn add(self, rhs: Self) -> Self::Output {
-    Self::new(self.x + rhs.x, self.y + rhs.y)
-  }
+  fn add(self, rhs: Self) -> Self::Output { Self::new(self.x + rhs.x, self.y + rhs.y) }
 }
 
 impl<T: Sub<Output = T>> Sub for Vec2<T> {
   type Output = Self;
 
-  fn sub(self, rhs: Self) -> Self::Output {
-    Self::new(self.x - rhs.x, self.y - rhs.y)
-  }
+  fn sub(self, rhs: Self) -> Self::Output { Self::new(self.x - rhs.x, self.y - rhs.y) }
 }
 
 impl<T: Mul<Output = T> + Copy> Mul<T> for Vec2<T> {
   type Output = Self;
 
-  fn mul(self, rhs: T) -> Self::Output {
-    Self::new(self.x * rhs, self.y * rhs)
-  }
+  fn mul(self, rhs: T) -> Self::Output { Self::new(self.x * rhs, self.y * rhs) }
 }
 
 macro_rules! impl_wrapping_add {

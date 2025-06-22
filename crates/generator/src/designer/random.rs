@@ -13,9 +13,7 @@ pub struct RandomDesigner(pub GMConfig);
 impl Deref for RandomDesigner {
   type Target = GMConfig;
 
-  fn deref(&self) -> &Self::Target {
-    &self.0
-  }
+  fn deref(&self) -> &Self::Target { &self.0 }
 }
 
 interpolate!(city_density, 0., 0.125, GMConfigRatio);

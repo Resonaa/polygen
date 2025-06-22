@@ -11,9 +11,7 @@ pub struct BasicTransformer(pub GMConfig);
 impl Deref for BasicTransformer {
   type Target = GMConfig;
 
-  fn deref(&self) -> &Self::Target {
-    &self.0
-  }
+  fn deref(&self) -> &Self::Target { &self.0 }
 }
 
 impl Transform for BasicTransformer {
