@@ -2,10 +2,11 @@ import { mergeGeometries as mergeGeometriesLib } from "three/addons/utils/Buffer
 import {
   BufferAttribute,
   CircleGeometry,
-  type Color,
+  Color,
   DoubleSide,
   Mesh,
   MeshBasicMaterial,
+  NoColorSpace,
   type Quaternion,
   type Vector3
 } from "three/webgpu";
@@ -16,12 +17,14 @@ const material = new MeshBasicMaterial({
 });
 
 let geometries: CircleGeometry[] = [];
+let pickingGeometries: CircleGeometry[] = [];
 
 let startingIndex: number[] = [];
 
 let nowIndex = 0;
 
 export function addGeometry(
+  id: number,
   radius: number,
   sides: number,
   position: Vector3,
@@ -37,6 +40,23 @@ export function addGeometry(
   geometries.push(geometry);
   startingIndex.push(nowIndex);
   nowIndex += vertexCount * 3;
+
+  {
+    const geometry = new CircleGeometry(radius, sides);
+
+    geometry.rotateZ((Math.PI * (sides - 2)) / sides / 2);
+    geometry.applyQuaternion(quaternion);
+    geometry.translate(...position.toArray());
+
+    const colors = new Float32Array(vertexCount * 3);
+    const targetColor = new Color().setHex(id + 1, NoColorSpace).toArray();
+    for (let i = 0; i < colors.length; i++) {
+      colors[i] = targetColor[i % 3];
+    }
+    geometry.setAttribute("color", new BufferAttribute(colors, 3, false));
+
+    pickingGeometries.push(geometry);
+  }
 }
 
 export function mergeGeometries() {
@@ -56,9 +76,23 @@ export function mergeGeometries() {
   return mesh;
 }
 
+export function mergePickingGeometries() {
+  const mergedGeometry = mergeGeometriesLib(pickingGeometries, false);
+  const mesh = new Mesh(mergedGeometry, material);
+  mesh.matrixAutoUpdate = false;
+  mesh.matrixWorldAutoUpdate = false;
+
+  for (const geometry of pickingGeometries) {
+    geometry.dispose();
+  }
+
+  return mesh;
+}
+
 export function resetGeometries() {
   nowIndex = 0;
   geometries = [];
+  pickingGeometries = [];
   startingIndex = [];
 }
 

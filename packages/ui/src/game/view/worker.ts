@@ -4,8 +4,9 @@ import type { Font, FontData } from "three/addons/loaders/FontLoader.js";
 import { FontLoader } from "three/addons/loaders/FontLoader.js";
 import { mergeGeometries as mergeGeometriesLib } from "three/addons/utils/BufferGeometryUtils.js";
 import {
+  ArrowHelper,
   AxesHelper,
-  type BufferGeometry,
+  BufferGeometry,
   Color,
   EdgesGeometry,
   Euler,
@@ -19,6 +20,7 @@ import {
   PerspectiveCamera,
   PlaneGeometry,
   Quaternion,
+  RingGeometry,
   Scene,
   ShapeGeometry,
   Texture,
@@ -36,11 +38,13 @@ import { CanvasProxy } from "./canvasProxy";
 import {
   addGeometry,
   mergeGeometries,
+  mergePickingGeometries,
   resetGeometries,
   updateGeometry
 } from "./geometryUtils";
 import { MapControls } from "./mapControls";
 import { MetaLayer } from "./metaLayer";
+import { PickHelper } from "./pickHelper";
 import { ResourceTracker } from "./resourceTracker";
 import type * as Settings from "./settings";
 
@@ -85,6 +89,9 @@ const textureMaterial = new MeshBasicMaterial({
   transparent: true
 });
 
+const pickHelper = new PickHelper();
+let oldPickIndicator: Mesh;
+
 let renderRequested = false;
 
 function requestRenderIfNotRequested() {
@@ -94,9 +101,12 @@ function requestRenderIfNotRequested() {
   }
 }
 
+let devicePixelRatio = 1;
+
 export function setConfig(arg: {
   palette?: Palette;
   settings?: Settings.Type["game"];
+  devicePixelRatio?: number;
 }) {
   if (arg.palette) {
     palette = arg.palette;
@@ -104,6 +114,10 @@ export function setConfig(arg: {
 
   if (arg.settings) {
     settings = arg.settings;
+  }
+
+  if (arg.devicePixelRatio) {
+    devicePixelRatio = arg.devicePixelRatio;
   }
 }
 
@@ -177,6 +191,56 @@ export async function start(canvas: OffscreenCanvas) {
   render();
 
   controls.addEventListener("change", requestRenderIfNotRequested);
+
+  canvasProxy.addEventListener("click", async event => {
+    const pos = pickHelper.getPos(
+      event as unknown as PointerEvent,
+      canvasProxy as unknown as HTMLCanvasElement
+    );
+
+    const id = await pickHelper.pick(pos, renderer, camera, devicePixelRatio);
+    console.log("Picked ID:", id);
+
+    if (id !== null) {
+      const normal = new Vector3(...(await rp.normal(id)));
+      const position = new Vector3(...(await rp.position(id))).multiplyScalar(
+        settings.view.map.radius
+      );
+      const radius = (await rp.radius(id)) * settings.view.map.radius;
+      const sides = await rp.sides(id);
+
+      const matrix = new Matrix4().lookAt(
+        normal,
+        new Vector3(),
+        Object3D.DEFAULT_UP
+      );
+      const quaternion = new Quaternion().setFromRotationMatrix(matrix);
+
+      const geometry = new RingGeometry(radius - 5, radius, sides);
+
+      geometry.rotateZ((Math.PI * (sides - 2)) / sides / 2);
+      geometry.translate(0, 0, 0.1);
+      geometry.applyQuaternion(quaternion);
+      geometry.translate(position.x, position.y, position.z);
+
+      const pickIndicator = new Mesh(geometry);
+      scene.add(pickIndicator);
+
+      if (oldPickIndicator) {
+        scene.remove(oldPickIndicator);
+        oldPickIndicator.geometry.dispose();
+      }
+
+      oldPickIndicator = pickIndicator;
+
+      requestRenderIfNotRequested();
+    }
+
+    // const meta = metaContainer.children[id] as MetaLayer;
+
+    // // Update text.
+    // updateText(id).catch(console.error);
+  });
 }
 
 export function dispose() {
@@ -326,7 +390,7 @@ export async function setup() {
       settings.view.map.radius
     );
 
-    addGeometry(radius, sides, position, quaternion);
+    addGeometry(id, radius, sides, position, quaternion);
 
     // const normal = new Vector3(...(await rp.normal(id)));
     // const helper = new ArrowHelper(normal, position, 10, 0xff0000, 10, 5);
@@ -366,6 +430,10 @@ export async function setup() {
 
   geometry = mergeGeometries();
   scene.add(geometry);
+
+  const pickingGeometry = mergePickingGeometries();
+  pickHelper.scene.add(pickingGeometry);
+
   const edges = new EdgesGeometry(geometry.geometry);
   const line = new LineSegments(
     edges,
@@ -379,6 +447,7 @@ export async function setup() {
   tracker.track(line);
   tracker.track(geometry);
   tracker.track(helperContainer);
+  tracker.track(pickingGeometry);
 
   const mergedImageGeometry = mergeGeometriesLib(imageGeometries, false);
   const imageMesh = new Mesh(mergedImageGeometry, textureMaterial);

@@ -57,6 +57,7 @@ function touchEventHandler(event: TouchEvent, sendFn: SendFn) {
 }
 
 const eventHandlers = {
+  click: mouseEventHandler,
   contextmenu: preventDefaultHandler,
   mousedown: mouseEventHandler,
   mousemove: mouseEventHandler,
@@ -117,7 +118,7 @@ export class Renderer {
         left,
         top
       });
-      await this.worker.setConfig({ palette, settings });
+      await this.worker.setConfig({ devicePixelRatio, palette, settings });
       // @ts-ignore
       await this.worker.setGM(this.proxiedGM);
       // @ts-ignore
