@@ -103,6 +103,8 @@ function requestRenderIfNotRequested() {
 
 let devicePixelRatio = 1;
 
+let selectedId: number | null = null;
+
 export function setConfig(arg: {
   palette?: Palette;
   settings?: Settings.Type["game"];
@@ -192,7 +194,35 @@ export async function start(canvas: OffscreenCanvas) {
 
   controls.addEventListener("change", requestRenderIfNotRequested);
 
-  canvasProxy.addEventListener("click", async event => {
+  let downPos: { x: number; y: number } | null = null;
+
+  canvasProxy.addEventListener("pointerdown", e => {
+    const event = e as unknown as PointerEvent;
+    downPos = { x: event.clientX, y: event.clientY };
+  });
+
+  canvasProxy.addEventListener("pointermove", e => {
+    if (!downPos) {
+      return;
+    }
+
+    const event = e as unknown as PointerEvent;
+
+    const dx = event.clientX - downPos.x;
+    const dy = event.clientY - downPos.y;
+
+    if (Math.sqrt(dx * dx + dy * dy) > 20) {
+      downPos = null; // Ignore large movements.
+    }
+  });
+
+  canvasProxy.addEventListener("pointerup", async event => {
+    if (!downPos) {
+      return;
+    }
+
+    downPos = null;
+
     const pos = pickHelper.getPos(
       event as unknown as PointerEvent,
       canvasProxy as unknown as HTMLCanvasElement
@@ -200,47 +230,51 @@ export async function start(canvas: OffscreenCanvas) {
 
     const id = await pickHelper.pick(pos, renderer, camera, devicePixelRatio);
     console.log("Picked ID:", id);
-
-    if (id !== null) {
-      const normal = new Vector3(...(await rp.normal(id)));
-      const position = new Vector3(...(await rp.position(id))).multiplyScalar(
-        settings.view.map.radius
-      );
-      const radius = (await rp.radius(id)) * settings.view.map.radius;
-      const sides = await rp.sides(id);
-
-      const matrix = new Matrix4().lookAt(
-        normal,
-        new Vector3(),
-        Object3D.DEFAULT_UP
-      );
-      const quaternion = new Quaternion().setFromRotationMatrix(matrix);
-
-      const geometry = new RingGeometry(radius - 5, radius, sides);
-
-      geometry.rotateZ((Math.PI * (sides - 2)) / sides / 2);
-      geometry.translate(0, 0, 0.1);
-      geometry.applyQuaternion(quaternion);
-      geometry.translate(position.x, position.y, position.z);
-
-      const pickIndicator = new Mesh(geometry);
-      scene.add(pickIndicator);
-
-      if (oldPickIndicator) {
-        scene.remove(oldPickIndicator);
-        oldPickIndicator.geometry.dispose();
-      }
-
-      oldPickIndicator = pickIndicator;
-
-      requestRenderIfNotRequested();
-    }
-
-    // const meta = metaContainer.children[id] as MetaLayer;
-
-    // // Update text.
-    // updateText(id).catch(console.error);
+    await select(id);
   });
+}
+
+export async function select(id: number | null) {
+  if (selectedId === id) {
+    return;
+  }
+
+  selectedId = id;
+
+  if (oldPickIndicator) {
+    scene.remove(oldPickIndicator);
+    oldPickIndicator.geometry.dispose();
+  }
+
+  if (id !== null) {
+    const normal = new Vector3(...(await rp.normal(id)));
+    const position = new Vector3(...(await rp.position(id))).multiplyScalar(
+      settings.view.map.radius
+    );
+    const radius = (await rp.radius(id)) * settings.view.map.radius;
+    const sides = await rp.sides(id);
+
+    const matrix = new Matrix4().lookAt(
+      normal,
+      new Vector3(),
+      Object3D.DEFAULT_UP
+    );
+    const quaternion = new Quaternion().setFromRotationMatrix(matrix);
+
+    const geometry = new RingGeometry(radius - 5, radius, sides);
+
+    geometry.rotateZ((Math.PI * (sides - 2)) / sides / 2);
+    geometry.translate(0, 0, 0.1);
+    geometry.applyQuaternion(quaternion);
+    geometry.translate(position.x, position.y, position.z);
+
+    const pickIndicator = new Mesh(geometry);
+    scene.add(pickIndicator);
+
+    oldPickIndicator = pickIndicator;
+  }
+
+  requestRenderIfNotRequested();
 }
 
 export function dispose() {
