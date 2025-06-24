@@ -24,6 +24,7 @@ import {
   Scene,
   ShapeGeometry,
   Texture,
+  Vector2,
   Vector3,
   WebGPURenderer
 } from "three/webgpu";
@@ -47,6 +48,8 @@ import { MetaLayer } from "./metaLayer";
 import { PickHelper } from "./pickHelper";
 import { ResourceTracker } from "./resourceTracker";
 import type * as Settings from "./settings";
+import { project } from "./movement";
+import { min } from "lodash";
 
 let settings: Settings.Type["game"];
 
@@ -152,6 +155,51 @@ function resizeRendererToDisplaySize() {
     renderer.setSize(width, height, false);
   }
   return needResize;
+}
+
+export async function getMatchedMove(key: string) {
+  if (selectedId === null) {
+    return null;
+  }
+
+  const sides = await rp.sides(selectedId);
+  if (!(sides in settings.view.key)) {
+    return null;
+  }
+  if (!(key in settings.view.key[sides as keyof typeof settings.view.key])) {
+    return null;
+  }
+
+  // @ts-ignore
+  const template = new Vector3(...settings.view.key[sides][key]);
+
+  const neighbors = await gm.neighbors(selectedId);
+  console.log("neighbors", neighbors);
+  const selectedPosition = new Vector3(...(await rp.position(selectedId)));
+
+  let ansNeighborId = null;
+  let minAngle = Number.POSITIVE_INFINITY;
+
+  for (const neighbor of neighbors) {
+    const neighborPosition = new Vector3(...(await rp.position(neighbor)));
+    const sub = neighborPosition
+      .project(camera)
+      .sub(selectedPosition.clone().project(camera));
+    console.log(neighbor, sub);
+    //const projected = project(sub, camera);
+    const angle = sub.angleTo(template);
+
+    if (angle < minAngle) {
+      minAngle = angle;
+      ansNeighborId = neighbor;
+    }
+  }
+
+  console.log("ansNeighborId", ansNeighborId, "minAngle", minAngle);
+
+  select(ansNeighborId);
+
+  return ansNeighborId;
 }
 
 export async function start(canvas: OffscreenCanvas) {

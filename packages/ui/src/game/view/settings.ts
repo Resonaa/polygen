@@ -1,4 +1,5 @@
 import LZString from "lz-string";
+import { Vector2 } from "three/webgpu";
 import type { PartialDeep } from "type-fest";
 
 import { merge as deepMerge } from "./utils";
@@ -23,6 +24,14 @@ export const Default = {
         panSpeed: 1.1,
         rotateSpeed: 0.8,
         zoomSpeed: 2.1
+      },
+      key: {
+        4: {
+          w: [0, 1, 0],
+          s: [0, -1, 0],
+          a: [-1, 0, 0],
+          d: [1, 0, 0]
+        }
       },
       map: {
         imageSize: 20,

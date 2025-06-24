@@ -73,6 +73,13 @@ const eventHandlers = {
 
 export class Renderer {
   canvas: HTMLCanvasElement;
+  settings = Settings.Default.game;
+
+  handleMove: (key: string) => Promise<void> = async (key: string) => {
+    console.log("handleMove", key);
+    const matched = await this.worker.getMatchedMove(key);
+    console.log(matched);
+  };
 
   // @ts-ignore
   worker = new ComlinkWorker(new URL("./worker.ts", import.meta.url), {
@@ -89,12 +96,14 @@ export class Renderer {
     });
   }
 
+  async keyDownListener(e: KeyboardEvent) {
+    this.handleMove(e.key);
+  }
+
   constructor(canvas: HTMLCanvasElement, gm: GM, rp: RP, palette: Palette) {
     this.canvas = canvas;
     canvas.focus();
     const offscreen = canvas.transferControlToOffscreen();
-
-    const settings = Settings.Default.game;
 
     const sendEvent: SendFn = event => {
       this.worker.handleEvent(event as Event);
@@ -107,6 +116,7 @@ export class Renderer {
     }
 
     window.addEventListener("resize", this.resizeListener.bind(this));
+    canvas.addEventListener("keydown", this.keyDownListener.bind(this));
 
     this.proxiedGM = proxy(gm);
     this.proxiedRP = proxy(rp);
@@ -118,7 +128,11 @@ export class Renderer {
         left,
         top
       });
-      await this.worker.setConfig({ devicePixelRatio, palette, settings });
+      await this.worker.setConfig({
+        devicePixelRatio,
+        palette,
+        settings: this.settings
+      });
       // @ts-ignore
       await this.worker.setGM(this.proxiedGM);
       // @ts-ignore
@@ -138,6 +152,7 @@ export class Renderer {
   dispose() {
     this.worker.dispose();
     window.removeEventListener("resize", this.resizeListener);
+    this.canvas.removeEventListener("keydown", this.keyDownListener);
   }
 
   get gm() {
