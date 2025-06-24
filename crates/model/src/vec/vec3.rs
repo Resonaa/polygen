@@ -1,17 +1,8 @@
 use std::ops::{Add, Mul, Sub};
 
-#[derive(
-  rkyv::Archive,
-  rkyv::Deserialize,
-  rkyv::Serialize,
-  Debug,
-  Clone,
-  PartialEq,
-  Eq,
-  Default,
-  Copy,
-  Hash,
-)]
+use serde::{Deserialize, Serialize};
+
+#[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq, Default, Copy, Hash)]
 pub struct Vec3<T> {
   pub x: T,
   pub y: T,

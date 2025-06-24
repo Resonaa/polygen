@@ -2,6 +2,7 @@
 
 use std::iter;
 
+use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::wasm_bindgen;
 
 use crate::types::{LandAmount, LandColor, LandId, LandType};
@@ -15,7 +16,7 @@ pub use land::Land;
 pub use profile::{GMName, GMProfile};
 
 /// Game map.
-#[derive(rkyv::Archive, rkyv::Deserialize, rkyv::Serialize, Debug, Clone)]
+#[derive(Deserialize, Serialize, Debug, Clone)]
 #[wasm_bindgen]
 pub struct GM {
   #[wasm_bindgen(skip)]

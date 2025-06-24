@@ -1,14 +1,14 @@
 use std::ops::Deref;
 
 pub use face::Face;
+use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::wasm_bindgen;
-
 mod face;
 
 use crate::types::{FaceRaduis, FaceSides, FaceVec};
 
 /// 3D representation of a GM.
-#[derive(Default, Debug, Clone)]
+#[derive(Default, Debug, Clone, Serialize, Deserialize)]
 #[wasm_bindgen]
 pub struct RP(#[wasm_bindgen(skip)] pub Vec<Face>);
 

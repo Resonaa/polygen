@@ -9,5 +9,5 @@ homepage.workspace = true
 
 [dependencies]
 bitfield-struct.workspace = true
-rkyv.workspace = true
 wasm-bindgen.workspace = true
+serde.workspace = true

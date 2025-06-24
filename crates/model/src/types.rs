@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::wasm_bindgen;
 
 pub type LandId = u32;
@@ -14,9 +15,7 @@ pub type FaceSides = u8;
 pub type BlockVec = u32;
 pub type BlockYIndex = u32;
 
-#[derive(
-  rkyv::Archive, rkyv::Deserialize, rkyv::Serialize, Clone, Copy, PartialEq, Eq, Debug, Default,
-)]
+#[derive(Deserialize, Serialize, Clone, Copy, PartialEq, Eq, Debug, Default)]
 #[repr(u8)]
 #[wasm_bindgen]
 pub enum LandType {
@@ -31,9 +30,7 @@ pub enum LandType {
   Swamp
 }
 
-#[derive(
-  rkyv::Archive, rkyv::Deserialize, rkyv::Serialize, Clone, Copy, PartialEq, Eq, Debug, Default,
-)]
+#[derive(Deserialize, Serialize, Clone, Copy, PartialEq, Eq, Debug, Default)]
 #[repr(u8)]
 #[wasm_bindgen]
 pub enum GMMode {
@@ -52,3 +49,5 @@ impl GMMode {
     }
   }
 }
+
+pub type TeamId = u8;
